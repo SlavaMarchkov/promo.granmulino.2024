@@ -89,6 +89,12 @@ export default {
 
             const alertStore = useAlertStore();
             alertStore.error(error);
+        } finally {
+            // TODO: reset all stores
+            // import { getActivePinia } from "pinia"
+
+// map through that list and use the **$reset** fn to reset the state
+//             getActivePinia()._s.forEach(store => store.$reset());
         }
     },
 };
