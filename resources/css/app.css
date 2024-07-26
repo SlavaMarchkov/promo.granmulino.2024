@@ -14,7 +14,7 @@
 --------------------------------------------------------------*/
 :root {
     scroll-behavior: smooth;
-    --bs-body-font-size: 1.1rem;
+    --bs-body-font-size: 1rem;
     --bs-body-color: #141414;
 }
 

@@ -7,7 +7,11 @@
                         <i :class="menuItem.icon"></i><span>{{ menuItem.title }}</span><i
                         class="bi bi-chevron-down ms-auto"></i>
                     </a>
-                    <ul :id="menuItem.id" class="nav-content collapse" data-bs-parent="#sidebar-nav" style="">
+                    <ul
+                        :id="menuItem.id"
+                        class="nav-content collapse"
+                        data-bs-parent="#sidebar-nav"
+                    >
                         <li v-for="item in menuItem.items">
                             <RouterLink :to="{ name: item.route }">
                                 <i class="bi bi-circle"></i><span>{{ item.title }}</span>

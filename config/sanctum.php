@@ -52,7 +52,7 @@ return [
     |
     */
 
-    'expiration' => 10, // TODO: check the time of the token
+    'expiration' => 60,
 
     /*
     |--------------------------------------------------------------------------
