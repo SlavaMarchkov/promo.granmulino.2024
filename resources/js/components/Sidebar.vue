@@ -7,9 +7,13 @@
                         <i :class="menuItem.icon"></i><span>{{ menuItem.title }}</span><i
                         class="bi bi-chevron-down ms-auto"></i>
                     </a>
-                    <ul :id="menuItem.id" class="nav-content collapse" data-bs-parent="#sidebar-nav" style="">
+                    <ul
+                        :id="menuItem.id"
+                        class="nav-content collapse"
+                        data-bs-parent="#sidebar-nav"
+                    >
                         <li v-for="item in menuItem.items">
-                            <RouterLink :to="{ name: item.route }">
+                            <RouterLink :to="{ name: item.route }" :id="item.route">
                                 <i class="bi bi-circle"></i><span>{{ item.title }}</span>
                             </RouterLink>
                         </li>
@@ -34,6 +38,25 @@
 </template>
 
 <script setup>
+import { onMounted } from 'vue';
+import { useRoute } from 'vue-router';
+
+const route = useRoute();
+
+onMounted(() => {
+    openActiveRouteMenuItem();
+});
+
+const openActiveRouteMenuItem = () => {
+    const routeNameList = document.querySelectorAll('ul.nav-content > li > a');
+    routeNameList.forEach(el => {
+        if ( el.id === route.name ) {
+            el.parentElement.parentElement.classList.add('show');
+            el.parentElement.parentElement.previousElementSibling.classList.remove('collapsed');
+        }
+    });
+};
+
 const menuItems = [
     {
         isCollapsible: false,

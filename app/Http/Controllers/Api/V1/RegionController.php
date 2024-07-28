@@ -9,13 +9,27 @@ use App\Http\Requests\Region\StoreUpdateRequest;
 use App\Http\Resources\V1\RegionResource;
 use App\Models\Region;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\ResourceCollection;
 use Symfony\Component\HttpFoundation\Response;
 
 final class RegionController extends Controller
 {
     public function index()
+    : ResourceCollection
     {
-        return RegionResource::collection(Region::all());
+        $orderColumn = request('order_column', 'id');
+        if (!in_array($orderColumn, ['id', 'name', 'code'])) {
+            $orderColumn = 'id';
+        }
+
+        $orderDirection = request('order_direction', 'desc');
+        if (!in_array($orderDirection, ['asc', 'desc'])) {
+            $orderDirection = 'desc';
+        }
+
+        $items = Region::orderBy($orderColumn, $orderDirection)->get();
+
+        return RegionResource::collection($items);
     }
 
     public function store(StoreUpdateRequest $request)
@@ -47,6 +61,6 @@ final class RegionController extends Controller
         $region->delete();
         return response()->json([
             'message' => 'Регион удалён.',
-        ], Response::HTTP_NO_CONTENT);
+        ]);
     }
 }

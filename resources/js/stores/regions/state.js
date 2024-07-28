@@ -1,4 +1,6 @@
 export default {
     items: null,
-    isLoading: false,
+    isCardLoading: false,
+    isContentLoading: false,
+    isButtonDisabled: false,
 };
