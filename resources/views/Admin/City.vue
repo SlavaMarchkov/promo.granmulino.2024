@@ -1,7 +1,352 @@
 <template>
-    <h1>City Index</h1>
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <button @click="showNewItemModal" type="button" class="btn btn-primary">
+                Новый город
+            </button>
+        </div>
+        <div class="col-md-3 offset-3">
+            <div class="input-group">
+                <input
+                    v-model="searchName"
+                    class="form-control"
+                    type="text"
+                    placeholder="Введите название города"
+                >
+                <span @click="clearSearch()" class="input-group-text" style="cursor: pointer;"><i
+                    class="bi bi-x-lg"></i></span>
+            </div>
+        </div>
+    </div>
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body pb-0">
+                    <table v-if="items.length > 0" class="table table-bordered my-4 text-center align-middle">
+                        <thead>
+                        <tr>
+                            <ThSort
+                                :id="'id'"
+                                sort-type="numeric"
+                                :order-column="orderColumn"
+                                :order-direction="orderDirection"
+                                :width='60'
+                                @sortByColumn="updateSorting('id')"
+                            >ID
+                            </ThSort>
+                            <ThSort
+                                :id="'name'"
+                                sort-type="alpha"
+                                :order-column="orderColumn"
+                                :order-direction="orderDirection"
+                                class="text-start"
+                                @sortByColumn="updateSorting('name')"
+                            >Название города
+                            </ThSort>
+                            <ThSort
+                                :id="'region'"
+                                sort-type="alpha"
+                                :order-column="orderColumn"
+                                :order-direction="orderDirection"
+                                class="text-start"
+                                @sortByColumn="updateSorting('region')"
+                            >Регион
+                            </ThSort>
+                            <th scope="col" style="width: 100px;">Ред.</th>
+                            <th scope="col" style="width: 120px;">Удалить</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr v-for="item in items" :key="item.id">
+                            <th scope="row">{{ item.id }}</th>
+                            <td class="text-start" style="cursor: pointer;" @click="showItemModal(item.id)">
+                                {{ item.name }}
+                            </td>
+                            <td class="text-start">
+                                {{ item.region }}
+                            </td>
+                            <td>
+                                <button
+                                    @click="showItemModal(item.id)"
+                                    class="btn btn-sm btn-warning"
+                                >
+                                    <i class="bi bi-pencil-square"></i>
+                                    Edit
+                                </button>
+                            </td>
+                            <td>
+                                <button
+                                    @click="deleteItem(item.id)"
+                                    class="btn btn-sm btn-danger"
+                                >
+                                    <i class="bi bi-trash3"></i>
+                                    Delete
+                                </button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <p v-else class="mt-3 text-center lead">
+                        {{ cityStore.isContentLoading ? 'Подождите, загружаю...' : 'Записей не найдено...' }}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Service Modal Start -->
+    <div class="modal fade" id="newItem" tabindex="-1" style="display: none;" aria-hidden="true">
+        <div class="modal-dialog">
+            <form @submit.prevent="saveItem">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Добавление города</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <Alert/>
+                        <Spinner v-if="regionStore.isContentLoading"/>
+                        <div v-else class="row g-3">
+                            <div class="col-12">
+                                <Label for="name" required>Название города</Label>
+                                <Input
+                                    v-model="form.name"
+                                    type="text"
+                                    id="name"
+                                    placeholder="Например: Новосибирск"
+                                />
+                            </div>
+                            <div class="col-12">
+                                <Label for="region_id" required>Регион</Label>
+                                <select v-model="form.regionId" id="region_id" class="form-select">
+                                    <option value="" selected disabled>-- Выберите регион --</option>
+                                    <option
+                                        v-for="region in regions"
+                                        :value="region.id"
+                                    >{{ region.name }}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <Button
+                            type="submit"
+                            :loading="cityStore.isButtonDisabled"
+                            :disabled="cityStore.isButtonDisabled"
+                            class="w-25"
+                        >Сохранить
+                        </Button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- New Item Modal End -->
+
+    <!-- Show One Item Modal Start -->
+    <div class="modal fade" id="showItem" tabindex="-1" style="display: none;" aria-hidden="true">
+        <div class="modal-dialog">
+            <form @submit.prevent="updateItem(item)">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Редактирование региона</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <Alert/>
+                        <Spinner v-if="cityStore.isCardLoading"/>
+                        <div v-else class="row g-3">
+                            <div class="col-12">
+                                <Label for="edit-code" required>Код региона</Label>
+                                <Input
+                                    v-model="item.code"
+                                    type="text"
+                                    id="edit-code"
+                                    placeholder="Например: УФО"
+                                />
+                            </div>
+                            <div class="col-12">
+                                <Label for="edit-name" required>Название региона</Label>
+                                <Input
+                                    v-model="item.name"
+                                    type="text"
+                                    id="edit-name"
+                                    placeholder="Например: Уральский федеральный округ"
+                                />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <Button
+                            type="submit"
+                            :loading="cityStore.isButtonDisabled"
+                            :disabled="cityStore.isButtonDisabled"
+                            class="w-25"
+                        >Сохранить
+                        </Button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- Show One Item Modal End -->
 </template>
 
 <script setup>
+import Input from '@/components/core/Input.vue';
+import Label from '@/components/core/Label.vue';
+import Button from '@/components/core/Button.vue';
+import Alert from '@/components/Alert.vue';
+import { onMounted, ref, watch } from 'vue';
+import { useAlertStore } from '@/stores/alerts.js';
+import { useCityStore } from '@/stores/cities.js';
+import { useRegionStore } from '@/stores/regions.js';
+import Swal from 'sweetalert2';
+import ThSort from '@/components/core/ThSort.vue';
+import Spinner from '@/components/core/Spinner.vue';
 
+const cityStore = useCityStore();
+const regionStore = useRegionStore();
+const alertStore = useAlertStore();
+
+const initialFormData = () => ({
+    name: '',
+    regionId: '',
+});
+
+const form = ref(initialFormData());
+const items = ref([]);
+const regions = ref([]);
+const item = ref({});
+const searchName = ref('');
+const orderColumn = ref('id');
+const orderDirection = ref('desc');
+
+let newItemModal = ref(null);
+let itemModal = ref(null);
+
+onMounted(async () => {
+    await getItems();
+});
+
+const getItems = async (order_column = 'id', order_direction = 'desc') => {
+    const response = await cityStore.all(order_column, order_direction);
+    items.value = response.data;
+};
+
+const getRegions = async (order_column = 'name', order_direction = 'asc') => {
+    const response = await regionStore.all(order_column, order_direction);
+    regions.value = response.data;
+};
+
+const getItem = async (id) => {
+    const response = await cityStore.one(id);
+    item.value = response.data;
+};
+
+const showNewItemModal = async () => {
+    alertStore.clear();
+    newItemModal = new bootstrap.Modal(document.getElementById('newItem'));
+    newItemModal.show();
+    await getRegions();
+};
+
+const showItemModal = (id) => {
+    alertStore.clear();
+    itemModal = new bootstrap.Modal(document.getElementById('showItem'));
+    itemModal.show();
+    getItem(id);
+};
+
+const saveItem = async () => {
+    const response = await cityStore.save(form.value);
+    if ( response && response.status === 201 ) {
+        form.value = initialFormData();
+        alertStore.clear();
+        newItemModal.hide();
+        await Swal.fire({
+            icon: response.data.status,
+            title: 'Well done!',
+            text: response.data.message,
+        });
+        searchName.value = '';
+        orderColumn.value = 'id';
+        orderDirection.value = 'desc';
+        await getItems();
+    }
+};
+
+const updateItem = async (item) => {
+    const response = await cityStore.update(item);
+    if ( response && response.status === 'success' ) {
+        alertStore.clear();
+        itemModal.hide();
+        await getItems(orderColumn.value, orderDirection.value);
+        updateSorting(orderColumn.value);
+    }
+};
+
+const deleteItem = (id) => {
+    const itemName = cityStore.getItems
+        .filter(s => s.id === id)
+        .map(s => s.name);
+
+    Swal.fire({
+        title: 'Вы уверены?',
+        text: `Удаляемый город: ${itemName}`,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Да, удалить',
+        cancelButtonText: 'Отменить',
+        confirmButtonColor: '#ef4444',
+        timer: 10_000,
+        timerProgressBar: true,
+        reverseButtons: true,
+    }).then(async (result) => {
+        if ( result.isConfirmed ) {
+            await cityStore.delete(id);
+            searchName.value = '';
+            orderColumn.value = 'id';
+            orderDirection.value = 'desc';
+            await getItems();
+        }
+    });
+};
+
+const clearSearch = async () => {
+    searchName.value = '';
+    orderColumn.value = 'id';
+    orderDirection.value = 'desc';
+    await getItems();
+};
+
+watch(searchName, (current) => {
+    items.value = cityStore.getItems.filter(item => item.name.toLowerCase().includes(current.toLowerCase()));
+});
+
+const updateSorting = (column) => {
+    orderColumn.value = column;
+    orderDirection.value = orderDirection.value === 'asc' ? 'desc' : 'asc';
+
+    let tempArr = cityStore.getItems.slice();
+
+    if ( searchName.value ) {
+        tempArr = cityStore.getItems.filter(item => item.name.toLowerCase().includes(searchName.value.toLowerCase()));
+    }
+
+    items.value = tempArr.sort((a, b) => {
+        if ( column === 'id' ) {
+            return orderDirection.value === 'asc'
+                ? a.id - b.id
+                : b.id - a.id;
+        } else {
+            return orderDirection.value === 'asc'
+                ? a[column].localeCompare(b[column])
+                : b[column].localeCompare(a[column]);
+        }
+    });
+};
 </script>
