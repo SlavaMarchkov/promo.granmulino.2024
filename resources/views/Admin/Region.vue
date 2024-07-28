@@ -13,7 +13,7 @@
                     type="text"
                     placeholder="Введите название региона"
                 >
-                <span @click="searchName = ''" class="input-group-text" style="cursor: pointer;"><i
+                <span @click="clearSearch()" class="input-group-text" style="cursor: pointer;"><i
                     class="bi bi-x-lg"></i></span>
             </div>
         </div>
@@ -22,90 +22,42 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body pb-0">
-                    <table v-if="items.data" class="table table-bordered my-4 text-center align-middle">
+                    <table v-if="items.length > 0" class="table table-bordered my-4 text-center align-middle">
                         <thead>
                         <tr>
-                            <th
-                                scope="col"
-                                style="width: 60px;"
-                                :class="orderColumn === 'id' ? 'table-active' : ''"
-                            >
-                                <div @click="updateSorting('id')" style="cursor: pointer;">
-                                    ID
-                                    <i
-                                        :class="[
-                                            'bi',
-                                            {
-                                                'bi-sort-numeric-down-alt':
-                                                    orderDirection === 'desc' &&
-                                                    orderColumn === 'id',
-                                                'bi-sort-numeric-up':
-                                                    orderDirection !== '' &&
-                                                    orderDirection !== 'desc' &&
-                                                    orderColumn === 'id',
-                                                'bi-three-dots-vertical opacity-25':
-                                                    orderColumn !== 'id',
-                                            },
-                                        ]"
-                                    ></i>
-                                </div>
-                            </th>
-                            <th
-                                scope="col"
+                            <ThSort
+                                :id="'id'"
+                                sort-type="numeric"
+                                :order-column="orderColumn"
+                                :order-direction="orderDirection"
+                                :width='60'
+                                @sortByColumn="updateSorting('id')"
+                            >ID
+                            </ThSort>
+                            <ThSort
+                                :id="'name'"
+                                sort-type="alpha"
+                                :order-column="orderColumn"
+                                :order-direction="orderDirection"
                                 class="text-start"
-                                :class="orderColumn === 'name' ? 'table-active' : ''"
-                            >
-                                <div @click="updateSorting('name')" style="cursor: pointer;">
-                                    Название региона
-                                    <i
-                                        :class="[
-                                            'bi',
-                                            {
-                                                'bi-sort-alpha-down-alt':
-                                                    orderDirection === 'desc' &&
-                                                    orderColumn === 'name',
-                                                'bi-sort-alpha-up':
-                                                    orderDirection !== '' &&
-                                                    orderDirection !== 'desc' &&
-                                                    orderColumn === 'name',
-                                                'bi-three-dots-vertical opacity-25':
-                                                    orderColumn !== 'name',
-                                            },
-                                        ]"
-                                    ></i>
-                                </div>
-                            </th>
-                            <th
-                                scope="col"
-                                style="width: 120px;"
-                                :class="orderColumn === 'code' ? 'table-active' : ''"
-                            >
-                                <div @click="updateSorting('code')" style="cursor: pointer;">
-                                    Код
-                                    <i
-                                        :class="[
-                                            'bi',
-                                            {
-                                                'bi-sort-up':
-                                                    orderDirection === 'desc' &&
-                                                    orderColumn === 'code',
-                                                'bi-sort-down-alt':
-                                                    orderDirection !== '' &&
-                                                    orderDirection !== 'desc' &&
-                                                    orderColumn === 'code',
-                                                'bi-three-dots-vertical opacity-25':
-                                                    orderColumn !== 'code',
-                                            },
-                                        ]"
-                                    ></i>
-                                </div>
-                            </th>
+                                @sortByColumn="updateSorting('name')"
+                            >Название региона
+                            </ThSort>
+                            <ThSort
+                                :id="'code'"
+                                sort-type="alpha"
+                                :order-column="orderColumn"
+                                :order-direction="orderDirection"
+                                :width='120'
+                                @sortByColumn="updateSorting('code')"
+                            >Код
+                            </ThSort>
                             <th scope="col" style="width: 100px;">Ред.</th>
                             <th scope="col" style="width: 120px;">Удалить</th>
                         </tr>
                         </thead>
                         <tbody>
-                        <tr v-for="item in items.data" :key="item.id">
+                        <tr v-for="item in items" :key="item.id">
                             <th scope="row">{{ item.id }}</th>
                             <td class="text-start" style="cursor: pointer;" @click="showItemModal(item.id)">
                                 {{ item.name }}
@@ -134,7 +86,9 @@
                         </tr>
                         </tbody>
                     </table>
-                    <p v-else class="mt-3 text-center lead">В базе данных нет записей...</p>
+                    <p v-else class="mt-3 text-center lead">
+                        {{ regionStore.isContentLoading ? 'Подождите, загружаю...' : 'Записей не найдено...' }}
+                    </p>
                 </div>
             </div>
         </div>
@@ -153,7 +107,7 @@
                         <Alert/>
                         <div class="row g-3">
                             <div class="col-12">
-                                <Label for="code">Код региона</Label>
+                                <Label for="code" required>Код региона</Label>
                                 <Input
                                     v-model="form.code"
                                     type="text"
@@ -162,7 +116,7 @@
                                 />
                             </div>
                             <div class="col-12">
-                                <Label for="name">Наименование региона</Label>
+                                <Label for="name" required>Наименование региона</Label>
                                 <Input
                                     v-model="form.name"
                                     type="text"
@@ -175,8 +129,8 @@
                     <div class="modal-footer">
                         <Button
                             type="submit"
-                            :loading="regionStore.isLoading"
-                            :disabled="regionStore.isLoading"
+                            :loading="regionStore.isButtonDisabled"
+                            :disabled="regionStore.isButtonDisabled"
                             class="w-25"
                         >Сохранить
                         </Button>
@@ -199,9 +153,10 @@
                     </div>
                     <div class="modal-body">
                         <Alert/>
-                        <div class="row g-3">
+                        <Spinner v-if="regionStore.isCardLoading"/>
+                        <div v-else class="row g-3">
                             <div class="col-12">
-                                <Label for="edit-code">Код региона</Label>
+                                <Label for="edit-code" required>Код региона</Label>
                                 <Input
                                     v-model="item.code"
                                     type="text"
@@ -210,7 +165,7 @@
                                 />
                             </div>
                             <div class="col-12">
-                                <Label for="edit-name">Название региона</Label>
+                                <Label for="edit-name" required>Название региона</Label>
                                 <Input
                                     v-model="item.name"
                                     type="text"
@@ -223,8 +178,8 @@
                     <div class="modal-footer">
                         <Button
                             type="submit"
-                            :loading="regionStore.isLoading"
-                            :disabled="regionStore.isLoading"
+                            :loading="regionStore.isButtonDisabled"
+                            :disabled="regionStore.isButtonDisabled"
                             class="w-25"
                         >Сохранить
                         </Button>
@@ -242,10 +197,12 @@ import Input from '@/components/core/Input.vue';
 import Label from '@/components/core/Label.vue';
 import Button from '@/components/core/Button.vue';
 import Alert from '@/components/Alert.vue';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { useAlertStore } from '@/stores/alerts.js';
 import { useRegionStore } from '@/stores/regions.js';
 import Swal from 'sweetalert2';
+import ThSort from '@/components/core/ThSort.vue';
+import Spinner from '@/components/core/Spinner.vue';
 
 const regionStore = useRegionStore();
 const alertStore = useAlertStore();
@@ -256,7 +213,7 @@ const initialFormData = () => ({
 });
 
 const form = ref(initialFormData());
-const items = ref({});
+const items = ref([]);
 const item = ref({});
 const searchName = ref('');
 const orderColumn = ref('id');
@@ -269,8 +226,9 @@ onMounted(async () => {
     await getItems();
 });
 
-const getItems = async () => {
-    items.value = await regionStore.all();
+const getItems = async (order_column = 'id', order_direction = 'desc') => {
+    const response = await regionStore.all(order_column, order_direction);
+    items.value = response.data;
 };
 
 const getItem = async (id) => {
@@ -285,6 +243,7 @@ const showNewItemModal = () => {
 };
 
 const showItemModal = (id) => {
+    alertStore.clear();
     itemModal = new bootstrap.Modal(document.getElementById('showItem'));
     itemModal.show();
     getItem(id);
@@ -298,9 +257,12 @@ const saveItem = async () => {
         newItemModal.hide();
         await Swal.fire({
             icon: response.data.status,
-            title: 'Всё в норме!',
+            title: 'Well done!',
             text: response.data.message,
         });
+        searchName.value = '';
+        orderColumn.value = 'id';
+        orderDirection.value = 'desc';
         await getItems();
     }
 };
@@ -310,7 +272,8 @@ const updateItem = async (item) => {
     if ( response && response.status === 'success' ) {
         alertStore.clear();
         itemModal.hide();
-        await getItems();
+        await getItems(orderColumn.value, orderDirection.value);
+        updateSorting(orderColumn.value);
     }
 };
 
@@ -333,12 +296,45 @@ const deleteItem = (id) => {
     }).then(async (result) => {
         if ( result.isConfirmed ) {
             await regionStore.delete(id);
+            searchName.value = '';
+            orderColumn.value = 'id';
+            orderDirection.value = 'desc';
             await getItems();
         }
     });
 };
 
-const updateSorting = (column) => {
+const clearSearch = async () => {
+    searchName.value = '';
+    orderColumn.value = 'id';
+    orderDirection.value = 'desc';
+    await getItems();
+};
 
+watch(searchName, (current) => {
+    items.value = regionStore.getItems.filter(item => item.name.toLowerCase().includes(current.toLowerCase()));
+});
+
+const updateSorting = (column) => {
+    orderColumn.value = column;
+    orderDirection.value = orderDirection.value === 'asc' ? 'desc' : 'asc';
+
+    let tempArr = regionStore.getItems.slice();
+
+    if ( searchName.value ) {
+        tempArr = regionStore.getItems.filter(item => item.name.toLowerCase().includes(searchName.value.toLowerCase()));
+    }
+
+    items.value = tempArr.sort((a, b) => {
+        if ( column === 'id' ) {
+            return orderDirection.value === 'asc'
+                ? a.id - b.id
+                : b.id - a.id;
+        } else {
+            return orderDirection.value === 'asc'
+                ? a[column].localeCompare(b[column])
+                : b[column].localeCompare(a[column]);
+        }
+    });
 };
 </script>

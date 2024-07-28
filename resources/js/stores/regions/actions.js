@@ -15,29 +15,40 @@ export default {
         this.items = data;
     },
 
-    async all() {
+    async all(order_column, order_direction) {
+        this.isContentLoading = true;
         try {
-            const { data } = await http.get(URL);
+            const { data } = await http.get(URL, {
+                params: {
+                    order_column,
+                    order_direction,
+                },
+            });
             this.setItems(data);
             return data;
         } catch ( error ) {
             const alertStore = useAlertStore();
             alertStore.error(error);
+        } finally {
+            this.isContentLoading = false;
         }
     },
 
     async one(id) {
+        this.isCardLoading = true;
         try {
             const { data } = await http.get(`${URL}/${id}`);
             return data;
         } catch ( error ) {
             const alertStore = useAlertStore();
             alertStore.error(error);
+        } finally {
+            this.isCardLoading = false;
         }
     },
 
     async save(item) {
-        this.isLoading = true;
+        this.isButtonDisabled = true;
         const formData = convertCase(item, toSnakeCase);
         try {
             return await http.post(URL, formData);
@@ -45,12 +56,12 @@ export default {
             const alertStore = useAlertStore();
             alertStore.error(error, true);
         } finally {
-            this.isLoading = false;
+            this.isButtonDisabled = false;
         }
     },
 
     async update(item) {
-        this.isLoading = true;
+        this.isButtonDisabled = true;
         const formData = convertCase(item, toSnakeCase);
         try {
             const { data } = await http.put(`${URL}/${item.id}`, formData);
@@ -60,7 +71,7 @@ export default {
             const alertStore = useAlertStore();
             alertStore.error(error, true);
         } finally {
-            this.isLoading = false;
+            this.isButtonDisabled = false;
         }
     },
 
