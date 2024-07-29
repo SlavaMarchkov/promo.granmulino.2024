@@ -1,5 +1,5 @@
 export default {
-    items: null,
+    cities: null,
     isCardLoading: false,
     isContentLoading: false,
     isButtonDisabled: false,

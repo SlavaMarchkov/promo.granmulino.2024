@@ -1,7 +1,7 @@
 <template>
     <th
         scope="col"
-        :style="{ width: props.width + 'px' }"
+        :style="{ width: props.width + '%' }"
         :class="props.orderColumn === props.id ? 'table-active' : ''"
     >
         <div @click="handleClick(props.id)" style="cursor: pointer;">
