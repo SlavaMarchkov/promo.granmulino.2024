@@ -5,5 +5,5 @@ export default {
      * @param state
      * @returns {Array}
      */
-    getItems: (state) => state.items,
+    getCities: (state) => state.cities,
 };

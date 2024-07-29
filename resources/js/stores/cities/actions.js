@@ -11,8 +11,8 @@ const $toast = useToast({
 const URL = '/cities';
 
 export default {
-    setItems({ data }) {
-        this.items = data;
+    setCities({ data }) {
+        this.cities = data;
     },
 
     async all(order_column, order_direction) {
@@ -24,7 +24,7 @@ export default {
                     order_direction,
                 },
             });
-            this.setItems(data);
+            this.setCities(data);
             return data;
         } catch ( error ) {
             const alertStore = useAlertStore();
