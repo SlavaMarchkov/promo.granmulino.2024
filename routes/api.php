@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\CategoryController;
 use App\Http\Controllers\Api\V1\CityController;
 use App\Http\Controllers\Api\V1\RegionController;
+use App\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')
@@ -27,4 +28,5 @@ Route::prefix('v1')
         Route::apiResource('regions', RegionController::class);
         Route::apiResource('cities', CityController::class);
         Route::apiResource('categories', CategoryController::class);
+        Route::apiResource('products', ProductController::class);
     });
