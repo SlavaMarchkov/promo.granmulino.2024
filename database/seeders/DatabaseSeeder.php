@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             RegionsDumpSeeder::class,
             CitiesDumpSeeder::class,
             CategoriesDumpSeeder::class,
+            ProductsDumpSeeder::class,
         ]);
     }
 }
