@@ -1,7 +1,7 @@
 <template>
     <div class="row mb-4">
         <div class="col-md-6">
-            <button @click="showNewItemModal" type="button" class="btn btn-primary">
+            <button class="btn btn-primary" type="button" @click="showNewRegionModal">
                 Новый регион
             </button>
         </div>
@@ -22,7 +22,7 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body pb-0">
-                    <table v-if="items.length > 0" class="table table-bordered my-4 text-center align-middle">
+                    <table v-if="regions.length > 0" class="table table-bordered my-4 text-center align-middle">
                         <thead>
                         <tr>
                             <ThSort
@@ -30,7 +30,7 @@
                                 sort-type="numeric"
                                 :order-column="orderColumn"
                                 :order-direction="orderDirection"
-                                :width='60'
+                                :width='5'
                                 @sortByColumn="updateSorting('id')"
                             >ID
                             </ThSort>
@@ -48,39 +48,37 @@
                                 sort-type="alpha"
                                 :order-column="orderColumn"
                                 :order-direction="orderDirection"
-                                :width='120'
+                                :width='10'
                                 @sortByColumn="updateSorting('code')"
                             >Код
                             </ThSort>
-                            <th scope="col" style="width: 100px;">Ред.</th>
-                            <th scope="col" style="width: 120px;">Удалить</th>
+                            <th scope="col" style="width: 10%;">Просмотр</th>
+                            <th scope="col" style="width: 10%;">Ред.</th>
                         </tr>
                         </thead>
                         <tbody>
-                        <tr v-for="item in items" :key="item.id">
-                            <th scope="row">{{ item.id }}</th>
-                            <td class="text-start" style="cursor: pointer;" @click="showItemModal(item.id)">
-                                {{ item.name }}
+                        <tr v-for="region in regions" :key="region.id">
+                            <th scope="row">{{ region.id }}</th>
+                            <td class="text-start" style="cursor: pointer;" @click="showViewRegionModal(region.id)">
+                                {{ region.name }}
                             </td>
                             <td>
-                                {{ item.code }}
+                                {{ region.code }}
                             </td>
                             <td>
                                 <button
-                                    @click="showItemModal(item.id)"
-                                    class="btn btn-sm btn-warning"
-                                >
-                                    <i class="bi bi-pencil-square"></i>
-                                    Edit
+                                    class="btn btn-sm btn-primary"
+                                    @click="showViewRegionModal(region.id)"
+                                ><i class="bi bi-eye-fill"></i>
+                                    View
                                 </button>
                             </td>
                             <td>
                                 <button
-                                    @click="deleteItem(item.id)"
-                                    class="btn btn-sm btn-danger"
-                                >
-                                    <i class="bi bi-trash3"></i>
-                                    Delete
+                                    class="btn btn-sm btn-warning"
+                                    @click="showEditRegionModal(region.id)"
+                                ><i class="bi bi-pencil-square"></i>
+                                    Edit
                                 </button>
                             </td>
                         </tr>
@@ -94,10 +92,10 @@
         </div>
     </div>
 
-    <!-- New Service Modal Start -->
-    <div class="modal fade" id="newItem" tabindex="-1" style="display: none;" aria-hidden="true">
+    <!-- New Region Modal Start -->
+    <div id="newRegion" aria-hidden="true" class="modal fade" style="display: none;" tabindex="-1">
         <div class="modal-dialog">
-            <form @submit.prevent="saveItem">
+            <form @submit.prevent="saveRegion">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">Добавление региона</h5>
@@ -140,12 +138,12 @@
             </form>
         </div>
     </div>
-    <!-- New Item Modal End -->
+    <!-- New Region Modal End -->
 
-    <!-- Show One Item Modal Start -->
-    <div class="modal fade" id="showItem" tabindex="-1" style="display: none;" aria-hidden="true">
+    <!-- Edit Region Modal Start -->
+    <div id="editRegion" aria-hidden="true" class="modal fade" style="display: none;" tabindex="-1">
         <div class="modal-dialog">
-            <form @submit.prevent="updateItem(item)">
+            <form @submit.prevent="updateRegion(region)">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">Редактирование региона</h5>
@@ -158,7 +156,7 @@
                             <div class="col-12">
                                 <Label for="edit-code" required>Код региона</Label>
                                 <Input
-                                    v-model="item.code"
+                                    v-model="region.code"
                                     type="text"
                                     id="edit-code"
                                     placeholder="Например: УФО"
@@ -167,7 +165,7 @@
                             <div class="col-12">
                                 <Label for="edit-name" required>Название региона</Label>
                                 <Input
-                                    v-model="item.name"
+                                    v-model="region.name"
                                     type="text"
                                     id="edit-name"
                                     placeholder="Например: Уральский федеральный округ"
@@ -189,7 +187,7 @@
             </form>
         </div>
     </div>
-    <!-- Show One Item Modal End -->
+    <!-- Edit Region Modal End -->
 </template>
 
 <script setup>
@@ -213,48 +211,50 @@ const initialFormData = () => ({
 });
 
 const form = ref(initialFormData());
-const items = ref([]);
-const item = ref({});
+const regions = ref([]);
+const region = ref({});
+
 const searchName = ref('');
 const orderColumn = ref('id');
 const orderDirection = ref('desc');
 
-let newItemModal = ref(null);
-let itemModal = ref(null);
+let newRegionModal = ref(null);
+let viewRegionModal = ref(null);
+let editRegionModal = ref(null);
 
 onMounted(async () => {
-    await getItems();
+    await getRegions();
 });
 
-const getItems = async (order_column = 'id', order_direction = 'desc') => {
+const getRegions = async (order_column = 'id', order_direction = 'desc') => {
     const response = await regionStore.all(order_column, order_direction);
-    items.value = response.data;
+    regions.value = response.data;
 };
 
-const getItem = async (id) => {
+const getRegion = async (id) => {
     const response = await regionStore.one(id);
-    item.value = response.data;
+    region.value = response.data;
 };
 
-const showNewItemModal = () => {
+const showNewRegionModal = () => {
     alertStore.clear();
-    newItemModal = new bootstrap.Modal(document.getElementById('newItem'));
-    newItemModal.show();
+    newRegionModal = new bootstrap.Modal(document.getElementById('newRegion'));
+    newRegionModal.show();
 };
 
-const showItemModal = (id) => {
+const showEditRegionModal = async (id) => {
     alertStore.clear();
-    itemModal = new bootstrap.Modal(document.getElementById('showItem'));
-    itemModal.show();
-    getItem(id);
+    editRegionModal = new bootstrap.Modal(document.getElementById('editRegion'));
+    editRegionModal.show();
+    await getRegion(id);
 };
 
-const saveItem = async () => {
+const saveRegion = async () => {
     const response = await regionStore.save(form.value);
     if ( response && response.status === 201 ) {
         form.value = initialFormData();
         alertStore.clear();
-        newItemModal.hide();
+        newRegionModal.hide();
         await Swal.fire({
             icon: response.data.status,
             title: 'Well done!',
@@ -263,28 +263,28 @@ const saveItem = async () => {
         searchName.value = '';
         orderColumn.value = 'id';
         orderDirection.value = 'desc';
-        await getItems();
+        await getRegions();
     }
 };
 
-const updateItem = async (item) => {
-    const response = await regionStore.update(item);
+const updateRegion = async (region) => {
+    const response = await regionStore.update(region);
     if ( response && response.status === 'success' ) {
         alertStore.clear();
-        itemModal.hide();
-        await getItems(orderColumn.value, orderDirection.value);
+        editRegionModal.hide();
+        await getRegions(orderColumn.value, orderDirection.value);
         updateSorting(orderColumn.value);
     }
 };
 
-const deleteItem = (id) => {
-    const itemName = regionStore.getItems
+const deleteRegion = (id) => {
+    const regionName = regionStore.getRegions
         .filter(s => s.id === id)
         .map(s => s.name);
 
     Swal.fire({
         title: 'Вы уверены?',
-        text: `Удаляемый регион: ${itemName}`,
+        text: `Удаляемый регион: ${regionName}`,
         icon: 'question',
         showCancelButton: true,
         confirmButtonText: 'Да, удалить',
@@ -299,7 +299,7 @@ const deleteItem = (id) => {
             searchName.value = '';
             orderColumn.value = 'id';
             orderDirection.value = 'desc';
-            await getItems();
+            await getRegions();
         }
     });
 };
@@ -308,24 +308,22 @@ const clearSearch = async () => {
     searchName.value = '';
     orderColumn.value = 'id';
     orderDirection.value = 'desc';
-    await getItems();
+    await getRegions();
 };
 
 watch(searchName, (current) => {
-    items.value = regionStore.getItems.filter(item => item.name.toLowerCase().includes(current.toLowerCase()));
+    regions.value = regionStore.getRegions
+        .filter(item => item.name.toLowerCase().includes(current.toLowerCase()));
 });
 
 const updateSorting = (column) => {
     orderColumn.value = column;
     orderDirection.value = orderDirection.value === 'asc' ? 'desc' : 'asc';
 
-    let tempArr = regionStore.getItems.slice();
+    const tempArr = regionStore.getRegions
+        .filter(item => item.name.toLowerCase().includes(searchName.value.toLowerCase()));
 
-    if ( searchName.value ) {
-        tempArr = regionStore.getItems.filter(item => item.name.toLowerCase().includes(searchName.value.toLowerCase()));
-    }
-
-    items.value = tempArr.sort((a, b) => {
+    regions.value = tempArr.sort((a, b) => {
         if ( column === 'id' ) {
             return orderDirection.value === 'asc'
                 ? a.id - b.id

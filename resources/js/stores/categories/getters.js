@@ -5,5 +5,5 @@ export default {
      * @param state
      * @returns {Array}
      */
-    getRegions: (state) => state.regions,
+    getCategories: (state) => state.categories,
 };

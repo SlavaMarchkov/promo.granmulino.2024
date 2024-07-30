@@ -37,7 +37,7 @@ final class AuthController extends Controller
         $user = User::where('email', $credentials['email'])->firstOrFail();
 
         $user->tokens()->delete();
-        $token = $user->createToken("Token for user: $user->name");
+        $token = $user->createToken("Token for user: $user->name", ['*'], now()->addMinutes(10));
 
         return response()->json([
             'user'    => new UserResource($user),
