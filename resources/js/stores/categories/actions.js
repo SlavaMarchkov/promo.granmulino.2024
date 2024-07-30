@@ -8,11 +8,11 @@ const $toast = useToast({
     position: 'top-right',
 });
 
-const URL = '/regions';
+const URL = '/categories';
 
 export default {
-    setRegions({ data }) {
-        this.regions = data;
+    setCategories({ data }) {
+        this.categories = data;
     },
 
     async all(order_column, order_direction) {
@@ -24,7 +24,7 @@ export default {
                     order_direction,
                 },
             });
-            this.setRegions(data);
+            this.setCategories(data);
             return data;
         } catch ( error ) {
             const alertStore = useAlertStore();
@@ -72,15 +72,6 @@ export default {
             alertStore.error(error, true);
         } finally {
             this.isButtonDisabled = false;
-        }
-    },
-
-    async delete(id) {
-        try {
-            const { data } = await http.delete(`${URL}/${id}`);
-            $toast.success(data.message);
-        } catch ( error ) {
-            $toast.error('Ошибка при удалении: ' + error.message);
         }
     },
 };

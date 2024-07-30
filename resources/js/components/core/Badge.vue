@@ -18,8 +18,8 @@
 <script setup>
 const props = defineProps({
     isActive: {
-        type: Number,
-        default: 1,
+        type: Boolean,
+        default: true,
     },
 });
 </script>

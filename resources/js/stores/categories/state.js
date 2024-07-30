@@ -1,5 +1,5 @@
 export default {
-    regions: null,
+    categories: null,
     isCardLoading: false,
     isContentLoading: false,
     isButtonDisabled: false,
