@@ -15,17 +15,11 @@ export default {
         this.categories = data;
     },
 
-    async all(order_column, order_direction) {
+    async all() {
         this.isContentLoading = true;
         try {
-            const { data } = await http.get(URL, {
-                params: {
-                    order_column,
-                    order_direction,
-                },
-            });
+            const { data } = await http.get(URL);
             this.setCategories(data);
-            return data;
         } catch ( error ) {
             const alertStore = useAlertStore();
             alertStore.error(error);

@@ -9,14 +9,24 @@ use App\Http\Requests\Category\StoreUpdateRequest;
 use App\Http\Resources\V1\CategoryCollection;
 use App\Http\Resources\V1\CategoryResource;
 use App\Models\Category;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 final class CategoryController extends Controller
 {
     public function index()
+    : CategoryCollection
     {
-        return new CategoryCollection(Category::all());
+        $categories = Category::withCount([
+            'products' => function (Builder $query) {
+                $query->where('is_active', true);
+            },
+        ])
+            ->with('products')
+            ->get();
+
+        return new CategoryCollection($categories);
     }
 
     public function store(StoreUpdateRequest $request)
