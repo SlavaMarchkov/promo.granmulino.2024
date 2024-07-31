@@ -2,13 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api\V1;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\Product\StoreUpdateRequest;
 use App\Http\Resources\V1\ProductResource;
 use App\Models\Product;
 
-class ProductController extends Controller
+final class ProductController extends Controller
 {
     public function index()
     {

@@ -60,7 +60,10 @@
                                     :order-direction="orderDirection"
                                     :width='5'
                                     sort-type="numeric"
-                                    @sortByColumn="applyFilterSort('id', orderDirection === 'asc' ? 'desc' : 'asc')"
+                                    @sortByColumn="applyFilterSort(
+                                        'id',
+                                        orderDirection === 'asc' ? 'desc' : 'asc',
+                                    )"
                                 >ID
                                 </ThSort>
                                 <ThSort
@@ -70,15 +73,22 @@
                                     :width='30'
                                     class="text-start"
                                     sort-type="alpha"
-                                    @sortByColumn="applyFilterSort('name', orderDirection === 'asc' ? 'desc' : 'asc')"
+                                    @sortByColumn="applyFilterSort(
+                                        'name',
+                                        orderDirection === 'asc' ? 'desc' : 'asc',
+                                        false,
+                                    )"
                                 >Название группы товаров
                                 </ThSort>
                                 <ThSort
-                                    :id="'qty'"
+                                    :id="'productsCount'"
                                     :order-column="orderColumn"
                                     :order-direction="orderDirection"
                                     sort-type="numeric"
-                                    @sortByColumn="applyFilterSort('qty', orderDirection === 'asc' ? 'desc' : 'asc')"
+                                    @sortByColumn="applyFilterSort(
+                                        'productsCount',
+                                        orderDirection === 'asc' ? 'desc' : 'asc',
+                                    )"
                                 >Количество SKU в группе
                                 </ThSort>
                                 <ThSort
@@ -87,7 +97,10 @@
                                     :order-direction="orderDirection"
                                     :width='18'
                                     sort-type="numeric"
-                                    @sortByColumn="applyFilterSort('isActive', orderDirection === 'asc' ? 'desc' : 'asc')"
+                                    @sortByColumn="applyFilterSort(
+                                        'isActive',
+                                        orderDirection === 'asc' ? 'desc' : 'asc',
+                                    )"
                                 >В продаже?
                                 </ThSort>
                                 <th scope="col" style="width: 10%;">Просмотр</th>
@@ -102,7 +115,7 @@
                                     {{ category.name }}
                                 </td>
                                 <td>
-                                    000
+                                    {{ category.productsCount }}
                                 </td>
                                 <td>
                                     <Badge :is-active="category.isActive"/>
@@ -254,12 +267,12 @@ import Input from '@/components/core/Input.vue';
 import Label from '@/components/core/Label.vue';
 import Button from '@/components/core/Button.vue';
 import Alert from '@/components/Alert.vue';
+import Badge from '@/components/core/Badge.vue';
+import ThSort from '@/components/core/ThSort.vue';
+import Swal from 'sweetalert2';
 import { onMounted, ref, watch } from 'vue';
 import { useAlertStore } from '@/stores/alerts.js';
-import Swal from 'sweetalert2';
-import ThSort from '@/components/core/ThSort.vue';
 import { useCategoryStore } from '@/stores/categories.js';
-import Badge from '@/components/core/Badge.vue';
 
 const categoryStore = useCategoryStore();
 const alertStore = useAlertStore();
@@ -286,12 +299,8 @@ onMounted(async () => {
     await getCategories();
 });
 
-const getCategories = async (
-    order_column = orderColumn.value,
-    order_direction = orderDirection.value,
-) => {
-    const response = await categoryStore.all(order_column, order_direction);
-    categories.value = response.data;
+const getCategories = async () => {
+    await categoryStore.all();
     applyFilterSort();
 };
 
@@ -348,37 +357,40 @@ const updateCategory = async (category) => {
     }
 };
 
-const clearSearch = async () => {
+const clearSearch = () => {
     searchName.value = '';
     isActive.value = false;
-    orderColumn.value = 'id';
-    orderDirection.value = 'asc';
-    await getCategories();
+    applyFilterSort(
+        (orderColumn.value = 'id'),
+        (orderDirection.value = 'asc'),
+    );
 };
 
 watch(searchName, () => applyFilterSort());
 watch(isActive, () => applyFilterSort());
 
-// https://codepen.io/thaekeh/pen/PoGJRKQ
 const applyFilterSort = (
     column = orderColumn.value,
     direction = orderDirection.value,
+    sort_by_numeric = true,
 ) => {
-    const arrayOfIntegers = ['id', 'qty', 'isActive'];
     orderColumn.value = column;
     orderDirection.value = direction;
 
     let tempArr = categoryStore.getCategories.slice();
 
     tempArr = tempArr.sort((a, b) => {
-        if ( arrayOfIntegers.includes(column) ) {
+        if ( sort_by_numeric ) {
             return orderDirection.value === 'asc'
                 ? a[column] - b[column]
                 : b[column] - a[column];
         } else {
+            const fa = a[column].toLowerCase();
+            const fb = b[column].toLowerCase();
+
             return orderDirection.value === 'asc'
-                ? a[column].localeCompare(b[column])
-                : b[column].localeCompare(a[column]);
+                ? fa.localeCompare(fb)
+                : fb.localeCompare(fa);
         }
     });
 
