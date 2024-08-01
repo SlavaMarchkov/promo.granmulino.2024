@@ -269,8 +269,7 @@ import Button from '@/components/core/Button.vue';
 import Alert from '@/components/Alert.vue';
 import Badge from '@/components/core/Badge.vue';
 import ThSort from '@/components/core/ThSort.vue';
-import Swal from 'sweetalert2';
-import { onMounted, ref, watch } from 'vue';
+import { onMounted, reactive, ref, watch } from 'vue';
 import { useAlertStore } from '@/stores/alerts.js';
 import { useCategoryStore } from '@/stores/categories.js';
 
@@ -281,19 +280,20 @@ const initialFormData = () => ({
     name: '',
 });
 
-const form = ref(initialFormData());
+let form = reactive(initialFormData());
+
 const categories = ref([]);
 const category = ref({});
 
 const searchName = ref('');
 const isActive = ref(false);
 
-const orderColumn = ref('id');
-const orderDirection = ref('asc');
+let orderColumn = 'id';
+let orderDirection = 'asc';
 
-let newCategoryModal = ref(null);
-let editCategoryModal = ref(null);
-let viewCategoryModal = ref(null);
+let newCategoryModal = null;
+let editCategoryModal = null;
+let viewCategoryModal = null;
 
 onMounted(async () => {
     await getCategories();
@@ -330,20 +330,15 @@ const showViewCategoryModal = (id) => {
 };
 
 const saveCategory = async () => {
-    const response = await categoryStore.save(form.value);
-    if ( response && response.status === 201 ) {
-        form.value = initialFormData();
+    const response = await categoryStore.save(form);
+    if ( response && response.status === 'success' ) {
+        form = initialFormData();
         alertStore.clear();
         newCategoryModal.hide();
-        await Swal.fire({
-            icon: response.data.status,
-            title: 'Well done!',
-            text: response.data.message,
-        });
         searchName.value = '';
         isActive.value = false;
-        orderColumn.value = 'id';
-        orderDirection.value = 'desc';
+        orderColumn = 'id';
+        orderDirection = 'desc';
         await getCategories();
     }
 };
@@ -361,8 +356,8 @@ const clearSearch = () => {
     searchName.value = '';
     isActive.value = false;
     applyFilterSort(
-        (orderColumn.value = 'id'),
-        (orderDirection.value = 'asc'),
+        (orderColumn = 'id'),
+        (orderDirection = 'asc'),
     );
 };
 
@@ -370,25 +365,25 @@ watch(searchName, () => applyFilterSort());
 watch(isActive, () => applyFilterSort());
 
 const applyFilterSort = (
-    column = orderColumn.value,
-    direction = orderDirection.value,
+    column = orderColumn,
+    direction = orderDirection,
     sort_by_numeric = true,
 ) => {
-    orderColumn.value = column;
-    orderDirection.value = direction;
+    orderColumn = column;
+    orderDirection = direction;
 
     let tempArr = categoryStore.getCategories.slice();
 
     tempArr = tempArr.sort((a, b) => {
         if ( sort_by_numeric ) {
-            return orderDirection.value === 'asc'
+            return orderDirection === 'asc'
                 ? a[column] - b[column]
                 : b[column] - a[column];
         } else {
             const fa = a[column].toLowerCase();
             const fb = b[column].toLowerCase();
 
-            return orderDirection.value === 'asc'
+            return orderDirection === 'asc'
                 ? fa.localeCompare(fb)
                 : fb.localeCompare(fa);
         }
