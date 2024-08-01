@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\City\StoreRequest;
 use App\Http\Requests\City\UpdateRequest;
+use App\Http\Resources\V1\CityCollection;
 use App\Http\Resources\V1\CityResource;
 use App\Models\City;
 use Illuminate\Http\JsonResponse;
@@ -15,24 +16,10 @@ use Symfony\Component\HttpFoundation\Response;
 final class CityController extends Controller
 {
     public function index()
+    : CityCollection
     {
-        $orderColumn = request('order_column', 'id');
-        if (!in_array($orderColumn, ['id', 'name', 'region'])) {
-            $orderColumn = 'id';
-        }
-
-        $orderDirection = request('order_direction', 'desc');
-        if (!in_array($orderDirection, ['asc', 'desc'])) {
-            $orderDirection = 'desc';
-        }
-
-        // TODO
-        $cities = City::with('region')
-//            ->orderBy($orderColumn, $orderDirection)
-            ->orderBy('id', 'desc')
-            ->get();
-
-        return CityResource::collection($cities);
+        $cities = City::with('region')->get();
+        return new CityCollection($cities);
     }
 
     public function store(StoreRequest $request)

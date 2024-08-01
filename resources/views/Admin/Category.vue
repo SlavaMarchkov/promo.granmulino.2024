@@ -21,13 +21,13 @@
                                 <td class="py-1" style="width: 30%;">
                                     <div class="input-group">
                                         <input
-                                            v-model="searchName"
+                                            v-model="searchBy.name"
                                             class="form-control"
                                             placeholder="Поиск по названию"
                                             type="text"
                                         />
                                         <span class="input-group-text" style="cursor: pointer;"
-                                              @click="searchName = ''"><i
+                                              @click="searchBy.name = ''"><i
                                             class="bi bi-x-lg"></i></span>
                                     </div>
                                 </td>
@@ -37,7 +37,7 @@
                                         <div class="input-group-text">
                                             <input
                                                 id="is_active"
-                                                v-model="isActive"
+                                                v-model="searchBy.isActive"
                                                 class="form-check-input mt-0"
                                                 type="checkbox"
                                             >
@@ -50,7 +50,7 @@
                             </tr>
                             </tbody>
                         </table>
-                        <table v-if="categories.length > 0" class="table table-bordered mb-4 text-center align-middle"
+                        <table v-if="categories.length > 0" class="table table-bordered mb-3 text-center align-middle"
                                style="margin-top: -1px;">
                             <thead>
                             <tr>
@@ -96,7 +96,6 @@
                                     :order-column="orderColumn"
                                     :order-direction="orderDirection"
                                     :width='18'
-                                    sort-type="numeric"
                                     @sortByColumn="applyFilterSort(
                                         'isActive',
                                         orderDirection === 'asc' ? 'desc' : 'asc',
@@ -143,6 +142,7 @@
                             {{ categoryStore.isContentLoading ? 'Подождите, загружаю...' : 'Записей не найдено...' }}
                         </p>
                     </div>
+                    <p>Всего записей: <span class="fw-bold">{{ categories.length }}</span></p>
                 </div>
             </div>
         </div>
@@ -285,8 +285,10 @@ let form = reactive(initialFormData());
 const categories = ref([]);
 const category = ref({});
 
-const searchName = ref('');
-const isActive = ref(false);
+const searchBy = reactive({
+    name: '',
+    isActive: false,
+});
 
 let orderColumn = 'id';
 let orderDirection = 'asc';
@@ -335,8 +337,7 @@ const saveCategory = async () => {
         form = initialFormData();
         alertStore.clear();
         newCategoryModal.hide();
-        searchName.value = '';
-        isActive.value = false;
+        resetSearchKeys();
         orderColumn = 'id';
         orderDirection = 'desc';
         await getCategories();
@@ -353,16 +354,20 @@ const updateCategory = async (category) => {
 };
 
 const clearSearch = () => {
-    searchName.value = '';
-    isActive.value = false;
+    resetSearchKeys();
     applyFilterSort(
         (orderColumn = 'id'),
         (orderDirection = 'asc'),
     );
 };
 
-watch(searchName, () => applyFilterSort());
-watch(isActive, () => applyFilterSort());
+const resetSearchKeys = () => {
+    for ( const key in searchBy ) {
+        searchBy[key] = '';
+    }
+};
+
+watch(searchBy, () => applyFilterSort());
 
 const applyFilterSort = (
     column = orderColumn,
@@ -389,13 +394,13 @@ const applyFilterSort = (
         }
     });
 
-    if ( isActive.value === true ) {
-        tempArr = tempArr
-            .filter(item => item.isActive === isActive.value);
+    for ( const key in searchBy ) {
+        if ( key === 'isActive' && searchBy[key] === true ) {
+            tempArr = tempArr.filter(item => item[key] === true);
+        } else if ( key !== 'isActive' && searchBy[key] !== '' ) {
+            tempArr = tempArr.filter(item => item[key].toLowerCase().includes(searchBy[key].toLowerCase()));
+        }
     }
-
-    tempArr = tempArr
-        .filter(item => item.name.toLowerCase().includes(searchName.value.toLowerCase()));
 
     categories.value = tempArr;
 };
