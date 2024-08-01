@@ -21,12 +21,12 @@
                                 <td class="py-1" style="width: 30%;">
                                     <div class="input-group">
                                         <input
-                                            v-model="searchName"
+                                            v-model="searchBy.name"
                                             type="text"
                                             class="form-control"
                                             placeholder="Поиск по названию города"
                                         />
-                                        <span @click="searchName = ''" class="input-group-text"
+                                        <span class="input-group-text" @click="searchBy.name = ''"
                                               style="cursor: pointer;"><i
                                             class="bi bi-x-lg"></i></span>
                                     </div>
@@ -34,12 +34,12 @@
                                 <td class="py-1">
                                     <div class="input-group">
                                         <input
-                                            v-model="searchRegion"
+                                            v-model="searchBy.regionName"
                                             type="text"
                                             class="form-control"
                                             placeholder="Поиск по названию региона"
                                         />
-                                        <span @click="searchRegion = ''" class="input-group-text"
+                                        <span class="input-group-text" @click="searchBy.regionName = ''"
                                               style="cursor: pointer;"><i
                                             class="bi bi-x-lg"></i></span>
                                     </div>
@@ -50,35 +50,46 @@
                             </tbody>
                         </table>
                         <table v-if="cities.length > 0" style="margin-top: -1px;"
-                               class="table table-bordered mb-4 text-center align-middle">
+                               class="table table-bordered mb-3 text-center align-middle">
                             <thead>
                             <tr>
                                 <ThSort
                                     :id="'id'"
-                                    sort-type="numeric"
                                     :order-column="orderColumn"
                                     :order-direction="orderDirection"
                                     :width='5'
-                                    @sortByColumn="updateSorting('id')"
+                                    sort-type="numeric"
+                                    @sortByColumn="applyFilterSort(
+                                        'id',
+                                        orderDirection === 'asc' ? 'desc' : 'asc',
+                                    )"
                                 >ID
                                 </ThSort>
                                 <ThSort
                                     :id="'name'"
-                                    sort-type="alpha"
                                     :order-column="orderColumn"
                                     :order-direction="orderDirection"
-                                    class="text-start"
                                     :width='30'
-                                    @sortByColumn="updateSorting('name')"
+                                    class="text-start"
+                                    sort-type="alpha"
+                                    @sortByColumn="applyFilterSort(
+                                        'name',
+                                        orderDirection === 'asc' ? 'desc' : 'asc',
+                                        false,
+                                    )"
                                 >Название города
                                 </ThSort>
                                 <ThSort
-                                    :id="'region'"
-                                    sort-type="alpha"
+                                    :id="'regionName'"
                                     :order-column="orderColumn"
                                     :order-direction="orderDirection"
                                     class="text-start"
-                                    @sortByColumn="updateSorting('region')"
+                                    sort-type="alpha"
+                                    @sortByColumn="applyFilterSort(
+                                        'regionName',
+                                        orderDirection === 'asc' ? 'desc' : 'asc',
+                                        false,
+                                    )"
                                 >Регион
                                 </ThSort>
                                 <th scope="col" style="width: 10%;">Просмотр</th>
@@ -92,7 +103,7 @@
                                     {{ city.name }}
                                 </td>
                                 <td class="text-start">
-                                    {{ city.region }}
+                                    {{ city.regionName }}
                                 </td>
                                 <td>
                                     <button
@@ -119,6 +130,7 @@
                             {{ cityStore.isContentLoading ? 'Подождите, загружаю...' : 'Записей не найдено...' }}
                         </p>
                     </div>
+                    <p>Всего записей: <span class="fw-bold">{{ cities.length }}</span></p>
                 </div>
             </div>
         </div>
@@ -153,6 +165,7 @@
                                     <option
                                         v-for="region in regions"
                                         :value="region.id"
+                                        :key="region.id"
                                     >{{ region.name }}
                                     </option>
                                 </select>
@@ -208,6 +221,7 @@
                                     <option
                                         v-for="region in regions"
                                         :value="region.id"
+                                        :key="region.id"
                                     >{{ region.name }}
                                     </option>
                                 </select>
@@ -229,6 +243,27 @@
         </div>
     </div>
     <!-- Edit One City Modal End -->
+
+    <!-- View One City Modal Start -->
+    <div id="viewCity" aria-hidden="true" class="modal fade" style="display: none;" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Просмотр города</h5>
+                    <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"></button>
+                </div>
+                <div class="modal-body">
+                    <pre>
+                        {{ city }}
+                    </pre>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal" type="button">Закрыть</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- View One City Modal End -->
 </template>
 
 <script setup>
@@ -236,13 +271,12 @@ import Input from '@/components/core/Input.vue';
 import Label from '@/components/core/Label.vue';
 import Button from '@/components/core/Button.vue';
 import Alert from '@/components/Alert.vue';
-import { onMounted, ref, watch } from 'vue';
+import ThSort from '@/components/core/ThSort.vue';
+import Spinner from '@/components/core/Spinner.vue';
+import { onMounted, reactive, ref, watch } from 'vue';
 import { useAlertStore } from '@/stores/alerts.js';
 import { useCityStore } from '@/stores/cities.js';
 import { useRegionStore } from '@/stores/regions.js';
-import Swal from 'sweetalert2';
-import ThSort from '@/components/core/ThSort.vue';
-import Spinner from '@/components/core/Spinner.vue';
 
 const cityStore = useCityStore();
 const regionStore = useRegionStore();
@@ -253,41 +287,46 @@ const initialFormData = () => ({
     regionId: '',
 });
 
-const form = ref(initialFormData());
+let form = reactive(initialFormData());
+
 const cities = ref([]);
 const regions = ref([]);
 const city = ref({});
 
-const searchName = ref('');
-const searchRegion = ref('');
+const searchBy = reactive({
+    name: '',
+    regionName: '',
+});
 
-const orderColumn = ref('id');
-const orderDirection = ref('desc');
+let orderColumn = 'id';
+let orderDirection = 'asc';
 
-let newCityModal = ref(null);
-let editCityModal = ref(null);
+let newCityModal = null;
+let editCityModal = null;
+let viewCityModal = null;
 
 onMounted(async () => {
     await getCities();
 });
 
-const getCities = async (order_column = 'id', order_direction = 'desc') => {
-    const response = await cityStore.all(order_column, order_direction);
-    cities.value = response.data;
+const getCities = async () => {
+    await cityStore.all();
+    applyFilterSort();
 };
 
 const getRegions = async () => {
-    const response = await regionStore.all('name', 'asc');
+    const response = await regionStore.all();
     regions.value = response.data;
 };
 
-const getCity = async (id) => {
-    const response = await cityStore.one(id);
-    city.value = response.data;
+const getCity = (id) => {
+    city.value = cityStore.getCities
+        .find(item => item.id === id);
 };
 
 const showNewCityModal = async () => {
     alertStore.clear();
+    form = initialFormData();
     newCityModal = new bootstrap.Modal(document.getElementById('newCity'));
     newCityModal.show();
     await getRegions();
@@ -298,24 +337,25 @@ const showEditCityModal = async (id) => {
     editCityModal = new bootstrap.Modal(document.getElementById('editCity'));
     editCityModal.show();
     await getRegions();
-    await getCity(id);
+    getCity(id);
+};
+
+// TODO: make view
+const showViewCityModal = (id) => {
+    viewCityModal = new bootstrap.Modal(document.getElementById('viewCity'));
+    viewCityModal.show();
+    getCity(id);
 };
 
 const saveCity = async () => {
-    const response = await cityStore.save(form.value);
-    if ( response && response.status === 201 ) {
-        form.value = initialFormData();
+    const response = await cityStore.save(form);
+    if ( response && response.status === 'success' ) {
+        form = initialFormData();
         alertStore.clear();
         newCityModal.hide();
-        await Swal.fire({
-            icon: response.data.status,
-            title: 'Well done!',
-            text: response.data.message,
-        });
-        searchName.value = '';
-        searchRegion.value = '';
-        orderColumn.value = 'id';
-        orderDirection.value = 'desc';
+        resetSearchKeys();
+        orderColumn = 'id';
+        orderDirection = 'desc';
         await getCities();
     }
 };
@@ -325,77 +365,59 @@ const updateCity = async (city) => {
     if ( response && response.status === 'success' ) {
         alertStore.clear();
         editCityModal.hide();
-        await getCities(orderColumn.value, orderDirection.value);
-        updateSorting(orderColumn.value);
+        await getCities();
     }
 };
 
-const deleteCity = (id) => {
-    const cityName = cityStore.getCities
-        .filter(s => s.id === id)
-        .map(s => s.name);
-
-    Swal.fire({
-        title: 'Вы уверены?',
-        text: `Удаляемый город: ${cityName}`,
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonText: 'Да, удалить',
-        cancelButtonText: 'Отменить',
-        confirmButtonColor: '#ef4444',
-        timer: 10_000,
-        timerProgressBar: true,
-        reverseButtons: true,
-    }).then(async (result) => {
-        if ( result.isConfirmed ) {
-            await cityStore.delete(id);
-            searchName.value = '';
-            searchRegion.value = '';
-            orderColumn.value = 'id';
-            orderDirection.value = 'desc';
-            await getCities();
-        }
-    });
+const clearSearch = () => {
+    resetSearchKeys();
+    applyFilterSort(
+        (orderColumn = 'id'),
+        (orderDirection = 'asc'),
+    );
 };
 
-const clearSearch = async () => {
-    searchName.value = '';
-    searchRegion.value = '';
-    orderColumn.value = 'id';
-    orderDirection.value = 'desc';
-    await getCities();
+const resetSearchKeys = () => {
+    for ( const key in searchBy ) {
+        searchBy[key] = '';
+    }
 };
 
-watch(searchName, (current) => {
-    cities.value = cityStore.getCities
-        .filter(item => item.name.toLowerCase().includes(current.toLowerCase()))
-        .filter(item => item.region.toLowerCase().includes(searchRegion.value.toLowerCase()));
-});
+watch(searchBy, () => applyFilterSort());
 
-watch(searchRegion, (current) => {
-    cities.value = cityStore.getCities
-        .filter(item => item.region.toLowerCase().includes(current.toLowerCase()))
-        .filter(item => item.name.toLowerCase().includes(searchName.value.toLowerCase()));
-});
+const applyFilterSort = (
+    column = orderColumn,
+    direction = orderDirection,
+    sort_by_numeric = true,
+) => {
+    orderColumn = column;
+    orderDirection = direction;
 
-const updateSorting = (column) => {
-    orderColumn.value = column;
-    orderDirection.value = orderDirection.value === 'asc' ? 'desc' : 'asc';
+    let tempArr = cityStore.getCities.slice();
 
-    const tempArr = cityStore.getCities
-        .filter(item => item.name.toLowerCase().includes(searchName.value.toLowerCase()))
-        .filter(item => item.region.toLowerCase().includes(searchRegion.value.toLowerCase()));
-
-    cities.value = tempArr.sort((a, b) => {
-        if ( column === 'id' ) {
-            return orderDirection.value === 'asc'
-                ? a.id - b.id
-                : b.id - a.id;
+    tempArr = tempArr.sort((a, b) => {
+        if ( sort_by_numeric ) {
+            return orderDirection === 'asc'
+                ? a[column] - b[column]
+                : b[column] - a[column];
         } else {
-            return orderDirection.value === 'asc'
-                ? a[column].localeCompare(b[column])
-                : b[column].localeCompare(a[column]);
+            const fa = a[column].toLowerCase();
+            const fb = b[column].toLowerCase();
+
+            return orderDirection === 'asc'
+                ? fa.localeCompare(fb)
+                : fb.localeCompare(fa);
         }
     });
+
+    for ( const key in searchBy ) {
+        if ( key === 'isActive' && searchBy[key] === true ) {
+            tempArr = tempArr.filter(item => item[key] === true);
+        } else if ( key !== 'isActive' && searchBy[key] !== '' ) {
+            tempArr = tempArr.filter(item => item[key].toLowerCase().includes(searchBy[key].toLowerCase()));
+        }
+    }
+
+    cities.value = tempArr;
 };
 </script>

@@ -14,12 +14,10 @@ class CityResource extends JsonResource
     public function toArray(Request $request)
     : array {
         return [
-            'id'        => $this->id,
-            'name'      => $this->name,
-            'regionId'  => $this->region_id,
-            'createdAt' => $this->created_at,
-            'updatedAt' => $this->updated_at,
-            'region'    => $this->region->name,
+            'id'         => $this->id,
+            'name'       => $this->name,
+            'regionId'   => $this->region_id,
+            'regionName' => $this->region->name,
         ];
     }
 }

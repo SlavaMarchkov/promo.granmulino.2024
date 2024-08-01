@@ -15,15 +15,10 @@ export default {
         this.cities = data;
     },
 
-    async all(order_column, order_direction) {
+    async all() {
         this.isContentLoading = true;
         try {
-            const { data } = await http.get(URL, {
-                params: {
-                    order_column,
-                    order_direction,
-                },
-            });
+            const { data } = await http.get(URL);
             this.setCities(data);
             return data;
         } catch ( error ) {
@@ -51,7 +46,9 @@ export default {
         this.isButtonDisabled = true;
         const formData = convertCase(item, toSnakeCase);
         try {
-            return await http.post(URL, formData);
+            const { data } = await http.post(URL, formData);
+            $toast.success(data.message);
+            return data;
         } catch ( error ) {
             const alertStore = useAlertStore();
             alertStore.error(error, true);
@@ -79,6 +76,7 @@ export default {
         try {
             const { data } = await http.delete(`${URL}/${id}`);
             $toast.success(data.message);
+            return data;
         } catch ( error ) {
             $toast.error('Ошибка при удалении: ' + error.message);
         }
