@@ -1,92 +1,134 @@
 <template>
     <div class="row mb-4">
-        <div class="col-md-6">
+        <div class="col-12">
             <button class="btn btn-primary" type="button" @click="showNewRegionModal">
                 Новый регион
             </button>
-        </div>
-        <div class="col-md-3 offset-3">
-            <div class="input-group">
-                <input
-                    v-model="searchName"
-                    class="form-control"
-                    type="text"
-                    placeholder="Введите название региона"
-                >
-                <span @click="clearSearch()" class="input-group-text" style="cursor: pointer;"><i
-                    class="bi bi-x-lg"></i></span>
-            </div>
+            <button class="btn btn-secondary" type="button" @click="clearSearch">
+                Сбросить фильтр
+            </button>
         </div>
     </div>
     <div class="row mb-4">
         <div class="col-12">
             <div class="card">
                 <div class="card-body pb-0">
-                    <table v-if="regions.length > 0" class="table table-bordered my-4 text-center align-middle">
-                        <thead>
-                        <tr>
-                            <ThSort
-                                :id="'id'"
-                                sort-type="numeric"
-                                :order-column="orderColumn"
-                                :order-direction="orderDirection"
-                                :width='5'
-                                @sortByColumn="updateSorting('id')"
-                            >ID
-                            </ThSort>
-                            <ThSort
-                                :id="'name'"
-                                sort-type="alpha"
-                                :order-column="orderColumn"
-                                :order-direction="orderDirection"
-                                class="text-start"
-                                @sortByColumn="updateSorting('name')"
-                            >Название региона
-                            </ThSort>
-                            <ThSort
-                                :id="'code'"
-                                sort-type="alpha"
-                                :order-column="orderColumn"
-                                :order-direction="orderDirection"
-                                :width='10'
-                                @sortByColumn="updateSorting('code')"
-                            >Код
-                            </ThSort>
-                            <th scope="col" style="width: 10%;">Просмотр</th>
-                            <th scope="col" style="width: 10%;">Ред.</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr v-for="region in regions" :key="region.id">
-                            <th scope="row">{{ region.id }}</th>
-                            <td class="text-start" style="cursor: pointer;" @click="showViewRegionModal(region.id)">
-                                {{ region.name }}
-                            </td>
-                            <td>
-                                {{ region.code }}
-                            </td>
-                            <td>
-                                <button
-                                    class="btn btn-sm btn-primary"
-                                    @click="showViewRegionModal(region.id)"
-                                ><i class="bi bi-eye-fill"></i>
-                                    View
-                                </button>
-                            </td>
-                            <td>
-                                <button
-                                    class="btn btn-sm btn-warning"
-                                    @click="showEditRegionModal(region.id)"
-                                ><i class="bi bi-pencil-square"></i>
-                                    Edit
-                                </button>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                    <p v-else class="mt-3 text-center lead">
-                        {{ regionStore.isContentLoading ? 'Подождите, загружаю...' : 'Записей не найдено...' }}
-                    </p>
+                    <div class="table-responsive">
+                        <table class="table table-bordered mt-4 mb-0 text-center align-middle">
+                            <tbody>
+                            <tr>
+                                <td class="py-1" style="width: 5%;"></td>
+                                <td class="py-1" style="width: 30%;">
+                                    <div class="input-group">
+                                        <input
+                                            v-model="searchBy.name"
+                                            class="form-control"
+                                            placeholder="Поиск по названию региона"
+                                            type="text"
+                                        />
+                                        <span class="input-group-text" style="cursor: pointer;"
+                                              @click="searchBy.name = ''"><i
+                                            class="bi bi-x-lg"></i></span>
+                                    </div>
+                                </td>
+                                <td class="py-1" style="width: 30%;">
+                                    <div class="input-group">
+                                        <input
+                                            v-model="searchBy.code"
+                                            class="form-control"
+                                            placeholder="Поиск по коду региона"
+                                            type="text"
+                                        />
+                                        <span class="input-group-text" style="cursor: pointer;"
+                                              @click="searchBy.code = ''"><i
+                                            class="bi bi-x-lg"></i></span>
+                                    </div>
+                                </td>
+                                <td class="py-1" style="width: 10%;"></td>
+                                <td class="py-1" style="width: 10%;"></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <table v-if="regions.length > 0" class="table table-bordered my-4 text-center align-middle">
+                            <thead>
+                            <tr>
+                                <ThSort
+                                    :id="'id'"
+                                    :order-column="orderColumn"
+                                    :order-direction="orderDirection"
+                                    :width='5'
+                                    sort-type="numeric"
+                                    @sortByColumn="applyFilterSort(
+                                        'id',
+                                        orderDirection === 'asc' ? 'desc' : 'asc',
+                                    )"
+                                >ID
+                                </ThSort>
+                                <ThSort
+                                    :id="'name'"
+                                    :order-column="orderColumn"
+                                    :order-direction="orderDirection"
+                                    :width='30'
+                                    class="text-start"
+                                    sort-type="alpha"
+                                    @sortByColumn="applyFilterSort(
+                                        'name',
+                                        orderDirection === 'asc' ? 'desc' : 'asc',
+                                        false,
+                                    )"
+                                >Название региона
+                                </ThSort>
+                                <ThSort
+                                    :id="'code'"
+                                    :order-column="orderColumn"
+                                    :order-direction="orderDirection"
+                                    :width='30'
+                                    class="text-start"
+                                    sort-type="alpha"
+                                    @sortByColumn="applyFilterSort(
+                                        'code',
+                                        orderDirection === 'asc' ? 'desc' : 'asc',
+                                        false,
+                                    )"
+                                >Код
+                                </ThSort>
+                                <th scope="col" style="width: 10%;">Просмотр</th>
+                                <th scope="col" style="width: 10%;">Ред.</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr v-for="region in regions" :key="region.id">
+                                <th scope="row">{{ region.id }}</th>
+                                <td class="text-start" style="cursor: pointer;" @click="showViewRegionModal(region.id)">
+                                    {{ region.name }}
+                                </td>
+                                <td>
+                                    {{ region.code }}
+                                </td>
+                                <td>
+                                    <button
+                                        class="btn btn-sm btn-primary"
+                                        @click="showViewRegionModal(region.id)"
+                                    ><i class="bi bi-eye-fill"></i>
+                                        View
+                                    </button>
+                                </td>
+                                <td>
+                                    <button
+                                        class="btn btn-sm btn-warning"
+                                        @click="showEditRegionModal(region.id)"
+                                    ><i class="bi bi-pencil-square"></i>
+                                        Edit
+                                    </button>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <p v-else class="mt-3 text-center lead">
+                            {{ regionStore.isContentLoading ? 'Подождите, загружаю...' : 'Записей не найдено...' }}
+                        </p>
+                    </div>
+                    <p>Всего записей: <span class="fw-bold">{{ regions.length }}</span></p>
                 </div>
             </div>
         </div>
@@ -188,6 +230,27 @@
         </div>
     </div>
     <!-- Edit Region Modal End -->
+
+    <!-- View One Region Modal Start -->
+    <div id="viewRegion" aria-hidden="true" class="modal fade" style="display: none;" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Просмотр региона</h5>
+                    <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"></button>
+                </div>
+                <div class="modal-body">
+                    <pre>
+                        {{ region }}
+                    </pre>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal" type="button">Закрыть</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- View One Region Modal End -->
 </template>
 
 <script setup>
@@ -195,10 +258,9 @@ import Input from '@/components/core/Input.vue';
 import Label from '@/components/core/Label.vue';
 import Button from '@/components/core/Button.vue';
 import Alert from '@/components/Alert.vue';
-import { onMounted, ref, watch } from 'vue';
+import { onMounted, reactive, ref, watch } from 'vue';
 import { useAlertStore } from '@/stores/alerts.js';
 import { useRegionStore } from '@/stores/regions.js';
-import Swal from 'sweetalert2';
 import ThSort from '@/components/core/ThSort.vue';
 import Spinner from '@/components/core/Spinner.vue';
 
@@ -210,30 +272,35 @@ const initialFormData = () => ({
     name: '',
 });
 
-const form = ref(initialFormData());
+let form = reactive(initialFormData());
+
 const regions = ref([]);
 const region = ref({});
 
-const searchName = ref('');
-const orderColumn = ref('id');
-const orderDirection = ref('desc');
+const searchBy = reactive({
+    code: '',
+    name: '',
+});
 
-let newRegionModal = ref(null);
-let viewRegionModal = ref(null);
-let editRegionModal = ref(null);
+let orderColumn = 'id';
+let orderDirection = 'asc';
+
+let newRegionModal = null;
+let editRegionModal = null;
+let viewRegionModal = null;
 
 onMounted(async () => {
     await getRegions();
 });
 
-const getRegions = async (order_column = 'id', order_direction = 'desc') => {
-    const response = await regionStore.all(order_column, order_direction);
-    regions.value = response.data;
+const getRegions = async () => {
+    await regionStore.all();
+    applyFilterSort();
 };
 
 const getRegion = async (id) => {
-    const response = await regionStore.one(id);
-    region.value = response.data;
+    region.value = regionStore.getRegions
+        .find(item => item.id === id);
 };
 
 const showNewRegionModal = () => {
@@ -242,27 +309,29 @@ const showNewRegionModal = () => {
     newRegionModal.show();
 };
 
-const showEditRegionModal = async (id) => {
+const showEditRegionModal = (id) => {
     alertStore.clear();
     editRegionModal = new bootstrap.Modal(document.getElementById('editRegion'));
     editRegionModal.show();
-    await getRegion(id);
+    getRegion(id);
+};
+
+// TODO: make view
+const showViewRegionModal = (id) => {
+    viewRegionModal = new bootstrap.Modal(document.getElementById('viewRegion'));
+    viewRegionModal.show();
+    getRegion(id);
 };
 
 const saveRegion = async () => {
-    const response = await regionStore.save(form.value);
-    if ( response && response.status === 201 ) {
-        form.value = initialFormData();
+    const response = await regionStore.save(form);
+    if ( response && response.status === 'success' ) {
+        form = initialFormData();
         alertStore.clear();
         newRegionModal.hide();
-        await Swal.fire({
-            icon: response.data.status,
-            title: 'Well done!',
-            text: response.data.message,
-        });
-        searchName.value = '';
-        orderColumn.value = 'id';
-        orderDirection.value = 'desc';
+        resetSearchKeys();
+        orderColumn = 'id';
+        orderDirection = 'desc';
         await getRegions();
     }
 };
@@ -272,67 +341,59 @@ const updateRegion = async (region) => {
     if ( response && response.status === 'success' ) {
         alertStore.clear();
         editRegionModal.hide();
-        await getRegions(orderColumn.value, orderDirection.value);
-        updateSorting(orderColumn.value);
+        await getRegions();
     }
 };
 
-const deleteRegion = (id) => {
-    const regionName = regionStore.getRegions
-        .filter(s => s.id === id)
-        .map(s => s.name);
-
-    Swal.fire({
-        title: 'Вы уверены?',
-        text: `Удаляемый регион: ${regionName}`,
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonText: 'Да, удалить',
-        cancelButtonText: 'Отменить',
-        confirmButtonColor: '#ef4444',
-        timer: 10_000,
-        timerProgressBar: true,
-        reverseButtons: true,
-    }).then(async (result) => {
-        if ( result.isConfirmed ) {
-            await regionStore.delete(id);
-            searchName.value = '';
-            orderColumn.value = 'id';
-            orderDirection.value = 'desc';
-            await getRegions();
-        }
-    });
+const clearSearch = () => {
+    resetSearchKeys();
+    applyFilterSort(
+        (orderColumn = 'id'),
+        (orderDirection = 'asc'),
+    );
 };
 
-const clearSearch = async () => {
-    searchName.value = '';
-    orderColumn.value = 'id';
-    orderDirection.value = 'desc';
-    await getRegions();
+const resetSearchKeys = () => {
+    for ( const key in searchBy ) {
+        searchBy[key] = '';
+    }
 };
 
-watch(searchName, (current) => {
-    regions.value = regionStore.getRegions
-        .filter(item => item.name.toLowerCase().includes(current.toLowerCase()));
-});
+watch(searchBy, () => applyFilterSort());
 
-const updateSorting = (column) => {
-    orderColumn.value = column;
-    orderDirection.value = orderDirection.value === 'asc' ? 'desc' : 'asc';
+const applyFilterSort = (
+    column = orderColumn,
+    direction = orderDirection,
+    sort_by_numeric = true,
+) => {
+    orderColumn = column;
+    orderDirection = direction;
 
-    const tempArr = regionStore.getRegions
-        .filter(item => item.name.toLowerCase().includes(searchName.value.toLowerCase()));
+    let tempArr = regionStore.getRegions.slice();
 
-    regions.value = tempArr.sort((a, b) => {
-        if ( column === 'id' ) {
-            return orderDirection.value === 'asc'
-                ? a.id - b.id
-                : b.id - a.id;
+    tempArr = tempArr.sort((a, b) => {
+        if ( sort_by_numeric ) {
+            return orderDirection === 'asc'
+                ? a[column] - b[column]
+                : b[column] - a[column];
         } else {
-            return orderDirection.value === 'asc'
-                ? a[column].localeCompare(b[column])
-                : b[column].localeCompare(a[column]);
+            const fa = a[column].toLowerCase();
+            const fb = b[column].toLowerCase();
+
+            return orderDirection === 'asc'
+                ? fa.localeCompare(fb)
+                : fb.localeCompare(fa);
         }
     });
+
+    for ( const key in searchBy ) {
+        if ( key === 'isActive' && searchBy[key] === true ) {
+            tempArr = tempArr.filter(item => item[key] === true);
+        } else if ( key !== 'isActive' && searchBy[key] !== '' ) {
+            tempArr = tempArr.filter(item => item[key].toLowerCase().includes(searchBy[key].toLowerCase()));
+        }
+    }
+
+    regions.value = tempArr;
 };
 </script>

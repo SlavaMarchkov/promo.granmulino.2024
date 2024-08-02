@@ -46,7 +46,9 @@ export default {
         this.isButtonDisabled = true;
         const formData = convertCase(item, toSnakeCase);
         try {
-            return await http.post(URL, formData);
+            const { data } = await http.post(URL, formData);
+            $toast.success(data.message);
+            return data;
         } catch ( error ) {
             const alertStore = useAlertStore();
             alertStore.error(error, true);

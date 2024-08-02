@@ -17,7 +17,9 @@ final class RegionController extends Controller
     public function index()
     : RegionCollection
     {
-        $regions = Region::with('cities')->get();
+        $regions = Region::with('cities')
+            ->withCount('cities')
+            ->get();
         return new RegionCollection($regions);
     }
 
