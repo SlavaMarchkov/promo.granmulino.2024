@@ -17,9 +17,10 @@ return new class extends Migration {
             $table->string('email', 64)->unique();
             $table->string('password', 128);
             $table->boolean('is_active')->default(true);
-            $table->text('abilities')->nullable();
-            $table->timestamp('last_seen_at')->nullable();
+            $table->boolean('is_super')->default(false);
+            $table->timestamp('logged_in_at')->nullable();
 
+            $table->rememberToken();
             $table->timestamps();
         });
     }
