@@ -108,7 +108,7 @@
                                 <td>
                                     <button
                                         @click="showViewCityModal(city.id)"
-                                        class="btn btn-sm btn-success"
+                                        class="btn btn-sm btn-primary"
                                     >
                                         <i class="bi bi-eye-fill"></i>
                                         View

@@ -43,6 +43,13 @@ import { useRoute } from 'vue-router';
 
 const route = useRoute();
 
+defineProps({
+    menuItems: {
+        type: Array,
+        default: [],
+    },
+});
+
 onMounted(() => {
     openActiveRouteMenuItem();
 });
@@ -56,64 +63,6 @@ const openActiveRouteMenuItem = () => {
         }
     });
 };
-
-const menuItems = [
-    {
-        isCollapsible: false,
-        id: 'dashboard',
-        route: 'Dashboard',
-        title: 'Главная страница',
-        icon: 'bi bi-speedometer',
-    },
-    {
-        isCollapsible: true,
-        id: 'reports',
-        title: 'Отчёты',
-        icon: 'bi bi-server',
-        items: [
-            {
-                route: 'Report.Index',
-                title: 'Генератор отчётов',
-            },
-        ],
-    },
-    {
-        isCollapsible: true,
-        id: 'references',
-        title: 'Справочники',
-        icon: 'bi bi-boxes',
-        items: [
-            {
-                route: 'Region.Index',
-                title: 'Регионы',
-            },
-            {
-                route: 'City.Index',
-                title: 'Города',
-            },
-            {
-                route: 'Category.Index',
-                title: 'Группы товаров',
-            },
-            {
-                route: 'Product.Index',
-                title: 'Ассортимент',
-            },
-        ],
-    },
-    {
-        isCollapsible: true,
-        id: 'settings',
-        title: 'Настройки',
-        icon: 'bi bi-gear',
-        items: [
-            {
-                route: 'User.Index',
-                title: 'Пользователи',
-            },
-        ],
-    },
-];
 
 const collapse = (element) => {
     const collapseElementList = document.querySelectorAll('.collapse');

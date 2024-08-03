@@ -1,7 +1,7 @@
 <template>
     <div class="row mb-4">
         <div class="col-12">
-            <button class="btn btn-primary" type="button" @click="showNewRegionModal">
+            <button class="btn btn-primary me-2" type="button" @click="showNewRegionModal">
                 Новый регион
             </button>
             <button class="btn btn-secondary" type="button" @click="clearSearch">
@@ -18,7 +18,7 @@
                             <tbody>
                             <tr>
                                 <td class="py-1" style="width: 5%;"></td>
-                                <td class="py-1" style="width: 30%;">
+                                <td class="py-1" style="width: 35%;">
                                     <div class="input-group">
                                         <input
                                             v-model="searchBy.name"
@@ -31,7 +31,7 @@
                                             class="bi bi-x-lg"></i></span>
                                     </div>
                                 </td>
-                                <td class="py-1" style="width: 30%;">
+                                <td class="py-1" style="width: 20%;">
                                     <div class="input-group">
                                         <input
                                             v-model="searchBy.code"
@@ -44,6 +44,7 @@
                                             class="bi bi-x-lg"></i></span>
                                     </div>
                                 </td>
+                                <td class="py-1" style="width: 20%;"></td>
                                 <td class="py-1" style="width: 10%;"></td>
                                 <td class="py-1" style="width: 10%;"></td>
                             </tr>
@@ -68,7 +69,7 @@
                                     :id="'name'"
                                     :order-column="orderColumn"
                                     :order-direction="orderDirection"
-                                    :width='30'
+                                    :width='35'
                                     class="text-start"
                                     sort-type="alpha"
                                     @sortByColumn="applyFilterSort(
@@ -82,7 +83,7 @@
                                     :id="'code'"
                                     :order-column="orderColumn"
                                     :order-direction="orderDirection"
-                                    :width='30'
+                                    :width='20'
                                     class="text-start"
                                     sort-type="alpha"
                                     @sortByColumn="applyFilterSort(
@@ -91,6 +92,18 @@
                                         false,
                                     )"
                                 >Код
+                                </ThSort>
+                                <ThSort
+                                    :id="'citiesCount'"
+                                    :order-column="orderColumn"
+                                    :order-direction="orderDirection"
+                                    :width='20'
+                                    sort-type="numeric"
+                                    @sortByColumn="applyFilterSort(
+                                        'citiesCount',
+                                        orderDirection === 'asc' ? 'desc' : 'asc',
+                                    )"
+                                >Количество городов
                                 </ThSort>
                                 <th scope="col" style="width: 10%;">Просмотр</th>
                                 <th scope="col" style="width: 10%;">Ред.</th>
@@ -102,8 +115,11 @@
                                 <td class="text-start" style="cursor: pointer;" @click="showViewRegionModal(region.id)">
                                     {{ region.name }}
                                 </td>
-                                <td>
+                                <td class="text-start">
                                     {{ region.code }}
+                                </td>
+                                <td>
+                                    {{ region.citiesCount }}
                                 </td>
                                 <td>
                                     <button

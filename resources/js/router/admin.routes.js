@@ -6,7 +6,7 @@ export default {
     children: [
         {
             path: '',
-            name: 'Dashboard',
+            name: 'Admin.Index',
             component: Index,
             meta: {
                 title: 'Главная страница',
@@ -63,5 +63,7 @@ export default {
     ],
     meta: {
         requiresAuth: true,
+        adminAuth: true,
+        managerAuth: false,
     },
 };

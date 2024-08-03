@@ -1,4 +1,4 @@
-import { Layout, Login, Register } from '../../views/Auth/index.js';
+import { Layout, Login } from '../../views/Auth/index.js';
 
 export default {
     path: '/',
@@ -14,14 +14,6 @@ export default {
             component: Login,
             meta: {
                 title: 'Вход в систему',
-            },
-        },
-        {
-            path: 'register',
-            name: 'Register',
-            component: Register,
-            meta: {
-                title: 'Регистрация',
             },
         },
     ],

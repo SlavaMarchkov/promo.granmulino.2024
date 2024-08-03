@@ -15,7 +15,11 @@ app.component('Bootstrap5Pagination', Bootstrap5Pagination);
 
 const authStore = useAuthStore();
 
-authStore.attempt(localStorage.getItem('token'))
+const isAdmin = localStorage.getItem('user')
+    ? JSON.parse(localStorage.getItem('user')).isAdmin
+    : false;
+
+authStore.loadUser(localStorage.getItem('token'), isAdmin)
     .then(() => {
         app.mount('#app');
     });

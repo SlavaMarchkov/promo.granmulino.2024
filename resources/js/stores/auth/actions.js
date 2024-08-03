@@ -17,7 +17,7 @@ export default {
         this.token = token;
     },
 
-    async attempt(token) {
+    async loadUser(token, isAdmin) {
         if ( token ) {
             this.setToken(token);
         }
@@ -26,13 +26,18 @@ export default {
             return;
         }
 
+        const path = isAdmin ? '/admin/user' : '/user';
+
         try {
-            const response = await http.get('/user');
-            this.setUser(response.data.data);
+            const { data } = await http.get(path);
+            this.setUser(data.data);
+            localStorage.setItem('user', JSON.stringify(data.data));
         } catch ( error ) {
             this.setToken(null);
             this.setUser(null);
             localStorage.removeItem('token');
+            localStorage.removeItem('user');
+
             const alertStore = useAlertStore();
             alertStore.error(error);
         }
@@ -41,11 +46,28 @@ export default {
     async login(credentials) {
         this.isLoading = true;
         try {
-            const response = await http.post('/login', credentials);
-            await this.attempt(response.data.token);
-            $toast.success(response.data.message);
+            const { data } = await http.post('/login', credentials);
+            await this.loadUser(data.token, false);
+            $toast.success(data.message);
             await router.push({
-                name: 'Dashboard',
+                name: 'Manager.Index',
+            });
+        } catch ( error ) {
+            const alertStore = useAlertStore();
+            alertStore.error(error);
+        } finally {
+            this.isLoading = false;
+        }
+    },
+
+    async adminLogin(credentials) {
+        this.isLoading = true;
+        try {
+            const { data } = await http.post('/admin/login', credentials);
+            await this.loadUser(data.token, true);
+            $toast.success(data.message);
+            await router.push({
+                name: 'Admin.Index',
             });
         } catch ( error ) {
             const alertStore = useAlertStore();
@@ -74,9 +96,11 @@ export default {
     async logout() {
         try {
             const response = await http.post('/logout');
+
             this.setToken(null);
             this.setUser(null);
             localStorage.removeItem('token');
+            localStorage.removeItem('user');
 
             $toast.success(response.data.message);
             await router.push({
@@ -86,6 +110,31 @@ export default {
             this.setToken(null);
             this.setUser(null);
             localStorage.removeItem('token');
+            localStorage.removeItem('user');
+
+            const alertStore = useAlertStore();
+            alertStore.error(error);
+        }
+    },
+
+    async adminLogout() {
+        try {
+            const response = await http.post('/admin/logout');
+
+            this.setToken(null);
+            this.setUser(null);
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+
+            $toast.success(response.data.message);
+            await router.push({
+                name: 'AdminLogin',
+            });
+        } catch ( error ) {
+            this.setToken(null);
+            this.setUser(null);
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
 
             const alertStore = useAlertStore();
             alertStore.error(error);

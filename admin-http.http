@@ -1,0 +1,9 @@
+### Admin authentication
+POST {{ host }}/login
+Accept: application/json
+Content-Type: application/json
+
+{
+    "email": "carolunas@yandex.ru",
+    "password": "carolunas@yandex.ru"
+}

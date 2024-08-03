@@ -1,5 +1,5 @@
 export default {
-    token: null,
     user: null,
+    token: null,
     isLoading: false,
 };

@@ -3,53 +3,53 @@
         <div class="row justify-content-center">
             <div class="col-lg-4 col-md-6 d-flex flex-column align-items-center justify-content-center">
                 <div class="d-flex justify-content-center py-4">
-                    <RouterLink :to="{ name: 'Manager.Index' }" class="logo d-flex align-items-center w-auto">
-                        <img src="/assets/img/logo.png" alt="">
+                    <RouterLink :to="{ name: 'Admin.Index' }" class="logo d-flex align-items-center w-auto">
+                        <img alt="" src="/assets/img/logo.png">
                         <span class="d-none d-lg-block">{{ props.brand }}</span>
                     </RouterLink>
                 </div>
                 <div class="card mb-3">
                     <div class="card-body">
                         <div class="pt-2 pb-2">
-                            <h5 class="card-title text-center pb-0 fs-4">Вход в панель управления</h5>
+                            <h5 class="card-title text-center pb-0 fs-4">Вход в панель администратора</h5>
                             <p class="text-center small">Введите email и пароль для входа</p>
                         </div>
                         <Alert/>
-                        <form @submit.prevent="handleLogin" class="row g-3">
+                        <form class="row g-3" @submit.prevent="handleAdminLogin">
                             <div class="col-12">
-                                <label for="email" class="form-label">Email</label>
+                                <label class="form-label" for="email">Email</label>
                                 <input
-                                    v-model="credentials.email"
-                                    type="email"
-                                    class="form-control"
                                     id="email"
-                                    placeholder="email@mail.ru"
+                                    v-model="credentials.email"
                                     autocomplete="current-email"
+                                    class="form-control"
+                                    placeholder="email@mail.ru"
+                                    type="email"
                                 >
                             </div>
                             <div class="col-12">
-                                <label for="password" class="form-label">Пароль</label>
+                                <label class="form-label" for="password">Пароль</label>
                                 <input
-                                    v-model="credentials.password"
-                                    type="password"
-                                    class="form-control"
                                     id="password"
+                                    v-model="credentials.password"
                                     autocomplete="current-password"
+                                    class="form-control"
+                                    type="password"
                                 >
                             </div>
                             <div class="col-12">
                                 <button
+                                    :disabled="authStore.isLoading"
                                     class="btn btn-primary w-100"
                                     type="submit"
-                                    :disabled="authStore.isLoading"
                                 >
                                     <span
                                         v-if="authStore.isLoading"
+                                        aria-hidden="true"
                                         class="spinner-border spinner-border-sm"
                                         role="status"
-                                        aria-hidden="true"
                                     ></span>
-                                    <span v-else>Войти</span>
+                                    <span v-else>Войти в админку</span>
                                 </button>
                             </div>
                         </form>
@@ -76,7 +76,7 @@ const credentials = reactive({
     password: '',
 });
 
-const handleLogin = async () => {
-    await authStore.login(credentials);
+const handleAdminLogin = async () => {
+    await authStore.adminLogin(credentials);
 };
 </script>

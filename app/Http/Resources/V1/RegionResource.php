@@ -14,11 +14,11 @@ class RegionResource extends JsonResource
     public function toArray(Request $request)
     : array {
         return [
-            'id'           => $this->id,
-            'code'         => $this->code,
-            'name'         => $this->name,
-            'cities_count' => $this->cities_count,
-            'cities'       => CityResource::collection($this->whenLoaded('cities')),
+            'id'          => $this->id,
+            'code'        => $this->code,
+            'name'        => $this->name,
+            'citiesCount' => $this->cities_count,
+            'cities'      => CityResource::collection($this->whenLoaded('cities')),
         ];
     }
 }

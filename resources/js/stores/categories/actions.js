@@ -20,6 +20,7 @@ export default {
         try {
             const { data } = await http.get(URL);
             this.setCategories(data);
+            return data;
         } catch ( error ) {
             const alertStore = useAlertStore();
             alertStore.error(error);

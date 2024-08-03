@@ -13,10 +13,22 @@ class AdminSeeder extends Seeder
     public function run()
     : void
     {
-        Admin::create([
-            'name'     => 'SuperAdministrator',
-            'email'    => 'carolunas@yandex.ru',
-            'password' => Hash::make('carolunas@yandex.ru'),
-        ]);
+        Admin::create(
+            [
+                'name'     => 'SuperAdministrator',
+                'email'    => 'carolunas@yandex.ru',
+                'is_super' => true,
+                'password' => Hash::make('carolunas@yandex.ru'),
+            ]
+        );
+
+        Admin::create(
+            [
+                'name'     => 'Slava Marchello',
+                'email'    => 'slavamarchkov@yandex.ru',
+                'is_super' => false,
+                'password' => Hash::make('slavamarchkov@yandex.ru'),
+            ]
+        );
     }
 }
