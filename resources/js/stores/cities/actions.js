@@ -8,7 +8,7 @@ const $toast = useToast({
     position: 'top-right',
 });
 
-const URL = '/cities';
+const URL = '/admin/cities';
 
 export default {
     setCities({ data }) {
