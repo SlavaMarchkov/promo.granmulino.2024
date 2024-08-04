@@ -19,6 +19,7 @@ return new class extends Migration {
             $table->string('middle_name', 32)->nullable();
             $table->string('email')->unique();
             $table->string('password');
+            $table->boolean('is_active')->default(true);
             $table->timestamp('logged_in_at')->nullable();
 
             $table->rememberToken();
