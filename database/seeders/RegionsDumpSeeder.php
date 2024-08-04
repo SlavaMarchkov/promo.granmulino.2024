@@ -13,14 +13,6 @@ class RegionsDumpSeeder extends Seeder
     /*public function run()
     : void
     {
-        $file = database_path('dumps/regions.sql');
-        $sql = File::get($file);
-        DB::connection()->getPdo()->exec($sql);
-    }*/
-
-    /*public function run()
-    : void
-    {
         $csvData = fopen(base_path('database/dumps/regions.csv'), 'r');
 
         $transRow = true;

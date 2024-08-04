@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\V1\Admin\CityController;
 use App\Http\Controllers\Api\V1\Admin\ProductController;
 use App\Http\Controllers\Api\V1\Admin\RegionController;
 use App\Http\Controllers\Api\V1\AuthController;
+use App\Http\Controllers\Api\V1\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')
@@ -28,8 +29,7 @@ Route::prefix('v1/admin')
         Route::get('user', [AdminAuthController::class, 'user'])
             ->middleware('auth:sanctum');
         Route::post('login', [AdminAuthController::class, 'login']);
-        Route::post('logout', [AdminAuthController::class, 'logout'])
-            ->middleware('auth:sanctum');
+        Route::post('logout', [AdminAuthController::class, 'logout']);
     });
 
 Route::prefix('v1/admin')
@@ -41,4 +41,12 @@ Route::prefix('v1/admin')
         Route::apiResource('cities', CityController::class);
         Route::apiResource('categories', CategoryController::class);
         Route::apiResource('products', ProductController::class);
+    });
+
+Route::prefix('v1')
+    ->middleware([
+        'auth:sanctum',
+    ])
+    ->group(function () {
+        Route::resource('users', UserController::class);
     });

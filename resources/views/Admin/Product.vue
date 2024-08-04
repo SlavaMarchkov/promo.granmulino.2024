@@ -280,7 +280,7 @@
                                 <Input
                                     id="edit-name"
                                     v-model="product.name"
-                                    placeholder="Например: Бантики, 400 г>"
+                                    placeholder="Например: Бантики, 400 г"
                                     type="text"
                                 />
                             </div>

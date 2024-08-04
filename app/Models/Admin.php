@@ -22,8 +22,13 @@ class Admin extends Authenticatable
         'password',
     ];
 
-    protected $casts = [
-        'is_active' => 'boolean',
-        'is_super' => 'boolean',
-    ];
+    protected function casts()
+    : array
+    {
+        return [
+            'is_active' => 'boolean',
+            'is_super'  => 'boolean',
+            'password'  => 'hashed',
+        ];
+    }
 }
