@@ -8,7 +8,7 @@ const $toast = useToast({
     position: 'top-right',
 });
 
-const URL = '/categories';
+const URL = '/admin/categories';
 
 export default {
     setCategories({ data }) {

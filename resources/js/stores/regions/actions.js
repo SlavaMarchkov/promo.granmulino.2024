@@ -8,7 +8,7 @@ const $toast = useToast({
     position: 'top-right',
 });
 
-const URL = '/regions';
+const URL = '/admin/regions';
 
 export default {
     setRegions({ data }) {

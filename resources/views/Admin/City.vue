@@ -277,6 +277,8 @@ import { onMounted, reactive, ref, watch } from 'vue';
 import { useAlertStore } from '@/stores/alerts.js';
 import { useCityStore } from '@/stores/cities.js';
 import { useRegionStore } from '@/stores/regions.js';
+import { arrFilter, arrSort } from '@/helpers/arrHandlers.js';
+import { resetSearchKeys } from '@/helpers/searchHandlers.js';
 
 const cityStore = useCityStore();
 const regionStore = useRegionStore();
@@ -353,7 +355,7 @@ const saveCity = async () => {
         form = initialFormData();
         alertStore.clear();
         newCityModal.hide();
-        resetSearchKeys();
+        resetSearchKeys(searchBy);
         orderColumn = 'id';
         orderDirection = 'desc';
         await getCities();
@@ -370,17 +372,11 @@ const updateCity = async (city) => {
 };
 
 const clearSearch = () => {
-    resetSearchKeys();
+    resetSearchKeys(searchBy);
     applyFilterSort(
         (orderColumn = 'id'),
         (orderDirection = 'asc'),
     );
-};
-
-const resetSearchKeys = () => {
-    for ( const key in searchBy ) {
-        searchBy[key] = '';
-    }
 };
 
 watch(searchBy, () => applyFilterSort());
@@ -395,28 +391,8 @@ const applyFilterSort = (
 
     let tempArr = cityStore.getCities.slice();
 
-    tempArr = tempArr.sort((a, b) => {
-        if ( sort_by_numeric ) {
-            return orderDirection === 'asc'
-                ? a[column] - b[column]
-                : b[column] - a[column];
-        } else {
-            const fa = a[column].toLowerCase();
-            const fb = b[column].toLowerCase();
-
-            return orderDirection === 'asc'
-                ? fa.localeCompare(fb)
-                : fb.localeCompare(fa);
-        }
-    });
-
-    for ( const key in searchBy ) {
-        if ( key === 'isActive' && searchBy[key] === true ) {
-            tempArr = tempArr.filter(item => item[key] === true);
-        } else if ( key !== 'isActive' && searchBy[key] !== '' ) {
-            tempArr = tempArr.filter(item => item[key].toLowerCase().includes(searchBy[key].toLowerCase()));
-        }
-    }
+    tempArr = arrSort(tempArr, sort_by_numeric, direction, column);
+    tempArr = arrFilter(tempArr, searchBy);
 
     cities.value = tempArr;
 };

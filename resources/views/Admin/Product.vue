@@ -21,36 +21,51 @@
                                 <td class="py-1" style="width: 20%;">
                                     <div class="input-group">
                                         <input
-                                            v-model="searchName"
+                                            v-model="searchBy.name"
                                             class="form-control"
                                             placeholder="Поиск по названию"
                                             type="text"
                                         />
                                         <span class="input-group-text" style="cursor: pointer;"
-                                              @click="searchName = ''"><i
-                                            class="bi bi-x-lg"></i></span>
-                                    </div>
-                                </td>
-                                <td class="py-1" style="width: 15%;"></td>
-                                <td class="py-1">
-                                    <div class="input-group">
-                                        <input
-                                            v-model="searchName"
-                                            class="form-control"
-                                            placeholder="Поиск по названию"
-                                            type="text"
-                                        />
-                                        <span class="input-group-text" style="cursor: pointer;"
-                                              @click="searchName = ''"><i
+                                              @click="searchBy.name = ''"><i
                                             class="bi bi-x-lg"></i></span>
                                     </div>
                                 </td>
                                 <td class="py-1" style="width: 15%;">
                                     <div class="input-group">
+                                        <input
+                                            v-model="searchBy.price"
+                                            class="form-control"
+                                            placeholder="Поиск по цене"
+                                            type="text"
+                                        />
+                                        <span class="input-group-text" style="cursor: pointer;"
+                                              @click="searchBy.price = ''"><i
+                                            class="bi bi-x-lg"></i></span>
+                                    </div>
+                                </td>
+                                <td class="py-1" style="width: 20%;">
+                                    <div class="input-group">
+                                        <select v-model="searchBy.categoryId" class="form-select">
+                                            <option disabled selected value="">Фильтр по группе</option>
+                                            <option
+                                                v-for="category in categories"
+                                                :key="category.id"
+                                                :value="category.id"
+                                            >{{ category.name }}
+                                            </option>
+                                        </select>
+                                        <span class="input-group-text" style="cursor: pointer;"
+                                              @click="searchBy.categoryId = ''"><i
+                                            class="bi bi-x-lg"></i></span>
+                                    </div>
+                                </td>
+                                <td class="py-1" style="width: 20%;">
+                                    <div class="input-group">
                                         <div class="input-group-text">
                                             <input
                                                 id="is_active"
-                                                v-model="isActive"
+                                                v-model="searchBy.isActive"
                                                 class="form-check-input mt-0"
                                                 type="checkbox"
                                             >
@@ -73,7 +88,10 @@
                                     :order-direction="orderDirection"
                                     :width='5'
                                     sort-type="numeric"
-                                    @sortByColumn="applyFilterSort('id', orderDirection === 'asc' ? 'desc' : 'asc')"
+                                    @sortByColumn="applyFilterSort(
+                                        'id',
+                                        orderDirection === 'asc' ? 'desc' : 'asc',
+                                    )"
                                 >ID
                                 </ThSort>
                                 <ThSort
@@ -83,26 +101,48 @@
                                     :width='20'
                                     class="text-start"
                                     sort-type="alpha"
-                                    @sortByColumn="applyFilterSort('name', orderDirection === 'asc' ? 'desc' : 'asc')"
+                                    @sortByColumn="applyFilterSort(
+                                        'name',
+                                        orderDirection === 'asc' ? 'desc' : 'asc',
+                                        false,
+                                    )"
                                 >Название продукта
                                 </ThSort>
-                                <th scope="col" style="width: 15%;">Отпускная цена</th>
+                                <ThSort
+                                    :id="'price'"
+                                    :order-column="orderColumn"
+                                    :order-direction="orderDirection"
+                                    :width='15'
+                                    sort-type="numeric"
+                                    @sortByColumn="applyFilterSort(
+                                        'price',
+                                        orderDirection === 'asc' ? 'desc' : 'asc',
+                                    )"
+                                >Отпускная цена
+                                </ThSort>
                                 <ThSort
                                     :id="'category'"
                                     :order-column="orderColumn"
                                     :order-direction="orderDirection"
+                                    :width='20'
                                     class="text-start"
                                     sort-type="alpha"
-                                    @sortByColumn="applyFilterSort('category', orderDirection === 'asc' ? 'desc' : 'asc')"
+                                    @sortByColumn="applyFilterSort(
+                                        'category',
+                                        orderDirection === 'asc' ? 'desc' : 'asc',
+                                        false,
+                                    )"
                                 >Группа товаров
                                 </ThSort>
                                 <ThSort
                                     :id="'isActive'"
                                     :order-column="orderColumn"
                                     :order-direction="orderDirection"
-                                    :width='15'
-                                    sort-type="numeric"
-                                    @sortByColumn="applyFilterSort('isActive', orderDirection === 'asc' ? 'desc' : 'asc')"
+                                    :width='20'
+                                    @sortByColumn="applyFilterSort(
+                                        'isActive',
+                                        orderDirection === 'asc' ? 'desc' : 'asc',
+                                    )"
                                 >В продаже?
                                 </ThSort>
                                 <th scope="col" style="width: 10%;">Просмотр</th>
@@ -148,6 +188,7 @@
                             {{ productStore.isContentLoading ? 'Подождите, загружаю...' : 'Записей не найдено...' }}
                         </p>
                     </div>
+                    <p>Всего записей: <span class="fw-bold">{{ products.length }}</span></p>
                 </div>
             </div>
         </div>
@@ -180,7 +221,7 @@
                                     id="price"
                                     v-model="form.price"
                                     max="299.99"
-                                    min="0"
+                                    min="0.00"
                                     placeholder="Например: 36.99"
                                     step="0.01"
                                     type="number"
@@ -280,6 +321,13 @@
                                     </label>
                                 </div>
                             </div>
+                            <div class="col-12">
+                                <Label for="edit-image">Новое изображение продукта</Label>
+                                <Input
+                                    id="edit-image"
+                                    type="file"
+                                />
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -325,13 +373,14 @@ import Input from '@/components/core/Input.vue';
 import Label from '@/components/core/Label.vue';
 import Button from '@/components/core/Button.vue';
 import Alert from '@/components/Alert.vue';
-import { onMounted, ref, watch } from 'vue';
+import { onMounted, reactive, ref, watch } from 'vue';
 import { useProductStore } from '@/stores/products.js';
 import { useCategoryStore } from '@/stores/categories.js';
 import { useAlertStore } from '@/stores/alerts.js';
-import Swal from 'sweetalert2';
 import ThSort from '@/components/core/ThSort.vue';
 import Badge from '@/components/core/Badge.vue';
+import { arrFilter, arrSort } from '@/helpers/arrHandlers.js';
+import { resetSearchKeys } from '@/helpers/searchHandlers.js';
 
 const productStore = useProductStore();
 const categoryStore = useCategoryStore();
@@ -343,20 +392,24 @@ const initialFormData = () => ({
     categoryId: '',
 });
 
-const form = ref(initialFormData());
+let form = reactive(initialFormData());
+
 const products = ref([]);
 const product = ref({});
 const categories = ref([]);
 
-const searchName = ref('');
-const isActive = ref(false);
+const searchBy = reactive({
+    name: '',
+    categoryId: '',
+    isActive: false,
+});
 
-const orderColumn = ref('id');
-const orderDirection = ref('asc');
+let orderColumn = 'id';
+let orderDirection = 'asc';
 
-let newProductModal = ref(null);
-let editProductModal = ref(null);
-let viewProductModal = ref(null);
+let newProductModal = null;
+let editProductModal = null;
+let viewProductModal = null;
 
 onMounted(async () => {
     await getProducts();
@@ -364,8 +417,7 @@ onMounted(async () => {
 });
 
 const getProducts = async () => {
-    const response = await productStore.all();
-    products.value = response.data;
+    await productStore.all();
     applyFilterSort();
 };
 
@@ -379,8 +431,9 @@ const getCategories = async () => {
     categories.value = response.data;
 };
 
-const showNewProductModal = async () => {
+const showNewProductModal = () => {
     alertStore.clear();
+    form = initialFormData();
     newProductModal = new bootstrap.Modal(document.getElementById('newProduct'));
     newProductModal.show();
 };
@@ -399,21 +452,16 @@ const showViewProductModal = (id) => {
     getProduct(id);
 };
 
+// TODO: upload images
 const saveProduct = async () => {
-    const response = await productStore.save(form.value);
-    if ( response && response.status === 201 ) {
-        form.value = initialFormData();
+    const response = await productStore.save(form);
+    if ( response && response.status === 'success' ) {
+        form = initialFormData();
         alertStore.clear();
         newProductModal.hide();
-        await Swal.fire({
-            icon: response.data.status,
-            title: 'Well done!',
-            text: response.data.message,
-        });
-        searchName.value = '';
-        isActive.value = false;
-        orderColumn.value = 'id';
-        orderDirection.value = 'desc';
+        resetSearchKeys(searchBy);
+        orderColumn = 'id';
+        orderDirection = 'desc';
         await getProducts();
     }
 };
@@ -427,47 +475,28 @@ const updateProduct = async (product) => {
     }
 };
 
-const clearSearch = async () => {
-    searchName.value = '';
-    isActive.value = false;
-    orderColumn.value = 'id';
-    orderDirection.value = 'asc';
-    await getProducts();
+const clearSearch = () => {
+    resetSearchKeys(searchBy);
+    applyFilterSort(
+        (orderColumn = 'id'),
+        (orderDirection = 'asc'),
+    );
 };
 
-watch(searchName, () => applyFilterSort());
-watch(isActive, () => applyFilterSort());
+watch(searchBy, () => applyFilterSort());
 
-// https://codepen.io/thaekeh/pen/PoGJRKQ
 const applyFilterSort = (
-    column = orderColumn.value,
-    direction = orderDirection.value,
+    column = orderColumn,
+    direction = orderDirection,
+    sort_by_numeric = true,
 ) => {
-    const arrayOfIntegers = ['id', 'qty', 'isActive'];
-    orderColumn.value = column;
-    orderDirection.value = direction;
+    orderColumn = column;
+    orderDirection = direction;
 
     let tempArr = productStore.getProducts.slice();
 
-    tempArr = tempArr.sort((a, b) => {
-        if ( arrayOfIntegers.includes(column) ) {
-            return orderDirection.value === 'asc'
-                ? a[column] - b[column]
-                : b[column] - a[column];
-        } else {
-            return orderDirection.value === 'asc'
-                ? a[column].localeCompare(b[column])
-                : b[column].localeCompare(a[column]);
-        }
-    });
-
-    if ( isActive.value === true ) {
-        tempArr = tempArr
-            .filter(item => item.isActive === isActive.value);
-    }
-
-    tempArr = tempArr
-        .filter(item => item.name.toLowerCase().includes(searchName.value.toLowerCase()));
+    tempArr = arrSort(tempArr, sort_by_numeric, direction, column);
+    tempArr = arrFilter(tempArr, searchBy);
 
     products.value = tempArr;
 };
