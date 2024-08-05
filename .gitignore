@@ -10,6 +10,7 @@
 /public/storage
 /public/assets
 /public/vendor
+/public_html/
 
 /storage/*.key
 /vendor
