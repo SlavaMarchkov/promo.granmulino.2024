@@ -5,7 +5,6 @@
 /.vscode
 /.osp/
 
-/public/build
 /public/hot
 /public/storage
 /public/assets
@@ -25,3 +24,6 @@ Homestead.yaml
 auth.json
 npm-debug.log
 yarn-error.log
+
+admin-http.http
+http-client.env.json

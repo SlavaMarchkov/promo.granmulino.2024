@@ -14,3 +14,6 @@
 - символическая ссылка в config/filesystems.php
 - установка [Composer](https://getcomposer.org/download/)
 - php83 composer.phar install
+- cp .env.example .env
+- php83 artisan key:generate
+- настройка файла .env
