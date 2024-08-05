@@ -1,7 +1,7 @@
 <template>
     <header id="header" class="header fixed-top d-flex align-items-center">
         <div class="d-flex align-items-center justify-content-between">
-            <RouterLink :to="{ name: 'Admin.Index' }" class="logo d-flex align-items-center">
+            <RouterLink :to="{ name: 'Manager.Index' }" class="logo d-flex align-items-center">
                 <img src="/assets/img/logo.png" alt="">
                 <span class="d-none d-lg-block">{{ props.brand }}</span>
             </RouterLink>
@@ -13,8 +13,7 @@
                     <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
                         <i class="bi bi-bell"></i>
                         <span class="badge bg-primary badge-number">4</span>
-                    </a><!-- End Notification Icon -->
-
+                    </a>
                     <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications">
                         <li class="dropdown-header">
                             You have 4 new notifications
@@ -23,7 +22,6 @@
                         <li>
                             <hr class="dropdown-divider">
                         </li>
-
                         <li class="notification-item">
                             <i class="bi bi-exclamation-circle text-warning"></i>
                             <div>
@@ -32,11 +30,9 @@
                                 <p>30 min. ago</p>
                             </div>
                         </li>
-
                         <li>
                             <hr class="dropdown-divider">
                         </li>
-
                         <li class="notification-item">
                             <i class="bi bi-x-circle text-danger"></i>
                             <div>
@@ -45,11 +41,9 @@
                                 <p>1 hr. ago</p>
                             </div>
                         </li>
-
                         <li>
                             <hr class="dropdown-divider">
                         </li>
-
                         <li class="notification-item">
                             <i class="bi bi-check-circle text-success"></i>
                             <div>
@@ -58,11 +52,9 @@
                                 <p>2 hrs. ago</p>
                             </div>
                         </li>
-
                         <li>
                             <hr class="dropdown-divider">
                         </li>
-
                         <li class="notification-item">
                             <i class="bi bi-info-circle text-primary"></i>
                             <div>
@@ -71,25 +63,19 @@
                                 <p>4 hrs. ago</p>
                             </div>
                         </li>
-
                         <li>
                             <hr class="dropdown-divider">
                         </li>
                         <li class="dropdown-footer">
                             <a href="#">Show all notifications</a>
                         </li>
-
-                    </ul><!-- End Notification Dropdown Items -->
-
-                </li><!-- End Notification Nav -->
-
+                    </ul>
+                </li>
                 <li class="nav-item dropdown">
-
                     <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
                         <i class="bi bi-chat-left-text"></i>
                         <span class="badge bg-success badge-number">3</span>
-                    </a><!-- End Messages Icon -->
-
+                    </a>
                     <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow messages">
                         <li class="dropdown-header">
                             You have 3 new messages
@@ -98,7 +84,6 @@
                         <li>
                             <hr class="dropdown-divider">
                         </li>
-
                         <li class="message-item">
                             <a href="#">
                                 <img src="/assets/img/messages-1.jpg" alt="" class="rounded-circle">
@@ -112,7 +97,6 @@
                         <li>
                             <hr class="dropdown-divider">
                         </li>
-
                         <li class="message-item">
                             <a href="#">
                                 <img src="/assets/img/messages-2.jpg" alt="" class="rounded-circle">
@@ -126,7 +110,6 @@
                         <li>
                             <hr class="dropdown-divider">
                         </li>
-
                         <li class="message-item">
                             <a href="#">
                                 <img src="/assets/img/messages-3.jpg" alt="" class="rounded-circle">
@@ -140,31 +123,24 @@
                         <li>
                             <hr class="dropdown-divider">
                         </li>
-
                         <li class="dropdown-footer">
                             <a href="#">Show all messages</a>
                         </li>
-
-                    </ul><!-- End Messages Dropdown Items -->
-
-                </li><!-- End Messages Nav -->
-
+                    </ul>
+                </li>
                 <li class="nav-item dropdown pe-3">
-
                     <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
                         <img src="/assets/img/profile-img.jpg" alt="Profile" class="rounded-circle">
-                        <span class="d-none d-md-block dropdown-toggle ps-2">{{ user.name }}</span>
-                    </a><!-- End Profile Iamge Icon -->
-
+                        <span class="d-none d-md-block dropdown-toggle ps-2">{{ user.fullName }}</span>
+                    </a>
                     <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
                         <li class="dropdown-header">
-                            <h6>{{ user.name }}</h6>
+                            <h6>{{ user.fullName }}</h6>
                             <span>{{ user.email }}</span>
                         </li>
                         <li>
                             <hr class="dropdown-divider">
                         </li>
-
                         <li>
                             <a class="dropdown-item d-flex align-items-center" href="#">
                                 <i class="bi bi-person"></i>
@@ -174,7 +150,6 @@
                         <li>
                             <hr class="dropdown-divider">
                         </li>
-
                         <li>
                             <a class="dropdown-item d-flex align-items-center" href="#">
                                 <i class="bi bi-gear"></i>
@@ -184,7 +159,6 @@
                         <li>
                             <hr class="dropdown-divider">
                         </li>
-
                         <li>
                             <a class="dropdown-item d-flex align-items-center" href="#">
                                 <i class="bi bi-question-circle"></i>
@@ -194,7 +168,6 @@
                         <li>
                             <hr class="dropdown-divider">
                         </li>
-
                         <li>
                             <a
                                 @click="handleLogout"

@@ -1,4 +1,4 @@
-import { Index, Layout, Profile } from '../../views/Manager/index.js';
+import { Customer, Index, Layout, Profile, Retailer } from '../../views/Manager/index.js';
 
 export default {
     path: '/',
@@ -10,6 +10,22 @@ export default {
             component: Index,
             meta: {
                 title: 'Главная страница',
+            },
+        },
+        {
+            path: 'customers',
+            name: 'Manager.Customer',
+            component: Customer,
+            meta: {
+                title: 'Мои контрагенты',
+            },
+        },
+        {
+            path: 'retailers',
+            name: 'Manager.Retailer',
+            component: Retailer,
+            meta: {
+                title: 'Мои торговые сети',
             },
         },
         {
