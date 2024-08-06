@@ -1,0 +1,21 @@
+name: Deploy Laravel Project
+
+on:
+  push:
+    branches: [ "master", 'develop' ]
+  pull_request:
+    branches: [ "develop" ]
+
+jobs:
+  deploy:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to Server
+      - uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SPRINTHOST_HOST }}
+          username: ${{ secrets.SPRINTHOST_USER }}
+          key: ${{ secrets.SPRINTHOST_PRIVATE_KEY }}
+          script: cd domains/promo.lukaselektro.ru/ && sh ./deploy.sh
