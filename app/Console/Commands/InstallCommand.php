@@ -16,7 +16,9 @@ class InstallCommand extends Command
     : int
     {
         $this->call('storage:link');
-        $this->call('migrate');
+        $this->call('migrate', [
+            '--force' => true,
+        ]);
 
         return self::SUCCESS;
     }
