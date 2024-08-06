@@ -13,7 +13,7 @@ jobs:
 
     steps:
       - name: Deploy to Server
-      - uses: appleboy/ssh-action@master
+        uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.SPRINTHOST_HOST }}
           username: ${{ secrets.SPRINTHOST_USER }}
