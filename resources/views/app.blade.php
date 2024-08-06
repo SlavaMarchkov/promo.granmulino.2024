@@ -3,8 +3,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta content="" name="description">
-    <meta content="" name="keywords">
+    <meta content="System for promo activities management" name="description">
+    <meta content="promo, granmulino, гранмулино" name="keywords">
     <title>{{ config('APP_NAME') }}</title>
 
     <!-- Favicons -->
