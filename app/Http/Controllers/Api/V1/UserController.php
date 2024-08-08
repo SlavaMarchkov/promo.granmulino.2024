@@ -11,14 +11,21 @@ use App\Http\Resources\V1\UserCollection;
 use App\Http\Resources\V1\UserResource;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class UserController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     : UserCollection
     {
-        return new UserCollection(User::all());
+        $is_active = $request->boolean('is_active');
+
+        $users = User::query()
+            ->when($is_active, fn($query) => $query->where('is_active', true))
+            ->get();
+
+        return new UserCollection($users);
     }
 
     public function store(StoreRequest $request)

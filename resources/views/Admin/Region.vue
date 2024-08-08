@@ -50,7 +50,8 @@
                             </tr>
                             </tbody>
                         </table>
-                        <table v-if="regions.length > 0" class="table table-bordered my-4 text-center align-middle">
+                        <table v-if="regions.length > 0" class="table table-bordered mb-3 text-center align-middle"
+                               style="margin-top: -1px;">
                             <thead>
                             <tr>
                                 <ThSort
