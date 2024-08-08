@@ -1,4 +1,15 @@
-import { Category, City, Index, Layout, Product, Region, Report, User } from '../../views/Admin/index.js';
+import {
+    Category,
+    City,
+    Customer,
+    Index,
+    Layout,
+    Product,
+    Region,
+    Report,
+    Retailer,
+    User,
+} from '../../views/Admin/index.js';
 
 export default {
     path: '/admin',
@@ -45,6 +56,14 @@ export default {
             },
         },
         {
+            path: 'customers',
+            name: 'Customer.Index',
+            component: Customer,
+            meta: {
+                title: 'Контрагенты',
+            },
+        },
+        {
             path: 'products',
             name: 'Product.Index',
             component: Product,
@@ -58,6 +77,14 @@ export default {
             component: Report,
             meta: {
                 title: 'Генератор отчётов',
+            },
+        },
+        {
+            path: 'retailers',
+            name: 'Retailer.Index',
+            component: Retailer,
+            meta: {
+                title: 'Торговые сети',
             },
         },
     ],

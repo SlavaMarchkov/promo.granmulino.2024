@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Customer\StoreRequest;
+use App\Http\Resources\V1\CustomerCollection;
 use App\Http\Resources\V1\CustomerResource;
 use App\Models\Customer;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -15,10 +16,11 @@ final class CustomerController extends Controller
     use AuthorizesRequests;
 
     public function index()
+    : CustomerCollection
     {
-        $this->authorize('viewAny', Customer::class);
+        // $this->authorize('viewAny', Customer::class);
 
-        return CustomerResource::collection(Customer::all());
+        return new CustomerCollection(Customer::all());
     }
 
     public function store(StoreRequest $request)

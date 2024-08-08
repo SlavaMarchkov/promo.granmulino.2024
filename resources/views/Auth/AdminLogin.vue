@@ -5,7 +5,7 @@
                 <div class="d-flex justify-content-center py-4">
                     <RouterLink :to="{ name: 'Admin.Index' }" class="logo d-flex align-items-center w-auto">
                         <img alt="" src="/assets/img/logo.png">
-                        <span class="d-none d-lg-block">{{ props.brand }}</span>
+                        <span class="d-block">{{ props.brand }}</span>
                     </RouterLink>
                 </div>
                 <div class="card mb-3">
@@ -37,20 +37,14 @@
                                     type="password"
                                 >
                             </div>
-                            <div class="col-12">
-                                <button
+                            <div class="col-12 mb-2">
+                                <Button
+                                    :loading="authStore.isLoading"
+                                    class="w-100"
                                     :disabled="authStore.isLoading"
-                                    class="btn btn-primary w-100"
                                     type="submit"
-                                >
-                                    <span
-                                        v-if="authStore.isLoading"
-                                        aria-hidden="true"
-                                        class="spinner-border spinner-border-sm"
-                                        role="status"
-                                    ></span>
-                                    <span v-else>Войти в админку</span>
-                                </button>
+                                >Войти в админку
+                                </Button>
                             </div>
                         </form>
                     </div>
@@ -64,6 +58,7 @@
 import { reactive } from 'vue';
 import { useAuthStore } from '@/stores/auth.js';
 import Alert from '@/components/Alert.vue';
+import Button from '@/components/core/Button.vue';
 
 const authStore = useAuthStore();
 

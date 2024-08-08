@@ -6,6 +6,8 @@ use App\Http\Controllers\Api\V1\Admin\CityController;
 use App\Http\Controllers\Api\V1\Admin\ProductController;
 use App\Http\Controllers\Api\V1\Admin\RegionController;
 use App\Http\Controllers\Api\V1\AuthController;
+use App\Http\Controllers\Api\V1\CustomerController;
+use App\Http\Controllers\Api\V1\RetailerController;
 use App\Http\Controllers\Api\V1\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -47,5 +49,7 @@ Route::prefix('v1')
         'auth:sanctum',
     ])
     ->group(function () {
+        Route::resource('customers', CustomerController::class);
+        Route::resource('retailers', RetailerController::class);
         Route::resource('users', UserController::class);
     });

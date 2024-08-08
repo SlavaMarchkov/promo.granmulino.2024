@@ -8,22 +8,18 @@ const $toast = useToast({
     position: 'top-right',
 });
 
-const URL = '/users';
+const URL = '/customers';
 
 export default {
-    setUsers({ data }) {
-        this.users = data;
+    setCustomers({ data }) {
+        this.customers = data;
     },
 
-    async all(is_active = false) {
+    async all() {
         this.isContentLoading = true;
         try {
-            const { data } = await http.get(URL, {
-                params: {
-                    is_active,
-                },
-            });
-            this.setUsers(data);
+            const { data } = await http.get(URL);
+            this.setCustomers(data);
             return data;
         } catch ( error ) {
             const alertStore = useAlertStore();
@@ -73,6 +69,15 @@ export default {
             alertStore.error(error, true);
         } finally {
             this.isButtonDisabled = false;
+        }
+    },
+
+    async delete(id) {
+        try {
+            const { data } = await http.delete(`${URL}/${id}`);
+            $toast.success(data.message);
+        } catch ( error ) {
+            $toast.error('Ошибка при удалении: ' + error.message);
         }
     },
 };

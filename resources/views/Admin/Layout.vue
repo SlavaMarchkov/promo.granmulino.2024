@@ -52,6 +52,14 @@ const menuItems = [
         icon: 'bi bi-boxes',
         items: [
             {
+                route: 'Customer.Index',
+                title: 'Контрагенты',
+            },
+            {
+                route: 'Retailer.Index',
+                title: 'Торговые сети',
+            },
+            {
                 route: 'Region.Index',
                 title: 'Регионы',
             },
