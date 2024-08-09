@@ -9,6 +9,7 @@
 			field.invalid ? 'is-invalid' : '',
 			field.valid ? 'is-valid' : '',
 		]"
+        :placeholder="field.placeholder"
     >
 </template>
 
@@ -24,6 +25,7 @@ const props = defineProps({
     required: Boolean,
     invalid: String,
     valid: Boolean,
+    placeholder: String,
 });
 
 const emit = defineEmits([

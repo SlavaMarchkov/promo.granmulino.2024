@@ -12,83 +12,45 @@
                 <legend>Фильтр</legend>
                 <div class="row">
                     <div class="col-md-4 mb-2">
-                        <div class="input-group">
-                            <span class="input-group-text">Клиент</span>
-                            <Input
-                                v-model="searchBy.name"
-                                placeholder="Поиск по названию"
-                                type="text"
-                            />
-                            <span class="input-group-text" style="cursor: pointer;"
-                                  @click="searchBy.name = ''"><i
-                                class="bi bi-x-lg"></i></span>
-                        </div>
+                        <InputGroup
+                            v-model="searchBy.name"
+                            placeholder="Поиск по названию"
+                        >
+                            Клиент
+                        </InputGroup>
                     </div>
                     <div class="col-md-4 mb-2">
-                        <div class="input-group">
-                            <span class="input-group-text">Менеджер</span>
-                            <select
-                                v-model="searchBy.userId"
-                                class="form-select"
-                            >
-                                <option disabled selected value="">-- Выберите менеджера --</option>
-                                <option
-                                    v-for="user in users"
-                                    :key="user.id"
-                                    :value="user.id"
-                                >{{ user.fullName }}
-                                </option>
-                            </select>
-                            <span class="input-group-text" style="cursor: pointer;"
-                                  @click="searchBy.userId = ''"><i
-                                class="bi bi-x-lg"></i></span>
-                        </div>
+                        <SelectGroup
+                            v-model="searchBy.userId"
+                            :chooseFrom="'-- Выберите менеджера --'"
+                            :items="users"
+                            selectedOption="fullName"
+                        >Менеджер
+                        </SelectGroup>
                     </div>
                     <div class="col-md-4 mb-2">
-                        <div class="input-group">
-                            <span class="input-group-text">Регион</span>
-                            <select
-                                v-model="searchBy.regionId"
-                                class="form-select"
-                            >
-                                <option disabled selected value="">-- Выберите регион --</option>
-                                <option
-                                    v-for="region in regions"
-                                    :key="region.id"
-                                    :value="region.id"
-                                >{{ region.name }}
-                                </option>
-                            </select>
-                            <span class="input-group-text" style="cursor: pointer;"
-                                  @click="searchBy.regionId = ''"><i
-                                class="bi bi-x-lg"></i></span>
-                        </div>
+                        <SelectGroup
+                            v-model="searchBy.regionId"
+                            :chooseFrom="'-- Выберите регион --'"
+                            :items="regions"
+                        >Регион
+                        </SelectGroup>
                     </div>
                     <div class="col-md-4 mb-2">
-                        <div class="input-group">
-                            <span class="input-group-text">Город</span>
-                            <Input
-                                v-model="searchBy.city"
-                                placeholder="Поиск по городу"
-                                type="text"
-                            />
-                            <span class="input-group-text" style="cursor: pointer;"
-                                  @click="searchBy.city = ''"><i
-                                class="bi bi-x-lg"></i></span>
-                        </div>
+                        <InputGroup
+                            v-model="searchBy.city"
+                            placeholder="Поиск по городу"
+                        >
+                            Город
+                        </InputGroup>
                     </div>
                     <div class="col-md-4 mb-2">
-                        <div class="input-group">
-                            <div class="input-group-text">
-                                <input
-                                    id="is_active"
-                                    v-model="searchBy.isActive"
-                                    class="form-check-input mt-0"
-                                    type="checkbox"
-                                >
-                            </div>
-                            <label class="form-control text-start" for="is_active">Показать только активных</label>
-                        </div>
+                        <CheckboxGroup
+                            id="is_active"
+                            v-model="searchBy.isActive"
+                        >
+                            Показать только активных
+                        </CheckboxGroup>
                     </div>
                 </div>
                 <button class="btn btn-secondary" type="button" @click="clearSearch">
@@ -242,10 +204,12 @@ import { useUserStore } from '@/stores/users.js';
 import { useRegionStore } from '@/stores/regions.js';
 import { arrFilter, arrSort } from '@/helpers/arrHandlers.js';
 import { resetSearchKeys } from '@/helpers/searchHandlers.js';
-import Input from '@/components/core/Input.vue';
 import ThSort from '@/components/core/ThSort.vue';
 import Button from '@/components/core/Button.vue';
 import Badge from '@/components/core/Badge.vue';
+import InputGroup from '@/components/core/InputGroup.vue';
+import SelectGroup from '@/components/core/SelectGroup.vue';
+import CheckboxGroup from '@/components/core/CheckboxGroup.vue';
 
 const customerStore = useCustomerStore();
 const userStore = useUserStore();
@@ -307,8 +271,8 @@ const applyFilterSort = (
 
     let tempArr = customerStore.getCustomers.slice();
 
-    tempArr = arrSort(tempArr, sort_by_numeric, direction, column);
     tempArr = arrFilter(tempArr, searchBy);
+    tempArr = arrSort(tempArr, sort_by_numeric, direction, column);
 
     customers.value = tempArr;
 };
