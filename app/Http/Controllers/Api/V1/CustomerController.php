@@ -10,6 +10,8 @@ use App\Http\Resources\V1\CustomerCollection;
 use App\Http\Resources\V1\CustomerResource;
 use App\Models\Customer;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Http\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 final class CustomerController extends Controller
 {
@@ -18,16 +20,16 @@ final class CustomerController extends Controller
     public function index()
     : CustomerCollection
     {
-        // $this->authorize('viewAny', Customer::class);
-
         return new CustomerCollection(Customer::all());
     }
 
     public function store(StoreRequest $request)
-    {
-        $this->authorize('create', Customer::class);
-
-        return new CustomerResource(Customer::create($request->validated()));
+    : JsonResponse {
+        return response()->json([
+            'item'    => new CustomerResource(Customer::create($request->validated())),
+            'status'  => 'success',
+            'message' => 'Контрагент создан.',
+        ], Response::HTTP_CREATED);
     }
 
     public function show(Customer $customer)

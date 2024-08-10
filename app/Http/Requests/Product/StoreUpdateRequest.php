@@ -12,10 +12,10 @@ final class StoreUpdateRequest extends FormRequest
     : array
     {
         return [
-            'name'  => ['required', 'string', 'min:8', 'max:64'],
-            'price' => ['required', 'numeric', 'min:0', 'max:199.99', 'decimal:2', 'regex:/\d{1,3}.\d{2}/'],
+            'name'        => ['required', 'string', 'min:8', 'max:64'],
+            'price'       => ['required', 'numeric', 'min:0', 'max:199.99', 'decimal:2', 'regex:/\d{1,3}.\d{2}/'],
             'is_active'   => ['boolean'],
-            'image' => ['exclude_unless:image,null', 'image', 'mimes:jpeg,png,jpg', 'max:2048'],
+            'image'       => ['exclude_unless:image,null', 'image', 'mimes:jpeg,png,jpg', 'max:2048'],
             'category_id' => ['required', 'nullable', 'exists:categories,id'],
         ];
     }

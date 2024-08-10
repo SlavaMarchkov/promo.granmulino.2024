@@ -154,7 +154,7 @@
     <!-- New Region Modal Start -->
     <div id="newRegion" aria-hidden="true" class="modal fade" style="display: none;" tabindex="-1">
         <div class="modal-dialog">
-            <form @submit.prevent="saveRegion">
+
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">Добавление региона</h5>
@@ -163,6 +163,7 @@
                     <div class="modal-body">
                         <Alert/>
                         <div class="row g-3">
+                            <form @submit.prevent="saveRegion">
                             <div class="col-12">
                                 <Label for="code" required>Код региона</Label>
                                 <Input
@@ -181,6 +182,7 @@
                                     placeholder="Например: Уральский федеральный округ"
                                 />
                             </div>
+                            </form>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -194,7 +196,7 @@
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
                     </div>
                 </div>
-            </form>
+
         </div>
     </div>
     <!-- New Region Modal End -->

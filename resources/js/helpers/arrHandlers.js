@@ -1,9 +1,10 @@
+// TODO: доработать сортировку по кликам isActive
 export const arrFilter = (tempArr, searchArr) => {
     for ( const key in searchArr ) {
         if ( key === 'isActive' && searchArr[key] === true ) {
             tempArr = tempArr.filter(item => item[key] === true);
         } else if ( key.endsWith('Id') && searchArr[key] !== '' ) {
-            tempArr = tempArr.filter(item => item[key] === searchArr[key]);
+            tempArr = tempArr.filter(item => item[key] === parseInt(searchArr[key], 10));
         } else if ( key !== 'isActive' && searchArr[key] !== '' ) {
             tempArr = tempArr.filter(item => item[key].toLowerCase().includes(searchArr[key].toLowerCase()));
         }

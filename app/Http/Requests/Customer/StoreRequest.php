@@ -12,12 +12,13 @@ class StoreRequest extends FormRequest
     : array
     {
         return [
-            'name'        => ['required'],
+            'name'        => ['required', 'string', 'min:8', 'max:64'],
+            'description' => ['nullable', 'string'],
             'is_active'   => ['boolean'],
-            'description' => ['nullable'],
-            'region_id'   => ['nullable', 'exists:regions'],
-            'city_id'     => ['nullable', 'exists:cities'],
-            'user_id'     => ['nullable', 'exists:users'],
+
+            'region_id' => ['nullable', 'exists:regions,id'],
+            'city_id'   => ['nullable', 'exists:cities,id'],
+            'user_id'   => ['nullable', 'exists:users,id'],
         ];
     }
 
