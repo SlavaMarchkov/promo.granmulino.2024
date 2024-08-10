@@ -1,7 +1,11 @@
 <template>
     <div class="row mb-4">
         <div class="col-12">
-            <button class="btn btn-primary" type="button" @click="showNewRegionModal">
+            <button
+                @click="createCustomerInit"
+                class="btn btn-primary"
+                type="button"
+            >
                 Новый контрагент
             </button>
         </div>
@@ -23,7 +27,7 @@
                         <SelectGroup
                             v-model="searchBy.userId"
                             :chooseFrom="'-- Выберите менеджера --'"
-                            :items="users"
+                            :items="state.users"
                             selectedOption="fullName"
                         >Менеджер
                         </SelectGroup>
@@ -32,7 +36,7 @@
                         <SelectGroup
                             v-model="searchBy.regionId"
                             :chooseFrom="'-- Выберите регион --'"
-                            :items="regions"
+                            :items="state.regions"
                         >Регион
                         </SelectGroup>
                     </div>
@@ -53,7 +57,11 @@
                         </CheckboxGroup>
                     </div>
                 </div>
-                <button class="btn btn-secondary" type="button" @click="clearSearch">
+                <button
+                    class="btn btn-secondary my-2"
+                    type="button"
+                    @click="clearSearch"
+                >
                     Сбросить фильтр
                 </button>
             </fieldset>
@@ -64,7 +72,7 @@
             <div class="card">
                 <div class="card-body pb-0">
                     <div class="table-responsive">
-                        <table v-if="customers.length > 0"
+                        <table v-if="state.customers.length > 0"
                                class="table table-bordered my-4 text-center align-middle text-nowrap"
                                style="width: 100%;">
                             <thead>
@@ -149,7 +157,7 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <tr v-for="customer in customers" :key="customer.id">
+                            <tr v-for="customer in state.customers" :key="customer.id">
                                 <th scope="row">{{ customer.id }}</th>
                                 <td class="text-start" style="cursor: pointer;"
                                     @click="showViewCustomerModal(customer.id)">
@@ -170,7 +178,7 @@
                                 <td>
                                     <button
                                         class="btn btn-sm btn-primary"
-                                        @click="showViewCustomerModal(customer.id)"
+                                        @click="showViewModal(customer.id)"
                                     ><i class="bi bi-eye-fill"></i>
                                         View
                                     </button>
@@ -178,7 +186,7 @@
                                 <td>
                                     <button
                                         class="btn btn-sm btn-warning"
-                                        @click="showEditCustomerModal(customer.id)"
+                                        @click="editCustomerInit(customer.id)"
                                     ><i class="bi bi-pencil-square"></i>
                                         Edit
                                     </button>
@@ -190,18 +198,86 @@
                             {{ customerStore.isContentLoading ? 'Подождите, загружаю...' : 'Записей не найдено...' }}
                         </p>
                     </div>
-                    <p>Всего записей: <span class="fw-bold">{{ customers.length }}</span></p>
+                    <p>Всего записей: <span class="fw-bold">{{ state.customers.length }}</span></p>
                 </div>
             </div>
         </div>
     </div>
+
+    <Modal
+        id="modalPopUp"
+        :close-func="closeModal"
+        :custom-classes="['']"
+    >
+        <template #title>
+            <span v-if="state.isEditing">Редактирование контрагента <b>{{ state.customer.name }}</b></span>
+            <span v-else>Добавление контрагента</span>
+        </template>
+        <template #body>
+            <Alert/>
+            <div class="row g-3">
+                <div class="col-12">
+                    <Label for="name" required>Название контрагента</Label>
+                    <Input
+                        v-model="state.customer.name"
+                        type="text"
+                        id="name"
+                        placeholder="Например: Уральская Бакалея, ООО"
+                    />
+                </div>
+                <div class="col-12">
+                    <Label for="region_id" required>Регион</Label>
+                    <select
+                        v-model="state.customer.regionId"
+                        id="region_id"
+                        class="form-select"
+                        @change="handleRegionChange($event.target.value)"
+                    >
+                        <option value="" selected disabled>-- Выберите регион --</option>
+                        <option
+                            v-for="region in state.regions"
+                            :value="region.id"
+                            :key="region.id"
+                        >{{ region.name }}
+                        </option>
+                    </select>
+                </div>
+                <div class="col-12" v-if="state.customer.regionId">
+                    <Label for="city_id" required>Город</Label>
+                    <select v-model="state.customer.cityId" id="city_id" class="form-select">
+                        <option value="" selected disabled>-- Выберите город --</option>
+                        <option
+                            v-for="city in cities"
+                            :value="city.id"
+                            :key="city.id"
+                        >{{ city.name }}
+                        </option>
+                    </select>
+                </div>
+            </div>
+        </template>
+        <template #footer>
+            <Button
+                @click="saveCustomer"
+                type="button"
+                :loading="customerStore.isButtonDisabled"
+                :disabled="customerStore.isButtonDisabled"
+                class="w-25"
+                :class="state.isEditing ? 'btn-warning' : 'btn-primary'"
+            >
+                <span v-if="state.isEditing">Сохранить</span>
+                <span v-else>Создать</span>
+            </Button>
+        </template>
+    </Modal>
 </template>
 
 <script setup>
-import { onMounted, reactive, ref, watch } from 'vue';
+import { computed, onMounted, reactive, ref, watch } from 'vue';
 import { useCustomerStore } from '@/stores/customers.js';
 import { useUserStore } from '@/stores/users.js';
 import { useRegionStore } from '@/stores/regions.js';
+import { useAlertStore } from '@/stores/alerts.js';
 import { arrFilter, arrSort } from '@/helpers/arrHandlers.js';
 import { resetSearchKeys } from '@/helpers/searchHandlers.js';
 import ThSort from '@/components/core/ThSort.vue';
@@ -210,14 +286,32 @@ import Badge from '@/components/core/Badge.vue';
 import InputGroup from '@/components/core/InputGroup.vue';
 import SelectGroup from '@/components/core/SelectGroup.vue';
 import CheckboxGroup from '@/components/core/CheckboxGroup.vue';
+import Modal from '@/components/Modal.vue';
+import Input from '@/components/core/Input.vue';
+import Label from '@/components/core/Label.vue';
+import Alert from '@/components/Alert.vue';
 
 const customerStore = useCustomerStore();
 const userStore = useUserStore();
 const regionStore = useRegionStore();
+const alertStore = useAlertStore();
 
-const customers = ref([]);
-const users = ref([]);
-const regions = ref([]);
+const initialFormData = () => ({
+    name: '',
+    description: '',
+    regionId: '',
+    cityId: '',
+    userId: '',
+    isActive: true,
+});
+
+const state = reactive({
+    customers: [],
+    users: [],
+    regions: [],
+    customer: initialFormData(),
+    isEditing: false,
+});
 
 const searchBy = reactive({
     name: '',
@@ -230,10 +324,18 @@ const searchBy = reactive({
 let orderColumn = 'id';
 let orderDirection = 'asc';
 
+let modalPopUp = null;
+
 onMounted(async () => {
     await getCustomers();
     await getUsers();
     await getRegions();
+
+    modalPopUp = new bootstrap.Modal(document.getElementById('modalPopUp'));
+    modalPopUp._element.addEventListener('hide.bs.modal', () => {
+        state.isEditing = false;
+        state.customer = initialFormData();
+    });
 });
 
 const getCustomers = async () => {
@@ -243,12 +345,55 @@ const getCustomers = async () => {
 
 const getUsers = async () => {
     const response = await userStore.all(true);
-    users.value = response.data;
+    state.users = response.data;
 };
 
 const getRegions = async () => {
     const response = await regionStore.all();
-    regions.value = response.data;
+    state.regions = response.data;
+};
+
+const getCities = computed((regionId) => {
+    return state.regions.map(region => {
+        if (region.id === regionId) {
+            return region.cities;
+        }
+    });
+});
+
+const createCustomerInit = () => {
+    alertStore.clear();
+    state.isEditing = false;
+    modalPopUp.show();
+};
+
+const editCustomerInit = (id) => {
+    alertStore.clear();
+    state.isEditing = true;
+    modalPopUp.show();
+    state.customer = customerStore.getCustomers.find(item => item.id === id);
+};
+
+const closeModal = () => {
+    modalPopUp.hide();
+};
+
+const saveCustomer = async () => {
+    if ( state.isEditing ) {
+
+        return;
+    }
+
+    const response = await customerStore.save(state.customer);
+    if ( response && response.status === 'success' ) {
+        alertStore.clear();
+        state.customer = initialFormData();
+        modalPopUp.hide();
+        resetSearchKeys(searchBy);
+        orderColumn = 'id';
+        orderDirection = 'desc';
+        await getCustomers();
+    }
 };
 
 const clearSearch = () => {
@@ -274,6 +419,6 @@ const applyFilterSort = (
     tempArr = arrFilter(tempArr, searchBy);
     tempArr = arrSort(tempArr, sort_by_numeric, direction, column);
 
-    customers.value = tempArr;
+    state.customers = tempArr;
 };
 </script>
