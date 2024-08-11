@@ -16,9 +16,9 @@ class StoreRequest extends FormRequest
             'description' => ['nullable', 'string'],
             'is_active'   => ['boolean'],
 
-            'region_id' => ['nullable', 'exists:regions,id'],
-            'city_id'   => ['nullable', 'exists:cities,id'],
-            'user_id'   => ['nullable', 'exists:users,id'],
+            'region_id' => ['required', 'nullable', 'exists:regions,id'],
+            'city_id'   => ['required', 'nullable', 'exists:cities,id'],
+            'user_id'   => ['required', 'nullable', 'exists:users,id'],
         ];
     }
 

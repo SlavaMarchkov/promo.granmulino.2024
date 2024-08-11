@@ -231,9 +231,8 @@
                         v-model="state.customer.regionId"
                         id="region_id"
                         class="form-select"
-                        @change="handleRegionChange($event.target.value)"
                     >
-                        <option value="" selected disabled>-- Выберите регион --</option>
+                        <option disabled selected value="null">-- Выберите регион --</option>
                         <option
                             v-for="region in state.regions"
                             :value="region.id"
@@ -245,14 +244,53 @@
                 <div class="col-12" v-if="state.customer.regionId">
                     <Label for="city_id" required>Город</Label>
                     <select v-model="state.customer.cityId" id="city_id" class="form-select">
-                        <option value="" selected disabled>-- Выберите город --</option>
+                        <option disabled selected value="null">-- Выберите город --</option>
                         <option
-                            v-for="city in cities"
+                            v-for="city in state.cities"
                             :value="city.id"
                             :key="city.id"
                         >{{ city.name }}
                         </option>
                     </select>
+                </div>
+                <div class="col-12">
+                    <Label for="user_id" required>Менеджер для контрагента</Label>
+                    <select
+                        id="user_id"
+                        v-model="state.customer.userId"
+                        class="form-select"
+                    >
+                        <option disabled selected value="null">-- Выберите ФИО --</option>
+                        <option
+                            v-for="user in state.users"
+                            :key="user.id"
+                            :value="user.id"
+                        >{{ user.fullName }}
+                        </option>
+                    </select>
+                </div>
+                <div class="col-12">
+                    <Label for="description">Описание для контрагента</Label>
+                    <textarea
+                        id="description"
+                        v-model="state.customer.description"
+                        class="form-control"
+                        placeholder="Укажите произвольное описание"
+                    ></textarea>
+                </div>
+                <div class="col-12">
+                    <div class="form-check">
+                        <input
+                            id="is-active"
+                            v-model="state.customer.isActive"
+                            :checked="state.customer.isActive"
+                            class="form-check-input"
+                            type="checkbox"
+                        >
+                        <label class="form-check-label" for="is-active">
+                            Активный?
+                        </label>
+                    </div>
                 </div>
             </div>
         </template>
@@ -273,7 +311,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, reactive, ref, watch } from 'vue';
+import { onMounted, reactive, watch } from 'vue';
 import { useCustomerStore } from '@/stores/customers.js';
 import { useUserStore } from '@/stores/users.js';
 import { useRegionStore } from '@/stores/regions.js';
@@ -299,9 +337,9 @@ const alertStore = useAlertStore();
 const initialFormData = () => ({
     name: '',
     description: '',
-    regionId: '',
-    cityId: '',
-    userId: '',
+    regionId: null,
+    cityId: null,
+    userId: null,
     isActive: true,
 });
 
@@ -309,6 +347,7 @@ const state = reactive({
     customers: [],
     users: [],
     regions: [],
+    cities: [],
     customer: initialFormData(),
     isEditing: false,
 });
@@ -353,17 +392,18 @@ const getRegions = async () => {
     state.regions = response.data;
 };
 
-const getCities = computed((regionId) => {
-    return state.regions.map(region => {
-        if (region.id === regionId) {
-            return region.cities;
+const getCitiesForRegion = (regionId) => {
+    state.regions.map(region => {
+        if ( +region.id === +regionId ) {
+            state.cities = region.cities;
         }
     });
-});
+};
 
 const createCustomerInit = () => {
     alertStore.clear();
     state.isEditing = false;
+    state.cities = [];
     modalPopUp.show();
 };
 
@@ -372,6 +412,7 @@ const editCustomerInit = (id) => {
     state.isEditing = true;
     modalPopUp.show();
     state.customer = customerStore.getCustomers.find(item => item.id === id);
+    getCitiesForRegion(state.customer.regionId);
 };
 
 const closeModal = () => {
@@ -405,6 +446,12 @@ const clearSearch = () => {
 };
 
 watch(searchBy, () => applyFilterSort());
+watch(() => state.customer.regionId, (newValue, oldValue) => {
+    if ( oldValue !== null ) {
+        state.customer.cityId = null;
+    }
+    getCitiesForRegion(newValue);
+});
 
 const applyFilterSort = (
     column = orderColumn,
