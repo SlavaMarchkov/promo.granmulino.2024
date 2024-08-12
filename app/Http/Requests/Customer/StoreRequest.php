@@ -50,28 +50,12 @@ class StoreRequest extends FormRequest
         ];
     }
 
-    /**
-     * Prepare inputs for validation.
-     *
-     * @return void
-     */
     protected function prepareForValidation()
     : void
     {
         $is_active = $this->input('is_active', true);
         $this->merge([
-            'is_active' => $this->toBoolean($is_active),
+            'is_active' => to_boolean($is_active),
         ]);
-    }
-
-    /**
-     * Convert to boolean
-     *
-     * @param string|null $booleable
-     * @return boolean
-     */
-    private function toBoolean(string|null $booleable)
-    : bool {
-        return filter_var($booleable, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
     }
 }

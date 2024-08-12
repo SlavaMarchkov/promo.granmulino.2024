@@ -41,21 +41,11 @@ final class CustomerController extends Controller
 
     public function update(UpdateRequest $request, Customer $customer)
     : JsonResponse {
-        dd($request->validated());
         $customer->update($request->validated());
         return response()->json([
             'item'    => new CustomerResource($customer),
             'status'  => 'success',
             'message' => 'Контрагент обновлён.',
         ], Response::HTTP_OK);
-    }
-
-    public function destroy(Customer $customer)
-    {
-        $this->authorize('delete', $customer);
-
-        $customer->delete();
-
-        return response()->json();
     }
 }
