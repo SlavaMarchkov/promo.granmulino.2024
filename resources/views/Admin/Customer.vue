@@ -12,59 +12,55 @@
     </div>
     <div class="row mb-2">
         <div class="col-12">
-            <fieldset>
-                <legend>Фильтр</legend>
-                <div class="row">
-                    <div class="col-md-4 mb-2">
-                        <InputGroup
-                            v-model="searchBy.name"
-                            placeholder="Поиск по названию"
-                        >
-                            Клиент
-                        </InputGroup>
-                    </div>
-                    <div class="col-md-4 mb-2">
-                        <SelectGroup
-                            v-model="searchBy.userId"
-                            :chooseFrom="'-- Выберите менеджера --'"
-                            :items="state.users"
-                            selectedOption="fullName"
-                        >Менеджер
-                        </SelectGroup>
-                    </div>
-                    <div class="col-md-4 mb-2">
-                        <SelectGroup
-                            v-model="searchBy.regionId"
-                            :chooseFrom="'-- Выберите регион --'"
-                            :items="state.regions"
-                        >Регион
-                        </SelectGroup>
-                    </div>
-                    <div class="col-md-4 mb-2">
-                        <InputGroup
-                            v-model="searchBy.city"
-                            placeholder="Поиск по городу"
-                        >
-                            Город
-                        </InputGroup>
-                    </div>
-                    <div class="col-md-4 mb-2">
-                        <CheckboxGroup
-                            id="is_active"
-                            v-model="searchBy.isActive"
-                        >
-                            Показать только активных
-                        </CheckboxGroup>
-                    </div>
+            <pre>
+                {{ orderColumn }}
+                {{ orderDirection }}
+            </pre>
+            <Filter
+                @reset-filter="clearSearch"
+            >
+                <div class="col-md-4 mb-2">
+                    <InputGroup
+                        v-model="searchBy.name"
+                        placeholder="Поиск по названию"
+                    >
+                        Клиент
+                    </InputGroup>
                 </div>
-                <button
-                    class="btn btn-secondary my-2"
-                    type="button"
-                    @click="clearSearch"
-                >
-                    Сбросить фильтр
-                </button>
-            </fieldset>
+                <div class="col-md-4 mb-2">
+                    <SelectGroup
+                        v-model="searchBy.userId"
+                        :chooseFrom="'-- Выберите менеджера --'"
+                        :items="state.users"
+                        selectedOption="fullName"
+                    >Менеджер
+                    </SelectGroup>
+                </div>
+                <div class="col-md-4 mb-2">
+                    <SelectGroup
+                        v-model="searchBy.regionId"
+                        :chooseFrom="'-- Выберите регион --'"
+                        :items="state.regions"
+                    >Регион
+                    </SelectGroup>
+                </div>
+                <div class="col-md-4 mb-2">
+                    <InputGroup
+                        v-model="searchBy.city"
+                        placeholder="Поиск по городу"
+                    >
+                        Город
+                    </InputGroup>
+                </div>
+                <div class="col-md-4 mb-2">
+                    <CheckboxGroup
+                        id="is_active"
+                        v-model="searchBy.isActive"
+                    >
+                        Показать только активных
+                    </CheckboxGroup>
+                </div>
+            </Filter>
         </div>
     </div>
     <div class="row mb-4">
@@ -311,7 +307,7 @@
 </template>
 
 <script setup>
-import { onMounted, reactive, watch } from 'vue';
+import { onMounted, reactive, ref, watch } from 'vue';
 import { useCustomerStore } from '@/stores/customers.js';
 import { useUserStore } from '@/stores/users.js';
 import { useRegionStore } from '@/stores/regions.js';
@@ -328,6 +324,7 @@ import Modal from '@/components/Modal.vue';
 import Input from '@/components/core/Input.vue';
 import Label from '@/components/core/Label.vue';
 import Alert from '@/components/Alert.vue';
+import Filter from '@/components/core/Filter.vue';
 
 const customerStore = useCustomerStore();
 const userStore = useUserStore();
@@ -337,10 +334,10 @@ const alertStore = useAlertStore();
 const initialFormData = () => ({
     name: '',
     description: '',
+    isActive: true,
     regionId: null,
     cityId: null,
     userId: null,
-    isActive: true,
 });
 
 const state = reactive({
@@ -360,8 +357,8 @@ const searchBy = reactive({
     isActive: false,
 });
 
-let orderColumn = 'id';
-let orderDirection = 'asc';
+const orderColumn = ref('id');
+let orderDirection = ref('asc');
 
 let modalPopUp = null;
 
@@ -421,31 +418,46 @@ const closeModal = () => {
 
 const saveCustomer = async () => {
     if ( state.isEditing ) {
-
-        return;
-    }
-
-    const response = await customerStore.save(state.customer);
-    if ( response && response.status === 'success' ) {
-        alertStore.clear();
-        state.customer = initialFormData();
-        modalPopUp.hide();
-        resetSearchKeys(searchBy);
-        orderColumn = 'id';
-        orderDirection = 'desc';
-        await getCustomers();
+        const response = await customerStore.update(state.customer);
+        if ( response && response.status === 'success' ) {
+            alertStore.clear();
+            modalPopUp.hide();
+            await getCustomers();
+        }
+    } else {
+        const response = await customerStore.save(state.customer);
+        if ( response && response.status === 'success' ) {
+            alertStore.clear();
+            state.customer = initialFormData();
+            modalPopUp.hide();
+            resetSearchKeys(searchBy);
+            orderColumn.value = 'id';
+            orderDirection.value = 'desc';
+            await getCustomers();
+        }
     }
 };
 
 const clearSearch = () => {
     resetSearchKeys(searchBy);
     applyFilterSort(
-        (orderColumn = 'id'),
-        (orderDirection = 'asc'),
+        (orderColumn.value = 'id'),
+        (orderDirection.value = 'asc'),
     );
 };
 
-watch(searchBy, () => applyFilterSort());
+// watch(searchBy, () => applyFilterSort(orderColumn.value, orderDirection.value, false));
+/*watch(() => searchBy.name || searchBy.city, () => {
+    applyFilterSort(orderColumn.value, orderDirection.value, false);
+});
+watch(() => searchBy.userId || searchBy.regionId || searchBy.isActive, (newValue, oldValue) => {
+    console.log('n', newValue);
+    console.log('o', oldValue);
+    let tempArr = customerStore.getCustomers.slice();
+    tempArr = arrFilter(tempArr, searchBy);
+    state.customers = tempArr;
+    // applyFilterSort(orderColumn.value, orderDirection.value, true);
+});*/
 watch(() => state.customer.regionId, (newValue, oldValue) => {
     if ( oldValue !== null ) {
         state.customer.cityId = null;
@@ -454,12 +466,14 @@ watch(() => state.customer.regionId, (newValue, oldValue) => {
 });
 
 const applyFilterSort = (
-    column = orderColumn,
-    direction = orderDirection,
+    column = orderColumn.value,
+    direction = orderDirection.value,
     sort_by_numeric = true,
 ) => {
-    orderColumn = column;
-    orderDirection = direction;
+    console.log('column', column);
+    console.log('direction', direction);
+    orderColumn.value = column;
+    orderDirection.value = direction;
 
     let tempArr = customerStore.getCustomers.slice();
 

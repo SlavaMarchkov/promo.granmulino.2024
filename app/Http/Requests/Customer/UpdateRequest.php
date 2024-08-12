@@ -7,7 +7,7 @@ namespace App\Http\Requests\Customer;
 use App\Rules\BooleanRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreRequest extends FormRequest
+class UpdateRequest extends FormRequest
 {
     public function authorize()
     : bool
@@ -21,7 +21,7 @@ class StoreRequest extends FormRequest
         return [
             'name'        => ['required', 'string', 'min:8', 'max:64'],
             'description' => ['nullable', 'string'],
-            'is_active' => ['required', new BooleanRule],
+            'is_active'   => ['required', new BooleanRule],
 
             'region_id' => ['required', 'nullable', 'exists:regions,id'],
             'city_id'   => ['required', 'nullable', 'exists:cities,id'],
@@ -48,14 +48,5 @@ class StoreRequest extends FormRequest
             'required' => 'Поле ":attribute" нужно заполнить.',
             'exists'   => 'Поле ":attribute" нужно выбрать из списка.',
         ];
-    }
-
-    protected function prepareForValidation()
-    : void
-    {
-        $is_active = $this->input('is_active', true);
-        $this->merge([
-            'is_active' => to_boolean($is_active),
-        ]);
     }
 }
