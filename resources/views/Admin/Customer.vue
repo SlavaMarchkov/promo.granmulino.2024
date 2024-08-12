@@ -337,10 +337,10 @@ const alertStore = useAlertStore();
 const initialFormData = () => ({
     name: '',
     description: '',
+    isActive: '',
     regionId: null,
     cityId: null,
     userId: null,
-    isActive: true,
 });
 
 const state = reactive({
