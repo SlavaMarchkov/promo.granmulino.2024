@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Customer\StoreRequest;
+use App\Http\Requests\Customer\UpdateRequest;
 use App\Http\Resources\V1\CustomerCollection;
 use App\Http\Resources\V1\CustomerResource;
 use App\Models\Customer;
@@ -33,19 +34,20 @@ final class CustomerController extends Controller
     }
 
     public function show(Customer $customer)
+    : CustomerResource
     {
-        $this->authorize('view', $customer);
-
         return new CustomerResource($customer);
     }
 
-    public function update(StoreRequest $request, Customer $customer)
-    {
-        $this->authorize('update', $customer);
-
+    public function update(UpdateRequest $request, Customer $customer)
+    : JsonResponse {
+        dd($request->validated());
         $customer->update($request->validated());
-
-        return new CustomerResource($customer);
+        return response()->json([
+            'item'    => new CustomerResource($customer),
+            'status'  => 'success',
+            'message' => 'Контрагент обновлён.',
+        ], Response::HTTP_OK);
     }
 
     public function destroy(Customer $customer)

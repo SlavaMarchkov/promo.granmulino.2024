@@ -418,22 +418,26 @@ const editCustomerInit = (id) => {
 const closeModal = () => {
     modalPopUp.hide();
 };
-
+// TODO: сбросить state.isEditing
 const saveCustomer = async () => {
     if ( state.isEditing ) {
-
-        return;
-    }
-
-    const response = await customerStore.save(state.customer);
-    if ( response && response.status === 'success' ) {
-        alertStore.clear();
-        state.customer = initialFormData();
-        modalPopUp.hide();
-        resetSearchKeys(searchBy);
-        orderColumn = 'id';
-        orderDirection = 'desc';
-        await getCustomers();
+        const response = await customerStore.update(state.customer);
+        if ( response && response.status === 'success' ) {
+            alertStore.clear();
+            modalPopUp.hide();
+            await getCustomers();
+        }
+    } else {
+        const response = await customerStore.save(state.customer);
+        if ( response && response.status === 'success' ) {
+            alertStore.clear();
+            state.customer = initialFormData();
+            modalPopUp.hide();
+            resetSearchKeys(searchBy);
+            orderColumn = 'id';
+            orderDirection = 'desc';
+            await getCustomers();
+        }
     }
 };
 
