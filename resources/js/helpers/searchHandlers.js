@@ -1,5 +1,6 @@
 export const resetSearchKeys = (obj) => {
     for ( const key in obj ) {
-        obj[key] = '';
+        obj[key] = (key === 'isActive') ? false : '';
     }
+    console.log(obj);
 };

@@ -337,7 +337,7 @@ const alertStore = useAlertStore();
 const initialFormData = () => ({
     name: '',
     description: '',
-    isActive: '',
+    isActive: true,
     regionId: null,
     cityId: null,
     userId: null,
