@@ -14,12 +14,15 @@ class Retailer extends Model
         'name',
         'type',
         'description',
+        'is_active',
+        'is_direct',
         'customer_id',
         'city_id',
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
+        'is_direct' => 'boolean',
     ];
 
     public function customer()

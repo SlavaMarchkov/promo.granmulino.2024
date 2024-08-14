@@ -14,19 +14,18 @@ class RetailerResource extends JsonResource
     public function toArray(Request $request)
     : array {
         return [
-            'created_at'  => $this->created_at,
-            'updated_at'  => $this->updated_at,
             'id'          => $this->id,
             'name'        => $this->name,
             'type'        => $this->type,
-            'is_active'   => $this->is_active,
             'description' => $this->description,
+            'isActive' => $this->is_active,
+            'isDirect' => $this->is_direct,
 
-            'customer_id' => $this->customer_id,
-            'city_id'     => $this->city_id,
+            'customerId' => $this->customer_id,
+            'cityId'     => $this->city_id,
 
-            'customer' => new CustomerResource($this->whenLoaded('customer')),
-            'city'     => new CityResource($this->whenLoaded('city')),
+            'customer' => $this->customer?->name,
+            'city'     => $this->city?->name,
         ];
     }
 }
