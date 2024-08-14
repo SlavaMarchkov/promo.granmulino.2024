@@ -6,50 +6,61 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Retailer\StoreRequest;
+use App\Http\Resources\V1\RetailerCollection;
 use App\Http\Resources\V1\RetailerResource;
 use App\Models\Retailer;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Http\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 final class RetailerController extends Controller
 {
     use AuthorizesRequests;
 
     public function index()
+    : RetailerCollection
     {
-        $this->authorize('viewAny', Retailer::class);
+        // $this->authorize('viewAny', Retailer::class);
 
-        return RetailerResource::collection(Retailer::all());
+        return new RetailerCollection(Retailer::all());
     }
 
     public function store(StoreRequest $request)
-    {
-        $this->authorize('create', Retailer::class);
+    : JsonResponse {
+        // $this->authorize('create', Retailer::class);
 
-        return new RetailerResource(Retailer::create($request->validated()));
+        return response()->json([
+            'item'    => new RetailerResource(Retailer::create($request->validated())),
+            'status'  => 'success',
+            'message' => 'Торговая сеть создана.',
+        ], Response::HTTP_CREATED);
     }
 
-    public function show(Retailer $directRetailer)
-    {
-        $this->authorize('view', $directRetailer);
+    public function show(Retailer $retailer)
+    : RetailerResource {
+        // $this->authorize('view', $retailer);
 
-        return new RetailerResource($directRetailer);
+        return new RetailerResource($retailer);
     }
 
-    public function update(StoreRequest $request, Retailer $directRetailer)
+    public function update(StoreRequest $request, Retailer $retailer)
     {
-        $this->authorize('update', $directRetailer);
+        // $this->authorize('update', $retailer);
 
-        $directRetailer->update($request->validated());
-
-        return new RetailerResource($directRetailer);
+        $retailer->update($request->validated());
+        return response()->json([
+            'item'    => new RetailerResource($retailer),
+            'status'  => 'success',
+            'message' => 'Торговая сеть обновлена.',
+        ], Response::HTTP_OK);
     }
 
-    public function destroy(Retailer $directRetailer)
+    /*public function destroy(Retailer $directRetailer)
     {
         $this->authorize('delete', $directRetailer);
 
         $directRetailer->delete();
 
         return response()->json();
-    }
+    }*/
 }

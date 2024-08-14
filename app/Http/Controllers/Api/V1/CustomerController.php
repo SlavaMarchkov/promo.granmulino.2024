@@ -10,14 +10,11 @@ use App\Http\Requests\Customer\UpdateRequest;
 use App\Http\Resources\V1\CustomerCollection;
 use App\Http\Resources\V1\CustomerResource;
 use App\Models\Customer;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 final class CustomerController extends Controller
 {
-    use AuthorizesRequests;
-
     public function index()
     : CustomerCollection
     {
