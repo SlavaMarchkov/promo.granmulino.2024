@@ -17,14 +17,16 @@ class RetailerResource extends JsonResource
             'id'          => $this->id,
             'name'        => $this->name,
             'type'        => $this->type,
+            'typeRU' => $this->type->toText(),
             'description' => $this->description,
             'isActive' => $this->is_active,
             'isDirect' => $this->is_direct,
 
-            'customerId' => $this->customer_id,
-            'cityId'     => $this->city_id,
 
-            'customer' => $this->customer?->name,
+//            'customerId' => $this->customer_id,
+            'cityId'     => $this->city_id,
+//
+//            'customer' => $this->customer?->name,
             'city'     => $this->city?->name,
         ];
     }

@@ -22,7 +22,11 @@ final class RetailerController extends Controller
     {
         // $this->authorize('viewAny', Retailer::class);
 
-        return new RetailerCollection(Retailer::all());
+        $retailers = Retailer::query()
+            ->with('city')
+            ->get();
+
+        return new RetailerCollection($retailers);
     }
 
     public function store(StoreRequest $request)

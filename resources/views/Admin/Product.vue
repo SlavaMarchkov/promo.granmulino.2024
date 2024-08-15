@@ -379,8 +379,8 @@ import { useCategoryStore } from '@/stores/categories.js';
 import { useAlertStore } from '@/stores/alerts.js';
 import ThSort from '@/components/core/ThSort.vue';
 import Badge from '@/components/core/Badge.vue';
-import { arrFilter, arrSort } from '@/helpers/arrHandlers.js';
-import { resetSearchKeys } from '@/helpers/searchHandlers.js';
+// import { arrFilter, arrSort } from '@/helpers/arrHandlers.js';
+// import { resetSearchKeys } from '@/helpers/searchHandlers.js';
 
 const productStore = useProductStore();
 const categoryStore = useCategoryStore();

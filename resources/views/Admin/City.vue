@@ -277,8 +277,8 @@ import { onMounted, reactive, ref, watch } from 'vue';
 import { useAlertStore } from '@/stores/alerts.js';
 import { useCityStore } from '@/stores/cities.js';
 import { useRegionStore } from '@/stores/regions.js';
-import { arrFilter, arrSort } from '@/helpers/arrHandlers.js';
-import { resetSearchKeys } from '@/helpers/searchHandlers.js';
+// import { arrFilter, arrSort } from '@/helpers/arrHandlers.js';
+// import { resetSearchKeys } from '@/helpers/searchHandlers.js';
 
 const cityStore = useCityStore();
 const regionStore = useRegionStore();

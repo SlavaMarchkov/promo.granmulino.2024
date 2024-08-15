@@ -2,7 +2,7 @@
     {
         "name": "Лента",
         "customer_id": null,
-        "type": "federal",
+        "type": "Федеральная",
         "city_id": "2",
         "description": "",
         "is_active": "1",
@@ -11,7 +11,7 @@
     {
         "name": "Ашан",
         "customer_id": null,
-        "type": "federal",
+        "type": "Федеральная",
         "city_id": "2",
         "description": "",
         "is_active": "1",
@@ -20,7 +20,7 @@
     {
         "name": "Мария-Ра",
         "customer_id": null,
-        "type": "regional",
+        "type": "Региональная",
         "city_id": "3",
         "description": "",
         "is_active": "1",
@@ -29,7 +29,7 @@
     {
         "name": "Зельгрос",
         "customer_id": null,
-        "type": "federal",
+        "type": "Федеральная",
         "city_id": "8",
         "description": "",
         "is_active": "1",
@@ -38,7 +38,7 @@
     {
         "name": "Пятерочка",
         "customer_id": null,
-        "type": "federal",
+        "type": "Федеральная",
         "city_id": "11",
         "description": "",
         "is_active": "1",
@@ -47,7 +47,7 @@
     {
         "name": "Магнит",
         "customer_id": null,
-        "type": "federal",
+        "type": "Федеральная",
         "city_id": "15",
         "description": "",
         "is_active": "1",
@@ -56,7 +56,7 @@
     {
         "name": "Карусель",
         "customer_id": null,
-        "type": "federal",
+        "type": "Федеральная",
         "city_id": "8",
         "description": "",
         "is_active": "1",
@@ -65,7 +65,7 @@
     {
         "name": "Billa",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "8",
         "description": "",
         "is_active": "1",
@@ -74,7 +74,7 @@
     {
         "name": "Реми",
         "customer_id": null,
-        "type": "regional",
+        "type": "Региональная",
         "city_id": "12",
         "description": "",
         "is_active": "1",
@@ -83,7 +83,7 @@
     {
         "name": "Байрам",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "7",
         "description": "",
         "is_active": "1",
@@ -92,7 +92,7 @@
     {
         "name": "Невада",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "13",
         "description": "",
         "is_active": "1",
@@ -101,7 +101,7 @@
     {
         "name": "Красный Яр",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "17",
         "description": "",
         "is_active": "1",
@@ -110,7 +110,7 @@
     {
         "name": "Аникс",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "4",
         "description": "",
         "is_active": "1",
@@ -119,7 +119,7 @@
     {
         "name": "Амбар",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "13",
         "description": "",
         "is_active": "1",
@@ -128,7 +128,7 @@
     {
         "name": "Командор",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "17",
         "description": "",
         "is_active": "1",
@@ -137,7 +137,7 @@
     {
         "name": "Быстроном",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "5",
         "description": "",
         "is_active": "1",
@@ -146,7 +146,7 @@
     {
         "name": "Вулкан",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "18",
         "description": "",
         "is_active": "1",
@@ -155,7 +155,7 @@
     {
         "name": "Берег",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "18",
         "description": "",
         "is_active": "1",
@@ -164,7 +164,7 @@
     {
         "name": "Багира",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "18",
         "description": "",
         "is_active": "1",
@@ -173,7 +173,7 @@
     {
         "name": "Удача",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "18",
         "description": "",
         "is_active": "1",
@@ -182,7 +182,7 @@
     {
         "name": "Триумф",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "6",
         "description": "",
         "is_active": "1",
@@ -191,7 +191,7 @@
     {
         "name": "Новатор",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "6",
         "description": "",
         "is_active": "1",
@@ -200,7 +200,7 @@
     {
         "name": "Подсолнухи",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "19",
         "description": "",
         "is_active": "1",
@@ -209,7 +209,7 @@
     {
         "name": "Бегемот",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "1",
         "description": "",
         "is_active": "1",
@@ -218,7 +218,7 @@
     {
         "name": "Радуга Вкуса",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "5",
         "description": "",
         "is_active": "1",
@@ -227,7 +227,7 @@
     {
         "name": "Брусничка",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "18",
         "description": "",
         "is_active": "1",
@@ -236,7 +236,7 @@
     {
         "name": "Фея",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "18",
         "description": "",
         "is_active": "1",
@@ -245,7 +245,7 @@
     {
         "name": "Янта",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "18",
         "description": "",
         "is_active": "1",
@@ -254,7 +254,7 @@
     {
         "name": "Молния",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "9",
         "description": "",
         "is_active": "1",
@@ -263,7 +263,7 @@
     {
         "name": "Серебряный Шар",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "17",
         "description": "",
         "is_active": "1",
@@ -272,7 +272,7 @@
     {
         "name": "Эссен",
         "customer_id": null,
-        "type": "regional",
+        "type": "Региональная",
         "city_id": "21",
         "description": "",
         "is_active": "1",
@@ -281,7 +281,7 @@
     {
         "name": "Амба",
         "customer_id": null,
-        "type": "regional",
+        "type": "Региональная",
         "city_id": "22",
         "description": "",
         "is_active": "1",
@@ -290,7 +290,7 @@
     {
         "name": "Розничные технологии",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "18",
         "description": "",
         "is_active": "1",
@@ -299,7 +299,7 @@
     {
         "name": "СПАР-Тула",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "36",
         "description": "",
         "is_active": "1",
@@ -308,7 +308,7 @@
     {
         "name": "Высшая Лига",
         "customer_id": null,
-        "type": "regional",
+        "type": "Региональная",
         "city_id": "35",
         "description": "",
         "is_active": "1",
@@ -317,7 +317,7 @@
     {
         "name": "Виктория",
         "customer_id": null,
-        "type": "regional",
+        "type": "Региональная",
         "city_id": "24",
         "description": "",
         "is_active": "1",
@@ -326,7 +326,7 @@
     {
         "name": "Семья",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "24",
         "description": "",
         "is_active": "1",
@@ -335,7 +335,7 @@
     {
         "name": "Ряды Оптоклуб",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "14",
         "description": "",
         "is_active": "1",
@@ -344,7 +344,7 @@
     {
         "name": "Продсиб",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "2",
         "description": "",
         "is_active": "1",
@@ -353,7 +353,7 @@
     {
         "name": "Лама",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "5",
         "description": "",
         "is_active": "1",
@@ -362,7 +362,7 @@
     {
         "name": "Маяк",
         "customer_id": null,
-        "type": "regional",
+        "type": "Региональная",
         "city_id": "18",
         "description": "",
         "is_active": "1",
@@ -371,7 +371,7 @@
     {
         "name": "Жар-Птица",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "19",
         "description": "",
         "is_active": "1",
@@ -380,7 +380,7 @@
     {
         "name": "Metro C&С",
         "customer_id": null,
-        "type": "federal",
+        "type": "Федеральная",
         "city_id": "2",
         "description": "",
         "is_active": "1",
@@ -389,7 +389,7 @@
     {
         "name": "Ярче",
         "customer_id": null,
-        "type": "regional",
+        "type": "Региональная",
         "city_id": "5",
         "description": "",
         "is_active": "1",
@@ -398,7 +398,7 @@
     {
         "name": "Самбери",
         "customer_id": null,
-        "type": "regional",
+        "type": "Региональная",
         "city_id": "13",
         "description": "",
         "is_active": "1",
@@ -407,7 +407,7 @@
     {
         "name": "Холди",
         "customer_id": null,
-        "type": "regional",
+        "type": "Региональная",
         "city_id": "2",
         "description": "",
         "is_active": "1",
@@ -416,7 +416,7 @@
     {
         "name": "Ариант",
         "customer_id": null,
-        "type": "regional",
+        "type": "Региональная",
         "city_id": "9",
         "description": "",
         "is_active": "1",
@@ -425,7 +425,7 @@
     {
         "name": "Сималэнд",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "11",
         "description": "",
         "is_active": "1",
@@ -434,7 +434,7 @@
     {
         "name": "Макси",
         "customer_id": null,
-        "type": "regional",
+        "type": "Региональная",
         "city_id": "23",
         "description": "",
         "is_active": "1",
@@ -443,7 +443,7 @@
     {
         "name": "Деметра",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "17",
         "description": "",
         "is_active": "1",
@@ -452,7 +452,7 @@
     {
         "name": "Гамбаров, ИП",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "13",
         "description": "",
         "is_active": "1",
@@ -461,7 +461,7 @@
     {
         "name": "Титан",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "20",
         "description": "",
         "is_active": "1",
@@ -470,7 +470,7 @@
     {
         "name": "Ассорти",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "3",
         "description": "",
         "is_active": "1",
@@ -479,7 +479,7 @@
     {
         "name": "Хорошее настроение",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "3",
         "description": "",
         "is_active": "1",
@@ -488,7 +488,7 @@
     {
         "name": "Лидер",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "3",
         "description": "",
         "is_active": "1",
@@ -497,7 +497,7 @@
     {
         "name": "Занин, ИП",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "3",
         "description": "",
         "is_active": "1",
@@ -506,7 +506,7 @@
     {
         "name": "Прайм",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "3",
         "description": "",
         "is_active": "1",
@@ -515,7 +515,7 @@
     {
         "name": "Корзинка",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "4",
         "description": "",
         "is_active": "1",
@@ -524,7 +524,7 @@
     {
         "name": "Бобыкин, ИП",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "12",
         "description": "",
         "is_active": "1",
@@ -533,7 +533,7 @@
     {
         "name": "Парус",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "12",
         "description": "",
         "is_active": "1",
@@ -542,7 +542,7 @@
     {
         "name": "Фреш 25",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "12",
         "description": "",
         "is_active": "1",
@@ -551,7 +551,7 @@
     {
         "name": "Вертикаль",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "3",
         "description": "",
         "is_active": "1",
@@ -560,7 +560,7 @@
     {
         "name": "Хорошие продукты",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "3",
         "description": "",
         "is_active": "1",
@@ -569,7 +569,7 @@
     {
         "name": "Фасоль",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "12",
         "description": "",
         "is_active": "1",
@@ -578,7 +578,7 @@
     {
         "name": "Молния (Spar)",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "9",
         "description": "",
         "is_active": "1",
@@ -587,7 +587,7 @@
     {
         "name": "Экономыч",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "13",
         "description": "",
         "is_active": "1",
@@ -596,7 +596,7 @@
     {
         "name": "Шамса",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "39",
         "description": "",
         "is_active": "1",
@@ -605,7 +605,7 @@
     {
         "name": "Арт-Маркет",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "29",
         "description": "",
         "is_active": "1",
@@ -614,7 +614,7 @@
     {
         "name": "Кэш & Кэрри",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "29",
         "description": "",
         "is_active": "1",
@@ -623,7 +623,7 @@
     {
         "name": "Джаки",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "22",
         "description": "",
         "is_active": "1",
@@ -632,7 +632,7 @@
     {
         "name": "Унимарт",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "22",
         "description": "",
         "is_active": "1",
@@ -641,7 +641,7 @@
     {
         "name": "Слата",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "18",
         "description": "",
         "is_active": "1",
@@ -650,7 +650,7 @@
     {
         "name": "Абсолют",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "18",
         "description": "",
         "is_active": "1",
@@ -659,7 +659,7 @@
     {
         "name": "Райт",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "11",
         "description": "",
         "is_active": "1",
@@ -668,7 +668,7 @@
     {
         "name": "ОКей",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "1",
         "description": "",
         "is_active": "1",
@@ -677,7 +677,7 @@
     {
         "name": "Копеечка",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "9",
         "description": "",
         "is_active": "1",
@@ -686,7 +686,7 @@
     {
         "name": "Елисей",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "11",
         "description": "",
         "is_active": "1",
@@ -695,7 +695,7 @@
     {
         "name": "Мегамарт",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "11",
         "description": "",
         "is_active": "1",
@@ -704,7 +704,7 @@
     {
         "name": "Флагман",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "11",
         "description": "",
         "is_active": "1",
@@ -713,7 +713,7 @@
     {
         "name": "Выгодный",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "11",
         "description": "",
         "is_active": "1",
@@ -722,7 +722,7 @@
     {
         "name": "Яблоко",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "11",
         "description": "",
         "is_active": "1",
@@ -731,7 +731,7 @@
     {
         "name": "Гастроном",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "11",
         "description": "",
         "is_active": "1",
@@ -740,7 +740,7 @@
     {
         "name": "Народный",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "18",
         "description": "",
         "is_active": "1",
@@ -749,7 +749,7 @@
     {
         "name": "Кристалл",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "29",
         "description": "",
         "is_active": "1",
@@ -758,7 +758,7 @@
     {
         "name": "Аутлет",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "29",
         "description": "",
         "is_active": "1",
@@ -767,7 +767,7 @@
     {
         "name": "Гигант\/Горожанка",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "2",
         "description": "",
         "is_active": "1",
@@ -776,7 +776,7 @@
     {
         "name": "Гипербола",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "11",
         "description": "",
         "is_active": "1",
@@ -785,7 +785,7 @@
     {
         "name": "Матрешки",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "18",
         "description": "",
         "is_active": "1",
@@ -794,7 +794,7 @@
     {
         "name": "Магнат",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "18",
         "description": "",
         "is_active": "1",
@@ -803,7 +803,7 @@
     {
         "name": "Янтарь",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "40",
         "description": "",
         "is_active": "1",
@@ -812,7 +812,7 @@
     {
         "name": "Миндаль",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "48",
         "description": "",
         "is_active": "1",
@@ -821,7 +821,7 @@
     {
         "name": "Нива",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "13",
         "description": "",
         "is_active": "1",
@@ -830,7 +830,7 @@
     {
         "name": "Чекторг",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "13",
         "description": "",
         "is_active": "1",
@@ -839,7 +839,7 @@
     {
         "name": "Спутник",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "45",
         "description": "",
         "is_active": "1",
@@ -848,7 +848,7 @@
     {
         "name": "Чайка",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "18",
         "description": "",
         "is_active": "1",
@@ -857,7 +857,7 @@
     {
         "name": "Пеликан",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "13",
         "description": "",
         "is_active": "1",
@@ -866,7 +866,7 @@
     {
         "name": "Бридер",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "13",
         "description": "",
         "is_active": "1",
@@ -875,7 +875,7 @@
     {
         "name": "Прайд",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "22",
         "description": "",
         "is_active": "1",
@@ -884,7 +884,7 @@
     {
         "name": "Новоторг",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "13",
         "description": "",
         "is_active": "1",
@@ -893,7 +893,7 @@
     {
         "name": "Квартет вкусов",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "12",
         "description": "",
         "is_active": "1",
@@ -902,7 +902,7 @@
     {
         "name": "Князев, ИП",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "44",
         "description": "",
         "is_active": "1",
@@ -911,7 +911,7 @@
     {
         "name": "Караван",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "46",
         "description": "",
         "is_active": "1",
@@ -920,7 +920,7 @@
     {
         "name": "Экспресс Ритейл",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "13",
         "description": "",
         "is_active": "1",
@@ -929,7 +929,7 @@
     {
         "name": "Айгуль",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "50",
         "description": "",
         "is_active": "1",
@@ -938,7 +938,7 @@
     {
         "name": "Мега",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "28",
         "description": "",
         "is_active": "1",
@@ -947,7 +947,7 @@
     {
         "name": "Черкизов Ч.М., ИП",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "13",
         "description": "",
         "is_active": "1",
@@ -956,7 +956,7 @@
     {
         "name": "МАН",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "52",
         "description": "",
         "is_active": "1",
@@ -965,7 +965,7 @@
     {
         "name": "Бегемаг",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "1",
         "description": "",
         "is_active": "1",
@@ -974,7 +974,7 @@
     {
         "name": "Низкоцен",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "6",
         "description": "",
         "is_active": "1",
@@ -983,7 +983,7 @@
     {
         "name": "Бахетле",
         "customer_id": null,
-        "type": "regional",
+        "type": "Региональная",
         "city_id": "2",
         "description": "",
         "is_active": "1",
@@ -992,7 +992,7 @@
     {
         "name": "Радуга",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "40",
         "description": "",
         "is_active": "1",
@@ -1001,7 +1001,7 @@
     {
         "name": "Кировский",
         "customer_id": null,
-        "type": "regional",
+        "type": "Региональная",
         "city_id": "11",
         "description": "",
         "is_active": "1",
@@ -1010,7 +1010,7 @@
     {
         "name": "Март",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "18",
         "description": "",
         "is_active": "1",
@@ -1019,7 +1019,7 @@
     {
         "name": "Метрополис",
         "customer_id": null,
-        "type": "local",
+        "type": "Локальная",
         "city_id": "54",
         "description": "",
         "is_active": "1",

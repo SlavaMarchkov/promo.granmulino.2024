@@ -3,10 +3,9 @@
         <div class="input-group-text">
             <input
                 :id="props.id"
-                :checked="modelValue"
                 class="form-check-input mt-0"
                 type="checkbox"
-                @change="$emit('update:modelValue', !modelValue)"
+                @change="filter"
             >
         </div>
         <label
@@ -26,4 +25,12 @@ const props = defineProps({
         default: false,
     },
 });
+
+const emit = defineEmits([
+    'filter',
+]);
+
+const filter = (evt) => {
+    emit('filter', evt.target.value);
+};
 </script>

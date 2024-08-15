@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Enums\Retailer\TypeEnum;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -23,6 +24,7 @@ class Retailer extends Model
     protected $casts = [
         'is_active' => 'boolean',
         'is_direct' => 'boolean',
+        'type' => TypeEnum::class,
     ];
 
     public function customer()

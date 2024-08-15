@@ -307,19 +307,19 @@
 </template>
 
 <script setup>
-import { onMounted, reactive, ref, watch } from 'vue';
+import { computed, onMounted, reactive, ref, watch } from 'vue';
 import { useCustomerStore } from '@/stores/customers.js';
 import { useUserStore } from '@/stores/users.js';
 import { useRegionStore } from '@/stores/regions.js';
 import { useAlertStore } from '@/stores/alerts.js';
-import { arrFilter, arrSort } from '@/helpers/arrHandlers.js';
-import { resetSearchKeys } from '@/helpers/searchHandlers.js';
+// import { arrFilter, arrSort } from '@/helpers/arrHandlers.js';
+// import { resetSearchKeys } from '@/helpers/searchHandlers.js';
 import ThSort from '@/components/core/ThSort.vue';
 import Button from '@/components/core/Button.vue';
 import Badge from '@/components/core/Badge.vue';
 import InputGroup from '@/components/core/InputGroup.vue';
 import SelectGroup from '@/components/core/SelectGroup.vue';
-import CheckboxGroup from '@/components/core/CheckboxGroup.vue';
+// import CheckboxGroup from '@/components/core/CheckboxGroup.vue';
 import Modal from '@/components/Modal.vue';
 import Input from '@/components/core/Input.vue';
 import Label from '@/components/core/Label.vue';
@@ -388,6 +388,14 @@ const getRegions = async () => {
     const response = await regionStore.all();
     state.regions = response.data;
 };
+
+const cities = computed((regionId) => {
+    return state.regions.map(region => {
+        if ( +region.id === +regionId ) {
+            return region.cities;
+        }
+    });
+});
 
 const getCitiesForRegion = (regionId) => {
     state.regions.map(region => {
