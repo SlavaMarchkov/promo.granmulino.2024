@@ -16,45 +16,44 @@
                 @reset-filter="clearSearch"
             >
                 <div class="col-md-4 mb-2">
-                    <InputGroup
+                    <SearchForm
                         v-model="searchBy.name"
-                        placeholder="Поиск по названию"
-                    >
-                        Клиент
-                    </InputGroup>
+                        placeholder="Поиск по названию ТС"
+                    >Название
+                    </SearchForm>
                 </div>
+                <FilterRadios
+                    @filter="handleRadioFilter"
+                ></FilterRadios>
                 <div class="col-md-4 mb-2">
-                    <SelectGroup
-                        v-model="searchBy.userId"
-                        :chooseFrom="'-- Выберите менеджера --'"
-                        :items="state.users"
-                        selectedOption="fullName"
-                    >Менеджер
-                    </SelectGroup>
-                </div>
-                <div class="col-md-4 mb-2">
-                    <SelectGroup
-                        v-model="searchBy.regionId"
-                        :chooseFrom="'-- Выберите регион --'"
-                        :items="state.regions"
-                    >Регион
-                    </SelectGroup>
-                </div>
-                <div class="col-md-4 mb-2">
-                    <InputGroup
-                        v-model="searchBy.city"
+                    <SearchForm
+                        @search="handleSearch"
                         placeholder="Поиск по городу"
-                    >
-                        Город
-                    </InputGroup>
+                    >Город
+                    </SearchForm>
                 </div>
                 <div class="col-md-4 mb-2">
-                    <CheckboxGroup
+                    <SearchForm
+                        placeholder="Поиск по контрагенту"
+                        @search="handleSearch"
+                    >Контрагент
+                    </SearchForm>
+                </div>
+                <div class="col-md-2 mb-2">
+                    <FilterCheckbox
                         id="is_active"
-                        v-model="searchBy.isActive"
+                        @change="handleCheckboxFilter"
                     >
-                        Показать только активные ТС
-                    </CheckboxGroup>
+                        Только активные
+                    </FilterCheckbox>
+                </div>
+                <div class="col-md-2 mb-2">
+                    <FilterCheckbox
+                        id="is_direct"
+                        @change="handleCheckboxFilter"
+                    >
+                        Только прямые
+                    </FilterCheckbox>
                 </div>
             </Filter>
         </div>
@@ -63,114 +62,49 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body pb-0">
-                    <div class="table-responsive">
-                        <table v-if="state.retailers.length > 0"
-                               class="table table-bordered my-4 text-center align-middle text-nowrap"
-                               style="width: 100%;">
+                    <div v-if="filteredItems.length > 0" class="table-responsive">
+                        <table
+                            class="table table-bordered my-4 text-center align-middle text-nowrap"
+                            style="width: 100%;"
+                        >
                             <thead>
                             <tr>
-                                <ThSort
-                                    :id="'id'"
-                                    :order-column="orderColumn"
-                                    :order-direction="orderDirection"
-                                    :width='5'
-                                    sort-type="numeric"
-                                    @sortByColumn="applyFilterSort(
-                                        'id',
-                                        orderDirection === 'asc' ? 'desc' : 'asc',
-                                    )"
-                                >ID
-                                </ThSort>
-                                <ThSort
-                                    :id="'name'"
-                                    :order-column="orderColumn"
-                                    :order-direction="orderDirection"
-                                    class="text-start"
-                                    sort-type="alpha"
-                                    @sortByColumn="applyFilterSort(
-                                        'name',
-                                        orderDirection === 'asc' ? 'desc' : 'asc',
-                                        false,
-                                    )"
-                                >Название
-                                </ThSort>
-                                <ThSort
-                                    :id="'userId'"
-                                    :order-column="orderColumn"
-                                    :order-direction="orderDirection"
-                                    class="text-start"
-                                    sort-type="numeric"
-                                    @sortByColumn="applyFilterSort(
-                                        'userId',
-                                        orderDirection === 'asc' ? 'desc' : 'asc',
-                                    )"
-                                >Менеджер
-                                </ThSort>
-                                <ThSort
-                                    :id="'region'"
-                                    :order-column="orderColumn"
-                                    :order-direction="orderDirection"
-                                    class="text-start"
-                                    sort-type="alpha"
-                                    @sortByColumn="applyFilterSort(
-                                        'region',
-                                        orderDirection === 'asc' ? 'desc' : 'asc',
-                                        false,
-                                    )"
-                                >Регион
-                                </ThSort>
-                                <ThSort
-                                    :id="'city'"
-                                    :order-column="orderColumn"
-                                    :order-direction="orderDirection"
-                                    :width='15'
-                                    class="text-start"
-                                    sort-type="alpha"
-                                    @sortByColumn="applyFilterSort(
-                                        'city',
-                                        orderDirection === 'asc' ? 'desc' : 'asc',
-                                        false,
-                                    )"
-                                >Город
-                                </ThSort>
-                                <ThSort
-                                    :id="'isActive'"
-                                    :order-column="orderColumn"
-                                    :order-direction="orderDirection"
-                                    :width='12'
-                                    @sortByColumn="applyFilterSort(
-                                        'isActive',
-                                        orderDirection === 'asc' ? 'desc' : 'asc',
-                                    )"
-                                >Активный?
-                                </ThSort>
+                                <th scope="col" style="width: 5%;">ID</th>
+                                <th class="text-start" scope="col">Название ТС</th>
+                                <th class="text-start" scope="col">Тип ТС</th>
+                                <th class="text-start" scope="col">Контрагент</th>
+                                <th class="text-start" scope="col">Город</th>
+                                <th scope="col">Прямой контракт</th>
+                                <th scope="col">Активная?</th>
                                 <th scope="col" style="width: 10%;">Просмотр</th>
                                 <th scope="col" style="width: 10%;">Ред.</th>
                             </tr>
                             </thead>
                             <tbody>
-                            <tr v-for="retailer in state.retailers" :key="retailer.id">
-                                <th scope="row">{{ retailer.id }}</th>
-                                <td class="text-start" style="cursor: pointer;"
-                                    @click="showViewCustomerModal(retailer.id)">
-                                    {{ retailer.name }}
+                            <tr v-for="item in filteredItems" :key="item.id">
+                                <th scope="row">{{ item.id }}</th>
+                                <td class="text-start">
+                                    {{ item.name }}
                                 </td>
                                 <td class="text-start">
-                                    {{ retailer.user }}
+                                    {{ item.typeRU }}
                                 </td>
                                 <td class="text-start">
-                                    {{ retailer.region }}
+                                    ---
                                 </td>
                                 <td class="text-start">
-                                    {{ retailer.city }}
+                                    {{ item.city }}
                                 </td>
                                 <td>
-                                    <Badge :is-active="retailer.isActive"/>
+                                    <Badge :is-active="item.isDirect"/>
+                                </td>
+                                <td>
+                                    <Badge :is-active="item.isActive"/>
                                 </td>
                                 <td>
                                     <button
                                         class="btn btn-sm btn-primary"
-                                        @click="showViewModal(retailer.id)"
+                                        @click="showViewModal(item.id)"
                                     ><i class="bi bi-eye-fill"></i>
                                         View
                                     </button>
@@ -178,7 +112,7 @@
                                 <td>
                                     <button
                                         class="btn btn-sm btn-warning"
-                                        @click="editRetailerInit(retailer.id)"
+                                        @click="editRetailerInit(item.id)"
                                     ><i class="bi bi-pencil-square"></i>
                                         Edit
                                     </button>
@@ -186,11 +120,11 @@
                             </tr>
                             </tbody>
                         </table>
-                        <p v-else class="mt-3 text-center lead">
-                            {{ retailerStore.isContentLoading ? 'Подождите, загружаю...' : 'Записей не найдено...' }}
-                        </p>
                     </div>
-                    <p>Всего записей: <span class="fw-bold">{{ state.retailers.length }}</span></p>
+                    <p v-else class="mt-3 text-center lead">
+                        {{ retailerStore.isContentLoading ? 'Подождите, загружаю...' : 'Записей не найдено...' }}
+                    </p>
+                    <p>Всего записей: <span class="fw-bold">{{ filteredItems.length }}</span></p>
                 </div>
             </div>
         </div>
@@ -303,22 +237,21 @@
 </template>
 
 <script setup>
-import { onMounted, reactive, ref } from 'vue';
+import { computed, onMounted, reactive, ref, watch } from 'vue';
 import { useAlertStore } from '@/stores/alerts.js';
 import { useRetailerStore } from '@/stores/retailers.js';
-import ThSort from '@/components/core/ThSort.vue';
 import Button from '@/components/core/Button.vue';
 import Badge from '@/components/core/Badge.vue';
-import InputGroup from '@/components/core/InputGroup.vue';
-import SelectGroup from '@/components/core/SelectGroup.vue';
-import CheckboxGroup from '@/components/core/CheckboxGroup.vue';
+import FilterCheckbox from '@/components/core/FilterCheckbox.vue';
 import Modal from '@/components/Modal.vue';
 import Input from '@/components/core/Input.vue';
 import Label from '@/components/core/Label.vue';
 import Alert from '@/components/Alert.vue';
 import Filter from '@/components/core/Filter.vue';
+import SearchForm from '@/components/core/SearchForm.vue';
+import FilterRadios from '@/components/core/FilterRadios.vue';
 
-const retailerStore = useRetailerStore;
+const retailerStore = useRetailerStore();
 const alertStore = useAlertStore();
 
 const initialFormData = () => ({
@@ -339,12 +272,19 @@ const state = reactive({
     isEditing: false,
 });
 
+const searchFilter = ref('');
+const radioFilter = ref('');
+
 const searchBy = reactive({
     name: '',
-    userId: '',
-    regionId: '',
     city: '',
+    type: 'all',
     isActive: false,
+    isDirect: false,
+});
+
+watch(searchBy, (newValue, oldValue) => {
+    console.log(searchBy);
 });
 
 const orderColumn = ref('id');
@@ -363,7 +303,9 @@ onMounted(async () => {
 });
 
 const getRetailers = async () => {
-    await retailerStore.all();
+    const response = await retailerStore.all();
+    state.retailers = response.data;
+    // console.log(response);
     // applyFilterSort();
 };
 
@@ -389,6 +331,33 @@ const editRetailerInit = (id) => {
 
 const closeModal = () => {
     modalPopUp.hide();
+};
+
+const filteredItems = computed(() => {
+    let items = state.retailers;
+
+    if ( radioFilter.value && radioFilter.value !== 'all' ) {
+        items = state.retailers.filter(item => item.type === radioFilter.value);
+    }
+
+    if ( searchFilter.value !== '' ) {
+        items = state.retailers
+            .filter(item => item.name.toLowerCase().includes(searchFilter.value.toLowerCase()));
+    }
+
+    return items;
+});
+
+const handleSearch = (search) => {
+    searchFilter.value = search;
+};
+
+const handleRadioFilter = (filter) => {
+    radioFilter.value = filter;
+};
+
+const handleCheckboxFilter = (filter) => {
+    console.log(filter);
 };
 
 const saveRetailer = async () => {

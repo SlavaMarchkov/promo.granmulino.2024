@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Enums\Admin\RoleEnum;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Sanctum\HasApiTokens;
 
@@ -27,8 +28,8 @@ class Admin extends Authenticatable
     {
         return [
             'is_active' => 'boolean',
-            'is_super'  => 'boolean',
             'password'  => 'hashed',
+            'role' => RoleEnum::class,
         ];
     }
 }

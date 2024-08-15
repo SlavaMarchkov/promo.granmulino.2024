@@ -282,8 +282,8 @@ import { useAlertStore } from '@/stores/alerts.js';
 import { useRegionStore } from '@/stores/regions.js';
 import ThSort from '@/components/core/ThSort.vue';
 import Spinner from '@/components/core/Spinner.vue';
-import { arrFilter, arrSort } from '@/helpers/arrHandlers.js';
-import { resetSearchKeys } from '@/helpers/searchHandlers.js';
+// import { arrFilter, arrSort } from '@/helpers/arrHandlers.js';
+// import { resetSearchKeys } from '@/helpers/searchHandlers.js';
 
 const regionStore = useRegionStore();
 const alertStore = useAlertStore();
