@@ -10,7 +10,7 @@
             @input="handleInput"
         />
         <span class="input-group-text" style="cursor: pointer;"
-              @click="$emit('update:modelValue', '')"><i
+              @click="clearInput"><i
             class="bi bi-x-lg"></i></span>
     </div>
 </template>
@@ -36,6 +36,10 @@ const emit = defineEmits([
 
 const handleInput = (event) => {
     emit('update:modelValue', event.target.value);
+};
+
+const clearInput = () => {
+    emit('update:modelValue', '');
 };
 </script>
 
