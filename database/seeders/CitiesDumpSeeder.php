@@ -21,8 +21,8 @@ class CitiesDumpSeeder extends Seeder
                 'id'         => $city->id,
                 'name'       => $city->name,
                 'region_id'  => $city->region_id,
-                'created_at' => fake()->dateTimeInInterval('-5 years'),
-                'updated_at' => fake()->dateTimeInInterval('-3 years'),
+                'created_at' => $this->faker->dateTimeInInterval('-5 years'),
+                'updated_at' => $this->faker->dateTimeInInterval('-3 years'),
             ]);
         }
     }
