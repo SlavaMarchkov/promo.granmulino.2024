@@ -12,13 +12,12 @@ class RefreshCommand extends Command
 
     protected $description = 'Refreshing and seeding database';
 
-    public function handle()
-    : int
+    public function handle(): int
     {
-        if (app()->environment() === 'production') {
+        /* if (app()->environment() === 'production') {
             $this->error('No refresh database in production mode!');
             return self::FAILURE;
-        }
+        } */
 
         $this->call('migrate:fresh', [
             '--seed' => true,
