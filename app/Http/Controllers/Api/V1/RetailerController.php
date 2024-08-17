@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\ApiController;
 use App\Http\Requests\Retailer\StoreRequest;
 use App\Http\Resources\V1\RetailerCollection;
 use App\Http\Resources\V1\RetailerResource;
@@ -13,35 +13,42 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
-final class RetailerController extends Controller
+final class RetailerController extends ApiController
 {
     use AuthorizesRequests;
 
-    public function index()
-    : RetailerCollection
+    public function index(): RetailerCollection
     {
         // $this->authorize('viewAny', Retailer::class);
 
         $retailers = Retailer::query()
             ->with('city')
+            ->with('customer')
             ->get();
 
         return new RetailerCollection($retailers);
     }
 
-    public function store(StoreRequest $request)
-    : JsonResponse {
+    public function store(StoreRequest $request): JsonResponse
+    {
         // $this->authorize('create', Retailer::class);
 
-        return response()->json([
-            'item'    => new RetailerResource(Retailer::create($request->validated())),
+        $retailer = new RetailerResource(Retailer::create($request->validated()));
+        return $this->successResponse(
+            'success',
+            'Торговая сеть создана.',
+            $retailer,
+            Response::HTTP_CREATED,
+        );
+        /* return response()->json([
+            'item'    => ,
             'status'  => 'success',
             'message' => 'Торговая сеть создана.',
-        ], Response::HTTP_CREATED);
+        ], Response::HTTP_CREATED); */
     }
 
-    public function show(Retailer $retailer)
-    : RetailerResource {
+    public function show(Retailer $retailer): RetailerResource
+    {
         // $this->authorize('view', $retailer);
 
         return new RetailerResource($retailer);

@@ -23,7 +23,7 @@ export default {
             const { data } = await http.get(URL);
             this.setRetailers(data);
             return data;
-        } catch ( error ) {
+        } catch (error) {
             const alertStore = useAlertStore();
             alertStore.error(error);
         } finally {
@@ -36,7 +36,7 @@ export default {
         try {
             const { data } = await http.get(`${URL}/${id}`);
             return data;
-        } catch ( error ) {
+        } catch (error) {
             const alertStore = useAlertStore();
             alertStore.error(error);
         } finally {
@@ -51,7 +51,7 @@ export default {
             const { data } = await http.post(URL, formData);
             $toast.success(data.message);
             return data;
-        } catch ( error ) {
+        } catch (error) {
             const alertStore = useAlertStore();
             alertStore.error(error, true);
         } finally {
@@ -66,7 +66,7 @@ export default {
             const { data } = await http.put(`${URL}/${item.id}`, formData);
             $toast.success(data.message);
             return data;
-        } catch ( error ) {
+        } catch (error) {
             const alertStore = useAlertStore();
             alertStore.error(error, true);
         } finally {

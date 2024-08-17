@@ -6,6 +6,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Customer extends Model
 {
@@ -22,21 +23,23 @@ class Customer extends Model
         'is_active' => 'boolean',
     ];
 
-    public function region()
-    : BelongsTo
+    public function region(): BelongsTo
     {
         return $this->belongsTo(Region::class);
     }
 
-    public function city()
-    : BelongsTo
+    public function city(): BelongsTo
     {
         return $this->belongsTo(City::class);
     }
 
-    public function user()
-    : BelongsTo
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function retailers(): HasMany
+    {
+        return $this->hasMany(Retailer::class);
     }
 }

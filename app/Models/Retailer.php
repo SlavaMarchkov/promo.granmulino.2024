@@ -7,7 +7,6 @@ namespace App\Models;
 use App\Enums\Retailer\TypeEnum;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Retailer extends Model
 {
@@ -27,15 +26,13 @@ class Retailer extends Model
         'type' => TypeEnum::class,
     ];
 
-    public function customer()
-    : HasOne
+    public function customer(): BelongsTo
     {
-        return $this->hasOne(Customer::class);
+        return $this->belongsTo(Customer::class)->withDefault();
     }
 
-    public function city()
-    : BelongsTo
+    public function city(): BelongsTo
     {
-        return $this->belongsTo(City::class);
+        return $this->belongsTo(City::class)->withDefault();
     }
 }
