@@ -14,10 +14,10 @@ class RefreshCommand extends Command
 
     public function handle(): int
     {
-        /* if (app()->environment() === 'production') {
+        if (app()->environment() === 'production') {
             $this->error('No refresh database in production mode!');
             return self::FAILURE;
-        } */
+        }
 
         $this->call('migrate:fresh', [
             '--seed' => true,
