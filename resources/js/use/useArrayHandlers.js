@@ -17,6 +17,7 @@ export function useArrayHandlers() {
                 } else if (key === 'type') {
                     tempArr = tempArr.filter(item => item[key] === obj[key]);
                 } else {
+                    // TODO: TypeError: Cannot read properties of null (reading 'toLowerCase')
                     tempArr = tempArr.filter(item => item[key].toLowerCase().includes(obj[key].toLowerCase()));
                 }
             }

@@ -68,7 +68,7 @@
                                         {{ item.typeRU }}
                                     </td>
                                     <td class="text-start">
-                                        ---
+                                        {{ item.customer }}
                                     </td>
                                     <td class="text-start">
                                         {{ item.city }}
@@ -106,7 +106,7 @@
 
     <Modal id="modalPopUp" :close-func="closeModal" :custom-classes="['']">
         <template #title>
-            <span v-if="state.isEditing">Редактирование торговой сети <br><b>{{ state.retailer.name }}</b></span>
+            <span v-if="state.isEditing">Редактирование торговой сети <br>«<b>{{ state.retailer.name }}</b>»</span>
             <span v-else>Добавление торговой сети</span>
         </template>
         <template #body>
@@ -117,26 +117,27 @@
                     <Input id="name" v-model="state.retailer.name" placeholder="Например: Пятёрочка" type="text" />
                 </div>
                 <div class="col-12">
-                    <Label for="region_id" required>Регион</Label>
-                    <select id="region_id" v-model="state.retailer.regionId" class="form-select">
-                        <option disabled selected value="null">-- Выберите регион --</option>
-                        <option v-for="region in state.regions" :key="region.id" :value="region.id">{{ region.name }}
-                        </option>
-                    </select>
-                </div>
-                <div v-if="state.retailer.regionId" class="col-12">
-                    <Label for="city_id" required>Город</Label>
-                    <select id="city_id" v-model="state.retailer.cityId" class="form-select">
-                        <option disabled selected value="null">-- Выберите город --</option>
-                        <option v-for="city in state.cities" :key="city.id" :value="city.id">{{ city.name }}
+                    <Label for="customer_id" required>Контрагент</Label>
+                    <select id="customer_id" v-model="state.retailer.customerId" class="form-select">
+                        <option disabled selected value="null">-- Выберите дистрибутора, который поставляет в эту ТС --</option>
+                        <option v-for="customer in state.customers" :key="customer.id" :value="customer.id">{{ customer.name }}
                         </option>
                     </select>
                 </div>
                 <div class="col-12">
-                    <Label for="user_id" required>Менеджер для контрагента</Label>
-                    <select id="user_id" v-model="state.retailer.userId" class="form-select">
-                        <option disabled selected value="null">-- Выберите ФИО --</option>
-                        <option v-for="user in state.users" :key="user.id" :value="user.id">{{ user }}
+                    <Label for="type" required>Тип торговой сети</Label>
+                    <select id="type" v-model="state.retailer.type" class="form-select">
+                        <option disabled selected value="">-- Выберите тип торговой сети --</option>
+                        <option value="local">Локальная</option>
+                        <option value="regional">Региональная</option>
+                        <option value="federal">Федеральная</option>
+                    </select>
+                </div>
+                <div class="col-12">
+                    <Label for="city_id" required>Город</Label>
+                    <select id="city_id" v-model="state.retailer.cityId" class="form-select">
+                        <option disabled selected value="null">-- Выберите город, где находится штаб-квартира ТС --</option>
+                        <option v-for="city in state.cities" :key="city.id" :value="city.id">{{ city.name }}
                         </option>
                     </select>
                 </div>
@@ -147,10 +148,19 @@
                 </div>
                 <div class="col-12">
                     <div class="form-check">
+                        <input id="is-direct" v-model="state.retailer.isDirect" :checked="state.retailer.isDirect"
+                            class="form-check-input" type="checkbox">
+                        <label class="form-check-label" for="is-direct">
+                            Прямой контракт (да/нет)
+                        </label>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-check">
                         <input id="is-active" v-model="state.retailer.isActive" :checked="state.retailer.isActive"
                             class="form-check-input" type="checkbox">
                         <label class="form-check-label" for="is-active">
-                            ТС активная?
+                            ТС активная (да/нет)
                         </label>
                     </div>
                 </div>
@@ -170,6 +180,8 @@
 import { onMounted, reactive, ref, watch } from 'vue';
 import { useAlertStore } from '@/stores/alerts.js';
 import { useRetailerStore } from '@/stores/retailers.js';
+import { useCustomerStore } from '@/stores/customers.js';
+import { useCityStore } from '@/stores/cities.js';
 import { useArrayHandlers } from '@/use/useArrayHandlers.js';
 import Button from '@/components/core/Button.vue';
 import Badge from '@/components/core/Badge.vue';
@@ -183,6 +195,8 @@ import InputGroup from '@/components/core/InputGroup.vue';
 import RadioButton from '@/components/core/RadioButton.vue';
 
 const retailerStore = useRetailerStore();
+const customerStore = useCustomerStore();
+const cityStore = useCityStore();
 const alertStore = useAlertStore();
 const arrayHandlers = useArrayHandlers();
 
@@ -237,12 +251,14 @@ const searchBy = reactive({
 });
 
 const orderColumn = ref('id');
-let orderDirection = ref('asc');
+const orderDirection = ref('asc');
 
 let modalPopUp = null;
 
 onMounted(async () => {
     await getRetailers();
+    await getCustomers();
+    await getCities();
 
     modalPopUp = new bootstrap.Modal(document.getElementById('modalPopUp'));
     modalPopUp._element.addEventListener('hide.bs.modal', () => {
@@ -256,17 +272,19 @@ const getRetailers = async () => {
     state.retailers = arrayHandlers.filterArray(response.data, searchBy);
 };
 
+const getCustomers = async () => {
+    const response = await customerStore.all();
+    state.customers = response.data;
+};
 
-
-/*const getRegions = async () => {
-    const response = await regionStore.all();
-    state.regions = response.data;
-};*/
+const getCities = async () => {
+    const response = await cityStore.all();
+    state.cities = response.data;
+};
 
 const createRetailerInit = () => {
     alertStore.clear();
     state.isEditing = false;
-    state.retailers = [];
     modalPopUp.show();
 };
 
@@ -275,7 +293,6 @@ const editRetailerInit = (id) => {
     state.isEditing = true;
     modalPopUp.show();
     state.retailer = retailerStore.getRetailers.find(item => item.id === id);
-    // getCitiesForRegion(state.customer.regionId);
 };
 
 const closeModal = () => {
@@ -309,7 +326,7 @@ const saveRetailer = async () => {
             alertStore.clear();
             state.retailer = initialFormData();
             modalPopUp.hide();
-            resetSearchKeys(searchBy);
+            arrayHandlers.resetSearchKeys(searchBy);
             orderColumn.value = 'id';
             orderDirection.value = 'desc';
             await getRetailers();
