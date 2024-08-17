@@ -27,3 +27,5 @@ yarn-error.log
 
 admin-http.http
 http-client.env.json
+
+composer-setup.php
