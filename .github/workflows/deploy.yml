@@ -2,13 +2,10 @@ name: Deploy Laravel Project
 
 on:
   push:
-    branches: [ "master", 'develop' ]
-  pull_request:
-    branches: [ "develop" ]
+    branches: ["master", "develop"]
 
 jobs:
   deploy:
-
     runs-on: ubuntu-latest
 
     steps:

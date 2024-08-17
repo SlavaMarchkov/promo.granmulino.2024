@@ -10,8 +10,7 @@ use Illuminate\Support\Facades\File;
 
 class CitiesDumpSeeder extends Seeder
 {
-    public function run()
-    : void
+    public function run(): void
     {
         $file = database_path('dumps/cities.json');
         $json = File::get($file);
