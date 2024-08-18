@@ -8,9 +8,9 @@ use Symfony\Component\HttpFoundation\Response;
 class ApiController extends Controller
 {
     protected function successResponse(
+        $data,
         string $status = 'success',
         string $message = '',
-        $data,
         int $code = Response::HTTP_OK,
     ): JsonResponse {
         return response()->json([
@@ -21,9 +21,9 @@ class ApiController extends Controller
     }
 
     protected function errorResponse(
+        int $code,
         string $status = 'error',
         string $message = '',
-        int $code,
     ): JsonResponse {
         return response()->json([
             'status' => $status,

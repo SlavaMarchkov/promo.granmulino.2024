@@ -65,7 +65,11 @@
                                         {{ item.name }}
                                     </td>
                                     <td class="text-start">
-                                        {{ item.typeRU }}
+                                        <span
+                                            :class="['badge', 'bg-opacity-75', item.typeBgColor]"
+                                            :title="item.typeDescription"
+                                            style="font-size: 0.8em;"
+                                        >{{ item.label }}</span>
                                     </td>
                                     <td class="text-start">
                                         {{ item.customer }}

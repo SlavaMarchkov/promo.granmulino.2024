@@ -35,16 +35,11 @@ final class RetailerController extends ApiController
 
         $retailer = new RetailerResource(Retailer::create($request->validated()));
         return $this->successResponse(
+            $retailer,
             'success',
             'Торговая сеть создана.',
-            $retailer,
             Response::HTTP_CREATED,
         );
-        /* return response()->json([
-            'item'    => ,
-            'status'  => 'success',
-            'message' => 'Торговая сеть создана.',
-        ], Response::HTTP_CREATED); */
     }
 
     public function show(Retailer $retailer): RetailerResource
@@ -59,19 +54,10 @@ final class RetailerController extends ApiController
         // $this->authorize('update', $retailer);
 
         $retailer->update($request->validated());
-        return response()->json([
-            'item'    => new RetailerResource($retailer),
-            'status'  => 'success',
-            'message' => 'Торговая сеть обновлена.',
-        ], Response::HTTP_OK);
+        return $this->successResponse(
+            new RetailerResource($retailer),
+            'success',
+            'Торговая сеть обновлена.',
+        );
     }
-
-    /*public function destroy(Retailer $directRetailer)
-    {
-        $this->authorize('delete', $directRetailer);
-
-        $directRetailer->delete();
-
-        return response()->json();
-    }*/
 }
