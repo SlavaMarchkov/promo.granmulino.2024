@@ -62,13 +62,13 @@ const props = defineProps({
     },
     orderDirection: {
         type: String,
-        default: 'desc',
+        default: 'asc',
     },
-    width: Number,
     sortType: {
         type: String,
-        default: '',
+        default: 'numeric',
     },
+    width: Number,
 });
 
 const emit = defineEmits([

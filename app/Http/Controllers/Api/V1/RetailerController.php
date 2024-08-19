@@ -17,7 +17,8 @@ final class RetailerController extends ApiController
 {
     use AuthorizesRequests;
 
-    public function index(): RetailerCollection
+    public function index()
+    : JsonResponse
     {
         // $this->authorize('viewAny', Retailer::class);
 
@@ -26,7 +27,11 @@ final class RetailerController extends ApiController
             ->with('customer')
             ->get();
 
-        return new RetailerCollection($retailers);
+        return $this->successResponse(
+            new RetailerCollection($retailers),
+            'success',
+            'Получена коллекция Торговых сетей.',
+        );
     }
 
     public function store(StoreRequest $request): JsonResponse
@@ -34,6 +39,7 @@ final class RetailerController extends ApiController
         // $this->authorize('create', Retailer::class);
 
         $retailer = new RetailerResource(Retailer::create($request->validated()));
+
         return $this->successResponse(
             $retailer,
             'success',
@@ -54,6 +60,7 @@ final class RetailerController extends ApiController
         // $this->authorize('update', $retailer);
 
         $retailer->update($request->validated());
+
         return $this->successResponse(
             new RetailerResource($retailer),
             'success',

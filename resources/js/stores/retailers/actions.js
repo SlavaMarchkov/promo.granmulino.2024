@@ -14,7 +14,7 @@ const URL = '/retailers';
 
 export default {
     setRetailers({ data }) {
-        this.retailers = data;
+        this.retailers = data.data;
     },
 
     async all() {

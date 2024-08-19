@@ -1,4 +1,9 @@
+import { ref } from 'vue';
+
 export function useArrayHandlers() {
+    const orderColumn = ref('id');
+    const orderDirection = ref('asc');
+
     const resetSearchKeys = (obj) => {
         for (const key in obj) {
             obj[key] = (key.startsWith('is')) ? false : '';
@@ -17,8 +22,11 @@ export function useArrayHandlers() {
                 } else if (key === 'type') {
                     tempArr = tempArr.filter(item => item[key] === obj[key]);
                 } else {
-                    // TODO: TypeError: Cannot read properties of null (reading 'toLowerCase')
-                    tempArr = tempArr.filter(item => item[key].toLowerCase().includes(obj[key].toLowerCase()));
+                    tempArr = tempArr.filter(item => {
+                        if ( item[key] !== null ) {
+                            return item[key].toLowerCase().includes(obj[key].toLowerCase());
+                        }
+                    });
                 }
             }
         }
@@ -26,7 +34,9 @@ export function useArrayHandlers() {
         return tempArr;
     };
 
-    const sortArray = (tempArr, sort_by_numeric, direction, column) => {
+    const sortArray = (arr, sort_by_numeric, direction, column) => {
+        let tempArr = arr.slice();
+
         return tempArr.sort((a, b) => {
             if (sort_by_numeric) {
                 return direction === 'asc'
@@ -43,8 +53,31 @@ export function useArrayHandlers() {
         });
     };
 
+    const applyFilterSort = (
+        arr,
+        obj,
+        column = orderColumn.value,
+        direction = orderDirection.value,
+        sort_by_numeric = true,
+    ) => {
+
+        orderColumn.value = column;
+        orderDirection.value = direction;
+
+        let tempArr;
+
+        tempArr = filterArray(arr, obj);
+        tempArr = sortArray(tempArr, sort_by_numeric, direction, column);
+
+        return tempArr;
+    };
+
     return {
+        orderColumn,
+        orderDirection,
         resetSearchKeys,
         filterArray,
+        sortArray,
+        applyFilterSort,
     };
 }
