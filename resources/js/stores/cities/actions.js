@@ -12,7 +12,7 @@ const URL = '/admin/cities';
 
 export default {
     setCities({ data }) {
-        this.cities = data;
+        this.cities = data.data;
     },
 
     async all() {
@@ -20,6 +20,7 @@ export default {
         try {
             const { data } = await http.get(URL);
             this.setCities(data);
+            $toast.success(data.message);
             return data;
         } catch ( error ) {
             const alertStore = useAlertStore();

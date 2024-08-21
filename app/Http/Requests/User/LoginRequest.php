@@ -17,6 +17,23 @@ final class LoginRequest extends FormRequest
         ];
     }
 
+    public function attributes()
+    : array
+    {
+        return [
+            'email'    => 'Email',
+            'password' => 'Пароль',
+        ];
+    }
+
+    public function messages()
+    : array
+    {
+        return [
+            'required' => 'Поле ":attribute" нужно заполнить.',
+        ];
+    }
+
     public function authorize()
     : bool
     {

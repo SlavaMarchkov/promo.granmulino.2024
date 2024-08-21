@@ -73,6 +73,7 @@ http.interceptors.request.use(
 
 http.interceptors.response.use(
     (response) => response,
-    (err) => Promise.reject(responseErrorHandler(err)));
+    (err) => Promise.reject(responseErrorHandler(err)),
+);
 
 export default http;

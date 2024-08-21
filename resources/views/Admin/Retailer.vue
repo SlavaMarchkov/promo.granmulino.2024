@@ -274,8 +274,6 @@ const searchBy = reactive({
     isDirect: false,
 });
 
-
-
 let modalPopUp = null;
 
 onMounted(async () => {
@@ -292,19 +290,17 @@ onMounted(async () => {
 
 const getRetailers = async () => {
     const { data } = await retailerStore.all();
-    // state.retailers = arrayHandlers.filterArray(data.data, searchBy);
-    state.retailers = arrayHandlers.applyFilterSort(data.data, searchBy);
-    //arrayHandlers.filterArray(data.data, searchBy);
+    state.retailers = arrayHandlers.filterArray(data.data, searchBy);
 };
 
 const getCustomers = async () => {
-    const response = await customerStore.all();
-    state.customers = response.data;
+    const { data } = await customerStore.all();
+    state.customers = data.data;
 };
 
 const getCities = async () => {
-    const response = await cityStore.all();
-    state.cities = response.data;
+    const { data } = await cityStore.all();
+    state.cities = data.data;
 };
 
 const createRetailerInit = () => {
@@ -317,7 +313,7 @@ const editRetailerInit = (id) => {
     alertStore.clear();
     state.isEditing = true;
     modalPopUp.show();
-    state.retailer = retailerStore.getRetailers.find(item => item.id === id);
+    state.retailer = retailerStore.oneRetailer(id);
 };
 
 const closeModal = () => {

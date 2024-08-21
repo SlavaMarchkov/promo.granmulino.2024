@@ -19,7 +19,11 @@ final class AuthController extends Controller
         $credentials = $request->validated();
 
         if (Auth::guard('admin')->attempt(
-            ['email' => $credentials['email'], 'password' => $credentials['password'], 'is_active' => true]
+            [
+                'email'     => $credentials['email'],
+                'password'  => $credentials['password'],
+                'is_active' => true,
+            ]
         )) {
             $admin = Admin::where('email', $credentials['email'])->first();
 

@@ -27,8 +27,8 @@ class RetailerResource extends JsonResource
 
             'customerId' => $this->customer_id,
             'cityId'     => $this->city_id,
-            'customer'        => $this->customer->name,
-            'city'            => $this->city->name,
+            'customer' => $this->customer->name,
+            'city'     => $this->city->name,
         ];
     }
 }

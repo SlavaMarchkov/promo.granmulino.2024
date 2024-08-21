@@ -1,6 +1,7 @@
 import http from '@/api/http.js';
 import router from '@/router/index.js';
 import { useAlertStore } from '@/stores/alerts.js';
+import { resetAllPiniaStores } from '@/use/useResetStore.js';
 import { useToast } from 'vue-toast-notification';
 import 'vue-toast-notification/dist/theme-bootstrap.css';
 
@@ -30,16 +31,13 @@ export default {
 
         try {
             const { data } = await http.get(path);
-            this.setUser(data.data);
-            localStorage.setItem('user', JSON.stringify(data.data));
+            this.setUser(data);
+            localStorage.setItem('user', JSON.stringify(data));
         } catch ( error ) {
             this.setToken(null);
             this.setUser(null);
             localStorage.removeItem('token');
             localStorage.removeItem('user');
-
-            const alertStore = useAlertStore();
-            alertStore.error(error);
         }
     },
 
@@ -77,22 +75,6 @@ export default {
         }
     },
 
-    async register(credentials) {
-        this.isLoading = true;
-        try {
-            const response = await http.post('/register', credentials);
-            $toast.success(response.data.message);
-            await router.push({
-                name: 'Login',
-            });
-        } catch ( error ) {
-            const alertStore = useAlertStore();
-            alertStore.error(error);
-        } finally {
-            this.isLoading = false;
-        }
-    },
-
     async logout() {
         try {
             const response = await http.post('/logout');
@@ -103,6 +85,9 @@ export default {
             localStorage.removeItem('user');
 
             $toast.success(response.data.message);
+
+            resetAllPiniaStores();
+
             await router.push({
                 name: 'Login',
             });
@@ -127,6 +112,9 @@ export default {
             localStorage.removeItem('user');
 
             $toast.success(response.data.message);
+
+            resetAllPiniaStores();
+
             await router.push({
                 name: 'AdminLogin',
             });

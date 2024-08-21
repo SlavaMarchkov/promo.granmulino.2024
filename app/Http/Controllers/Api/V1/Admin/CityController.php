@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\V1\Admin;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\ApiController;
 use App\Http\Requests\City\StoreRequest;
 use App\Http\Requests\City\UpdateRequest;
 use App\Http\Resources\V1\CityCollection;
@@ -13,13 +13,20 @@ use App\Models\City;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
-final class CityController extends Controller
+final class CityController extends ApiController
 {
     public function index()
-    : CityCollection
+    : JsonResponse
     {
-        $cities = City::with('region')->get();
-        return new CityCollection($cities);
+        $cities = City::query()
+            ->with('region')
+            ->get();
+
+        return $this->successResponse(
+            new CityCollection($cities),
+            'success',
+            'Получена коллекция Городов.',
+        );
     }
 
     public function store(StoreRequest $request)

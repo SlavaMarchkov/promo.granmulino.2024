@@ -2,7 +2,6 @@ import http from '@/api/http.js';
 import { useAlertStore } from '@/stores/alerts.js';
 import { useToast } from 'vue-toast-notification';
 import 'vue-toast-notification/dist/theme-bootstrap.css';
-// import { convertCase, toSnakeCase } from '@/helpers/case.js';
 
 const $toast = useToast({
     position: 'top-right',
@@ -12,7 +11,7 @@ const URL = '/customers';
 
 export default {
     setCustomers({ data }) {
-        this.customers = data;
+        this.customers = data.data;
     },
 
     async all() {
@@ -20,6 +19,7 @@ export default {
         try {
             const { data } = await http.get(URL);
             this.setCustomers(data);
+            $toast.success(data.message);
             return data;
         } catch ( error ) {
             const alertStore = useAlertStore();

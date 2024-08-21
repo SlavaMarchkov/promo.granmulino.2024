@@ -23,10 +23,10 @@ class CustomerResource extends JsonResource
             'cityId'   => $this->city_id,
             'userId'   => $this->user_id,
 
-            'regionCode' => $this->region?->code,
-            'region'     => $this->region?->name,
-            'city'       => $this->city?->name,
-            'user'       => $this->user?->full_name,
+            'regionCode' => $this->region->code,
+            'region'     => $this->region->name,
+            'city'       => $this->city->name,
+            'user'       => $this->user->full_name,
         ];
     }
 }
