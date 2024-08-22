@@ -123,7 +123,11 @@
         </div>
     </div>
 
-    <Modal id="modalPopUp" :close-func="closeModal" :custom-classes="['']">
+    <Modal
+        id="modalPopUp"
+        :close-func="closeModal"
+        :custom-classes="['']"
+    >
         <template #title>
             <span v-if="state.isEditing">Редактирование торговой сети <br>«<b>{{ state.retailer.name }}</b>»</span>
             <span v-else>Добавление торговой сети</span>
@@ -356,6 +360,4 @@ const saveRetailer = async () => {
         }
     }
 };
-
-
 </script>

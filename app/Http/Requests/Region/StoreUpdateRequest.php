@@ -17,6 +17,29 @@ final class StoreUpdateRequest extends FormRequest
         ];
     }
 
+    public function attributes()
+    : array
+    {
+        return [
+            'code' => 'Код',
+            'name' => 'Название',
+        ];
+    }
+
+    public function messages()
+    : array
+    {
+        return [
+            'required' => 'Поле ":attribute" нужно заполнить.',
+            'min'      => [
+                'string' => 'Поле ":attribute" должно иметь не менее :min символов.',
+            ],
+            'max'      => [
+                'string' => 'Поле ":attribute" должно иметь не более :max символов.',
+            ],
+        ];
+    }
+
     public function authorize()
     : bool
     {

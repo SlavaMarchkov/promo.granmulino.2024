@@ -21,9 +21,9 @@
 </template>
 
 <script setup>
-import AdminHeader from '@/components/AdminHeader.vue';
-import Sidebar from '@/components/Sidebar.vue';
-import Footer from '@/components/Footer.vue';
+import AdminHeader from '@/components/layout/AdminHeader.vue';
+import Sidebar from '@/components/layout/Sidebar.vue';
+import Footer from '@/components/layout/Footer.vue';
 
 const menuItems = [
     {

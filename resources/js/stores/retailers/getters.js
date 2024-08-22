@@ -12,5 +12,6 @@ export default {
      *
      * @returns {function(*): Object}
      */
-    oneRetailer: (state) => id => state.retailers.find(item => item.id === id),
+    oneRetailer: (state) => id => state.retailers
+        .find(item => item.id === id),
 };
