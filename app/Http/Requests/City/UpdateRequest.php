@@ -23,6 +23,27 @@ final class UpdateRequest extends FormRequest
         ];
     }
 
+    public function attributes()
+    : array
+    {
+        return [
+            'name'      => 'Город',
+            'region_id' => 'Регион',
+        ];
+    }
+
+    public function messages()
+    : array
+    {
+        return [
+            'required'    => 'Поле ":attribute" нужно заполнить.',
+            'max'         => [
+                'string' => 'Поле ":attribute" должно иметь не более :max символов.',
+            ],
+            'name.unique' => 'Такой город уже есть в базе данных.'
+        ];
+    }
+
     public function authorize()
     : bool
     {

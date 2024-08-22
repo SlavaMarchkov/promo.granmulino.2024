@@ -65,18 +65,18 @@
                                 <td>
                                     {{ item.citiesCount }}
                                 </td>
-                                <td>
-                                    <button class="btn btn-sm btn-primary" @click="viewRegionInit(item.id)"><i
-                                        class="bi bi-eye-fill"></i>
-                                        View
-                                    </button>
-                                </td>
-                                <td>
-                                    <button class="btn btn-sm btn-warning" @click="editRegionInit(item.id)"><i
-                                        class="bi bi-pencil-square"></i>
-                                        Edit
-                                    </button>
-                                </td>
+                                <TdButton
+                                    :id="item.id"
+                                    intent="view"
+                                    @initModal="viewRegionInit"
+                                >View
+                                </TdButton>
+                                <TdButton
+                                    :id="item.id"
+                                    intent="edit"
+                                    @initModal="editRegionInit"
+                                >Edit
+                                </TdButton>
                             </tr>
                             </tbody>
                         </table>
@@ -96,7 +96,7 @@
         :custom-classes="['']"
     >
         <template #title>
-            <span v-if="state.isEditing">Редактирование региона <br>«<b>{{ state.region.name }}</b>»</span>
+            <span v-if="state.isEditing">Редактирование региона <br><b>{{ state.region.name }}</b></span>
             <span v-else>Добавление региона</span>
         </template>
         <template #body>
@@ -137,7 +137,7 @@
         :custom-classes="['']"
     >
         <template #title>
-            Просмотр региона <br>«<b>{{ state.region.name }}</b>»
+            Просмотр региона <br><b>{{ state.region.name }}</b>
         </template>
         <template #body>
             <div v-if="state.region.citiesCount > 0">
@@ -167,18 +167,19 @@
 </template>
 
 <script setup>
-import Input from '@/components/core/Input.vue';
-import Label from '@/components/core/Label.vue';
+import Input from '@/components/form/Input.vue';
+import Label from '@/components/form/Label.vue';
 import Button from '@/components/core/Button.vue';
 import Alert from '@/components/Alert.vue';
 import { computed, onMounted, reactive, watch } from 'vue';
 import { useAlertStore } from '@/stores/alerts.js';
 import { useRegionStore } from '@/stores/regions.js';
 import { useArrayHandlers } from '@/use/useArrayHandlers.js';
-import InputGroup from '@/components/core/InputGroup.vue';
+import InputGroup from '@/components/form/InputGroup.vue';
 import Filter from '@/components/core/Filter.vue';
 import Modal from '@/components/Modal.vue';
-import ThSort from '@/components/core/ThSort.vue';
+import ThSort from '@/components/table/ThSort.vue';
+import TdButton from '@/components/table/TdButton.vue';
 
 const regionStore = useRegionStore();
 const alertStore = useAlertStore();
@@ -230,20 +231,25 @@ const getRegions = async () => {
 const createRegionInit = () => {
     alertStore.clear();
     state.isEditing = false;
+    state.region = initialFormData();
     modalPopUp.show();
 };
 
 const editRegionInit = (id) => {
     alertStore.clear();
     state.isEditing = true;
-    modalPopUp.show();
     state.region = regionStore.oneRegion(id);
+    modalPopUp.show();
 };
 
 const viewRegionInit = (id) => {
     viewModalPopUp = new bootstrap.Modal(document.getElementById('viewModalPopUp'));
-    viewModalPopUp.show();
     state.region = regionStore.oneRegion(id);
+    viewModalPopUp.show();
+    viewModalPopUp._element.addEventListener('hide.bs.modal', () => {
+        state.isEditing = false;
+        state.region = initialFormData();
+    });
 };
 
 const closeModal = () => {
