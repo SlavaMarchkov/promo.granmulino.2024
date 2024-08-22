@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\V1\Admin;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\ApiController;
 use App\Http\Requests\City\StoreRequest;
 use App\Http\Requests\City\UpdateRequest;
 use App\Http\Resources\V1\CityCollection;
@@ -13,22 +13,32 @@ use App\Models\City;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
-final class CityController extends Controller
+final class CityController extends ApiController
 {
     public function index()
-    : CityCollection
+    : JsonResponse
     {
-        $cities = City::with('region')->get();
-        return new CityCollection($cities);
+        $cities = City::query()
+            ->with('region')
+            ->get();
+
+        return $this->successResponse(
+            new CityCollection($cities),
+            'success',
+            __('crud.cities.all'),
+        );
     }
 
     public function store(StoreRequest $request)
     : JsonResponse {
-        return response()->json([
-            'item'    => new CityResource(City::create($request->validated())),
-            'status'  => 'success',
-            'message' => 'Город создан.',
-        ], Response::HTTP_CREATED);
+        $city = new CityResource(City::create($request->validated()));
+
+        return $this->successResponse(
+            $city,
+            'success',
+            __('crud.cities.created'),
+            Response::HTTP_CREATED,
+        );
     }
 
     public function show(City $city)
@@ -39,17 +49,20 @@ final class CityController extends Controller
     public function update(UpdateRequest $request, City $city)
     : JsonResponse {
         $city->update($request->validated());
-        return response()->json([
-            'item'    => new CityResource($city),
-            'status'  => 'success',
-            'message' => 'Город обновлён.',
-        ], Response::HTTP_OK);
+
+        return $this->successResponse(
+            new CityResource($city),
+            'success',
+            __('crud.cities.updated'),
+        );
     }
 
     public function destroy(City $city)
-    {
+    : JsonResponse {
         $city->delete();
 
-        return response()->json();
+        return response()->json([
+            'message' => __('crud.cities.deleted'),
+        ]);
     }
 }

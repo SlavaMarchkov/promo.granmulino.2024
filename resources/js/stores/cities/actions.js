@@ -2,17 +2,19 @@ import http from '@/api/http.js';
 import { useAlertStore } from '@/stores/alerts.js';
 import { useToast } from 'vue-toast-notification';
 import 'vue-toast-notification/dist/theme-bootstrap.css';
-// import { convertCase, toSnakeCase } from '@/helpers/case.js';
+import { useConvertCase } from '@/use/useConvertCase.js';
 
 const $toast = useToast({
     position: 'top-right',
 });
 
+const { makeConvertibleObject, toSnake } = useConvertCase();
+
 const URL = '/admin/cities';
 
 export default {
     setCities({ data }) {
-        this.cities = data;
+        this.cities = data.data;
     },
 
     async all() {
@@ -20,6 +22,7 @@ export default {
         try {
             const { data } = await http.get(URL);
             this.setCities(data);
+            $toast.success(data.message);
             return data;
         } catch ( error ) {
             const alertStore = useAlertStore();
@@ -32,6 +35,7 @@ export default {
     async one(id) {
         this.isCardLoading = true;
         try {
+            // TODO - show one item
             const { data } = await http.get(`${URL}/${id}`);
             return data;
         } catch ( error ) {
@@ -44,7 +48,7 @@ export default {
 
     async save(item) {
         this.isButtonDisabled = true;
-        const formData = convertCase(item, toSnakeCase);
+        const formData = makeConvertibleObject(item, toSnake);
         try {
             const { data } = await http.post(URL, formData);
             $toast.success(data.message);
@@ -59,7 +63,7 @@ export default {
 
     async update(item) {
         this.isButtonDisabled = true;
-        const formData = convertCase(item, toSnakeCase);
+        const formData = makeConvertibleObject(item, toSnake);
         try {
             const { data } = await http.put(`${URL}/${item.id}`, formData);
             $toast.success(data.message);

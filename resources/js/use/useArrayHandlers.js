@@ -1,8 +1,26 @@
+import { reactive } from 'vue';
+
 export function useArrayHandlers() {
+    const sortBy = reactive({
+        column: 'id',
+        asc: true,
+        numeric: true,
+    });
+
     const resetSearchKeys = (obj) => {
         for (const key in obj) {
             obj[key] = (key.startsWith('is')) ? false : '';
         }
+    };
+
+    const resetSortKeys = (
+        column = 'id',
+        asc = true,
+        numeric = true,
+    ) => {
+        sortBy.column = column;
+        sortBy.asc = asc;
+        sortBy.numeric = numeric;
     };
 
     const filterArray = (arr, obj) => {
@@ -17,8 +35,11 @@ export function useArrayHandlers() {
                 } else if (key === 'type') {
                     tempArr = tempArr.filter(item => item[key] === obj[key]);
                 } else {
-                    // TODO: TypeError: Cannot read properties of null (reading 'toLowerCase')
-                    tempArr = tempArr.filter(item => item[key].toLowerCase().includes(obj[key].toLowerCase()));
+                    tempArr = tempArr.filter(item => {
+                        if ( item[key] !== null ) {
+                            return item[key].toLowerCase().includes(obj[key].toLowerCase());
+                        }
+                    });
                 }
             }
         }
@@ -26,17 +47,33 @@ export function useArrayHandlers() {
         return tempArr;
     };
 
-    const sortArray = (tempArr, sort_by_numeric, direction, column) => {
-        return tempArr.sort((a, b) => {
-            if (sort_by_numeric) {
-                return direction === 'asc'
-                    ? a[column] - b[column]
-                    : b[column] - a[column];
-            } else {
-                const fa = a[column].toLowerCase();
-                const fb = b[column].toLowerCase();
+    const setSort = (
+        key = 'id',
+        sort_by_numeric = true,
+    ) => {
+        sortBy.numeric = sort_by_numeric;
+        if ( sortBy.column === key ) {
+            if ( sortBy.asc === true ) sortBy.asc = false;
+            else sortBy.asc = sortBy.asc === false;
+        } else {
+            sortBy.column = key;
+            sortBy.asc = false;
+        }
+    };
 
-                return direction === 'asc'
+    const sortArray = (arr) => {
+        let tempArr = arr.slice();
+
+        return tempArr.sort((a, b) => {
+            if ( sortBy.numeric ) {
+                return sortBy.asc
+                    ? a[sortBy.column] - b[sortBy.column]
+                    : b[sortBy.column] - a[sortBy.column];
+            } else {
+                const fa = a[sortBy.column].toLowerCase();
+                const fb = b[sortBy.column].toLowerCase();
+
+                return sortBy.asc
                     ? fa.localeCompare(fb)
                     : fb.localeCompare(fa);
             }
@@ -44,7 +81,11 @@ export function useArrayHandlers() {
     };
 
     return {
+        sortBy,
+        setSort,
         resetSearchKeys,
+        resetSortKeys,
         filterArray,
+        sortArray,
     };
 }

@@ -13,6 +13,7 @@ class AdminResource extends JsonResource
 {
     public function toArray(Request $request)
     : array {
+        parent::$wrap = null; // TODO: check for UserResource
         return [
             'id'         => $this->id,
             'name'       => $this->name,

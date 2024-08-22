@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\ApiController;
 use App\Http\Requests\Customer\StoreRequest;
 use App\Http\Requests\Customer\UpdateRequest;
 use App\Http\Resources\V1\CustomerCollection;
@@ -13,12 +13,19 @@ use App\Models\Customer;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
-final class CustomerController extends Controller
+final class CustomerController extends ApiController
 {
     public function index()
-    : CustomerCollection
+    : JsonResponse
     {
-        return new CustomerCollection(Customer::all());
+        $customers = Customer::query()
+            ->get();
+
+        return $this->successResponse(
+            new CustomerCollection($customers),
+            'success',
+            'Получена коллекция Контрагентов.',
+        );
     }
 
     public function store(StoreRequest $request)

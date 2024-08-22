@@ -11,14 +11,16 @@ use Illuminate\Http\Resources\Json\JsonResource;
 /** @mixin Retailer */
 class RetailerResource extends JsonResource
 {
-    public function toArray(Request $request): array
-    {
+    public function toArray(Request $request)
+    : array {
         return [
-            'id'          => $this->id,
-            'name'        => $this->name,
-            'type'        => $this->type,
-            'typeRU' => $this->type->toText(),
-            'description' => $this->description,
+            'id'              => $this->id,
+            'name'            => $this->name,
+            'type'            => $this->type,
+            'label'           => $this->type->label(),
+            'typeDescription' => $this->type->description(),
+            'typeBgColor'     => $this->type->backgroundColor(),
+            'description'     => $this->description,
 
             'isActive' => $this->is_active,
             'isDirect' => $this->is_direct,

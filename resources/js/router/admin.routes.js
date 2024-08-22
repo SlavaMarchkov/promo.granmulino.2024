@@ -6,6 +6,7 @@ import {
     Layout,
     Product,
     Region,
+    RegionView,
     Report,
     Retailer,
     User,
@@ -37,6 +38,14 @@ export default {
             component: Region,
             meta: {
                 title: 'Регионы',
+            },
+        },
+        {
+            path: 'regions/:id',
+            name: 'Region.View',
+            component: RegionView,
+            meta: {
+                title: 'Просмотр региона',
             },
         },
         {

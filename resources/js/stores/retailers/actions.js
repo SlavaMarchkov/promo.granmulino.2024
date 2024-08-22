@@ -14,7 +14,7 @@ const URL = '/retailers';
 
 export default {
     setRetailers({ data }) {
-        this.retailers = data;
+        this.retailers = data.data;
     },
 
     async all() {
@@ -22,8 +22,9 @@ export default {
         try {
             const { data } = await http.get(URL);
             this.setRetailers(data);
+            $toast.success(data.message);
             return data;
-        } catch (error) {
+        } catch ( error ) {
             const alertStore = useAlertStore();
             alertStore.error(error);
         } finally {
@@ -36,9 +37,6 @@ export default {
         try {
             const { data } = await http.get(`${URL}/${id}`);
             return data;
-        } catch (error) {
-            const alertStore = useAlertStore();
-            alertStore.error(error);
         } finally {
             this.isCardLoading = false;
         }
@@ -51,9 +49,6 @@ export default {
             const { data } = await http.post(URL, formData);
             $toast.success(data.message);
             return data;
-        } catch (error) {
-            const alertStore = useAlertStore();
-            alertStore.error(error, true);
         } finally {
             this.isButtonDisabled = false;
         }
@@ -66,9 +61,6 @@ export default {
             const { data } = await http.put(`${URL}/${item.id}`, formData);
             $toast.success(data.message);
             return data;
-        } catch (error) {
-            const alertStore = useAlertStore();
-            alertStore.error(error, true);
         } finally {
             this.isButtonDisabled = false;
         }

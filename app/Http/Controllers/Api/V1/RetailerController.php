@@ -17,7 +17,8 @@ final class RetailerController extends ApiController
 {
     use AuthorizesRequests;
 
-    public function index(): RetailerCollection
+    public function index()
+    : JsonResponse
     {
         // $this->authorize('viewAny', Retailer::class);
 
@@ -26,7 +27,11 @@ final class RetailerController extends ApiController
             ->with('customer')
             ->get();
 
-        return new RetailerCollection($retailers);
+        return $this->successResponse(
+            new RetailerCollection($retailers),
+            'success',
+            'Получена коллекция Торговых сетей.',
+        );
     }
 
     public function store(StoreRequest $request): JsonResponse
@@ -34,17 +39,13 @@ final class RetailerController extends ApiController
         // $this->authorize('create', Retailer::class);
 
         $retailer = new RetailerResource(Retailer::create($request->validated()));
+
         return $this->successResponse(
+            $retailer,
             'success',
             'Торговая сеть создана.',
-            $retailer,
             Response::HTTP_CREATED,
         );
-        /* return response()->json([
-            'item'    => ,
-            'status'  => 'success',
-            'message' => 'Торговая сеть создана.',
-        ], Response::HTTP_CREATED); */
     }
 
     public function show(Retailer $retailer): RetailerResource
@@ -59,19 +60,11 @@ final class RetailerController extends ApiController
         // $this->authorize('update', $retailer);
 
         $retailer->update($request->validated());
-        return response()->json([
-            'item'    => new RetailerResource($retailer),
-            'status'  => 'success',
-            'message' => 'Торговая сеть обновлена.',
-        ], Response::HTTP_OK);
+
+        return $this->successResponse(
+            new RetailerResource($retailer),
+            'success',
+            'Торговая сеть обновлена.',
+        );
     }
-
-    /*public function destroy(Retailer $directRetailer)
-    {
-        $this->authorize('delete', $directRetailer);
-
-        $directRetailer->delete();
-
-        return response()->json();
-    }*/
 }
