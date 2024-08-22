@@ -41,6 +41,7 @@ final class RegionController extends ApiController
         );
     }
 
+    // TODO: how to show one item
     public function show(Region $region)
     : JsonResponse {
         $foundRegion = Region::query()
@@ -78,6 +79,7 @@ final class RegionController extends ApiController
     public function destroy(Region $region)
     : JsonResponse {
         $region->delete();
+
         return response()->json([
             'message' => __('crud.regions.deleted'),
         ]);

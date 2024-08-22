@@ -6,4 +6,12 @@ export default {
      * @returns {Array}
      */
     getCities: (state) => state.cities,
+
+    /**
+     * Возвращает одну запись по ID
+     *
+     * @returns {function(*): Object}
+     */
+    oneCity: (state) => id => state.cities
+        .find(item => item.id === id),
 };

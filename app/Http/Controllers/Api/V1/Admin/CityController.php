@@ -25,17 +25,20 @@ final class CityController extends ApiController
         return $this->successResponse(
             new CityCollection($cities),
             'success',
-            'Получена коллекция Городов.',
+            __('crud.cities.all'),
         );
     }
 
     public function store(StoreRequest $request)
     : JsonResponse {
-        return response()->json([
-            'item'    => new CityResource(City::create($request->validated())),
-            'status'  => 'success',
-            'message' => 'Город создан.',
-        ], Response::HTTP_CREATED);
+        $city = new CityResource(City::create($request->validated()));
+
+        return $this->successResponse(
+            $city,
+            'success',
+            __('crud.cities.created'),
+            Response::HTTP_CREATED,
+        );
     }
 
     public function show(City $city)
@@ -46,17 +49,20 @@ final class CityController extends ApiController
     public function update(UpdateRequest $request, City $city)
     : JsonResponse {
         $city->update($request->validated());
-        return response()->json([
-            'item'    => new CityResource($city),
-            'status'  => 'success',
-            'message' => 'Город обновлён.',
-        ], Response::HTTP_OK);
+
+        return $this->successResponse(
+            new CityResource($city),
+            'success',
+            __('crud.cities.updated'),
+        );
     }
 
     public function destroy(City $city)
-    {
+    : JsonResponse {
         $city->delete();
 
-        return response()->json();
+        return response()->json([
+            'message' => __('crud.cities.deleted'),
+        ]);
     }
 }

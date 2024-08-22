@@ -17,6 +17,26 @@ final class StoreRequest extends FormRequest
         ];
     }
 
+    public function attributes()
+    : array
+    {
+        return [
+            'name'      => 'Город',
+            'region_id' => 'Регион',
+        ];
+    }
+
+    public function messages()
+    : array
+    {
+        return [
+            'required' => 'Поле ":attribute" нужно заполнить.',
+            'max'      => [
+                'string' => 'Поле ":attribute" должно иметь не более :max символов.',
+            ],
+        ];
+    }
+
     public function authorize()
     : bool
     {
