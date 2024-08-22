@@ -56,18 +56,18 @@
                                 <td class="text-start">
                                     {{ item.regionName }}
                                 </td>
-                                <td>
-                                    <button class="btn btn-sm btn-primary" @click="viewCityInit(item.id)"><i
-                                        class="bi bi-eye-fill"></i>
-                                        View
-                                    </button>
-                                </td>
-                                <td>
-                                    <button class="btn btn-sm btn-warning" @click="editCityInit(item.id)"><i
-                                        class="bi bi-pencil-square"></i>
-                                        Edit
-                                    </button>
-                                </td>
+                                <TdButton
+                                    :id="item.id"
+                                    intent="view"
+                                    @initModal="viewCityInit"
+                                >View
+                                </TdButton>
+                                <TdButton
+                                    :id="item.id"
+                                    intent="edit"
+                                    @initModal="editCityInit"
+                                >Edit
+                                </TdButton>
                             </tr>
                             </tbody>
                         </table>
@@ -87,7 +87,7 @@
         :custom-classes="['']"
     >
         <template #title>
-            <span v-if="state.isEditing">Редактирование города <br>«<b>{{ state.city.name }}</b>»</span>
+            <span v-if="state.isEditing">Редактирование города <b>{{ state.city.name }}</b></span>
             <span v-else>Добавление города</span>
         </template>
         <template #body>
@@ -131,9 +131,12 @@
         :custom-classes="['']"
     >
         <template #title>
-            Просмотр города <br>«<b>{{ state.city.name }}</b>»
+            Просмотр города <b>{{ state.city.name }}</b>
         </template>
         <template #body>
+            <pre>
+                {{ state.city }}
+            </pre>
             <!--            <div v-if="state.region.citiesCount > 0">
                             <p>Всего городов в регионе: <span class="fw-bold">{{ state.region.citiesCount }}</span></p>
                             <table class="table table-bordered text-center align-middle text-nowrap"
@@ -150,9 +153,9 @@
                                 </tbody>
                             </table>
                         </div>-->
-            <div v-else>
-                <p class="mb-0">Регион пустой. Наполните регион городами во вкладке <b>Справочники | Города</b>.</p>
-            </div>
+            <!--            <div v-else>
+                            <p class="mb-0">Регион пустой. Наполните регион городами во вкладке <b>Справочники | Города</b>.</p>
+                        </div>-->
         </template>
         <template #footer>
             <Button class="btn btn-light"></Button>
@@ -161,8 +164,8 @@
 </template>
 
 <script setup>
-import Input from '@/components/core/Input.vue';
-import Label from '@/components/core/Label.vue';
+import Input from '@/components/form/Input.vue';
+import Label from '@/components/form/Label.vue';
 import Button from '@/components/core/Button.vue';
 import Alert from '@/components/Alert.vue';
 import { computed, onMounted, reactive, watch } from 'vue';
@@ -170,10 +173,11 @@ import { useAlertStore } from '@/stores/alerts.js';
 import { useCityStore } from '@/stores/cities.js';
 import { useRegionStore } from '@/stores/regions.js';
 import { useArrayHandlers } from '@/use/useArrayHandlers.js';
-import InputGroup from '@/components/core/InputGroup.vue';
+import InputGroup from '@/components/form/InputGroup.vue';
 import Filter from '@/components/core/Filter.vue';
 import Modal from '@/components/Modal.vue';
-import ThSort from '@/components/core/ThSort.vue';
+import ThSort from '@/components/table/ThSort.vue';
+import TdButton from '@/components/table/TdButton.vue';
 
 const cityStore = useCityStore();
 const regionStore = useRegionStore();
@@ -215,7 +219,7 @@ onMounted(async () => {
     modalPopUp = new bootstrap.Modal(document.getElementById('modalPopUp'));
     modalPopUp._element.addEventListener('hide.bs.modal', () => {
         state.isEditing = false;
-        state.region = initialFormData();
+        state.city = initialFormData();
     });
 });
 
@@ -232,20 +236,26 @@ const getRegions = async () => {
 const createCityInit = () => {
     alertStore.clear();
     state.isEditing = false;
+    state.city = initialFormData();
     modalPopUp.show();
 };
 
 const editCityInit = (id) => {
     alertStore.clear();
     state.isEditing = true;
-    modalPopUp.show();
     state.city = cityStore.oneCity(id);
+    modalPopUp.show();
 };
 
+// TODO: make view of the city
 const viewCityInit = (id) => {
     viewModalPopUp = new bootstrap.Modal(document.getElementById('viewModalPopUp'));
-    viewModalPopUp.show();
     state.city = cityStore.oneCity(id);
+    viewModalPopUp.show();
+    viewModalPopUp._element.addEventListener('hide.bs.modal', () => {
+        state.isEditing = false;
+        state.city = initialFormData();
+    });
 };
 
 const closeModal = () => {

@@ -34,6 +34,7 @@ final class StoreRequest extends FormRequest
             'max'      => [
                 'string' => 'Поле ":attribute" должно иметь не более :max символов.',
             ],
+            'name.unique' => 'Такой город уже есть в базе данных.'
         ];
     }
 
