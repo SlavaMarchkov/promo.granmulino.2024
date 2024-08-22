@@ -1,81 +1,81 @@
 <template>
     <th
+        v-if="sortable"
         scope="col"
-        :style="{ width: props.width + '%' }"
-        :class="props.orderColumn === props.id ? 'table-active' : ''"
+        :class="[
+            sortByColumn ? 'table-active' : '',
+            isNumeric ? '' : 'text-start'
+        ]"
+        :style="{ width: width + '%' }"
+        style="cursor: pointer;"
+        @click="handleClick(column, isNumeric)"
     >
-        <div @click="handleClick(props.id)" style="cursor: pointer;">
-            <slot/>
-            <i
-                :class="[
+        <slot/>
+        <template v-if="sortByColumn">
+            <span v-if="sortByAsc === true">
+                <i :class="[
                     'bi',
                     'ms-1',
-                    props.sortType === 'numeric' ?
-                    {
-                        'bi-sort-numeric-down-alt':
-                            props.orderDirection === 'desc' &&
-                            props.orderColumn === props.id,
-                        'bi-sort-numeric-up':
-                            props.orderDirection !== '' &&
-                            props.orderDirection !== 'desc' &&
-                            props.orderColumn === props.id,
-                        'bi-three-dots-vertical opacity-25':
-                            props.orderColumn !== props.id,
-                    } : props.sortType === 'alpha' ?
-                    {
-                        'bi-sort-alpha-down-alt':
-                            props.orderDirection === 'desc' &&
-                            props.orderColumn === props.id,
-                        'bi-sort-alpha-up':
-                            props.orderDirection !== '' &&
-                            props.orderDirection !== 'desc' &&
-                            props.orderColumn === props.id,
-                        'bi-three-dots-vertical opacity-25':
-                            props.orderColumn !== props.id,
-                    } :
-                    {
-                        'bi-sort-up':
-                            props.orderDirection === 'desc' &&
-                            props.orderColumn === props.id,
-                        'bi-sort-down-alt':
-                            props.orderDirection !== '' &&
-                            props.orderDirection !== 'desc' &&
-                            props.orderColumn === props.id,
-                        'bi-three-dots-vertical opacity-25':
-                            props.orderColumn !== props.id,
-                    },
-                ]"
-            ></i>
-        </div>
+                    isNumeric
+                        ? 'bi-sort-numeric-up'
+                        : 'bi-sort-alpha-up'
+                ]"></i>
+            </span>
+            <span v-else-if="sortByAsc === false">
+                <i :class="[
+                    'bi',
+                    'ms-1',
+                    isNumeric
+                        ? 'bi-sort-numeric-down-alt'
+                        : 'bi-sort-alpha-down-alt'
+                ]"></i>
+            </span>
+        </template>
+        <template v-else>
+            <i class="bi ms-1 bi-three-dots-vertical opacity-25"></i>
+        </template>
+    </th>
+    <th
+        v-else
+        :style="{ width: width + '%' }"
+        scope="col"
+    >
+        <slot/>
     </th>
 </template>
 
 <script setup>
 const props = defineProps({
-    id: {
+    sortable: {
+        type: Boolean,
+        default: false,
+    },
+    column: {
         type: String,
         default: 'id',
     },
-    orderColumn: {
-        type: String,
-        default: 'id',
+    sortByColumn: {
+        type: Boolean,
+        default: false,
     },
-    orderDirection: {
-        type: String,
-        default: 'asc',
+    sortByAsc: {
+        type: Boolean,
+        default: true,
     },
-    sortType: {
-        type: String,
-        default: 'numeric',
+    isNumeric: {
+        type: Boolean,
+        default: true,
     },
-    width: Number,
+    width: {
+        type: Number,
+    },
 });
 
 const emit = defineEmits([
-    'sortByColumn',
+    'setSort',
 ]);
 
-const handleClick = (column) => {
-    emit('sortByColumn', column);
+const handleClick = (column, is_num) => {
+    emit('setSort', column, is_num);
 };
 </script>

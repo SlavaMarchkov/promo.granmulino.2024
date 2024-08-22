@@ -25,7 +25,7 @@ final class RegionController extends ApiController
         return $this->successResponse(
             new RegionCollection($regions),
             'success',
-            'Получена коллекция Регионов.',
+            __('crud.regions.all'),
         );
     }
 
@@ -36,7 +36,7 @@ final class RegionController extends ApiController
         return $this->successResponse(
             $region,
             'success',
-            'Регион создан.',
+            __('crud.regions.created'),
             Response::HTTP_CREATED,
         );
     }
@@ -53,13 +53,13 @@ final class RegionController extends ApiController
             return $this->successResponse(
                 new RegionResource($foundRegion),
                 'success',
-                'Получен один Регион.',
+                __('crud.regions.one'),
             );
         } else {
             return $this->errorResponse(
                 Response::HTTP_NOT_FOUND,
                 'error',
-                'Регион с ID = ' . $region->id . ' не найден!',
+                __('crud.regions.not_found', $region->id),
             );
         }
     }
@@ -71,7 +71,7 @@ final class RegionController extends ApiController
         return $this->successResponse(
             new RegionResource($region),
             'success',
-            'Регион обновлён.',
+            __('crud.regions.updated'),
         );
     }
 
@@ -79,7 +79,7 @@ final class RegionController extends ApiController
     : JsonResponse {
         $region->delete();
         return response()->json([
-            'message' => 'Регион удалён.',
+            'message' => __('crud.regions.deleted'),
         ]);
     }
 }

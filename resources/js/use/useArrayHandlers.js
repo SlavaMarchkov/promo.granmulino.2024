@@ -1,13 +1,26 @@
-import { ref } from 'vue';
+import { reactive } from 'vue';
 
 export function useArrayHandlers() {
-    const orderColumn = ref('id');
-    const orderDirection = ref('asc');
+    const sortBy = reactive({
+        column: 'id',
+        asc: true,
+        numeric: true,
+    });
 
     const resetSearchKeys = (obj) => {
         for (const key in obj) {
             obj[key] = (key.startsWith('is')) ? false : '';
         }
+    };
+
+    const resetSortKeys = (
+        column = 'id',
+        asc = true,
+        numeric = true,
+    ) => {
+        sortBy.column = column;
+        sortBy.asc = asc;
+        sortBy.numeric = numeric;
     };
 
     const filterArray = (arr, obj) => {
@@ -34,50 +47,45 @@ export function useArrayHandlers() {
         return tempArr;
     };
 
-    const sortArray = (arr, sort_by_numeric, direction, column) => {
+    const setSort = (
+        key = 'id',
+        sort_by_numeric = true,
+    ) => {
+        sortBy.numeric = sort_by_numeric;
+        if ( sortBy.column === key ) {
+            if ( sortBy.asc === true ) sortBy.asc = false;
+            else sortBy.asc = sortBy.asc === false;
+        } else {
+            sortBy.column = key;
+            sortBy.asc = false;
+        }
+    };
+
+    const sortArray = (arr) => {
         let tempArr = arr.slice();
 
         return tempArr.sort((a, b) => {
-            if (sort_by_numeric) {
-                return direction === 'asc'
-                    ? a[column] - b[column]
-                    : b[column] - a[column];
+            if ( sortBy.numeric ) {
+                return sortBy.asc
+                    ? a[sortBy.column] - b[sortBy.column]
+                    : b[sortBy.column] - a[sortBy.column];
             } else {
-                const fa = a[column].toLowerCase();
-                const fb = b[column].toLowerCase();
+                const fa = a[sortBy.column].toLowerCase();
+                const fb = b[sortBy.column].toLowerCase();
 
-                return direction === 'asc'
+                return sortBy.asc
                     ? fa.localeCompare(fb)
                     : fb.localeCompare(fa);
             }
         });
     };
 
-    const applyFilterSort = (
-        arr,
-        obj,
-        column = orderColumn.value,
-        direction = orderDirection.value,
-        sort_by_numeric = true,
-    ) => {
-
-        orderColumn.value = column;
-        orderDirection.value = direction;
-
-        let tempArr;
-
-        tempArr = filterArray(arr, obj);
-        tempArr = sortArray(tempArr, sort_by_numeric, direction, column);
-
-        return tempArr;
-    };
-
     return {
-        orderColumn,
-        orderDirection,
+        sortBy,
+        setSort,
         resetSearchKeys,
+        resetSortKeys,
         filterArray,
         sortArray,
-        applyFilterSort,
     };
 }

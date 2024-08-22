@@ -24,21 +24,29 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body pb-0">
-                    <div v-if="state.regions.length > 0" class="table-responsive">
+                    <div v-if="filteredItems.length > 0" class="table-responsive">
                         <table class="table table-bordered my-4 text-center align-middle text-nowrap"
                                style="width: 100%;">
                             <thead>
                             <tr>
-                                <th scope="col">ID</th>
-                                <th class="text-start" scope="col">Название региона</th>
-                                <th class="text-start" scope="col">Код региона</th>
-                                <th scope="col">Количество городов</th>
-                                <th scope="col" style="width: 10%;">Просмотр</th>
-                                <th scope="col" style="width: 10%;">Ред.</th>
+                                <template
+                                    v-for="{ column, label, sortable, is_num, width } in thFields"
+                                    :key="column"
+                                >
+                                    <ThSort
+                                        :is-numeric="is_num"
+                                        :sort-by-asc="arrayHandlers.sortBy.asc"
+                                        :sort-by-column="arrayHandlers.sortBy.column === column"
+                                        :sortable="sortable"
+                                        :width="width"
+                                        @setSort="arrayHandlers.setSort(column, is_num)"
+                                    >{{ label }}
+                                    </ThSort>
+                                </template>
                             </tr>
                             </thead>
                             <tbody>
-                            <tr v-for="item in state.regions" :key="item.id">
+                            <tr v-for="item in filteredItems" :key="item.id">
                                 <th scope="row">
                                     {{ item.id }}
                                 </th>
@@ -76,7 +84,7 @@
                     <p v-else class="mt-3 text-center lead">
                         {{ regionStore.isContentLoading ? 'Подождите, загружаю...' : 'Записей не найдено...' }}
                     </p>
-                    <p>Всего записей: <span class="fw-bold">{{ state.regions.length }}</span></p>
+                    <p>Всего записей: <span class="fw-bold">{{ filteredItems.length }}</span></p>
                 </div>
             </div>
         </div>
@@ -163,13 +171,14 @@ import Input from '@/components/core/Input.vue';
 import Label from '@/components/core/Label.vue';
 import Button from '@/components/core/Button.vue';
 import Alert from '@/components/Alert.vue';
-import { onMounted, reactive, watch } from 'vue';
+import { computed, onMounted, reactive, watch } from 'vue';
 import { useAlertStore } from '@/stores/alerts.js';
 import { useRegionStore } from '@/stores/regions.js';
 import { useArrayHandlers } from '@/use/useArrayHandlers.js';
 import InputGroup from '@/components/core/InputGroup.vue';
 import Filter from '@/components/core/Filter.vue';
 import Modal from '@/components/Modal.vue';
+import ThSort from '@/components/core/ThSort.vue';
 
 const regionStore = useRegionStore();
 const alertStore = useAlertStore();
@@ -186,13 +195,19 @@ const state = reactive({
     isEditing: false,
 });
 
+const thFields = [
+    { column: 'id', label: 'ID', sortable: true, is_num: true, width: 6 },
+    { column: 'name', label: 'Название региона', sortable: true, is_num: false },
+    { column: 'code', label: 'Код региона', sortable: true, is_num: false },
+    { column: 'citiesCount', label: 'Количество городов', sortable: true, is_num: true },
+    { column: 'view', label: 'Просмотр', width: 10 },
+    { column: 'edit', label: 'Ред.', width: 10 },
+];
+
 const searchBy = reactive({
     code: '',
     name: '',
 });
-
-let orderColumn = 'id';
-let orderDirection = 'asc';
 
 let modalPopUp = null;
 let viewModalPopUp = null;
@@ -209,7 +224,7 @@ onMounted(async () => {
 
 const getRegions = async () => {
     const { data } = await regionStore.all();
-    state.regions = arrayHandlers.filterArray(data.data, searchBy);
+    state.regions = data.data;
 };
 
 const createRegionInit = () => {
@@ -240,18 +255,12 @@ const closeViewModal = () => {
 };
 
 watch(searchBy, () => {
-    state.regions = arrayHandlers.filterArray(
-        regionStore.getRegions,
-        searchBy,
-    );
+    state.regions = arrayHandlers.filterArray(regionStore.getRegions, searchBy);
 });
 
 const clearSearch = () => {
     arrayHandlers.resetSearchKeys(searchBy);
-    /* applyFilterSort(
-        (orderColumn.value = 'id'),
-        (orderDirection.value = 'asc'),
-    ); */
+    arrayHandlers.resetSortKeys();
 };
 
 const saveRegion = async () => {
@@ -269,10 +278,17 @@ const saveRegion = async () => {
             state.region = initialFormData();
             modalPopUp.hide();
             arrayHandlers.resetSearchKeys(searchBy);
-            //orderColumn.value = 'id';
-            //orderDirection.value = 'desc';
+            arrayHandlers.resetSortKeys('id', false);
             await getRegions();
         }
     }
 };
+
+const sortedItems = computed(() => {
+    return arrayHandlers.sortArray(state.regions);
+});
+
+const filteredItems = computed(() => {
+    return arrayHandlers.filterArray(sortedItems.value, searchBy);
+});
 </script>
