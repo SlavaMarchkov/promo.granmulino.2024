@@ -16,6 +16,8 @@
     scroll-behavior: smooth;
     --bs-body-font-size: 1rem;
     --bs-body-color: #141414;
+    --bd-callout-link: 10, 88, 202;
+    --bd-callout-code-color: #ab296a;
 }
 
 body {
@@ -1158,4 +1160,51 @@ legend {
     margin-top: -1.5rem;
     font-size: 20px;
     background-color: #f1f1f1;
+}
+
+/*--------------------------------------------------------------
+# Callout
+--------------------------------------------------------------*/
+.bd-callout {
+    --bs-link-color-rgb: var(--bd-callout-link);
+    --bs-code-color: var(--bd-callout-code-color);
+    padding: 1.25rem;
+    margin-bottom: 1.25rem;
+    color: var(--bd-callout-color, inherit);
+    background-color: var(--bd-callout-bg, var(--bs-gray-100));
+    border-left: 0.25rem solid var(--bd-callout-border, var(--bs-gray-300))
+}
+
+.bd-callout h4 {
+    margin-bottom: .25rem
+}
+
+.bd-callout > :last-child {
+    margin-bottom: 0
+}
+
+.bd-callout + .bd-callout {
+    margin-top: -.25rem
+}
+
+.bd-callout .highlight {
+    background-color: rgba(0, 0, 0, 0.05)
+}
+
+.bd-callout-info {
+    --bd-callout-color: var(--bs-info-text-emphasis);
+    --bd-callout-bg: var(--bs-info-bg-subtle);
+    --bd-callout-border: var(--bs-info-border-subtle)
+}
+
+.bd-callout-warning {
+    --bd-callout-color: var(--bs-warning-text-emphasis);
+    --bd-callout-bg: var(--bs-warning-bg-subtle);
+    --bd-callout-border: var(--bs-warning-border-subtle)
+}
+
+.bd-callout-danger {
+    --bd-callout-color: var(--bs-danger-text-emphasis);
+    --bd-callout-bg: var(--bs-danger-bg-subtle);
+    --bd-callout-border: var(--bs-danger-border-subtle)
 }

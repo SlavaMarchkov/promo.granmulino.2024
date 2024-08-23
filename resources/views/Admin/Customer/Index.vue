@@ -53,12 +53,12 @@
                     </InputGroup>
                 </div>
                 <div class="col-md-4 mb-2">
-                    <CheckboxGroup
+                    <Checkbox
                         id="is_active"
                         v-model="searchBy.isActive"
                     >
                         Показать только активных
-                    </CheckboxGroup>
+                    </Checkbox>
                 </div>
             </Filter>
         </div>
@@ -312,17 +312,15 @@ import { useCustomerStore } from '@/stores/customers.js';
 import { useUserStore } from '@/stores/users.js';
 import { useRegionStore } from '@/stores/regions.js';
 import { useAlertStore } from '@/stores/alerts.js';
-// import { arrFilter, arrSort } from '@/helpers/arrHandlers.js';
-// import { resetSearchKeys } from '@/helpers/searchHandlers.js';
-import ThSort from '@/components/core/ThSort.vue';
+import ThSort from '@/components/table/ThSort.vue';
 import Button from '@/components/core/Button.vue';
 import Badge from '@/components/core/Badge.vue';
-import InputGroup from '@/components/core/InputGroup.vue';
-import SelectGroup from '@/components/core/SelectGroup.vue';
-// import CheckboxGroup from '@/components/core/CheckboxGroup.vue';
+import InputGroup from '@/components/form/InputGroup.vue';
+import SelectGroup from '@/components/form/SelectGroup.vue';
+import Checkbox from '@/components/form/Checkbox.vue';
 import Modal from '@/components/Modal.vue';
-import Input from '@/components/core/Input.vue';
-import Label from '@/components/core/Label.vue';
+import Input from '@/components/form/Input.vue';
+import Label from '@/components/form/Label.vue';
 import Alert from '@/components/Alert.vue';
 import Filter from '@/components/core/Filter.vue';
 

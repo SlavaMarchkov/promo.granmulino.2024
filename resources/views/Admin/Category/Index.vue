@@ -140,34 +140,41 @@
     <Modal
         id="viewModalPopUp"
         :close-func="closeViewModal"
-        :custom-classes="['']"
+        :custom-classes="['modal-dialog-scrollable']"
     >
         <template #title>
             Просмотр группы товаров <b>{{ state.category.name }}</b>
         </template>
         <template #body>
-            <pre>
-                {{ state.category }}
-            </pre>
-            <!--            <div v-if="state.region.citiesCount > 0">
-                            <p>Всего городов в регионе: <span class="fw-bold">{{ state.region.citiesCount }}</span></p>
-                            <table class="table table-bordered text-center align-middle text-nowrap"
-                                   style="width: 100%;">
-                                <tbody>
-                                <tr>
-                                    <th>ID</th>
-                                    <th class="text-start">Название города</th>
-                                </tr>
-                                <tr v-for="city in state.region.cities" :key="city.id">
-                                    <td>{{ city.id }}</td>
-                                    <td class="text-start">{{ city.name }}</td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>-->
-            <!--            <div v-else>
-                            <p class="mb-0">Регион пустой. Наполните регион городами во вкладке <b>Справочники | Города</b>.</p>
-                        </div>-->
+            <div v-if="state.category.productsCount > 0">
+                <div class="bd-callout bd-callout-info">
+                    <p>Кол-во SKU в группе: <strong>{{ state.category.productsCount }}</strong></p>
+                </div>
+                <table class="table table-bordered text-center align-middle text-nowrap"
+                       style="width: 100%;">
+                    <thead class="table-light">
+                    <tr>
+                        <th>ID</th>
+                        <th class="text-start">Формат</th>
+                        <th>Вес, г</th>
+                        <th>Цена, руб.</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr v-for="product in state.category.products" :key="product.id">
+                        <td>{{ product.id }}</td>
+                        <td class="text-start">{{ product.name }}</td>
+                        <td>{{ product.weight }}</td>
+                        <td>{{ product.price }}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div v-else class="bd-callout bd-callout-warning">
+                <h5>В группе нет продукции</h5>
+                <hr>
+                <p>Наполните группу товаров ассортиментом во вкладке <b>Справочники | Ассортимент</b>.</p>
+            </div>
         </template>
         <template #footer>
             <Button class="btn btn-light"></Button>
@@ -198,6 +205,7 @@ const arrayHandlers = useArrayHandlers();
 
 const initialFormData = () => ({
     name: '',
+    isActive: true,
 });
 
 const state = reactive({
