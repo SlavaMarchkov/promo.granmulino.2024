@@ -31,7 +31,7 @@ final class AuthController extends Controller
             // Notification::send($administrators, new AdminNewUserNotification($user));
 
             $admin->tokens()->delete();
-            $token = $admin->createToken("Token for admin: $admin->name", ['*'], now()->addMinutes(20));
+            $token = $admin->createToken("Token for admin: $admin->name", ['*'], now()->addHours(24));
 
             $admin->update([
                 'logged_in_at' => now(),

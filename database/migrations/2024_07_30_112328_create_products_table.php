@@ -14,6 +14,7 @@ return new class extends Migration {
             $table->id();
 
             $table->string('name', 64);
+            $table->unsignedSmallInteger('weight')->comment('Вес в граммах')->default(400);
             $table->decimal('price', 5, 2)->default(0.00);
             $table->boolean('is_active')->default(true);
             $table->string('image')->nullable();

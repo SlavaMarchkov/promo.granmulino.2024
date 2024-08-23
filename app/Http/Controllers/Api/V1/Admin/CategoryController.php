@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\V1\Admin;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\ApiController;
 use App\Http\Requests\Category\StoreUpdateRequest;
 use App\Http\Resources\V1\CategoryCollection;
 use App\Http\Resources\V1\CategoryResource;
@@ -13,10 +13,10 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
-final class CategoryController extends Controller
+final class CategoryController extends ApiController
 {
     public function index()
-    : CategoryCollection
+    : JsonResponse
     {
         $categories = Category::withCount([
             'products' => function (Builder $query) {
@@ -26,18 +26,26 @@ final class CategoryController extends Controller
             ->with('products')
             ->get();
 
-        return new CategoryCollection($categories);
+        return $this->successResponse(
+            new CategoryCollection($categories),
+            'success',
+            __('crud.categories.all'),
+        );
     }
 
     public function store(StoreUpdateRequest $request)
     : JsonResponse {
-        return response()->json([
-            'item'    => new CategoryResource(Category::create($request->validated())),
-            'status'  => 'success',
-            'message' => 'Группа товаров создана.',
-        ], Response::HTTP_CREATED);
+        $category = new CategoryResource(Category::create($request->validated()));
+
+        return $this->successResponse(
+            $category,
+            'success',
+            __('crud.categories.created'),
+            Response::HTTP_CREATED,
+        );
     }
 
+    // TODO: how to show one item
     public function show(Category $category)
     : CategoryResource {
         return new CategoryResource($category);
@@ -46,16 +54,22 @@ final class CategoryController extends Controller
     public function update(StoreUpdateRequest $request, Category $category)
     : JsonResponse {
         $category->update($request->validated());
-        return response()->json([
-            'item'    => new CategoryResource($category),
-            'status'  => 'success',
-            'message' => 'Группа товаров обновлена.',
-        ], Response::HTTP_OK);
+
+        return $this->successResponse(
+            new CategoryResource($category),
+            'success',
+            __('crud.categories.updated'),
+        );
     }
 
     public function destroy(Category $category)
     {
         $category->delete();
-        return response()->json();
+
+        return $this->successResponse(
+            new CategoryResource($category),
+            'success',
+            __('crud.categories.deleted'),
+        );
     }
 }

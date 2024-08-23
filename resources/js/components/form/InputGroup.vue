@@ -16,7 +16,7 @@
 </template>
 
 <script setup>
-import Input from '@/components/core/Input.vue';
+import Input from '@/components/form/Input.vue';
 
 const props = defineProps({
     modelValue: {

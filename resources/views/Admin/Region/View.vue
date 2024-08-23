@@ -21,7 +21,7 @@
 import { computed, onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { useRegionStore } from '@/stores/regions.js';
-import PageNotFound from './PageNotFound.vue';
+import PageNotFound from '../../Admin/PageNotFound.vue';
 import Alert from '@/components/Alert.vue';
 
 const route = useRoute();

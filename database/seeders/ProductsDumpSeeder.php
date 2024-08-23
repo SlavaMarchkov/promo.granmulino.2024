@@ -20,6 +20,7 @@ class ProductsDumpSeeder extends Seeder
         foreach ($products as $product) {
             Product::create([
                 'name'        => $product->name,
+                'weight' => 400,
                 'price'       => 0.00,
                 'is_active'   => $product->is_active,
                 'category_id' => $product->group_id,
