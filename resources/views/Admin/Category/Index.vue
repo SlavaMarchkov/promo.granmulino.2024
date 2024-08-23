@@ -260,7 +260,6 @@ const editCategoryInit = (id) => {
     modalPopUp.show();
 };
 
-// TODO: make view of the category
 const viewCategoryInit = (id) => {
     viewModalPopUp = new bootstrap.Modal(document.getElementById('viewModalPopUp'));
     state.category = categoryStore.oneCategory(id);

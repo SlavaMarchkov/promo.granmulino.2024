@@ -9,29 +9,36 @@
     <div class="row mb-2">
         <div class="col-12">
             <Filter @reset-filter="clearSearch">
-                <div class="col-md-4 mb-2">
+                <div class="col-md-3 mb-2">
                     <InputGroup
                         v-model="searchBy.name"
                         placeholder="Поиск по названию"
                     >Продукт
                     </InputGroup>
                 </div>
-                <div class="col-md-4 mb-2">
+                <div class="col-md-3 mb-2">
+                    <SelectGroup
+                        v-model="searchBy.categoryId"
+                        :chooseFrom="'-- Выберите группу --'"
+                        :items="state.categories"
+                    >Группа
+                    </SelectGroup>
+                </div>
+                <div class="col-md-2 mb-2">
                     <InputGroup
-                        v-model="searchBy.name"
+                        v-model="searchBy.weight"
+                        placeholder="Поиск по весу"
+                    >Вес
+                    </InputGroup>
+                </div>
+                <div class="col-md-2 mb-2">
+                    <InputGroup
+                        v-model="searchBy.price"
                         placeholder="Поиск по цене"
                     >Цена
                     </InputGroup>
                 </div>
-                <div class="col-md-4 mb-2">
-                    <SelectGroup
-                        v-model="searchBy.categoryId"
-                        :chooseFrom="'-- Выберите группу товаров --'"
-                        :items="state.categories"
-                    >Группа товаров
-                    </SelectGroup>
-                </div>
-                <div class="col-md-4 mb-2">
+                <div class="col-md-2 mb-2">
                     <Checkbox
                         id="is_active"
                         v-model="searchBy.isActive"
@@ -74,6 +81,9 @@
                                 </th>
                                 <td class="text-start">
                                     {{ item.name }}
+                                </td>
+                                <td>
+                                    {{ item.weight }}
                                 </td>
                                 <td>
                                     {{ item.price }}
@@ -275,6 +285,7 @@ const initialFormData = () => ({
     weight: '',
     price: '',
     categoryId: '',
+    isActive: true,
 });
 
 const state = reactive({
