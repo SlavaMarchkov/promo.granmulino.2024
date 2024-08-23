@@ -17,6 +17,8 @@ return new class extends Migration {
             $table->string('name', 64);
             $table->enum('type', ['local', 'regional', 'federal'])->default(TypeEnum::LOCAL->value);
             $table->text('description')->nullable();
+            $table->json('data')->nullable();
+
             $table->boolean('is_active')->default(true);
             $table->boolean('is_direct')->default(false);
 

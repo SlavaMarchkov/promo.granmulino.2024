@@ -16,6 +16,7 @@ return new class extends Migration {
             $table->string('name', 64);
             $table->boolean('is_active')->default(true);
             $table->text('description')->nullable();
+            $table->json('data')->nullable();
 
             $table->foreignId('region_id')->nullable();
             $table->foreignId('city_id')->nullable();

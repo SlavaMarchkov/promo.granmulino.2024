@@ -14,8 +14,10 @@ return new class extends Migration {
         Schema::create('cities', function (Blueprint $table) {
             $table->id();
 
-            $table->string('name', 64)->unique();
+            $table->string('name', 64);
             $table->foreignIdFor(Region::class)->nullable();
+
+            $table->unique(['region_id', 'name'], 'city_in_region_unique');
 
             $table->timestamps();
         });

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\V1\Admin;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\ApiController;
 use App\Http\Requests\Product\StoreUpdateRequest;
 use App\Http\Resources\V1\ProductCollection;
 use App\Http\Resources\V1\ProductResource;
@@ -12,23 +12,33 @@ use App\Models\Product;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
-final class ProductController extends Controller
+final class ProductController extends ApiController
 {
     public function index()
-    : ProductCollection
+    : JsonResponse
     {
-        return new ProductCollection(Product::all());
+        $products = Product::all();
+
+        return $this->successResponse(
+            new ProductCollection($products),
+            'success',
+            __('crud.products.all'),
+        );
     }
 
     public function store(StoreUpdateRequest $request)
     : JsonResponse {
-        return response()->json([
-            'item'    => new ProductResource(Product::create($request->validated())),
-            'status'  => 'success',
-            'message' => 'Продукт создан.',
-        ], Response::HTTP_CREATED);
+        $product = new ProductResource(Product::create($request->validated()));
+
+        return $this->successResponse(
+            $product,
+            'success',
+            __('crud.products.created'),
+            Response::HTTP_CREATED,
+        );
     }
 
+    // TODO: how to show one item
     public function show(Product $product)
     : ProductResource {
         return new ProductResource($product);
@@ -38,16 +48,22 @@ final class ProductController extends Controller
     : JsonResponse
     {
         $product->update($request->validated());
-        return response()->json([
-            'item'    => new ProductResource($product),
-            'status'  => 'success',
-            'message' => 'Продукт обновлён.',
-        ], Response::HTTP_OK);
+
+        return $this->successResponse(
+            new ProductResource($product),
+            'success',
+            __('crud.products.updated'),
+        );
     }
 
     public function destroy(Product $product)
     {
         $product->delete();
-        return response()->json();
+
+        return $this->successResponse(
+            new ProductResource($product),
+            'success',
+            __('crud.products.deleted'),
+        );
     }
 }

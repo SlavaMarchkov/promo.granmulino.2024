@@ -41,6 +41,7 @@ final class CityController extends ApiController
         );
     }
 
+    // TODO: realize
     public function show(City $city)
     : CityResource {
         return new CityResource($city);
@@ -57,12 +58,15 @@ final class CityController extends ApiController
         );
     }
 
+    // TODO: check
     public function destroy(City $city)
     : JsonResponse {
         $city->delete();
 
-        return response()->json([
-            'message' => __('crud.cities.deleted'),
-        ]);
+        return $this->successResponse(
+            new CityResource($city),
+            'success',
+            __('crud.cities.deleted'),
+        );
     }
 }

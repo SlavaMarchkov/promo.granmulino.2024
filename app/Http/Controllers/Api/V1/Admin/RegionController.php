@@ -76,12 +76,15 @@ final class RegionController extends ApiController
         );
     }
 
+    // TODO: check
     public function destroy(Region $region)
     : JsonResponse {
         $region->delete();
 
-        return response()->json([
-            'message' => __('crud.regions.deleted'),
-        ]);
+        return $this->successResponse(
+            new RegionResource($region),
+            'success',
+            __('crud.regions.deleted'),
+        );
     }
 }
