@@ -1,7 +1,11 @@
 <template>
     <div class="row mb-4">
         <div class="col-12">
-            <button class="btn btn-primary" type="button" @click="createCategoryInit">
+            <button
+                class="btn btn-primary"
+                type="button"
+                @click="createCategoryInit"
+            >
                 Новая группа товаров
             </button>
         </div>
@@ -20,8 +24,7 @@
                     <Checkbox
                         id="is_active"
                         v-model="searchBy.isActive"
-                    >
-                        В продаже?
+                    >В продаже?
                     </Checkbox>
                 </div>
             </Filter>

@@ -37,7 +37,9 @@ export function useArrayHandlers() {
                 } else {
                     tempArr = tempArr.filter(item => {
                         if ( item[key] !== null ) {
-                            return item[key].toLowerCase().includes(obj[key].toLowerCase());
+                            return Number.isInteger(item[key])
+                                ? item[key] <= parseInt(obj[key], 10)
+                                : item[key].toLowerCase().includes(obj[key].toLowerCase());
                         }
                     });
                 }
