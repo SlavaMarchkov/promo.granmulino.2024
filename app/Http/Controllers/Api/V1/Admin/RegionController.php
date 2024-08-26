@@ -14,13 +14,17 @@ use Symfony\Component\HttpFoundation\Response;
 
 final class RegionController extends ApiController
 {
+    protected Region $region;
+
+    public function __construct(Region $region)
+    {
+        $this->region = $region;
+    }
+
     public function index()
     : JsonResponse
     {
-        $regions = Region::query()
-            ->with('cities')
-            ->withCount('cities')
-            ->get();
+        $regions = $this->region->getRegionsWithCities();
 
         return $this->successResponse(
             new RegionCollection($regions),

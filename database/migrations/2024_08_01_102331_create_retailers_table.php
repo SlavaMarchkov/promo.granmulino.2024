@@ -15,7 +15,11 @@ return new class extends Migration {
             $table->id();
 
             $table->string('name', 64);
-            $table->enum('type', ['local', 'regional', 'federal'])->default(TypeEnum::LOCAL->value);
+            $table->enum('type', [
+                TypeEnum::LOCAL->value,
+                TypeEnum::REGIONAL->value,
+                TypeEnum::FEDERAL->value,
+            ])->default(TypeEnum::LOCAL->value);
             $table->text('description')->nullable();
             $table->json('data')->nullable();
 

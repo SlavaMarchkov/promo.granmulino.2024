@@ -9,42 +9,42 @@
     <div class="row mb-2">
         <div class="col-12">
             <Filter @reset-filter="clearSearch">
-                <div class="col-md-3 mb-2">
+                <div class="col-md-4 mb-2">
                     <InputGroup
                         v-model="searchBy.name"
                         placeholder="Поиск по названию"
                     >Продукт
                     </InputGroup>
                 </div>
-                <div class="col-md-3 mb-2">
+                <div class="col-md-4 mb-2">
                     <SelectGroup
                         v-model="searchBy.categoryId"
-                        :chooseFrom="'-- Выберите группу --'"
+                        :chooseFrom="'-- Выберите группу товара --'"
                         :items="state.categories"
-                    >Группа
+                    >Группа товара
                     </SelectGroup>
                 </div>
-                <div class="col-md-2 mb-2">
+                <div class="col-md-4 mb-2">
+                    <Checkbox
+                        id="is_active"
+                        v-model="searchBy.isActive"
+                    >
+                        Продукт в продаже?
+                    </Checkbox>
+                </div>
+                <div class="col-md-4 mb-2">
                     <InputGroup
                         v-model="searchBy.weight"
-                        placeholder="Поиск по весу"
-                    >Вес
+                        placeholder="Фильтр по макс. весу"
+                    >Макс. вес
                     </InputGroup>
                 </div>
-                <div class="col-md-2 mb-2">
+                <div class="col-md-4 mb-2">
                     <InputGroup
                         v-model="searchBy.price"
                         placeholder="Поиск по цене"
                     >Цена
                     </InputGroup>
-                </div>
-                <div class="col-md-2 mb-2">
-                    <Checkbox
-                        id="is_active"
-                        v-model="searchBy.isActive"
-                    >
-                        В продаже?
-                    </Checkbox>
                 </div>
             </Filter>
         </div>
@@ -370,7 +370,7 @@ const closeModal = () => {
 const closeViewModal = () => {
     viewModalPopUp.hide();
 };
-
+// TODO - сделать фильтр по весу (вес в виде массива с весами продукции)
 watch(searchBy, () => {
     state.products = arrayHandlers.filterArray(productStore.getProducts, searchBy);
 });

@@ -82,7 +82,7 @@
                         </table>
                     </div>
                     <p v-else class="mt-3 text-center lead">
-                        {{ regionStore.isContentLoading ? 'Подождите, загружаю...' : 'Записей не найдено...' }}
+                        {{ spinnerStore.isContentLoading ? 'Подождите, загружаю...' : 'Записей не найдено...' }}
                     </p>
                     <p>Всего записей: <span class="fw-bold">{{ filteredItems.length }}</span></p>
                 </div>
@@ -96,7 +96,7 @@
         :custom-classes="['']"
     >
         <template #title>
-            <span v-if="state.isEditing">Редактирование региона <br><b>{{ state.region.name }}</b></span>
+            <span v-if="state.isEditing">Редактирование региона <b>{{ state.region.name }}</b></span>
             <span v-else>Добавление региона</span>
         </template>
         <template #body>
@@ -137,18 +137,22 @@
         :custom-classes="['']"
     >
         <template #title>
-            Просмотр региона <br><b>{{ state.region.name }}</b>
+            Просмотр региона <b>{{ state.region.name }}</b>
         </template>
         <template #body>
             <div v-if="state.region.citiesCount > 0">
-                <p>Всего городов в регионе: <span class="fw-bold">{{ state.region.citiesCount }}</span></p>
+                <div class="bd-callout bd-callout-info">
+                    <p>Всего городов в регионе: <strong>{{ state.region.citiesCount }}</strong></p>
+                </div>
                 <table class="table table-bordered text-center align-middle text-nowrap"
                        style="width: 100%;">
-                    <tbody>
+                    <thead class="table-light">
                     <tr>
                         <th>ID</th>
                         <th class="text-start">Название города</th>
                     </tr>
+                    </thead>
+                    <tbody>
                     <tr v-for="city in state.region.cities" :key="city.id">
                         <td>{{ city.id }}</td>
                         <td class="text-start">{{ city.name }}</td>
@@ -156,8 +160,10 @@
                     </tbody>
                 </table>
             </div>
-            <div v-else>
-                <p class="mb-0">Регион пустой. Наполните регион городами во вкладке <b>Справочники | Города</b>.</p>
+            <div v-else class="bd-callout bd-callout-warning">
+                <h5>Регион пустой</h5>
+                <hr>
+                <p>Наполните регион городами во вкладке <b>Справочники | Города</b>.</p>
             </div>
         </template>
         <template #footer>
@@ -173,17 +179,23 @@ import Button from '@/components/core/Button.vue';
 import Alert from '@/components/Alert.vue';
 import { computed, onMounted, reactive, watch } from 'vue';
 import { useAlertStore } from '@/stores/alerts.js';
+import { useSpinnerStore } from '@/stores/spinners.js';
 import { useRegionStore } from '@/stores/regions.js';
 import { useArrayHandlers } from '@/use/useArrayHandlers.js';
+import { useHttpService } from '@/use/useHttpService.js';
 import InputGroup from '@/components/form/InputGroup.vue';
 import Filter from '@/components/core/Filter.vue';
 import Modal from '@/components/Modal.vue';
 import ThSort from '@/components/table/ThSort.vue';
 import TdButton from '@/components/table/TdButton.vue';
 
+const URL = '/admin/regions';
+
 const regionStore = useRegionStore();
 const alertStore = useAlertStore();
+const spinnerStore = useSpinnerStore();
 const arrayHandlers = useArrayHandlers();
+const httpService = useHttpService();
 
 const initialFormData = () => ({
     code: '',
@@ -213,19 +225,21 @@ const searchBy = reactive({
 let modalPopUp = null;
 let viewModalPopUp = null;
 
+function resetState() {
+    state.isEditing = false;
+    state.region = initialFormData();
+}
+
 onMounted(async () => {
     await getRegions();
 
     modalPopUp = new bootstrap.Modal(document.getElementById('modalPopUp'));
-    modalPopUp._element.addEventListener('hide.bs.modal', () => {
-        state.isEditing = false;
-        state.region = initialFormData();
-    });
+    modalPopUp._element.addEventListener('hide.bs.modal', resetState);
 });
 
 const getRegions = async () => {
-    const { data } = await regionStore.all();
-    state.regions = data.data;
+    const { data } = await httpService.all(URL);
+    state.regions = data.regions;
 };
 
 const createRegionInit = () => {
@@ -246,18 +260,17 @@ const viewRegionInit = (id) => {
     viewModalPopUp = new bootstrap.Modal(document.getElementById('viewModalPopUp'));
     state.region = regionStore.oneRegion(id);
     viewModalPopUp.show();
-    viewModalPopUp._element.addEventListener('hide.bs.modal', () => {
-        state.isEditing = false;
-        state.region = initialFormData();
-    });
+    viewModalPopUp._element.addEventListener('hide.bs.modal', resetState);
 };
 
 const closeModal = () => {
     modalPopUp.hide();
+    modalPopUp._element.removeEventListener('hide.bs.modal', resetState);
 };
 
 const closeViewModal = () => {
     viewModalPopUp.hide();
+    viewModalPopUp._element.removeEventListener('hide.bs.modal', resetState);
 };
 
 watch(searchBy, () => {
