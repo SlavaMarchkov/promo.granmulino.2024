@@ -16,4 +16,14 @@ class RegionCollection extends ResourceCollection
             'data' => $this->collection,
         ];
     }
+
+    /*public static $wrap = '';
+
+    public function toArray(Request $request): array
+    {
+        return [
+            'regions' => $this->collection,
+            'regionsCount' => $this->count(),
+        ];
+    }*/
 }

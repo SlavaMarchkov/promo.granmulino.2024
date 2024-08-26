@@ -21,6 +21,7 @@ class Customer extends Model
 
     protected $casts = [
         'is_active' => 'boolean',
+        'data' => 'array',
     ];
 
     public function region(): BelongsTo

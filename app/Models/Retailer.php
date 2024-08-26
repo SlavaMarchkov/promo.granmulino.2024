@@ -24,6 +24,7 @@ class Retailer extends Model
         'is_active' => 'boolean',
         'is_direct' => 'boolean',
         'type' => TypeEnum::class,
+        'data' => 'array',
     ];
 
     public function customer(): BelongsTo

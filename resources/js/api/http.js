@@ -64,7 +64,10 @@ const responseErrorHandler = (err) => {
     return error;
 };
 
-http.interceptors.request.use(convertPostToFormData);
+http.interceptors.request.use(
+    convertPostToFormData,
+    (err) => Promise.reject(err),
+);
 
 http.interceptors.request.use(
     tokenHandler,

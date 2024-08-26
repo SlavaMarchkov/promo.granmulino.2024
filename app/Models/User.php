@@ -46,4 +46,9 @@ class User extends Authenticatable
             get: fn() => $this->last_name . ' ' . $this->first_name
         );
     }
+
+    public function setPasswordAttribute(string $password)
+    : void {
+        $this->attributes['password'] = bcrypt($password);
+    }
 }
