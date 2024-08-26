@@ -82,7 +82,7 @@
                         </table>
                     </div>
                     <p v-else class="mt-3 text-center lead">
-                        {{ regionStore.isContentLoading ? 'Подождите, загружаю...' : 'Записей не найдено...' }}
+                        {{ spinnerStore.isContentLoading ? 'Подождите, загружаю...' : 'Записей не найдено...' }}
                     </p>
                     <p>Всего записей: <span class="fw-bold">{{ filteredItems.length }}</span></p>
                 </div>
@@ -177,19 +177,25 @@ import Input from '@/components/form/Input.vue';
 import Label from '@/components/form/Label.vue';
 import Button from '@/components/core/Button.vue';
 import Alert from '@/components/Alert.vue';
-import { computed, onMounted, onUnmounted, reactive, watch } from 'vue';
+import { computed, onMounted, reactive, watch } from 'vue';
 import { useAlertStore } from '@/stores/alerts.js';
+import { useSpinnerStore } from '@/stores/spinners.js';
 import { useRegionStore } from '@/stores/regions.js';
 import { useArrayHandlers } from '@/use/useArrayHandlers.js';
+import { useHttpService } from '@/use/useHttpService.js';
 import InputGroup from '@/components/form/InputGroup.vue';
 import Filter from '@/components/core/Filter.vue';
 import Modal from '@/components/Modal.vue';
 import ThSort from '@/components/table/ThSort.vue';
 import TdButton from '@/components/table/TdButton.vue';
 
+const URL = '/admin/regions';
+
 const regionStore = useRegionStore();
 const alertStore = useAlertStore();
+const spinnerStore = useSpinnerStore();
 const arrayHandlers = useArrayHandlers();
+const httpService = useHttpService();
 
 const initialFormData = () => ({
     code: '',
@@ -231,14 +237,9 @@ onMounted(async () => {
     modalPopUp._element.addEventListener('hide.bs.modal', resetState);
 });
 
-onUnmounted(() => {
-    modalPopUp._element.removeEventListener('hide.bs.modal', resetState);
-    viewModalPopUp._element.removeEventListener('hide.bs.modal', resetState);
-});
-
 const getRegions = async () => {
-    const { data } = await regionStore.all();
-    state.regions = data.data;
+    const { data } = await httpService.all(URL);
+    state.regions = data.regions;
 };
 
 const createRegionInit = () => {
@@ -264,10 +265,12 @@ const viewRegionInit = (id) => {
 
 const closeModal = () => {
     modalPopUp.hide();
+    modalPopUp._element.removeEventListener('hide.bs.modal', resetState);
 };
 
 const closeViewModal = () => {
     viewModalPopUp.hide();
+    viewModalPopUp._element.removeEventListener('hide.bs.modal', resetState);
 };
 
 watch(searchBy, () => {

@@ -10,14 +10,7 @@ use Illuminate\Http\Resources\Json\ResourceCollection;
 /** @see \App\Models\Region */
 class RegionCollection extends ResourceCollection
 {
-    public function toArray(Request $request)
-    : array {
-        return [
-            'data' => $this->collection,
-        ];
-    }
-
-    /*public static $wrap = '';
+    public static $wrap = '';
 
     public function toArray(Request $request): array
     {
@@ -25,5 +18,5 @@ class RegionCollection extends ResourceCollection
             'regions' => $this->collection,
             'regionsCount' => $this->count(),
         ];
-    }*/
+    }
 }

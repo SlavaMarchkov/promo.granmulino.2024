@@ -4,8 +4,11 @@ import { useAuthStore } from '@/stores/auth.js';
 const http = Axios.create({
     baseURL: import.meta.env.VITE_API_URL,
     timeout: 60_000,
+    withCredentials: true,
+    responseType: 'json',
     headers: {
-        Accept: 'application/json',
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
     },
 });
 
