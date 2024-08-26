@@ -4,7 +4,6 @@
         :disabled="props.disabled"
         :loading="props.loading"
         :class="props.buttonClass"
-        class="btn btn-primary"
     >
         <span v-if="props.loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
         <slot v-else/>
@@ -17,7 +16,7 @@ const props = defineProps({
     disabled: Boolean,
     buttonClass: {
         type: String,
-        default: '',
+        default: 'btn',
     },
     type: {
         type: String,

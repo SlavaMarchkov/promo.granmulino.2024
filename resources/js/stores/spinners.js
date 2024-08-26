@@ -1,26 +1,13 @@
 import { defineStore } from 'pinia';
 
-// import state from '@/stores/alerts/state.js';
-// import getters from '@/stores/alerts/getters.js';
-// import actions from '@/stores/alerts/actions.js';
+import state from '@/stores/spinners/state.js';
+import getters from '@/stores/spinners/getters.js';
+import actions from '@/stores/spinners/actions.js';
 
 export const useSpinnerStore = defineStore(
     {
-        id: 'spinner',
-        state: () => (
-            {
-                isCardLoading: false,
-                isContentLoading: false,
-                isButtonDisabled: false,
-            }
-        ),
-        getters: {},
-        actions: {
-            showContentSpinner() {
-                this.isContentLoading = true;
-            },
-            hideContentSpinner() {
-                this.isContentLoading = false;
-            },
-        },
+        id: 'spinners',
+        state: () => (state),
+        getters,
+        actions,
     });

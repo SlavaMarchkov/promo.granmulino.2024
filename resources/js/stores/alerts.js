@@ -6,7 +6,7 @@ import actions from '@/stores/alerts/actions.js';
 
 export const useAlertStore = defineStore(
     {
-        id: 'alert',
+        id: 'alerts',
         state: () => (state),
         getters,
         actions,

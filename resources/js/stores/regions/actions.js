@@ -1,89 +1,47 @@
-import http from '@/api/http.js';
-import { useAlertStore } from '@/stores/alerts.js';
 import { useToast } from 'vue-toast-notification';
 import 'vue-toast-notification/dist/theme-bootstrap.css';
-import { useConvertCase } from '@/use/useConvertCase.js';
+import { useHttpService } from '@/use/useHttpService.js';
 
 const $toast = useToast({
     position: 'top-right',
 });
 
-const { makeConvertibleObject, toSnake } = useConvertCase();
-
 const URL = '/admin/regions';
 
 export default {
-    setRegions({ data }) {
-        this.regions = data.data;
+    setRegions(data) {
+        this.regions = data;
     },
 
     async all() {
-        this.isContentLoading = true;
-        try {
-            const { data } = await http.get(URL);
-            this.setRegions(data);
-            $toast.success(data.message);
-            return data;
-        } catch ( error ) {
-            const alertStore = useAlertStore();
-            alertStore.error(error);
-        } finally {
-            this.isContentLoading = false;
-        }
+        const { get } = useHttpService();
+        const { data } = await get(URL);
+        this.setRegions(data.regions);
     },
 
     async one(id) {
-        this.isCardLoading = true;
-        try {
-            // TODO - show one item
-            const response = await http.get(`${URL}/${id}`);
-            console.log(response);
-            $toast.success(data.message);
-            return data;
-        } catch ( error ) {
-            const alertStore = useAlertStore();
-            alertStore.error(error, true);
-        } finally {
-            this.isCardLoading = false;
-        }
+        const { get } = useHttpService();
+        return await get(`${URL}/${id}`);
     },
 
     async save(item) {
-        this.isButtonDisabled = true;
-        const formData = makeConvertibleObject(item, toSnake);
-        try {
-            const { data } = await http.post(URL, formData);
-            $toast.success(data.message);
-            return data;
-        } catch ( error ) {
-            const alertStore = useAlertStore();
-            alertStore.error(error, true);
-        } finally {
-            this.isButtonDisabled = false;
-        }
+        const { post } = useHttpService();
+        return await post(URL, item, {
+            method: 'POST',
+        });
     },
 
     async update(item) {
-        this.isButtonDisabled = true;
-        const formData = makeConvertibleObject(item, toSnake);
-        try {
-            const { data } = await http.put(`${URL}/${item.id}`, formData);
-            $toast.success(data.message);
-            return data;
-        } catch ( error ) {
-            const alertStore = useAlertStore();
-            alertStore.error(error, true);
-        } finally {
-            this.isButtonDisabled = false;
-        }
+        const { post } = useHttpService();
+        return await post(`${URL}/${item.id}`, item, {
+            method: 'PUT',
+        });
     },
 
     async delete(id) {
-        try {
-            const { data } = await http.delete(`${URL}/${id}`);
-            $toast.success(data.message);
-        } catch ( error ) {
-            $toast.error('Ошибка при удалении: ' + error.message);
-        }
+        const { post } = useHttpService();
+        return await post(`${URL}/${item.id}`, null, {
+            method: 'DELETE',
+        });
     },
 };

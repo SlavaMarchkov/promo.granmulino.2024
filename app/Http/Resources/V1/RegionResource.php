@@ -11,7 +11,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 /** @mixin Region */
 class RegionResource extends JsonResource
 {
-    // public static $wrap = 'region';
+    public static $wrap = 'region';
 
     public function toArray(Request $request)
     : array {

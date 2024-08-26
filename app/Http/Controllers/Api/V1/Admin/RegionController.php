@@ -48,11 +48,15 @@ final class RegionController extends ApiController
     // TODO: how to show one item
     public function show(Region $region)
     : JsonResponse {
-        $foundRegion = Region::query()
-            ->where('id', '=', $region->id)
+        return $this->successResponse(
+            new RegionResource($region),
+            'success',
+            __('crud.regions.one'),
+        );
+        /*$foundRegion = Region::find($region->id)
             ->with('cities')
             ->withCount('cities')
-            ->first();
+            ->get();
 
         if ($foundRegion) {
             return $this->successResponse(
@@ -66,7 +70,7 @@ final class RegionController extends ApiController
                 'error',
                 __('crud.regions.not_found', $region->id),
             );
-        }
+        }*/
     }
 
     public function update(StoreUpdateRequest $request, Region $region)

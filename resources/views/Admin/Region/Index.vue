@@ -123,8 +123,16 @@
             </div>
         </template>
         <template #footer>
-            <Button :class="state.isEditing ? 'btn-warning' : 'btn-primary'" :disabled="regionStore.isButtonDisabled"
-                    :loading="regionStore.isButtonDisabled" class="w-25" type="button" @click="saveRegion">
+            <Button
+                :class="state.isEditing
+                    ? 'btn-warning'
+                    : 'btn-primary'"
+                :disabled="spinnerStore.isButtonDisabled"
+                :loading="spinnerStore.isButtonDisabled"
+                class="w-25"
+                type="button"
+                @click="saveRegion"
+            >
                 <span v-if="state.isEditing">Сохранить</span>
                 <span v-else>Создать</span>
             </Button>
@@ -167,7 +175,7 @@
             </div>
         </template>
         <template #footer>
-            <Button class="btn btn-light"></Button>
+            <span></span>
         </template>
     </Modal>
 </template>
@@ -182,20 +190,16 @@ import { useAlertStore } from '@/stores/alerts.js';
 import { useSpinnerStore } from '@/stores/spinners.js';
 import { useRegionStore } from '@/stores/regions.js';
 import { useArrayHandlers } from '@/use/useArrayHandlers.js';
-import { useHttpService } from '@/use/useHttpService.js';
 import InputGroup from '@/components/form/InputGroup.vue';
 import Filter from '@/components/core/Filter.vue';
 import Modal from '@/components/Modal.vue';
 import ThSort from '@/components/table/ThSort.vue';
 import TdButton from '@/components/table/TdButton.vue';
 
-const URL = '/admin/regions';
-
 const regionStore = useRegionStore();
 const alertStore = useAlertStore();
 const spinnerStore = useSpinnerStore();
 const arrayHandlers = useArrayHandlers();
-const httpService = useHttpService();
 
 const initialFormData = () => ({
     code: '',
@@ -238,8 +242,8 @@ onMounted(async () => {
 });
 
 const getRegions = async () => {
-    const { data } = await httpService.all(URL);
-    state.regions = data.regions;
+    await regionStore.all();
+    state.regions = regionStore.getRegions;
 };
 
 const createRegionInit = () => {

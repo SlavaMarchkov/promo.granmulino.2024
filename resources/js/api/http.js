@@ -8,7 +8,6 @@ const http = Axios.create({
     responseType: 'json',
     headers: {
         'Accept': 'application/json',
-        'Content-Type': 'application/json',
     },
 });
 

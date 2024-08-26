@@ -14,24 +14,24 @@
                     <h5 class="modal-title">
                         <slot name="title"></slot>
                     </h5>
-                    <button
+                    <Button
                         @click="props.closeFunc"
                         type="button"
                         class="btn-close"
                         aria-label="Close"
-                    ></button>
+                    ></Button>
                 </div>
                 <div class="modal-body">
                     <slot name="body"></slot>
                 </div>
                 <div class="modal-footer">
                     <slot name="footer"></slot>
-                    <button
+                    <Button
                         @click="props.closeFunc"
                         type="button"
-                        class="btn btn-secondary"
+                        class="btn-secondary"
                     >Закрыть
-                    </button>
+                    </Button>
                 </div>
             </div>
         </div>
