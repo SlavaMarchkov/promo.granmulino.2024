@@ -40,7 +40,7 @@
                             <div class="col-12 mb-2">
                                 <Button
                                     :loading="authStore.isLoading"
-                                    class="w-100"
+                                    class="btn-primary w-100"
                                     :disabled="authStore.isLoading"
                                     type="submit"
                                 >Войти в админку
