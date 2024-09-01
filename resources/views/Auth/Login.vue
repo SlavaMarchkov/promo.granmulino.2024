@@ -42,7 +42,7 @@
                                     type="submit"
                                     :loading="authStore.isLoading"
                                     :disabled="authStore.isLoading"
-                                    class="w-100"
+                                    class="btn-success w-100"
                                 >Войти
                                 </Button>
                             </div>

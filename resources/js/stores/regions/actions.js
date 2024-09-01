@@ -1,10 +1,4 @@
-import { useToast } from 'vue-toast-notification';
-import 'vue-toast-notification/dist/theme-bootstrap.css';
 import { useHttpService } from '@/use/useHttpService.js';
-
-const $toast = useToast({
-    position: 'top-right',
-});
 
 const URL = '/admin/regions';
 
@@ -26,22 +20,16 @@ export default {
 
     async save(item) {
         const { post } = useHttpService();
-        return await post(URL, item, {
-            method: 'POST',
-        });
+        return await post(URL, item);
     },
 
     async update(item) {
-        const { post } = useHttpService();
-        return await post(`${URL}/${item.id}`, item, {
-            method: 'PUT',
-        });
+        const { update } = useHttpService();
+        return await update(`${URL}/${item.id}`, item);
     },
 
     async delete(id) {
-        const { post } = useHttpService();
-        return await post(`${URL}/${item.id}`, null, {
-            method: 'DELETE',
-        });
+        const { destroy } = useHttpService();
+        return await destroy(`${URL}/${id}`);
     },
 };

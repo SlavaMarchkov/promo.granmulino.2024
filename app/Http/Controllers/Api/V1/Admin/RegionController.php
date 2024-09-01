@@ -35,10 +35,8 @@ final class RegionController extends ApiController
 
     public function store(StoreUpdateRequest $request)
     : JsonResponse {
-        $region = new RegionResource(Region::create($request->validated()));
-
         return $this->successResponse(
-            $region,
+            new RegionResource(Region::create($request->validated())),
             'success',
             __('crud.regions.created'),
             Response::HTTP_CREATED,
@@ -53,24 +51,6 @@ final class RegionController extends ApiController
             'success',
             __('crud.regions.one'),
         );
-        /*$foundRegion = Region::find($region->id)
-            ->with('cities')
-            ->withCount('cities')
-            ->get();
-
-        if ($foundRegion) {
-            return $this->successResponse(
-                new RegionResource($foundRegion),
-                'success',
-                __('crud.regions.one'),
-            );
-        } else {
-            return $this->errorResponse(
-                Response::HTTP_NOT_FOUND,
-                'error',
-                __('crud.regions.not_found', $region->id),
-            );
-        }*/
     }
 
     public function update(StoreUpdateRequest $request, Region $region)
@@ -84,15 +64,24 @@ final class RegionController extends ApiController
         );
     }
 
-    // TODO: check
     public function destroy(Region $region)
     : JsonResponse {
-        $region->delete();
+        $canBeDeleted = false; // TODO: проверить на кол-во городов в регионе и у Customer
 
-        return $this->successResponse(
-            new RegionResource($region),
-            'success',
-            __('crud.regions.deleted'),
-        );
+        if ($canBeDeleted) {
+            $region->delete();
+
+            return $this->successResponse(
+                new RegionResource($region),
+                'success',
+                __('crud.regions.deleted'),
+            );
+        } else {
+            return $this->errorResponse(
+                Response::HTTP_OK,
+                'error',
+                __('crud.regions.not_deleted'),
+            );
+        }
     }
 }

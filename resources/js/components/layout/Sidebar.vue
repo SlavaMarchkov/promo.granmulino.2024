@@ -39,51 +39,19 @@
 
 <script setup>
 import { onMounted } from 'vue';
-import { useRoute } from 'vue-router';
+import { useDOMHandlers } from "@/use/useDOMHandlers.js";
 
-const route = useRoute();
+const { closeOpenedMenuItems, openActiveRouteMenuItem, collapse } = useDOMHandlers();
 
 defineProps({
     menuItems: {
         type: Array,
         default: [],
+        required: true,
     },
 });
 
 onMounted(() => {
     openActiveRouteMenuItem();
 });
-
-const openActiveRouteMenuItem = () => {
-    const routeNameList = document.querySelectorAll('ul.nav-content > li > a');
-    routeNameList.forEach(el => {
-        if ( el.id === route.name ) {
-            el.parentElement.parentElement.classList.add('show');
-            el.parentElement.parentElement.previousElementSibling.classList.remove('collapsed');
-        }
-    });
-};
-
-const collapse = (element) => {
-    const collapseElementList = document.querySelectorAll('.collapse');
-    collapseElementList.forEach(el => {
-        const collapsedElement = el.previousElementSibling;
-        if ( el.id === element ) {
-            el.classList.toggle('show');
-            collapsedElement.classList.toggle('collapsed');
-        } else {
-            el.classList.remove('show');
-            collapsedElement.classList.add('collapsed');
-        }
-    });
-};
-
-const closeOpenedMenuItems = () => {
-    const collapseElementList = document.querySelectorAll('.collapse');
-    collapseElementList.forEach(el => {
-        const collapsedElement = el.previousElementSibling;
-        el.classList.remove('show');
-        collapsedElement.classList.add('collapsed');
-    });
-};
 </script>

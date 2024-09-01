@@ -68,21 +68,27 @@
                                 <TdButton
                                     :id="item.id"
                                     intent="view"
-                                    @initModal="viewRegionInit"
+                                    @runButtonHandler="viewRegionInit"
                                 >View
                                 </TdButton>
                                 <TdButton
                                     :id="item.id"
                                     intent="edit"
-                                    @initModal="editRegionInit"
+                                    @runButtonHandler="editRegionInit"
                                 >Edit
+                                </TdButton>
+                                <TdButton
+                                    :id="item.id"
+                                    intent="delete"
+                                    @runButtonHandler="deleteRegion"
+                                >Delete
                                 </TdButton>
                             </tr>
                             </tbody>
                         </table>
                     </div>
                     <p v-else class="mt-3 text-center lead">
-                        {{ spinnerStore.isContentLoading ? 'Подождите, загружаю...' : 'Записей не найдено...' }}
+                        {{ spinnerStore.isLoading ? 'Подождите, загружаю...' : 'Записей не найдено...' }}
                     </p>
                     <p>Всего записей: <span class="fw-bold">{{ filteredItems.length }}</span></p>
                 </div>
@@ -142,7 +148,7 @@
     <Modal
         id="viewModalPopUp"
         :close-func="closeViewModal"
-        :custom-classes="['']"
+        :custom-classes="['modal-dialog-scrollable']"
     >
         <template #title>
             Просмотр региона <b>{{ state.region.name }}</b>
@@ -219,6 +225,7 @@ const thFields = [
     { column: 'citiesCount', label: 'Количество городов', sortable: true, is_num: true },
     { column: 'view', label: 'Просмотр', width: 10 },
     { column: 'edit', label: 'Ред.', width: 10 },
+    { column: 'delete', label: 'Удалить', width: 10 },
 ];
 
 const searchBy = reactive({
@@ -236,7 +243,6 @@ function resetState() {
 
 onMounted(async () => {
     await getRegions();
-
     modalPopUp = new bootstrap.Modal(document.getElementById('modalPopUp'));
     modalPopUp._element.addEventListener('hide.bs.modal', resetState);
 });
@@ -302,6 +308,15 @@ const saveRegion = async () => {
             modalPopUp.hide();
             arrayHandlers.resetSearchKeys(searchBy);
             arrayHandlers.resetSortKeys('id', false);
+            await getRegions();
+        }
+    }
+};
+
+const deleteRegion = async (id) => {
+    if ( confirm('Точно удалить? Уверены?') ) {
+        const response = await regionStore.delete(id);
+        if ( response && response.status === 'success' ) {
             await getRegions();
         }
     }

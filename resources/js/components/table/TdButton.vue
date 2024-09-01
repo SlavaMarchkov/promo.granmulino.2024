@@ -2,7 +2,7 @@
     <td>
         <button
             :class="buttonClasses"
-            @click="handleClick(props.id)"
+            @click="handleClick"
         ><i :class="iconClasses"></i>
             <slot/>
         </button>
@@ -16,6 +16,7 @@ import { cva } from 'class-variance-authority';
 const props = defineProps({
     id: {
         type: Number,
+        required: true,
     },
     intent: {
         type: String,
@@ -50,6 +51,7 @@ const iconClasses = computed(() => {
                 intent: {
                     view: 'bi-eye-fill',
                     edit: 'bi-pencil-square',
+                    delete: 'bi-trash',
                 },
             },
         },
@@ -59,10 +61,10 @@ const iconClasses = computed(() => {
 });
 
 const emit = defineEmits([
-    'initModal',
+    'runButtonHandler',
 ]);
 
-const handleClick = (id) => {
-    emit('initModal', id);
+const handleClick = () => {
+    emit('runButtonHandler', props.id);
 };
 </script>

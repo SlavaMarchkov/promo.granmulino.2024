@@ -1,7 +1,11 @@
 <template>
     <header id="header" class="header fixed-top d-flex align-items-center">
         <div class="d-flex align-items-center justify-content-between">
-            <RouterLink :to="{ name: 'Admin.Index' }" class="logo d-flex align-items-center">
+            <RouterLink
+                @click="closeOpenedMenuItems"
+                :to="{ name: 'Admin.Index' }"
+                class="logo d-flex align-items-center"
+            >
                 <img alt="" src="/assets/img/logo.png">
                 <span class="d-none d-lg-block">{{ props.brand }}</span>
             </RouterLink>
@@ -153,37 +157,15 @@
                         <li>
                             <hr class="dropdown-divider">
                         </li>
-
                         <li>
                             <a class="dropdown-item d-flex align-items-center" href="#">
                                 <i class="bi bi-person"></i>
-                                <span>My Profile</span>
+                                <span>Мой профиль</span>
                             </a>
                         </li>
                         <li>
                             <hr class="dropdown-divider">
                         </li>
-
-                        <li>
-                            <a class="dropdown-item d-flex align-items-center" href="#">
-                                <i class="bi bi-gear"></i>
-                                <span>Account Settings</span>
-                            </a>
-                        </li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-
-                        <li>
-                            <a class="dropdown-item d-flex align-items-center" href="#">
-                                <i class="bi bi-question-circle"></i>
-                                <span>Need Help?</span>
-                            </a>
-                        </li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-
                         <li>
                             <a
                                 class="dropdown-item d-flex align-items-center"
@@ -203,8 +185,10 @@
 
 <script setup>
 import { useAuthStore } from '@/stores/auth.js';
+import { useDOMHandlers } from "@/use/useDOMHandlers.js";
 
 const authStore = useAuthStore();
+const { closeOpenedMenuItems, toggleSidebar } = useDOMHandlers();
 
 const props = {
     brand,
@@ -216,9 +200,5 @@ const handleAdminLogout = async () => {
     if ( confirm('Вы действительно хотите выйти?') ) {
         await authStore.adminLogout();
     }
-};
-
-const toggleSidebar = () => {
-    document.querySelector('body').classList.toggle('toggle-sidebar');
 };
 </script>

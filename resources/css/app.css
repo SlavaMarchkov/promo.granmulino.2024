@@ -26,6 +26,10 @@ body {
     color: #444444;
 }
 
+.modal {
+    --bs-modal-title-line-height: 1.3;
+}
+
 a {
     color: #4154f1;
     text-decoration: none;

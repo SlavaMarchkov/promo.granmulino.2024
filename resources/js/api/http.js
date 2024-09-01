@@ -1,5 +1,11 @@
 import Axios from 'axios';
 import { useAuthStore } from '@/stores/auth.js';
+import { useToast } from 'vue-toast-notification';
+import 'vue-toast-notification/dist/theme-bootstrap.css';
+
+const $toast = useToast({
+    position: 'top-right',
+});
 
 const http = Axios.create({
     baseURL: import.meta.env.VITE_API_URL,
@@ -27,7 +33,7 @@ const convertPostToFormData = (config) => {
 const tokenHandler = (config) => {
     const { getToken: token } = useAuthStore();
     if ( token ) {
-        config.headers.Authorization = `Bearer ${token}`;
+        config.headers.Authorization = `Bearer ${ token }`;
         localStorage.setItem('token', token);
     }
     return config;
@@ -76,8 +82,27 @@ http.interceptors.request.use(
     (err) => Promise.reject(err),
 );
 
+const toastHandler = (response) => {
+    if ( response.data.status ) {
+        const message = response.data.message;
+        switch ( response.data.status ) {
+            case 'success':
+                $toast.success(message);
+                break;
+            case 'error':
+                $toast.error(message);
+                break;
+            default:
+                $toast.warning(message);
+        }
+    }
+};
+
 http.interceptors.response.use(
-    (response) => response,
+    (response) => {
+        toastHandler(response);
+        return response;
+    },
     (err) => Promise.reject(responseErrorHandler(err)),
 );
 
