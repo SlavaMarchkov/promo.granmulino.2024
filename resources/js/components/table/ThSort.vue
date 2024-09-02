@@ -8,7 +8,7 @@
         ]"
         :style="{ width: width + '%' }"
         style="cursor: pointer;"
-        @click="handleClick(column, isNumeric)"
+        @click="handleClick"
     >
         <slot/>
         <template v-if="sortByColumn">
@@ -52,7 +52,7 @@ const props = defineProps({
     },
     column: {
         type: String,
-        default: 'id',
+        required: true,
     },
     sortByColumn: {
         type: Boolean,
@@ -75,7 +75,7 @@ const emit = defineEmits([
     'setSort',
 ]);
 
-const handleClick = (column, is_num) => {
-    emit('setSort', column, is_num);
+const handleClick = () => {
+    emit('setSort', props.column, props.isNumeric);
 };
 </script>

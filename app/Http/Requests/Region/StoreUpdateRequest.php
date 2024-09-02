@@ -8,6 +8,12 @@ use Illuminate\Foundation\Http\FormRequest;
 
 final class StoreUpdateRequest extends FormRequest
 {
+    public function authorize()
+    : bool
+    {
+        return true;
+    }
+
     public function rules()
     : array
     {
@@ -40,9 +46,12 @@ final class StoreUpdateRequest extends FormRequest
         ];
     }
 
-    public function authorize()
-    : bool
+    protected function prepareForValidation()
+    : void
     {
-        return true;
+        $code = $this->input('code', true);
+        $this->merge([
+            'code' => process_code($code),
+        ]);
     }
 }

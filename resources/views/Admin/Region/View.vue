@@ -1,11 +1,13 @@
 <template>
-    <Alert/>
-    <div v-if="isRegionFound" class="row">
-        <div class="col-12">
+    <div class="row">
+        <div v-if="isRegionFound" class="col-12">
             <pre>
                 {{ region }}
             </pre>
-            <hr>
+        </div>
+        <Alert v-else />
+        <hr>
+        <div class="col-12">
             <RouterLink
                 :to="{ name: 'Region.Index' }"
                 class="btn btn-secondary my-2"
@@ -14,29 +16,29 @@
             </RouterLink>
         </div>
     </div>
-    <PageNotFound v-else></PageNotFound>
 </template>
 
 <script setup>
 import { computed, onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
-import { useRegionStore } from '@/stores/regions.js';
-import PageNotFound from '../../Admin/PageNotFound.vue';
-import Alert from '@/components/Alert.vue';
+import { useHttpService } from '@/use/useHttpService.js';
+import Alert from "@/components/Alert.vue";
 
 const route = useRoute();
 
-const regionStore = useRegionStore();
+const regionURL = '/admin/regions';
+
+const { get } = useHttpService();
 const id = +route.params.id;
 
 const region = ref({});
 
 onMounted(async () => {
-    const response = await regionStore.one(id);
-    if ( response !== 404 ) region.value = response.data;
+    const response = await get(`${ regionURL }/${ id }`);
+    if ( response.status === 'success' ) region.value = response.data;
 });
 
 const isRegionFound = computed(() => {
-    return typeof region.value !== 'undefined';
+    return Object.keys(region.value).length !== 0;
 });
 </script>

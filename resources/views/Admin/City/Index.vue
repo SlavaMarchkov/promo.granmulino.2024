@@ -34,6 +34,7 @@
                                     :key="column"
                                 >
                                     <ThSort
+                                        :column="column"
                                         :is-numeric="is_num"
                                         :sort-by-asc="arrayHandlers.sortBy.asc"
                                         :sort-by-column="arrayHandlers.sortBy.column === column"
@@ -54,26 +55,38 @@
                                     {{ item.name }}
                                 </td>
                                 <td class="text-start">
-                                    {{ item.regionName }}
+                                    <RouterLink :to="{
+                                        name: 'Region.View',
+                                        params: {
+                                            'id': item.regionId
+                                        },
+                                    }">{{ item.regionName }}
+                                    </RouterLink>
                                 </td>
                                 <TdButton
                                     :id="item.id"
                                     intent="view"
-                                    @initModal="viewCityInit"
+                                    @runButtonHandler="viewCityInit"
                                 >View
                                 </TdButton>
                                 <TdButton
                                     :id="item.id"
                                     intent="edit"
-                                    @initModal="editCityInit"
+                                    @runButtonHandler="editCityInit"
                                 >Edit
+                                </TdButton>
+                                <TdButton
+                                    :id="item.id"
+                                    intent="delete"
+                                    @runButtonHandler="deleteCity"
+                                >Delete
                                 </TdButton>
                             </tr>
                             </tbody>
                         </table>
                     </div>
                     <p v-else class="mt-3 text-center lead">
-                        {{ cityStore.isContentLoading ? 'Подождите, загружаю...' : 'Записей не найдено...' }}
+                        {{ spinnerStore.isLoading ? 'Подождите, загружаю...' : 'Записей не найдено...' }}
                     </p>
                     <p>Всего записей: <span class="fw-bold">{{ filteredItems.length }}</span></p>
                 </div>
@@ -117,8 +130,16 @@
             </div>
         </template>
         <template #footer>
-            <Button :class="state.isEditing ? 'btn-warning' : 'btn-primary'" :disabled="cityStore.isButtonDisabled"
-                    :loading="cityStore.isButtonDisabled" class="w-25" type="button" @click="saveCity">
+            <Button
+                :class="state.isEditing
+                    ? 'btn-warning'
+                    : 'btn-primary'"
+                :disabled="spinnerStore.isButtonDisabled"
+                :loading="spinnerStore.isButtonDisabled"
+                class="w-25"
+                type="button"
+                @click="saveCity"
+            >
                 <span v-if="state.isEditing">Сохранить</span>
                 <span v-else>Создать</span>
             </Button>
@@ -128,7 +149,7 @@
     <Modal
         id="viewModalPopUp"
         :close-func="closeViewModal"
-        :custom-classes="['']"
+        :custom-classes="['modal-dialog-scrollable']"
     >
         <template #title>
             Просмотр города <b>{{ state.city.name }}</b>
@@ -158,7 +179,7 @@
                         </div>-->
         </template>
         <template #footer>
-            <Button class="btn btn-light"></Button>
+            <span></span>
         </template>
     </Modal>
 </template>
@@ -171,7 +192,8 @@ import Alert from '@/components/Alert.vue';
 import { computed, onMounted, reactive, watch } from 'vue';
 import { useAlertStore } from '@/stores/alerts.js';
 import { useCityStore } from '@/stores/cities.js';
-import { useRegionStore } from '@/stores/regions.js';
+import { useSpinnerStore } from '@/stores/spinners.js';
+import { useHttpService } from '@/use/useHttpService.js';
 import { useArrayHandlers } from '@/use/useArrayHandlers.js';
 import InputGroup from '@/components/form/InputGroup.vue';
 import Filter from '@/components/core/Filter.vue';
@@ -180,9 +202,13 @@ import ThSort from '@/components/table/ThSort.vue';
 import TdButton from '@/components/table/TdButton.vue';
 
 const cityStore = useCityStore();
-const regionStore = useRegionStore();
 const alertStore = useAlertStore();
+const spinnerStore = useSpinnerStore();
 const arrayHandlers = useArrayHandlers();
+const { get, post, update, destroy } = useHttpService();
+
+const cityURL = '/admin/cities';
+const regionURL = '/admin/regions';
 
 const initialFormData = () => ({
     name: '',
@@ -202,6 +228,7 @@ const thFields = [
     { column: 'regionName', label: 'Регион', sortable: true, is_num: false },
     { column: 'view', label: 'Просмотр', width: 10 },
     { column: 'edit', label: 'Ред.', width: 10 },
+    { column: 'delete', label: 'Удалить', width: 10 },
 ];
 
 const searchBy = reactive({
@@ -212,25 +239,27 @@ const searchBy = reactive({
 let modalPopUp = null;
 let viewModalPopUp = null;
 
+function resetState() {
+    state.isEditing = false;
+    state.city = initialFormData();
+}
+
 onMounted(async () => {
     await getCities();
     await getRegions();
-
     modalPopUp = new bootstrap.Modal(document.getElementById('modalPopUp'));
-    modalPopUp._element.addEventListener('hide.bs.modal', () => {
-        state.isEditing = false;
-        state.city = initialFormData();
-    });
+    modalPopUp._element.addEventListener('hide.bs.modal', resetState);
 });
 
 const getCities = async () => {
-    const { data } = await cityStore.all();
-    state.cities = data.data;
+    const { data } = await get(cityURL);
+    cityStore.setCities(data.cities);
+    state.cities = cityStore.getCities;
 };
 
 const getRegions = async () => {
-    const { data } = await regionStore.all();
-    state.regions = data.data;
+    const { data } = await get(regionURL);
+    state.regions = data.regions;
 };
 
 const createCityInit = () => {
@@ -247,23 +276,22 @@ const editCityInit = (id) => {
     modalPopUp.show();
 };
 
-// TODO: make view of the city
+// TODO - View city modal
 const viewCityInit = (id) => {
     viewModalPopUp = new bootstrap.Modal(document.getElementById('viewModalPopUp'));
     state.city = cityStore.oneCity(id);
     viewModalPopUp.show();
-    viewModalPopUp._element.addEventListener('hide.bs.modal', () => {
-        state.isEditing = false;
-        state.city = initialFormData();
-    });
+    viewModalPopUp._element.addEventListener('hide.bs.modal', resetState);
 };
 
 const closeModal = () => {
     modalPopUp.hide();
+    modalPopUp._element.removeEventListener('hide.bs.modal', resetState);
 };
 
 const closeViewModal = () => {
     viewModalPopUp.hide();
+    viewModalPopUp._element.removeEventListener('hide.bs.modal', resetState);
 };
 
 watch(searchBy, () => {
@@ -277,20 +305,29 @@ const clearSearch = () => {
 
 const saveCity = async () => {
     if ( state.isEditing ) {
-        const response = await cityStore.update(state.city);
+        const response = await update(`${cityURL}/${state.city.id}`, state.city);
         if ( response && response.status === 'success' ) {
             alertStore.clear();
             modalPopUp.hide();
             await getCities();
         }
     } else {
-        const response = await cityStore.save(state.city);
+        const response = await post(cityURL, state.city);
         if ( response && response.status === 'success' ) {
             alertStore.clear();
             state.city = initialFormData();
             modalPopUp.hide();
             arrayHandlers.resetSearchKeys(searchBy);
             arrayHandlers.resetSortKeys('id', false);
+            await getCities();
+        }
+    }
+};
+
+const deleteCity = async (id) => {
+    if ( confirm('Точно удалить? Уверены?') ) {
+        const response = await destroy(`${cityURL}/${id}`);
+        if ( response && response.status === 'success' ) {
             await getCities();
         }
     }

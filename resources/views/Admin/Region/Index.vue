@@ -34,6 +34,7 @@
                                     :key="column"
                                 >
                                     <ThSort
+                                        :column="column"
                                         :is-numeric="is_num"
                                         :sort-by-asc="arrayHandlers.sortBy.asc"
                                         :sort-by-column="arrayHandlers.sortBy.column === column"
@@ -54,7 +55,7 @@
                                     <RouterLink :to="{
                                         name: 'Region.View',
                                         params: {
-                                            'id': item.id,
+                                            'id': item.id
                                         },
                                     }">{{ item.name }}
                                     </RouterLink>
@@ -195,6 +196,7 @@ import { computed, onMounted, reactive, watch } from 'vue';
 import { useAlertStore } from '@/stores/alerts.js';
 import { useSpinnerStore } from '@/stores/spinners.js';
 import { useRegionStore } from '@/stores/regions.js';
+import { useHttpService } from '@/use/useHttpService.js';
 import { useArrayHandlers } from '@/use/useArrayHandlers.js';
 import InputGroup from '@/components/form/InputGroup.vue';
 import Filter from '@/components/core/Filter.vue';
@@ -206,6 +208,9 @@ const regionStore = useRegionStore();
 const alertStore = useAlertStore();
 const spinnerStore = useSpinnerStore();
 const arrayHandlers = useArrayHandlers();
+const { get, post, update, destroy } = useHttpService();
+
+const regionURL = '/admin/regions';
 
 const initialFormData = () => ({
     code: '',
@@ -248,7 +253,8 @@ onMounted(async () => {
 });
 
 const getRegions = async () => {
-    await regionStore.all();
+    const { data } = await get(regionURL);
+    regionStore.setRegions(data.regions);
     state.regions = regionStore.getRegions;
 };
 
@@ -294,14 +300,14 @@ const clearSearch = () => {
 
 const saveRegion = async () => {
     if ( state.isEditing ) {
-        const response = await regionStore.update(state.region);
+        const response = await update(`${ regionURL }/${ state.region.id }`, state.region);
         if ( response && response.status === 'success' ) {
             alertStore.clear();
             modalPopUp.hide();
             await getRegions();
         }
     } else {
-        const response = await regionStore.save(state.region);
+        const response = await post(regionURL, state.region);
         if ( response && response.status === 'success' ) {
             alertStore.clear();
             state.region = initialFormData();
@@ -315,7 +321,7 @@ const saveRegion = async () => {
 
 const deleteRegion = async (id) => {
     if ( confirm('Точно удалить? Уверены?') ) {
-        const response = await regionStore.delete(id);
+        const response = await destroy(`${ regionURL }/${ id }`);
         if ( response && response.status === 'success' ) {
             await getRegions();
         }

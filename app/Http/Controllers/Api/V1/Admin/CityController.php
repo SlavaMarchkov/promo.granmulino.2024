@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\ApiController;
-use App\Http\Requests\City\StoreRequest;
-use App\Http\Requests\City\UpdateRequest;
+use App\Http\Requests\City\StoreUpdateRequest;
 use App\Http\Resources\V1\CityCollection;
 use App\Http\Resources\V1\CityResource;
 use App\Models\City;
@@ -15,12 +14,17 @@ use Symfony\Component\HttpFoundation\Response;
 
 final class CityController extends ApiController
 {
+    protected City $city;
+
+    public function __construct(City $city)
+    {
+        $this->city = $city;
+    }
+
     public function index()
     : JsonResponse
     {
-        $cities = City::query()
-            ->with('region')
-            ->get();
+        $cities = $this->city->getCityWithRegion();
 
         return $this->successResponse(
             new CityCollection($cities),
@@ -29,12 +33,10 @@ final class CityController extends ApiController
         );
     }
 
-    public function store(StoreRequest $request)
+    public function store(StoreUpdateRequest $request)
     : JsonResponse {
-        $city = new CityResource(City::create($request->validated()));
-
         return $this->successResponse(
-            $city,
+            new CityResource(City::create($request->validated())),
             'success',
             __('crud.cities.created'),
             Response::HTTP_CREATED,
@@ -47,7 +49,7 @@ final class CityController extends ApiController
         return new CityResource($city);
     }
 
-    public function update(UpdateRequest $request, City $city)
+    public function update(StoreUpdateRequest $request, City $city)
     : JsonResponse {
         $city->update($request->validated());
 
@@ -58,15 +60,24 @@ final class CityController extends ApiController
         );
     }
 
-    // TODO: check
     public function destroy(City $city)
     : JsonResponse {
-        $city->delete();
+        $canBeDeleted = false; // TODO: проверить на привязанные города у Customer и Retailer
 
-        return $this->successResponse(
-            new CityResource($city),
-            'success',
-            __('crud.cities.deleted'),
-        );
+        if ($canBeDeleted) {
+            $city->delete();
+
+            return $this->successResponse(
+                new CityResource($city),
+                'success',
+                __('crud.cities.deleted'),
+            );
+        } else {
+            return $this->errorResponse(
+                Response::HTTP_OK,
+                'error',
+                __('crud.cities.not_deleted'),
+            );
+        }
     }
 }

@@ -7,8 +7,14 @@ namespace App\Http\Requests\City;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-final class UpdateRequest extends FormRequest
+final class StoreUpdateRequest extends FormRequest
 {
+    public function authorize()
+    : bool
+    {
+        return true;
+    }
+
     public function rules()
     : array
     {
@@ -19,7 +25,11 @@ final class UpdateRequest extends FormRequest
                 'max:64',
                 Rule::unique('cities')->ignore($this->request->get('id')),
             ],
-            'region_id' => ['required', 'integer', 'exists:regions,id'],
+            'region_id' => [
+                'required',
+                'integer',
+                'exists:regions,id',
+            ],
         ];
     }
 
@@ -40,13 +50,16 @@ final class UpdateRequest extends FormRequest
             'max'         => [
                 'string' => 'Поле ":attribute" должно иметь не более :max символов.',
             ],
-            'name.unique' => 'Такой город уже есть в базе данных.'
+            'name.unique' => 'Такой город уже есть в базе данных.',
         ];
     }
 
-    public function authorize()
-    : bool
+    protected function prepareForValidation()
+    : void
     {
-        return true;
+        $name = $this->input('name', true);
+        $this->merge([
+            'name' => process_name($name),
+        ]);
     }
 }
