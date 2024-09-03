@@ -34,7 +34,8 @@ final class CityController extends ApiController
     }
 
     public function store(StoreUpdateRequest $request)
-    : JsonResponse {
+    : JsonResponse
+    {
         return $this->successResponse(
             new CityResource(City::create($request->validated())),
             'success',
@@ -43,14 +44,19 @@ final class CityController extends ApiController
         );
     }
 
-    // TODO: realize
     public function show(City $city)
-    : CityResource {
-        return new CityResource($city);
+    : JsonResponse
+    {
+        return $this->successResponse(
+            new CityResource($city),
+            'success',
+            __('crud.regions.one'),
+        );
     }
 
     public function update(StoreUpdateRequest $request, City $city)
-    : JsonResponse {
+    : JsonResponse
+    {
         $city->update($request->validated());
 
         return $this->successResponse(
@@ -61,7 +67,8 @@ final class CityController extends ApiController
     }
 
     public function destroy(City $city)
-    : JsonResponse {
+    : JsonResponse
+    {
         $canBeDeleted = false; // TODO: проверить на привязанные города у Customer и Retailer
 
         if ($canBeDeleted) {

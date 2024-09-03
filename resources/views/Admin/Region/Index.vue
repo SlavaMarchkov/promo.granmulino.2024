@@ -1,7 +1,11 @@
 <template>
     <div class="row mb-4">
         <div class="col-12">
-            <button class="btn btn-primary" type="button" @click="createRegionInit">
+            <button
+                class="btn btn-primary"
+                type="button"
+                @click="createRegionInit"
+            >
                 Новый регион
             </button>
         </div>
@@ -320,7 +324,7 @@ const saveRegion = async () => {
 };
 
 const deleteRegion = async (id) => {
-    if ( confirm('Точно удалить? Уверены?') ) {
+    if ( confirm('Точно удалить регион? Уверены?') ) {
         const response = await destroy(`${ regionURL }/${ id }`);
         if ( response && response.status === 'success' ) {
             await getRegions();

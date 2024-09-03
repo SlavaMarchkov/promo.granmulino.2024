@@ -12,13 +12,14 @@ use Illuminate\Http\Resources\Json\JsonResource;
 class AdminResource extends JsonResource
 {
     public function toArray(Request $request)
-    : array {
+    : array
+    {
         parent::$wrap = null; // TODO: check for UserResource
         return [
             'id'         => $this->id,
             'name'       => $this->name,
             'email'      => $this->email,
-            'role' => $this->role->value,
+            'role'       => $this->role->value,
             'isAdmin'    => true,
             'loggedInAt' => $this->logged_in_at,
         ];

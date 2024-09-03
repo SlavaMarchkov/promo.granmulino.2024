@@ -44,6 +44,7 @@
                                     :key="column"
                                 >
                                     <ThSort
+                                        :column="column"
                                         :is-numeric="is_num"
                                         :sort-by-asc="arrayHandlers.sortBy.asc"
                                         :sort-by-column="arrayHandlers.sortBy.column === column"
@@ -72,21 +73,27 @@
                                 <TdButton
                                     :id="item.id"
                                     intent="view"
-                                    @initModal="viewCategoryInit"
+                                    @runButtonHandler="viewCategoryInit"
                                 >View
                                 </TdButton>
                                 <TdButton
                                     :id="item.id"
                                     intent="edit"
-                                    @initModal="editCategoryInit"
+                                    @runButtonHandler="editCategoryInit"
                                 >Edit
+                                </TdButton>
+                                <TdButton
+                                    :id="item.id"
+                                    intent="delete"
+                                    @runButtonHandler="deleteCategory"
+                                >Delete
                                 </TdButton>
                             </tr>
                             </tbody>
                         </table>
                     </div>
                     <p v-else class="mt-3 text-center lead">
-                        {{ categoryStore.isContentLoading ? 'Подождите, загружаю...' : 'Записей не найдено...' }}
+                        {{ spinnerStore.isLoading ? 'Подождите, загружаю...' : 'Записей не найдено...' }}
                     </p>
                     <p>Всего записей: <span class="fw-bold">{{ filteredItems.length }}</span></p>
                 </div>
@@ -132,8 +139,16 @@
             </div>
         </template>
         <template #footer>
-            <Button :class="state.isEditing ? 'btn-warning' : 'btn-primary'" :disabled="categoryStore.isButtonDisabled"
-                    :loading="categoryStore.isButtonDisabled" class="w-25" type="button" @click="saveCategory">
+            <Button
+                :class="state.isEditing
+                    ? 'btn-warning'
+                    : 'btn-primary'"
+                :disabled="spinnerStore.isButtonDisabled"
+                :loading="spinnerStore.isButtonDisabled"
+                class="w-25"
+                type="button"
+                @click="saveCategory"
+            >
                 <span v-if="state.isEditing">Сохранить</span>
                 <span v-else>Создать</span>
             </Button>
@@ -193,7 +208,9 @@ import Button from '@/components/core/Button.vue';
 import Alert from '@/components/Alert.vue';
 import { computed, onMounted, reactive, watch } from 'vue';
 import { useAlertStore } from '@/stores/alerts.js';
+import { useSpinnerStore } from '@/stores/spinners.js';
 import { useCategoryStore } from '@/stores/categories.js';
+import { useHttpService } from '@/use/useHttpService.js';
 import { useArrayHandlers } from '@/use/useArrayHandlers.js';
 import InputGroup from '@/components/form/InputGroup.vue';
 import Filter from '@/components/core/Filter.vue';
@@ -204,7 +221,11 @@ import TdButton from '@/components/table/TdButton.vue';
 
 const categoryStore = useCategoryStore();
 const alertStore = useAlertStore();
+const spinnerStore = useSpinnerStore();
 const arrayHandlers = useArrayHandlers();
+const { get, post, update, destroy } = useHttpService();
+
+const categoryURL = '/admin/categories';
 
 const initialFormData = () => ({
     name: '',
@@ -224,6 +245,7 @@ const thFields = [
     { column: 'isActive', label: 'В продаже?', sortable: true, is_num: true, width: 15 },
     { column: 'view', label: 'Просмотр', width: 10 },
     { column: 'edit', label: 'Ред.', width: 10 },
+    { column: 'delete', label: 'Удалить', width: 10 },
 ];
 
 const searchBy = reactive({
@@ -234,19 +256,21 @@ const searchBy = reactive({
 let modalPopUp = null;
 let viewModalPopUp = null;
 
+function resetState() {
+    state.isEditing = false;
+    state.category = initialFormData();
+}
+
 onMounted(async () => {
     await getCategories();
-
     modalPopUp = new bootstrap.Modal(document.getElementById('modalPopUp'));
-    modalPopUp._element.addEventListener('hide.bs.modal', () => {
-        state.isEditing = false;
-        state.category = initialFormData();
-    });
+    modalPopUp._element.addEventListener('hide.bs.modal', resetState);
 });
 
 const getCategories = async () => {
-    const { data } = await categoryStore.all();
-    state.categories = data.data;
+    const { data } = await get(categoryURL);
+    categoryStore.setCategories(data.categories);
+    state.categories = categoryStore.getCategories;
 };
 
 const createCategoryInit = () => {
@@ -267,18 +291,17 @@ const viewCategoryInit = (id) => {
     viewModalPopUp = new bootstrap.Modal(document.getElementById('viewModalPopUp'));
     state.category = categoryStore.oneCategory(id);
     viewModalPopUp.show();
-    viewModalPopUp._element.addEventListener('hide.bs.modal', () => {
-        state.isEditing = false;
-        state.category = initialFormData();
-    });
+    viewModalPopUp._element.addEventListener('hide.bs.modal', resetState);
 };
 
 const closeModal = () => {
     modalPopUp.hide();
+    modalPopUp._element.removeEventListener('hide.bs.modal', resetState);
 };
 
 const closeViewModal = () => {
     viewModalPopUp.hide();
+    viewModalPopUp._element.removeEventListener('hide.bs.modal', resetState);
 };
 
 watch(searchBy, () => {
@@ -292,20 +315,29 @@ const clearSearch = () => {
 
 const saveCategory = async () => {
     if ( state.isEditing ) {
-        const response = await categoryStore.update(state.category);
+        const response = await update(`${ categoryURL }/${ state.category.id }`, state.category);
         if ( response && response.status === 'success' ) {
             alertStore.clear();
             modalPopUp.hide();
             await getCategories();
         }
     } else {
-        const response = await categoryStore.save(state.category);
+        const response = await post(categoryURL, state.category);
         if ( response && response.status === 'success' ) {
             alertStore.clear();
             state.category = initialFormData();
             modalPopUp.hide();
             arrayHandlers.resetSearchKeys(searchBy);
             arrayHandlers.resetSortKeys('id', false);
+            await getCategories();
+        }
+    }
+};
+
+const deleteCategory = async (id) => {
+    if ( confirm('Точно удалить группу товаров? Уверены?') ) {
+        const response = await destroy(`${ categoryURL }/${ id }`);
+        if ( response && response.status === 'success' ) {
             await getCategories();
         }
     }

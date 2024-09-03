@@ -10,10 +10,14 @@ use Illuminate\Http\Resources\Json\ResourceCollection;
 /** @see \App\Models\Category */
 class CategoryCollection extends ResourceCollection
 {
+    public static $wrap = '';
+
     public function toArray(Request $request)
-    : array {
+    : array
+    {
         return [
-            'data' => $this->collection,
+            'categories'      => $this->collection,
+            'categoriesCount' => $this->count(),
         ];
     }
 }

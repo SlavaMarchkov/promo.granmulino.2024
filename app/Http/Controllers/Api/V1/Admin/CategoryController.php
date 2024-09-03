@@ -9,22 +9,22 @@ use App\Http\Requests\Category\StoreUpdateRequest;
 use App\Http\Resources\V1\CategoryCollection;
 use App\Http\Resources\V1\CategoryResource;
 use App\Models\Category;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 final class CategoryController extends ApiController
 {
+    protected Category $category;
+
+    public function __construct(Category $category)
+    {
+        $this->category = $category;
+    }
+
     public function index()
     : JsonResponse
     {
-        $categories = Category::withCount([
-            'products' => function (Builder $query) {
-                $query->where('is_active', true);
-            },
-        ])
-            ->with('products')
-            ->get();
+        $categories = $this->category->getCategoriesWithActiveProducts();
 
         return $this->successResponse(
             new CategoryCollection($categories),
@@ -34,25 +34,29 @@ final class CategoryController extends ApiController
     }
 
     public function store(StoreUpdateRequest $request)
-    : JsonResponse {
-        $category = new CategoryResource(Category::create($request->validated()));
-
+    : JsonResponse
+    {
         return $this->successResponse(
-            $category,
+            new CategoryResource(Category::create($request->validated())),
             'success',
             __('crud.categories.created'),
             Response::HTTP_CREATED,
         );
     }
 
-    // TODO: how to show one item
     public function show(Category $category)
-    : CategoryResource {
-        return new CategoryResource($category);
+    : JsonResponse
+    {
+        return $this->successResponse(
+            new CategoryResource($category),
+            'success',
+            __('crud.regions.one'),
+        );
     }
 
     public function update(StoreUpdateRequest $request, Category $category)
-    : JsonResponse {
+    : JsonResponse
+    {
         $category->update($request->validated());
 
         return $this->successResponse(
@@ -63,13 +67,24 @@ final class CategoryController extends ApiController
     }
 
     public function destroy(Category $category)
+    : JsonResponse
     {
-        $category->delete();
+        $canBeDeleted = false; // TODO: проверить на кол-во городов в регионе и у Customer
 
-        return $this->successResponse(
-            new CategoryResource($category),
-            'success',
-            __('crud.categories.deleted'),
-        );
+        if ($canBeDeleted) {
+            $category->delete();
+
+            return $this->successResponse(
+                new CategoryResource($category),
+                'success',
+                __('crud.categories.deleted'),
+            );
+        } else {
+            return $this->errorResponse(
+                Response::HTTP_OK,
+                'error',
+                __('crud.categories.not_deleted'),
+            );
+        }
     }
 }

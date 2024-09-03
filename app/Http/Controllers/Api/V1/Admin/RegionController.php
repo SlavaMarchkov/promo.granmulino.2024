@@ -34,7 +34,8 @@ final class RegionController extends ApiController
     }
 
     public function store(StoreUpdateRequest $request)
-    : JsonResponse {
+    : JsonResponse
+    {
         return $this->successResponse(
             new RegionResource(Region::create($request->validated())),
             'success',
@@ -43,9 +44,9 @@ final class RegionController extends ApiController
         );
     }
 
-    // TODO: how to show one item
     public function show(Region $region)
-    : JsonResponse {
+    : JsonResponse
+    {
         return $this->successResponse(
             new RegionResource($region),
             'success',
@@ -54,7 +55,8 @@ final class RegionController extends ApiController
     }
 
     public function update(StoreUpdateRequest $request, Region $region)
-    : JsonResponse {
+    : JsonResponse
+    {
         $region->update($request->validated());
 
         return $this->successResponse(
@@ -65,7 +67,8 @@ final class RegionController extends ApiController
     }
 
     public function destroy(Region $region)
-    : JsonResponse {
+    : JsonResponse
+    {
         $canBeDeleted = false; // TODO: проверить на кол-во городов в регионе и у Customer
 
         if ($canBeDeleted) {

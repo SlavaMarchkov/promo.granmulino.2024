@@ -12,10 +12,11 @@ class RegionCollection extends ResourceCollection
 {
     public static $wrap = '';
 
-    public function toArray(Request $request): array
+    public function toArray(Request $request)
+    : array
     {
         return [
-            'regions' => $this->collection,
+            'regions'      => $this->collection,
             'regionsCount' => $this->count(),
         ];
     }

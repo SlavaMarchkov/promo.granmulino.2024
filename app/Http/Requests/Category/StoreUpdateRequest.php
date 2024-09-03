@@ -9,6 +9,12 @@ use Illuminate\Foundation\Http\FormRequest;
 
 final class StoreUpdateRequest extends FormRequest
 {
+    public function authorize()
+    : bool
+    {
+        return true;
+    }
+
     public function rules()
     : array
     {
@@ -27,14 +33,6 @@ final class StoreUpdateRequest extends FormRequest
         ];
     }
 
-    public function messages()
-    : array
-    {
-        return [
-            'required' => 'Поле ":attribute" нужно заполнить.',
-        ];
-    }
-
     protected function prepareForValidation()
     : void
     {
@@ -42,11 +40,5 @@ final class StoreUpdateRequest extends FormRequest
         $this->merge([
             'is_active' => to_boolean($is_active),
         ]);
-    }
-
-    public function authorize()
-    : bool
-    {
-        return true;
     }
 }
