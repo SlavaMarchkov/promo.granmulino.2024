@@ -15,41 +15,76 @@ use Symfony\Component\HttpFoundation\Response;
 
 final class CustomerController extends ApiController
 {
+    protected Customer $customer;
+
+    public function __construct(Customer $customer)
+    {
+        $this->customer = $customer;
+    }
+
     public function index()
     : JsonResponse
     {
-        $customers = Customer::query()
-            ->get();
+        $customers = Customer::all();
 
         return $this->successResponse(
             new CustomerCollection($customers),
             'success',
-            'Получена коллекция Контрагентов.',
+            __('crud.customers.all'),
         );
     }
 
     public function store(StoreRequest $request)
     : JsonResponse {
-        return response()->json([
-            'item'    => new CustomerResource(Customer::create($request->validated())),
-            'status'  => 'success',
-            'message' => 'Контрагент создан.',
-        ], Response::HTTP_CREATED);
+        return $this->successResponse(
+            new CustomerResource(Customer::create($request->validated())),
+            'success',
+            __('crud.customers.created'),
+            Response::HTTP_CREATED,
+        );
     }
 
     public function show(Customer $customer)
-    : CustomerResource
+    : JsonResponse
     {
-        return new CustomerResource($customer);
+        return $this->successResponse(
+            new CustomerResource($customer),
+            'success',
+            __('crud.customers.one'),
+        );
     }
 
     public function update(UpdateRequest $request, Customer $customer)
-    : JsonResponse {
+    : JsonResponse
+    {
         $customer->update($request->validated());
-        return response()->json([
-            'item'    => new CustomerResource($customer),
-            'status'  => 'success',
-            'message' => 'Контрагент обновлён.',
-        ], Response::HTTP_OK);
+
+        return $this->successResponse(
+            new CustomerResource($customer),
+            'success',
+            __('crud.customers.updated'),
+        );
+    }
+
+    public function destroy(Customer $customer)
+    : JsonResponse
+    {
+        $canBeDeleted = true; // TODO
+
+        if ($canBeDeleted) {
+            $customer->delete();
+
+            return $this->successResponse(
+                new CustomerResource($customer),
+                'success',
+                __('crud.customers.deleted'),
+            );
+        } else {
+            return $this->errorResponse(
+                Response::HTTP_OK,
+                'error',
+                __('crud.customers.not_deleted'),
+            );
+        }
     }
 }

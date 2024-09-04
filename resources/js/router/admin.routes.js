@@ -2,9 +2,11 @@ import {
     Category,
     City,
     Customer,
+    CustomerView,
     Index,
     Layout,
     Product,
+    ProductView,
     Region,
     RegionView,
     Report,
@@ -73,11 +75,27 @@ export default {
             },
         },
         {
+            path: 'customers/:id',
+            name: 'Customer.View',
+            component: CustomerView,
+            meta: {
+                title: 'Просмотр контрагента',
+            },
+        },
+        {
             path: 'products',
             name: 'Product.Index',
             component: Product,
             meta: {
                 title: 'Ассортимент продукции',
+            },
+        },
+        {
+            path: 'products/:id',
+            name: 'Product.View',
+            component: ProductView,
+            meta: {
+                title: 'Просмотр продукта',
             },
         },
         {

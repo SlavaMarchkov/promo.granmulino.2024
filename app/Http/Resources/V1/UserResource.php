@@ -12,11 +12,12 @@ use Illuminate\Http\Resources\Json\JsonResource;
 class UserResource extends JsonResource
 {
     public function toArray(Request $request)
-    : array {
+    : array
+    {
         return [
             'id'         => $this->id,
-            'firstName'  => $this->first_name,
             'lastName'   => $this->last_name,
+            'firstName'  => $this->first_name,
             'middleName' => $this->middle_name,
             'fullName'   => $this->full_name,
             'email'      => $this->email,

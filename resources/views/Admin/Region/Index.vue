@@ -163,7 +163,7 @@
                 <div class="bd-callout bd-callout-info">
                     <p>Всего городов в регионе: <strong>{{ state.region.citiesCount }}</strong></p>
                 </div>
-                <table class="table table-bordered text-center align-middle text-nowrap"
+                <table class="table table-bordered text-center align-middle text-wrap"
                        style="width: 100%;">
                     <thead class="table-light">
                     <tr>

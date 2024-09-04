@@ -21,7 +21,7 @@ class StoreRequest extends FormRequest
         return [
             'name'        => ['required', 'string', 'min:8', 'max:64'],
             'description' => ['nullable', 'string'],
-            'is_active' => ['required', new BooleanRule],
+            'is_active'   => ['required', new BooleanRule],
 
             'region_id' => ['required', 'nullable', 'exists:regions,id'],
             'city_id'   => ['required', 'nullable', 'exists:cities,id'],
@@ -38,15 +38,6 @@ class StoreRequest extends FormRequest
             'city_id'   => 'Город',
             'user_id'   => 'Менеджер',
             'is_active' => 'Активный',
-        ];
-    }
-
-    public function messages()
-    : array
-    {
-        return [
-            'required' => 'Поле ":attribute" нужно заполнить.',
-            'exists'   => 'Поле ":attribute" нужно выбрать из списка.',
         ];
     }
 

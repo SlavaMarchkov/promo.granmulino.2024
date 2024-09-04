@@ -40,13 +40,4 @@ class UpdateRequest extends FormRequest
             'is_active' => 'Активный',
         ];
     }
-
-    public function messages()
-    : array
-    {
-        return [
-            'required' => 'Поле ":attribute" нужно заполнить.',
-            'exists'   => 'Поле ":attribute" нужно выбрать из списка.',
-        ];
-    }
 }

@@ -14,9 +14,9 @@ final class StoreUpdateRequest extends FormRequest
     {
         return [
             'name'        => ['required', 'string', 'min:8', 'max:64'],
-            'weight'    => ['required', 'numeric', 'min:0', 'max:10000'],
+            'weight'      => ['required', 'numeric', 'min:0', 'max:10000'],
             'price'       => ['required', 'numeric', 'min:0', 'max:199.99', 'decimal:2', 'regex:/\d{1,3}.\d{2}/'],
-            'is_active' => ['required', new BooleanRule],
+            'is_active'   => ['required', new BooleanRule],
             'image'       => ['exclude_unless:image,null', 'image', 'mimes:jpeg,png,jpg', 'max:2048'],
             'category_id' => ['required', 'nullable', 'exists:categories,id'],
         ];
@@ -38,10 +38,8 @@ final class StoreUpdateRequest extends FormRequest
     : array
     {
         return [
-            'required' => 'Поле ":attribute" нужно заполнить.',
-            'exists'   => 'Поле ":attribute" нужно выбрать из списка.',
-            'price'    => [
-                'decimal' => 'Цена должна содержать две цифры после точки, напр. 30.00. Требование актуально и для целых чисел.'
+            'price' => [
+                'decimal' => 'Цена должна содержать две цифры после точки, напр. 30.00. Требование актуально и для целых чисел.',
             ],
         ];
     }

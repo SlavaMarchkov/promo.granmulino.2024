@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\ApiController;
 use App\Http\Requests\User\StoreRequest;
 use App\Http\Requests\User\UpdateRequest;
 use App\Http\Resources\V1\UserCollection;
@@ -14,18 +14,27 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-final class UserController extends Controller
+final class UserController extends ApiController
 {
+    protected User $user;
+
+    public function __construct(User $user)
+    {
+        $this->user = $user;
+    }
+
     public function index(Request $request)
-    : UserCollection
+    : JsonResponse
     {
         $is_active = $request->boolean('is_active');
 
-        $users = User::query()
-            ->when($is_active, fn($query) => $query->where('is_active', true))
-            ->get();
+        $users = $this->user->getUsers($is_active);
 
-        return new UserCollection($users);
+        return $this->successResponse(
+            new UserCollection($users),
+            'success',
+            __('crud.users.all'),
+        );
     }
 
     public function store(StoreRequest $request)

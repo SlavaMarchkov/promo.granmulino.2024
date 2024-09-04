@@ -35,7 +35,7 @@ class City extends Model
         return $this->hasManyThrough(Retailer::class, Customer::class);
     }
 
-    public function getCityWithRegion()
+    public function getCitiesWithRegion()
     : Collection
     {
         return $this->query()

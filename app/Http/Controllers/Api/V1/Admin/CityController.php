@@ -24,7 +24,7 @@ final class CityController extends ApiController
     public function index()
     : JsonResponse
     {
-        $cities = $this->city->getCityWithRegion();
+        $cities = $this->city->getCitiesWithRegion();
 
         return $this->successResponse(
             new CityCollection($cities),

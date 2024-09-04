@@ -6,4 +6,12 @@ export default {
      * @returns {Array}
      */
     getUsers: (state) => state.users,
+
+    /**
+     * Возвращает одну запись по ID
+     *
+     * @returns {function(*): Object}
+     */
+    oneUser: (state) => id => state.users
+        .find(item => item.id === id),
 };

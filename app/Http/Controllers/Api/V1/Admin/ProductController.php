@@ -14,6 +14,13 @@ use Symfony\Component\HttpFoundation\Response;
 
 final class ProductController extends ApiController
 {
+    protected Product $product;
+
+    public function __construct(Product $product)
+    {
+        $this->product = $product;
+    }
+
     public function index()
     : JsonResponse
     {
@@ -27,21 +34,24 @@ final class ProductController extends ApiController
     }
 
     public function store(StoreUpdateRequest $request)
-    : JsonResponse {
-        $product = new ProductResource(Product::create($request->validated()));
-
+    : JsonResponse
+    {
         return $this->successResponse(
-            $product,
+            new ProductResource(Product::create($request->validated())),
             'success',
             __('crud.products.created'),
             Response::HTTP_CREATED,
         );
     }
 
-    // TODO: how to show one item
     public function show(Product $product)
-    : ProductResource {
-        return new ProductResource($product);
+    : JsonResponse
+    {
+        return $this->successResponse(
+            new ProductResource($product),
+            'success',
+            __('crud.regions.one'),
+        );
     }
 
     public function update(StoreUpdateRequest $request, Product $product)
@@ -57,13 +67,24 @@ final class ProductController extends ApiController
     }
 
     public function destroy(Product $product)
+    : JsonResponse
     {
-        $product->delete();
+        $canBeDeleted = false;
 
-        return $this->successResponse(
-            new ProductResource($product),
-            'success',
-            __('crud.products.deleted'),
-        );
+        if ($canBeDeleted) {
+            $product->delete();
+
+            return $this->successResponse(
+                new ProductResource($product),
+                'success',
+                __('crud.products.deleted'),
+            );
+        } else {
+            return $this->errorResponse(
+                Response::HTTP_OK,
+                'error',
+                __('crud.products.not_deleted'),
+            );
+        }
     }
 }

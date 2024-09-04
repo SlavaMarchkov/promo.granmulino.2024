@@ -276,7 +276,6 @@ const editCityInit = (id) => {
     modalPopUp.show();
 };
 
-// TODO - View city modal
 const viewCityInit = (id) => {
     viewModalPopUp = new bootstrap.Modal(document.getElementById('viewModalPopUp'));
     state.city = cityStore.oneCity(id);
@@ -305,7 +304,7 @@ const clearSearch = () => {
 
 const saveCity = async () => {
     if ( state.isEditing ) {
-        const response = await update(`${cityURL}/${state.city.id}`, state.city);
+        const response = await update(`${ cityURL }/${ state.city.id }`, state.city);
         if ( response && response.status === 'success' ) {
             alertStore.clear();
             modalPopUp.hide();
@@ -325,8 +324,8 @@ const saveCity = async () => {
 };
 
 const deleteCity = async (id) => {
-    if ( confirm('Точно удалить? Уверены?') ) {
-        const response = await destroy(`${cityURL}/${id}`);
+    if ( confirm('Точно удалить город? Уверены?') ) {
+        const response = await destroy(`${ cityURL }/${ id }`);
         if ( response && response.status === 'success' ) {
             await getCities();
         }

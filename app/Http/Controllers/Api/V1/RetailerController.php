@@ -17,20 +17,24 @@ final class RetailerController extends ApiController
 {
     use AuthorizesRequests;
 
+    protected Retailer $retailer;
+
+    public function __construct(Retailer $retailer)
+    {
+        $this->retailer = $retailer;
+    }
+
     public function index()
     : JsonResponse
     {
         // $this->authorize('viewAny', Retailer::class);
 
-        $retailers = Retailer::query()
-            ->with('city')
-            ->with('customer')
-            ->get();
+        $retailers = $this->retailer->getRetailersWithCityAndCustomer();
 
         return $this->successResponse(
             new RetailerCollection($retailers),
             'success',
-            'Получена коллекция Торговых сетей.',
+            __('crud.retailers.all'),
         );
     }
 

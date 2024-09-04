@@ -12,10 +12,6 @@
     </div>
     <div class="row mb-2">
         <div class="col-12">
-            <pre>
-                {{ orderColumn }}
-                {{ orderDirection }}
-            </pre>
             <Filter
                 @reset-filter="clearSearch"
             >
@@ -67,134 +63,76 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body pb-0">
-                    <div class="table-responsive">
-                        <table v-if="state.customers.length > 0"
-                               class="table table-bordered my-4 text-center align-middle text-nowrap"
+                    <div v-if="filteredItems.length > 0" class="table-responsive">
+                        <table class="table table-bordered my-4 text-center align-middle text-nowrap"
                                style="width: 100%;">
                             <thead>
                             <tr>
-                                <ThSort
-                                    :id="'id'"
-                                    :order-column="orderColumn"
-                                    :order-direction="orderDirection"
-                                    :width='5'
-                                    sort-type="numeric"
-                                    @sortByColumn="applyFilterSort(
-                                        'id',
-                                        orderDirection === 'asc' ? 'desc' : 'asc',
-                                    )"
-                                >ID
-                                </ThSort>
-                                <ThSort
-                                    :id="'name'"
-                                    :order-column="orderColumn"
-                                    :order-direction="orderDirection"
-                                    class="text-start"
-                                    sort-type="alpha"
-                                    @sortByColumn="applyFilterSort(
-                                        'name',
-                                        orderDirection === 'asc' ? 'desc' : 'asc',
-                                        false,
-                                    )"
-                                >Название
-                                </ThSort>
-                                <ThSort
-                                    :id="'userId'"
-                                    :order-column="orderColumn"
-                                    :order-direction="orderDirection"
-                                    class="text-start"
-                                    sort-type="numeric"
-                                    @sortByColumn="applyFilterSort(
-                                        'userId',
-                                        orderDirection === 'asc' ? 'desc' : 'asc',
-                                    )"
-                                >Менеджер
-                                </ThSort>
-                                <ThSort
-                                    :id="'region'"
-                                    :order-column="orderColumn"
-                                    :order-direction="orderDirection"
-                                    class="text-start"
-                                    sort-type="alpha"
-                                    @sortByColumn="applyFilterSort(
-                                        'region',
-                                        orderDirection === 'asc' ? 'desc' : 'asc',
-                                        false,
-                                    )"
-                                >Регион
-                                </ThSort>
-                                <ThSort
-                                    :id="'city'"
-                                    :order-column="orderColumn"
-                                    :order-direction="orderDirection"
-                                    :width='15'
-                                    class="text-start"
-                                    sort-type="alpha"
-                                    @sortByColumn="applyFilterSort(
-                                        'city',
-                                        orderDirection === 'asc' ? 'desc' : 'asc',
-                                        false,
-                                    )"
-                                >Город
-                                </ThSort>
-                                <ThSort
-                                    :id="'isActive'"
-                                    :order-column="orderColumn"
-                                    :order-direction="orderDirection"
-                                    :width='12'
-                                    @sortByColumn="applyFilterSort(
-                                        'isActive',
-                                        orderDirection === 'asc' ? 'desc' : 'asc',
-                                    )"
-                                >Активный?
-                                </ThSort>
-                                <th scope="col" style="width: 10%;">Просмотр</th>
-                                <th scope="col" style="width: 10%;">Ред.</th>
+                                <template
+                                    v-for="{ column, label, sortable, is_num, width } in thFields"
+                                    :key="column"
+                                >
+                                    <ThSort
+                                        :column="column"
+                                        :is-numeric="is_num"
+                                        :sort-by-asc="arrayHandlers.sortBy.asc"
+                                        :sort-by-column="arrayHandlers.sortBy.column === column"
+                                        :sortable="sortable"
+                                        :width="width"
+                                        @setSort="arrayHandlers.setSort(column, is_num)"
+                                    >{{ label }}
+                                    </ThSort>
+                                </template>
                             </tr>
                             </thead>
                             <tbody>
-                            <tr v-for="customer in state.customers" :key="customer.id">
-                                <th scope="row">{{ customer.id }}</th>
-                                <td class="text-start" style="cursor: pointer;"
-                                    @click="showViewCustomerModal(customer.id)">
-                                    {{ customer.name }}
+                            <tr v-for="item in filteredItems" :key="item.id">
+                                <th scope="row">
+                                    {{ item.id }}
+                                </th>
+                                <td class="text-start">
+                                    <RouterLink :to="{ name: 'Customer.View', params: { id: item.id } }">
+                                        {{ item.name }}
+                                    </RouterLink>
                                 </td>
                                 <td class="text-start">
-                                    {{ customer.user }}
+                                    {{ item.user }}
                                 </td>
                                 <td class="text-start">
-                                    {{ customer.region }}
+                                    {{ item.region }}
                                 </td>
                                 <td class="text-start">
-                                    {{ customer.city }}
+                                    {{ item.city }}
                                 </td>
                                 <td>
-                                    <Badge :is-active="customer.isActive"/>
+                                    <Badge :is-active="item.isActive"/>
                                 </td>
-                                <td>
-                                    <button
-                                        class="btn btn-sm btn-primary"
-                                        @click="showViewModal(customer.id)"
-                                    ><i class="bi bi-eye-fill"></i>
-                                        View
-                                    </button>
-                                </td>
-                                <td>
-                                    <button
-                                        class="btn btn-sm btn-warning"
-                                        @click="editCustomerInit(customer.id)"
-                                    ><i class="bi bi-pencil-square"></i>
-                                        Edit
-                                    </button>
-                                </td>
+                                <TdButton
+                                    :id="item.id"
+                                    intent="view"
+                                    @runButtonHandler="viewCustomerInit"
+                                >View
+                                </TdButton>
+                                <TdButton
+                                    :id="item.id"
+                                    intent="edit"
+                                    @runButtonHandler="editCustomerInit"
+                                >Edit
+                                </TdButton>
+                                <TdButton
+                                    :id="item.id"
+                                    intent="delete"
+                                    @runButtonHandler="deleteCustomer"
+                                >Delete
+                                </TdButton>
                             </tr>
                             </tbody>
                         </table>
-                        <p v-else class="mt-3 text-center lead">
-                            {{ customerStore.isContentLoading ? 'Подождите, загружаю...' : 'Записей не найдено...' }}
-                        </p>
                     </div>
-                    <p>Всего записей: <span class="fw-bold">{{ state.customers.length }}</span></p>
+                    <p v-else class="mt-3 text-center lead">
+                        {{ spinnerStore.isLoading ? 'Подождите, загружаю...' : 'Записей не найдено...' }}
+                    </p>
+                    <p>Всего записей: <span class="fw-bold">{{ filteredItems.length }}</span></p>
                 </div>
             </div>
         </div>
@@ -206,7 +144,7 @@
         :custom-classes="['']"
     >
         <template #title>
-            <span v-if="state.isEditing">Редактирование контрагента <b>{{ state.customer.name }}</b></span>
+            <span v-if="state.isEditing">Редактирование контрагента <br><b>{{ state.customer.name }}</b></span>
             <span v-else>Добавление контрагента</span>
         </template>
         <template #body>
@@ -225,6 +163,7 @@
                     <Label for="region_id" required>Регион</Label>
                     <select
                         v-model="state.customer.regionId"
+                        @change="getCitiesForRegion(); state.customer.cityId = null"
                         id="region_id"
                         class="form-select"
                     >
@@ -239,7 +178,11 @@
                 </div>
                 <div class="col-12" v-if="state.customer.regionId">
                     <Label for="city_id" required>Город</Label>
-                    <select v-model="state.customer.cityId" id="city_id" class="form-select">
+                    <select
+                        v-model="state.customer.cityId"
+                        id="city_id"
+                        class="form-select"
+                    >
                         <option disabled selected value="null">-- Выберите город --</option>
                         <option
                             v-for="city in state.cities"
@@ -294,8 +237,8 @@
             <Button
                 @click="saveCustomer"
                 type="button"
-                :loading="customerStore.isButtonDisabled"
-                :disabled="customerStore.isButtonDisabled"
+                :loading="spinnerStore.isButtonDisabled"
+                :disabled="spinnerStore.isButtonDisabled"
                 class="w-25"
                 :class="state.isEditing ? 'btn-warning' : 'btn-primary'"
             >
@@ -304,14 +247,63 @@
             </Button>
         </template>
     </Modal>
+
+    <Modal
+        id="viewModalPopUp"
+        :close-func="closeViewModal"
+        :custom-classes="['modal-lg', 'modal-dialog-scrollable']"
+    >
+        <template #title>
+            Просмотр контрагента <b>{{ state.customer.name }}</b>
+        </template>
+        <template #body>
+            <table class="table table-bordered mt-3 align-middle text-wrap"
+                   style="width: 100%;">
+                <tbody>
+                <tr>
+                    <th style="width: 20%;">ID</th>
+                    <td>{{ state.customer.id }}</td>
+                </tr>
+                <tr>
+                    <th>Название</th>
+                    <td>{{ state.customer.name }}</td>
+                </tr>
+                <tr>
+                    <th>Регион</th>
+                    <td>{{ state.customer.region }}</td>
+                </tr>
+                <tr>
+                    <th>Город</th>
+                    <td>{{ state.customer.city }}</td>
+                </tr>
+                <tr>
+                    <th>Менеджер</th>
+                    <td>{{ state.customer.user }}</td>
+                </tr>
+                <tr>
+                    <th>Активен?</th>
+                    <td><Badge :is-active="state.customer.isActive" /></td>
+                </tr>
+                <tr>
+                    <th>Описание</th>
+                    <td>{{ state.customer.description }}</td>
+                </tr>
+                </tbody>
+            </table>
+        </template>
+        <template #footer>
+            <span></span>
+        </template>
+    </Modal>
 </template>
 
 <script setup>
-import { computed, onMounted, reactive, ref, watch } from 'vue';
+import { computed, onMounted, reactive, watch } from 'vue';
 import { useCustomerStore } from '@/stores/customers.js';
-import { useUserStore } from '@/stores/users.js';
-import { useRegionStore } from '@/stores/regions.js';
 import { useAlertStore } from '@/stores/alerts.js';
+import { useSpinnerStore } from '@/stores/spinners.js';
+import { useHttpService } from '@/use/useHttpService.js';
+import { useArrayHandlers } from '@/use/useArrayHandlers.js';
 import ThSort from '@/components/table/ThSort.vue';
 import Button from '@/components/core/Button.vue';
 import Badge from '@/components/core/Badge.vue';
@@ -323,11 +315,17 @@ import Input from '@/components/form/Input.vue';
 import Label from '@/components/form/Label.vue';
 import Alert from '@/components/Alert.vue';
 import Filter from '@/components/core/Filter.vue';
+import TdButton from "@/components/table/TdButton.vue";
 
 const customerStore = useCustomerStore();
-const userStore = useUserStore();
-const regionStore = useRegionStore();
 const alertStore = useAlertStore();
+const spinnerStore = useSpinnerStore();
+const arrayHandlers = useArrayHandlers();
+const { get, post, update, destroy } = useHttpService();
+
+const customerURL = '/customers';
+const regionURL = '/admin/regions';
+const userURL = '/users';
 
 const initialFormData = () => ({
     name: '',
@@ -347,6 +345,18 @@ const state = reactive({
     isEditing: false,
 });
 
+const thFields = [
+    { column: 'id', label: 'ID', sortable: true, is_num: true, width: 6 },
+    { column: 'name', label: 'Название', sortable: true, is_num: false },
+    { column: 'user', label: 'Менеджер', sortable: true, is_num: false },
+    { column: 'region', label: 'Регион', sortable: true, is_num: false },
+    { column: 'city', label: 'Город', sortable: true, is_num: false },
+    { column: 'isActive', label: 'Активен?', sortable: true, is_num: true },
+    { column: 'view', label: 'Просмотр', width: 10 },
+    { column: 'edit', label: 'Ред.', width: 10 },
+    { column: 'delete', label: 'Удалить', width: 10 },
+];
+
 const searchBy = reactive({
     name: '',
     userId: '',
@@ -355,49 +365,45 @@ const searchBy = reactive({
     isActive: false,
 });
 
-const orderColumn = ref('id');
-let orderDirection = ref('asc');
-
 let modalPopUp = null;
+let viewModalPopUp = null;
+
+function resetState() {
+    state.isEditing = false;
+    state.customer = initialFormData();
+}
 
 onMounted(async () => {
     await getCustomers();
     await getUsers();
     await getRegions();
-
     modalPopUp = new bootstrap.Modal(document.getElementById('modalPopUp'));
-    modalPopUp._element.addEventListener('hide.bs.modal', () => {
-        state.isEditing = false;
-        state.customer = initialFormData();
-    });
+    modalPopUp._element.addEventListener('hide.bs.modal', resetState);
 });
 
 const getCustomers = async () => {
-    await customerStore.all();
-    applyFilterSort();
-};
-
-const getUsers = async () => {
-    const response = await userStore.all(true);
-    state.users = response.data;
+    const { data } = await get(customerURL);
+    customerStore.setCustomers(data.customers);
+    state.customers = customerStore.getCustomers;
 };
 
 const getRegions = async () => {
-    const response = await regionStore.all();
-    state.regions = response.data;
+    const { data } = await get(regionURL);
+    state.regions = data.regions;
 };
 
-const cities = computed((regionId) => {
-    return state.regions.map(region => {
-        if ( +region.id === +regionId ) {
-            return region.cities;
-        }
+const getUsers = async () => {
+    const { data } = await get(userURL, {
+        params: {
+            is_active: true,
+        },
     });
-});
+    state.users = data.users;
+};
 
-const getCitiesForRegion = (regionId) => {
+const getCitiesForRegion = () => {
     state.regions.map(region => {
-        if ( +region.id === +regionId ) {
+        if ( +region.id === +state.customer.regionId ) {
             state.cities = region.cities;
         }
     });
@@ -407,85 +413,79 @@ const createCustomerInit = () => {
     alertStore.clear();
     state.isEditing = false;
     state.cities = [];
+    state.customer = initialFormData();
     modalPopUp.show();
 };
 
 const editCustomerInit = (id) => {
     alertStore.clear();
     state.isEditing = true;
-    modalPopUp.show();
-    state.customer = customerStore.getCustomers.find(item => item.id === id);
+    state.customer = customerStore.oneCustomer(id);
     getCitiesForRegion(state.customer.regionId);
+    modalPopUp.show();
+};
+
+const viewCustomerInit = (id) => {
+    viewModalPopUp = new bootstrap.Modal(document.getElementById('viewModalPopUp'));
+    state.customer = customerStore.oneCustomer(id);
+    viewModalPopUp.show();
+    viewModalPopUp._element.addEventListener('hide.bs.modal', resetState);
 };
 
 const closeModal = () => {
     modalPopUp.hide();
+    modalPopUp._element.removeEventListener('hide.bs.modal', resetState);
+};
+
+const closeViewModal = () => {
+    viewModalPopUp.hide();
+    viewModalPopUp._element.removeEventListener('hide.bs.modal', resetState);
+};
+
+watch(searchBy, () => {
+    state.customers = arrayHandlers.filterArray(customerStore.getCustomers, searchBy);
+});
+
+const clearSearch = () => {
+    arrayHandlers.resetSearchKeys(searchBy);
+    arrayHandlers.resetSortKeys();
 };
 
 const saveCustomer = async () => {
     if ( state.isEditing ) {
-        const response = await customerStore.update(state.customer);
+        const response = await update(`${ customerURL }/${ state.customer.id }`, state.customer);
         if ( response && response.status === 'success' ) {
             alertStore.clear();
             modalPopUp.hide();
             await getCustomers();
         }
     } else {
-        const response = await customerStore.save(state.customer);
+        const response = await post(customerURL, state.customer);
         if ( response && response.status === 'success' ) {
             alertStore.clear();
             state.customer = initialFormData();
             modalPopUp.hide();
-            resetSearchKeys(searchBy);
-            orderColumn.value = 'id';
-            orderDirection.value = 'desc';
+            arrayHandlers.resetSearchKeys(searchBy);
+            arrayHandlers.resetSortKeys('id', false);
             await getCustomers();
         }
     }
 };
 
-const clearSearch = () => {
-    resetSearchKeys(searchBy);
-    applyFilterSort(
-        (orderColumn.value = 'id'),
-        (orderDirection.value = 'asc'),
-    );
-};
-
-// watch(searchBy, () => applyFilterSort(orderColumn.value, orderDirection.value, false));
-/*watch(() => searchBy.name || searchBy.city, () => {
-    applyFilterSort(orderColumn.value, orderDirection.value, false);
-});
-watch(() => searchBy.userId || searchBy.regionId || searchBy.isActive, (newValue, oldValue) => {
-    console.log('n', newValue);
-    console.log('o', oldValue);
-    let tempArr = customerStore.getCustomers.slice();
-    tempArr = arrFilter(tempArr, searchBy);
-    state.customers = tempArr;
-    // applyFilterSort(orderColumn.value, orderDirection.value, true);
-});*/
-watch(() => state.customer.regionId, (newValue, oldValue) => {
-    if ( oldValue !== null ) {
-        state.customer.cityId = null;
+const deleteCustomer = async (id) => {
+    if ( confirm('Точно удалить контрагента? Уверены?') ) {
+        const response = await destroy(`${ customerURL }/${ id }`);
+        if ( response && response.status === 'success' ) {
+            await getCustomers();
+        }
     }
-    getCitiesForRegion(newValue);
+};
+
+const sortedItems = computed(() => {
+    return arrayHandlers.sortArray(state.customers);
 });
 
-const applyFilterSort = (
-    column = orderColumn.value,
-    direction = orderDirection.value,
-    sort_by_numeric = true,
-) => {
-    console.log('column', column);
-    console.log('direction', direction);
-    orderColumn.value = column;
-    orderDirection.value = direction;
-
-    let tempArr = customerStore.getCustomers.slice();
-
-    tempArr = arrFilter(tempArr, searchBy);
-    tempArr = arrSort(tempArr, sort_by_numeric, direction, column);
-
-    state.customers = tempArr;
-};
+const filteredItems = computed(() => {
+    return arrayHandlers.filterArray(sortedItems.value, searchBy);
+});
 </script>

@@ -1,7 +1,11 @@
 <template>
     <div class="row mb-4">
         <div class="col-12">
-            <button class="btn btn-primary" type="button" @click="createProductInit">
+            <button
+                class="btn btn-primary"
+                type="button"
+                @click="createProductInit"
+            >
                 Новый продукт
             </button>
         </div>
@@ -63,6 +67,7 @@
                                     :key="column"
                                 >
                                     <ThSort
+                                        :column="column"
                                         :is-numeric="is_num"
                                         :sort-by-asc="arrayHandlers.sortBy.asc"
                                         :sort-by-column="arrayHandlers.sortBy.column === column"
@@ -80,7 +85,13 @@
                                     {{ item.id }}
                                 </th>
                                 <td class="text-start">
-                                    {{ item.name }}
+                                    <RouterLink :to="{
+                                        name: 'Product.View',
+                                        params: {
+                                            'id': item.id
+                                        },
+                                    }">{{ item.name }}
+                                    </RouterLink>
                                 </td>
                                 <td>
                                     {{ item.weight }}
@@ -97,21 +108,27 @@
                                 <TdButton
                                     :id="item.id"
                                     intent="view"
-                                    @initModal="viewProductInit"
+                                    @runButtonHandler="viewProductInit"
                                 >View
                                 </TdButton>
                                 <TdButton
                                     :id="item.id"
                                     intent="edit"
-                                    @initModal="editProductInit"
+                                    @runButtonHandler="editProductInit"
                                 >Edit
+                                </TdButton>
+                                <TdButton
+                                    :id="item.id"
+                                    intent="delete"
+                                    @runButtonHandler="deleteProduct"
+                                >Delete
                                 </TdButton>
                             </tr>
                             </tbody>
                         </table>
                     </div>
                     <p v-else class="mt-3 text-center lead">
-                        {{ productStore.isContentLoading ? 'Подождите, загружаю...' : 'Записей не найдено...' }}
+                        {{ spinnerStore.isLoading ? 'Подождите, загружаю...' : 'Записей не найдено...' }}
                     </p>
                     <p>Всего записей: <span class="fw-bold">{{ filteredItems.length }}</span></p>
                 </div>
@@ -125,7 +142,7 @@
         :custom-classes="['']"
     >
         <template #title>
-            <span v-if="state.isEditing">Редактирование продукта <b>{{ state.product.name }}</b></span>
+            <span v-if="state.isEditing">Редактирование продукта <br><b>{{ state.product.name }}</b></span>
             <span v-else>Добавление продукта</span>
         </template>
         <template #body>
@@ -206,8 +223,8 @@
         <template #footer>
             <Button
                 :class="state.isEditing ? 'btn-warning' : 'btn-primary'"
-                :disabled="productStore.isButtonDisabled"
-                :loading="productStore.isButtonDisabled"
+                :disabled="spinnerStore.isButtonDisabled"
+                :loading="spinnerStore.isButtonDisabled"
                 class="w-25"
                 type="button"
                 @click="saveProduct"
@@ -227,31 +244,38 @@
             Просмотр продукта <b>{{ state.product.name }}</b>
         </template>
         <template #body>
-            <pre>
-                {{ state.product }}
-            </pre>
-            <!--            <div v-if="state.region.citiesCount > 0">
-                            <p>Всего городов в регионе: <span class="fw-bold">{{ state.region.citiesCount }}</span></p>
-                            <table class="table table-bordered text-center align-middle text-nowrap"
-                                   style="width: 100%;">
-                                <tbody>
-                                <tr>
-                                    <th>ID</th>
-                                    <th class="text-start">Название города</th>
-                                </tr>
-                                <tr v-for="city in state.region.cities" :key="city.id">
-                                    <td>{{ city.id }}</td>
-                                    <td class="text-start">{{ city.name }}</td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>-->
-            <!--            <div v-else>
-                            <p class="mb-0">Регион пустой. Наполните регион городами во вкладке <b>Справочники | Города</b>.</p>
-                        </div>-->
+            <table class="table table-bordered mt-3 align-middle text-wrap"
+                   style="width: 100%;">
+                <tbody>
+                <tr>
+                    <th style="width: 40%;">ID</th>
+                    <td>{{ state.product.id }}</td>
+                </tr>
+                <tr>
+                    <th>Название</th>
+                    <td>{{ state.product.name }}</td>
+                </tr>
+                <tr>
+                    <th>Вес, г</th>
+                    <td>{{ state.product.weight }}</td>
+                </tr>
+                <tr>
+                    <th>Себестоимость, руб.</th>
+                    <td>{{ state.product.price }}</td>
+                </tr>
+                <tr>
+                    <th>Группа товаров</th>
+                    <td>{{ state.product.category }}</td>
+                </tr>
+                <tr>
+                    <th>В продаже?</th>
+                    <td><Badge :is-active="state.product.isActive" /></td>
+                </tr>
+                </tbody>
+            </table>
         </template>
         <template #footer>
-            <Button class="btn btn-light"></Button>
+            <span></span>
         </template>
     </Modal>
 </template>
@@ -265,9 +289,10 @@ import Button from '@/components/core/Button.vue';
 import Alert from '@/components/Alert.vue';
 import { computed, onMounted, reactive, watch } from 'vue';
 import { useAlertStore } from '@/stores/alerts.js';
-import { useCategoryStore } from '@/stores/categories.js';
 import { useProductStore } from '@/stores/products.js';
+import { useSpinnerStore } from '@/stores/spinners.js';
 import { useArrayHandlers } from '@/use/useArrayHandlers.js';
+import { useHttpService } from '@/use/useHttpService.js';
 import InputGroup from '@/components/form/InputGroup.vue';
 import Filter from '@/components/core/Filter.vue';
 import Badge from '@/components/core/Badge.vue';
@@ -275,10 +300,15 @@ import Modal from '@/components/Modal.vue';
 import ThSort from '@/components/table/ThSort.vue';
 import TdButton from '@/components/table/TdButton.vue';
 
+const { get, post, update, destroy } = useHttpService();
+
 const productStore = useProductStore();
-const categoryStore = useCategoryStore();
 const alertStore = useAlertStore();
+const spinnerStore = useSpinnerStore();
 const arrayHandlers = useArrayHandlers();
+
+const productURL = '/admin/products';
+const categoryURL = '/admin/categories';
 
 const initialFormData = () => ({
     name: '',
@@ -304,6 +334,7 @@ const thFields = [
     { column: 'isActive', label: 'В продаже?', sortable: true, is_num: true, width: 15 },
     { column: 'view', label: 'Просмотр', width: 10 },
     { column: 'edit', label: 'Ред.', width: 10 },
+    { column: 'delete', label: 'Удалить', width: 10 },
 ];
 
 const searchBy = reactive({
@@ -317,25 +348,27 @@ const searchBy = reactive({
 let modalPopUp = null;
 let viewModalPopUp = null;
 
+function resetState() {
+    state.isEditing = false;
+    state.product = initialFormData();
+}
+
 onMounted(async () => {
     await getProducts();
     await getCategories();
-
     modalPopUp = new bootstrap.Modal(document.getElementById('modalPopUp'));
-    modalPopUp._element.addEventListener('hide.bs.modal', () => {
-        state.isEditing = false;
-        state.product = initialFormData();
-    });
+    modalPopUp._element.addEventListener('hide.bs.modal', resetState);
 });
 
 const getProducts = async () => {
-    const { data } = await productStore.all();
-    state.products = data.data;
+    const { data } = await get(productURL);
+    productStore.setProducts(data.products);
+    state.products = productStore.getProducts;
 };
 
 const getCategories = async () => {
-    const { data } = await categoryStore.all();
-    state.categories = data.data;
+    const { data } = await get(categoryURL);
+    state.categories = data.categories;
 };
 
 const createProductInit = () => {
@@ -352,24 +385,23 @@ const editProductInit = (id) => {
     modalPopUp.show();
 };
 
-// TODO: make view of the product
 const viewProductInit = (id) => {
     viewModalPopUp = new bootstrap.Modal(document.getElementById('viewModalPopUp'));
     state.product = productStore.oneProduct(id);
     viewModalPopUp.show();
-    viewModalPopUp._element.addEventListener('hide.bs.modal', () => {
-        state.isEditing = false;
-        state.product = initialFormData();
-    });
+    viewModalPopUp._element.addEventListener('hide.bs.modal', resetState);
 };
 
 const closeModal = () => {
     modalPopUp.hide();
+    modalPopUp._element.removeEventListener('hide.bs.modal', resetState);
 };
 
 const closeViewModal = () => {
     viewModalPopUp.hide();
+    viewModalPopUp._element.removeEventListener('hide.bs.modal', resetState);
 };
+
 // TODO - сделать фильтр по весу (вес в виде массива с весами продукции)
 watch(searchBy, () => {
     state.products = arrayHandlers.filterArray(productStore.getProducts, searchBy);
@@ -382,20 +414,29 @@ const clearSearch = () => {
 
 const saveProduct = async () => {
     if ( state.isEditing ) {
-        const response = await productStore.update(state.product);
+        const response = await update(`${ productURL }/${ state.product.id }`, state.product);
         if ( response && response.status === 'success' ) {
             alertStore.clear();
             modalPopUp.hide();
             await getProducts();
         }
     } else {
-        const response = await productStore.save(state.product);
+        const response = await post(productURL, state.product);
         if ( response && response.status === 'success' ) {
             alertStore.clear();
             state.product = initialFormData();
             modalPopUp.hide();
             arrayHandlers.resetSearchKeys(searchBy);
             arrayHandlers.resetSortKeys('id', false);
+            await getProducts();
+        }
+    }
+};
+
+const deleteProduct = async (id) => {
+    if ( confirm('Точно удалить продукт? Уверены?') ) {
+        const response = await destroy(`${ productURL }/${ id }`);
+        if ( response && response.status === 'success' ) {
             await getProducts();
         }
     }
