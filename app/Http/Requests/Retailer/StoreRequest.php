@@ -44,15 +44,6 @@ class StoreRequest extends FormRequest
         ];
     }
 
-    public function messages()
-    : array
-    {
-        return [
-            'required' => 'Поле ":attribute" нужно заполнить.',
-            'exists'   => 'Поле ":attribute" нужно выбрать из списка.',
-        ];
-    }
-
     protected function prepareForValidation()
     : void
     {

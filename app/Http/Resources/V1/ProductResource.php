@@ -12,16 +12,20 @@ use Illuminate\Http\Resources\Json\JsonResource;
 class ProductResource extends JsonResource
 {
     public function toArray(Request $request)
-    : array {
+    : array
+    {
         return [
-            'id'       => $this->id,
-            'name'     => $this->name,
-            'weight'   => $this->weight,
-            'price'    => $this->price,
-            'image'    => $this->image,
-            'isActive' => $this->is_active,
+            'id'         => $this->id,
+            'name'       => $this->name,
+            'weight'     => $this->weight,
+            'price'      => $this->price,
+            'image'      => $this->image,
+            'isActive'   => $this->is_active,
             'categoryId' => $this->category_id,
-            'category' => $this->category->name,
+            'category'   => $this->category->name,
+
+            'next' => $this->findNext($this->id),
+            'prev' => $this->findPrevious($this->id),
         ];
     }
 }

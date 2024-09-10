@@ -1,44 +1,133 @@
 <template>
     <div class="row">
-        <div v-if="isRegionFound" class="col-12">
-            <pre>
-                {{ region }}
-            </pre>
-        </div>
-        <Alert v-else />
-        <hr>
         <div class="col-12">
-            <RouterLink
-                :to="{ name: 'Region.Index' }"
-                class="btn btn-secondary my-2"
-                role="button"
-            >Обратно на Регионы
-            </RouterLink>
+            <div class="card">
+                <div class="card-body">
+                    <template v-if="spinnerStore.isLoading">
+                        <h4 class="my-4">Загрузка...</h4>
+                        <table class="table table-bordered mb-4 align-middle text-wrap"
+                               style="width: 100%;">
+                            <tbody>
+                            <tr>
+                                <th style="width: 20%;">ID</th>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <th>Регион</th>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <th>Код</th>
+                                <td></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <button
+                            class="btn btn-outline-secondary"
+                            disabled
+                            role="button"
+                        >Пред.
+                        </button>
+                        <button
+                            class="btn btn-outline-secondary mx-2"
+                            disabled
+                            role="button"
+                        >След.
+                        </button>
+                    </template>
+                    <template v-else>
+                        <div v-if="isItemFound">
+                            <h4 class="my-4">{{ item.name }}</h4>
+                            <table class="table table-bordered mb-4 align-middle text-wrap"
+                                   style="width: 100%;">
+                                <tbody>
+                                <tr>
+                                    <th style="width: 20%;">ID</th>
+                                    <td>{{ item.id }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Регион</th>
+                                    <td>{{ item.name }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Код</th>
+                                    <td>{{ item.code }}</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                            <button
+                                @click="navigateToPreviousItem"
+                                class="btn btn-outline-secondary"
+                                :disabled="item.prev === null"
+                                role="button"
+                            >Пред.
+                            </button>
+                            <button
+                                @click="navigateToNextItem"
+                                class="btn btn-outline-secondary mx-2"
+                                :disabled="item.next === null"
+                                role="button"
+                            >След.
+                            </button>
+                        </div>
+                        <Alert v-else class="mt-3"/>
+                    </template>
+                    <hr>
+                    <RouterLink
+                        :to="{ name: 'Region.Index' }"
+                        class="btn btn-secondary my-2"
+                        role="button"
+                    >Обратно на Регионы
+                    </RouterLink>
+                </div>
+            </div>
         </div>
     </div>
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from 'vue';
-import { useRoute } from 'vue-router';
+import { computed, onMounted, ref, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import { useHttpService } from '@/use/useHttpService.js';
+import { useSpinnerStore } from '@/stores/spinners.js';
 import Alert from "@/components/Alert.vue";
 
 const route = useRoute();
+const router = useRouter();
+const spinnerStore = useSpinnerStore();
 
 const regionURL = '/admin/regions';
 
 const { get } = useHttpService();
 const id = +route.params.id;
 
-const region = ref({});
+const item = ref({});
 
 onMounted(async () => {
+    await fetchDetails(id);
+})
+
+const fetchDetails = async (id) => {
     const response = await get(`${ regionURL }/${ id }`);
-    if ( response.status === 'success' ) region.value = response.data;
+    if ( response.status === 'success' ) item.value = response.data;
+};
+
+watch(
+    () => route.params.id,
+    () => {
+        fetchDetails(route.params.id);
+    },
+);
+
+const isItemFound = computed(() => {
+    return Object.keys(item.value).length !== 0;
 });
 
-const isRegionFound = computed(() => {
-    return Object.keys(region.value).length !== 0;
-});
+const navigateToPreviousItem = () => {
+    router.push({ name: 'Region.View', params: { id: item.value.prev } });
+};
+
+const navigateToNextItem = () => {
+    router.push({ name: 'Region.View', params: { id: item.value.next } });
+};
 </script>

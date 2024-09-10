@@ -72,8 +72,8 @@ export function useArrayHandlers() {
                     ? a[sortBy.column] - b[sortBy.column]
                     : b[sortBy.column] - a[sortBy.column];
             } else {
-                const fa = a[sortBy.column].toLowerCase();
-                const fb = b[sortBy.column].toLowerCase();
+                const fa = a[sortBy.column] ? a[sortBy.column].toLowerCase() : '';
+                const fb = b[sortBy.column] ? b[sortBy.column].toLowerCase() : '';
 
                 return sortBy.asc
                     ? fa.localeCompare(fb)

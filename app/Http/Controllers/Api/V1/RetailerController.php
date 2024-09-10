@@ -38,37 +38,60 @@ final class RetailerController extends ApiController
         );
     }
 
-    public function store(StoreRequest $request): JsonResponse
+    public function store(StoreRequest $request)
+    : JsonResponse
     {
         // $this->authorize('create', Retailer::class);
-
-        $retailer = new RetailerResource(Retailer::create($request->validated()));
-
         return $this->successResponse(
-            $retailer,
+            new RetailerResource(Retailer::create($request->validated())),
             'success',
-            'Торговая сеть создана.',
+            __('crud.retailers.created'),
             Response::HTTP_CREATED,
         );
     }
 
-    public function show(Retailer $retailer): RetailerResource
+    public function show(Retailer $retailer)
+    : JsonResponse
     {
-        // $this->authorize('view', $retailer);
-
-        return new RetailerResource($retailer);
+        return $this->successResponse(
+            new RetailerResource($retailer),
+            'success',
+            __('crud.retailers.one'),
+        );
     }
 
     public function update(StoreRequest $request, Retailer $retailer)
+    : JsonResponse
     {
         // $this->authorize('update', $retailer);
-
         $retailer->update($request->validated());
 
         return $this->successResponse(
             new RetailerResource($retailer),
             'success',
-            'Торговая сеть обновлена.',
+            __('crud.retailers.updated'),
         );
+    }
+
+    public function destroy(Retailer $retailer)
+    : JsonResponse
+    {
+        $canBeDeleted = true; // TODO
+
+        if ($canBeDeleted) {
+            $retailer->delete();
+
+            return $this->successResponse(
+                new RetailerResource($retailer),
+                'success',
+                __('crud.retailers.deleted'),
+            );
+        } else {
+            return $this->errorResponse(
+                Response::HTTP_OK,
+                'error',
+                __('crud.retailers.not_deleted'),
+            );
+        }
     }
 }

@@ -38,7 +38,7 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue';
+import { onMounted, onUpdated } from 'vue';
 import { useDOMHandlers } from "@/use/useDOMHandlers.js";
 
 const { closeOpenedMenuItems, openActiveRouteMenuItem, collapse } = useDOMHandlers();
@@ -53,5 +53,10 @@ defineProps({
 
 onMounted(() => {
     openActiveRouteMenuItem();
+});
+
+// TODO
+onUpdated(() => {
+    //openActiveRouteMenuItem();
 });
 </script>

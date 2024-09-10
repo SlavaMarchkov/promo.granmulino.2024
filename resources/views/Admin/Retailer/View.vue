@@ -17,7 +17,7 @@
                                 <td></td>
                             </tr>
                             <tr>
-                                <th>Регион</th>
+                                <th>Контрагент</th>
                                 <td></td>
                             </tr>
                             <tr>
@@ -25,11 +25,11 @@
                                 <td></td>
                             </tr>
                             <tr>
-                                <th>Менеджер</th>
+                                <th>Прямой контракт?</th>
                                 <td></td>
                             </tr>
                             <tr>
-                                <th>Активен?</th>
+                                <th>Активна?</th>
                                 <td></td>
                             </tr>
                             <tr>
@@ -66,22 +66,20 @@
                                 <td>{{ item.name }}</td>
                             </tr>
                             <tr>
-                                <th>Регион</th>
-                                <td>{{ item.region }}</td>
+                                <th>Контрагент</th>
+                                <td>{{ item.customer }}</td>
                             </tr>
                             <tr>
                                 <th>Город</th>
                                 <td>{{ item.city }}</td>
                             </tr>
                             <tr>
-                                <th>Менеджер</th>
-                                <td>{{ item.user }}</td>
+                                <th>Прямой контракт?</th>
+                                <td><Badge :is-active="item.isDirect" /></td>
                             </tr>
                             <tr>
-                                <th>Активен?</th>
-                                <td>
-                                    <Badge :is-active="item.isActive"/>
-                                </td>
+                                <th>Активна?</th>
+                                <td><Badge :is-active="item.isActive" /></td>
                             </tr>
                             <tr>
                                 <th>Описание</th>
@@ -108,10 +106,10 @@
                     </template>
                     <hr>
                     <RouterLink
-                        :to="{ name: 'Customer.Index' }"
+                        :to="{ name: 'Retailer.Index' }"
                         class="btn btn-secondary my-2"
                         role="button"
-                    >Обратно на Контрагенты
+                    >Обратно на Торговые сети
                     </RouterLink>
                 </div>
             </div>
@@ -131,7 +129,7 @@ const route = useRoute();
 const router = useRouter();
 const spinnerStore = useSpinnerStore();
 
-const customerURL = '/customers';
+const retailerURL = '/retailers';
 
 const { get } = useHttpService();
 const id = +route.params.id;
@@ -143,7 +141,7 @@ onMounted(async () => {
 })
 
 const fetchDetails = async (id) => {
-    const response = await get(`${ customerURL }/${ id }`);
+    const response = await get(`${ retailerURL }/${ id }`);
     if ( response.status === 'success' ) item.value = response.data;
 };
 
@@ -159,10 +157,10 @@ const isItemFound = computed(() => {
 });
 
 const navigateToPreviousItem = () => {
-    router.push({ name: 'Customer.View', params: { id: item.value.prev } });
+    router.push({ name: 'Retailer.View', params: { id: item.value.prev } });
 };
 
 const navigateToNextItem = () => {
-    router.push({ name: 'Customer.View', params: { id: item.value.next } });
+    router.push({ name: 'Retailer.View', params: { id: item.value.next } });
 };
 </script>

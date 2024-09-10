@@ -6,10 +6,9 @@ namespace App\Models;
 
 use App\Enums\Retailer\TypeEnum;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Retailer extends Model
+class Retailer extends BaseModel
 {
     protected $fillable = [
         'name',

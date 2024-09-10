@@ -11,3 +11,4 @@ export { default as Report } from './Report.vue';
 export { default as Customer } from './Customer/Index.vue';
 export { default as CustomerView } from './Customer/View.vue';
 export { default as Retailer } from './Retailer/Index.vue';
+export { default as RetailerView } from './Retailer/View.vue';

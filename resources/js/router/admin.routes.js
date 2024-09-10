@@ -11,6 +11,7 @@ import {
     RegionView,
     Report,
     Retailer,
+    RetailerView,
     User,
 } from '../../views/Admin/index.js';
 
@@ -112,6 +113,14 @@ export default {
             component: Retailer,
             meta: {
                 title: 'Торговые сети',
+            },
+        },
+        {
+            path: 'retailers/:id',
+            name: 'Retailer.View',
+            component: RetailerView,
+            meta: {
+                title: 'Просмотр торговой сети',
             },
         },
     ],

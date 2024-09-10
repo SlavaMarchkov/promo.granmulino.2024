@@ -12,12 +12,13 @@ use Illuminate\Http\Resources\Json\JsonResource;
 class CustomerResource extends JsonResource
 {
     public function toArray(Request $request)
-    : array {
+    : array
+    {
         return [
             'id'          => $this->id,
             'name'        => $this->name,
             'description' => $this->description,
-            'isActive' => $this->is_active,
+            'isActive'    => $this->is_active,
 
             'regionId' => $this->region_id,
             'cityId'   => $this->city_id,
@@ -27,6 +28,9 @@ class CustomerResource extends JsonResource
             'region'     => $this->region->name,
             'city'       => $this->city->name,
             'user'       => $this->user->full_name,
+
+            'next' => $this->findNext($this->id),
+            'prev' => $this->findPrevious($this->id),
         ];
     }
 }

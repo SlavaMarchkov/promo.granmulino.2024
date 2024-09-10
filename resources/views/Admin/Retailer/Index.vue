@@ -1,41 +1,61 @@
 <template>
     <div class="row mb-4">
         <div class="col-12">
-            <button class="btn btn-primary" type="button" @click="createRetailerInit">
+            <button
+                class="btn btn-primary"
+                type="button"
+                @click="createRetailerInit"
+            >
                 Новая торговая сеть
             </button>
         </div>
     </div>
     <div class="row mb-2">
         <div class="col-12">
-            <Filter @reset-filter="clearSearch">
+            <Filter
+                @reset-filter="clearSearch"
+            >
                 <div class="col-md-4 mb-2">
-                    <InputGroup v-model="searchBy.name" placeholder="Поиск по названию ТС">Название
-                    </InputGroup>
+                    <InputGroup
+                        v-model="searchBy.name"
+                        placeholder="Поиск по названию ТС"
+                    >Название</InputGroup>
                 </div>
-                <div class="col-md-2 mb-2" v-for="item of retailerTypes" :key="item.id">
-                    <RadioButton :id="item.id" :value="item.value" name="retailer-type" v-model="searchBy.type">{{
-                            item.title
-                        }}
+                <div
+                    class="col-md-2 mb-2"
+                    v-for="item of retailerTypes"
+                    :key="item.id"
+                >
+                    <RadioButton
+                        :id="item.id"
+                        :value="item.value"
+                        name="retailer-type"
+                        v-model="searchBy.type">{{ item.title }}
                     </RadioButton>
                 </div>
                 <div class="col-md-4 mb-2">
-                    <InputGroup v-model="searchBy.city" placeholder="Поиск по городу">Город
-                    </InputGroup>
+                    <InputGroup
+                        v-model="searchBy.city"
+                        placeholder="Поиск по городу"
+                    >Город</InputGroup>
                 </div>
                 <div class="col-md-4 mb-2">
-                    <InputGroup v-model="searchBy.customer" placeholder="Поиск по контрагенту">Контрагент
-                    </InputGroup>
+                    <InputGroup
+                        v-model="searchBy.customer"
+                        placeholder="Поиск по контрагенту"
+                    >Контрагент</InputGroup>
                 </div>
                 <div class="col-md-2 mb-2">
-                    <Checkbox id="is_active" v-model="searchBy.isActive">
-                        Только активные
-                    </Checkbox>
+                    <Checkbox
+                        id="is_active"
+                        v-model="searchBy.isActive"
+                    >Только активные</Checkbox>
                 </div>
                 <div class="col-md-2 mb-2">
-                    <Checkbox id="is_direct" v-model="searchBy.isDirect">
-                        Только прямые
-                    </Checkbox>
+                    <Checkbox
+                        id="is_direct"
+                        v-model="searchBy.isDirect"
+                    >Только прямые</Checkbox>
                 </div>
             </Filter>
         </div>
@@ -44,40 +64,35 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body pb-0">
-                    <div v-if="state.retailers.length > 0" class="table-responsive">
+                    <div v-if="filteredItems.length > 0" class="table-responsive">
                         <table class="table table-bordered my-4 text-center align-middle text-nowrap"
                                style="width: 100%;">
                             <thead>
                             <tr>
-                                <ThSort
-                                    :id="'id'"
-                                    :order-column="arrayHandlers.orderColumn.value"
-                                    :order-direction="arrayHandlers.orderDirection.value"
-                                    sort-type="numeric"
-                                    @sortByColumn="arrayHandlers.applyFilterSort(
-                                        state.retailers,
-                                        searchBy,
-                                        'id',
-                                        arrayHandlers.orderDirection.value === 'asc' ? 'desc' : 'asc',
-                                        true,
-                                    )"
-                                >ID
-                                </ThSort>
-                                <th class="text-start" scope="col">Название ТС</th>
-                                <th class="text-start" scope="col">Тип ТС</th>
-                                <th class="text-start" scope="col">Контрагент</th>
-                                <th class="text-start" scope="col">Город</th>
-                                <th scope="col">Прямой контракт</th>
-                                <th scope="col">Активная?</th>
-                                <th scope="col" style="width: 10%;">Просмотр</th>
-                                <th scope="col" style="width: 10%;">Ред.</th>
+                                <template
+                                    v-for="{ column, label, sortable, is_num, width } in thFields"
+                                    :key="column"
+                                >
+                                    <ThSort
+                                        :column="column"
+                                        :is-numeric="is_num"
+                                        :sort-by-asc="arrayHandlers.sortBy.asc"
+                                        :sort-by-column="arrayHandlers.sortBy.column === column"
+                                        :sortable="sortable"
+                                        :width="width"
+                                        @setSort="arrayHandlers.setSort(column, is_num)"
+                                    >{{ label }}
+                                    </ThSort>
+                                </template>
                             </tr>
                             </thead>
                             <tbody>
-                            <tr v-for="item in state.retailers" :key="item.id">
+                            <tr v-for="item in filteredItems" :key="item.id">
                                 <th scope="row">{{ item.id }}</th>
                                 <td class="text-start">
-                                    {{ item.name }}
+                                    <RouterLink :to="{ name: 'Retailer.View', params: { id: item.id } }">
+                                        {{ item.name }}
+                                    </RouterLink>
                                 </td>
                                 <td class="text-start">
                                         <span
@@ -98,26 +113,32 @@
                                 <td>
                                     <Badge :is-active="item.isActive"/>
                                 </td>
-                                <td>
-                                    <button class="btn btn-sm btn-primary" @click="showViewModal(item.id)"><i
-                                        class="bi bi-eye-fill"></i>
-                                        View
-                                    </button>
-                                </td>
-                                <td>
-                                    <button class="btn btn-sm btn-warning" @click="editRetailerInit(item.id)"><i
-                                        class="bi bi-pencil-square"></i>
-                                        Edit
-                                    </button>
-                                </td>
+                                <TdButton
+                                    :id="item.id"
+                                    intent="view"
+                                    @runButtonHandler="viewRetailerInit"
+                                >View
+                                </TdButton>
+                                <TdButton
+                                    :id="item.id"
+                                    intent="edit"
+                                    @runButtonHandler="editRetailerInit"
+                                >Edit
+                                </TdButton>
+                                <TdButton
+                                    :id="item.id"
+                                    intent="delete"
+                                    @runButtonHandler="deleteRetailer"
+                                >Delete
+                                </TdButton>
                             </tr>
                             </tbody>
                         </table>
                     </div>
                     <p v-else class="mt-3 text-center lead">
-                        {{ retailerStore.isContentLoading ? 'Подождите, загружаю...' : 'Записей не найдено...' }}
+                        {{ spinnerStore.isLoading ? 'Подождите, загружаю...' : 'Записей не найдено...' }}
                     </p>
-                    <p>Всего записей: <span class="fw-bold">{{ state.retailers.length }}</span></p>
+                    <p>Всего записей: <span class="fw-bold">{{ filteredItems.length }}</span></p>
                 </div>
             </div>
         </div>
@@ -129,7 +150,7 @@
         :custom-classes="['']"
     >
         <template #title>
-            <span v-if="state.isEditing">Редактирование торговой сети <br>«<b>{{ state.retailer.name }}</b>»</span>
+            <span v-if="state.isEditing">Редактирование торговой сети <br><b>{{ state.retailer.name }}</b></span>
             <span v-else>Добавление торговой сети</span>
         </template>
         <template #body>
@@ -194,21 +215,77 @@
             </div>
         </template>
         <template #footer>
-            <Button :class="state.isEditing ? 'btn-warning' : 'btn-primary'" :disabled="retailerStore.isButtonDisabled"
-                    :loading="retailerStore.isButtonDisabled" class="w-25" type="button" @click="saveRetailer">
+            <Button
+                :class="state.isEditing
+                    ? 'btn-warning'
+                    : 'btn-primary'"
+                :disabled="spinnerStore.isButtonDisabled"
+                :loading="spinnerStore.isButtonDisabled"
+                class="w-25"
+                type="button"
+                @click="saveRetailer"
+            >
                 <span v-if="state.isEditing">Сохранить</span>
                 <span v-else>Создать</span>
             </Button>
         </template>
     </Modal>
+
+    <Modal
+        id="viewModalPopUp"
+        :close-func="closeViewModal"
+        :custom-classes="['modal-lg', 'modal-dialog-scrollable']"
+    >
+        <template #title>
+            Просмотр торговой сети <b>{{ state.retailer.name }}</b>
+        </template>
+        <template #body>
+            <table class="table table-bordered mt-3 align-middle text-wrap"
+                   style="width: 100%;">
+                <tbody>
+                <tr>
+                    <th style="width: 30%;">ID</th>
+                    <td>{{ state.retailer.id }}</td>
+                </tr>
+                <tr>
+                    <th>Название</th>
+                    <td>{{ state.retailer.name }}</td>
+                </tr>
+                <tr>
+                    <th>Контрагент</th>
+                    <td>{{ state.retailer.customer }}</td>
+                </tr>
+                <tr>
+                    <th>Город</th>
+                    <td>{{ state.retailer.city }}</td>
+                </tr>
+                <tr>
+                    <th>Прямой контракт?</th>
+                    <td><Badge :is-active="state.retailer.isDirect" /></td>
+                </tr>
+                <tr>
+                    <th>Активна?</th>
+                    <td><Badge :is-active="state.retailer.isActive" /></td>
+                </tr>
+                <tr>
+                    <th>Описание</th>
+                    <td>{{ state.retailer.description }}</td>
+                </tr>
+                </tbody>
+            </table>
+        </template>
+        <template #footer>
+            <span></span>
+        </template>
+    </Modal>
 </template>
 
 <script setup>
-import { onMounted, reactive, watch } from 'vue';
+import { computed, onMounted, reactive, watch } from 'vue';
 import { useAlertStore } from '@/stores/alerts.js';
 import { useRetailerStore } from '@/stores/retailers.js';
-import { useCustomerStore } from '@/stores/customers.js';
-import { useCityStore } from '@/stores/cities.js';
+import { useSpinnerStore } from '@/stores/spinners.js';
+import { useHttpService } from '@/use/useHttpService.js';
 import { useArrayHandlers } from '@/use/useArrayHandlers.js';
 import Checkbox from '@/components/form/Checkbox.vue';
 import Input from '@/components/form/Input.vue';
@@ -221,12 +298,17 @@ import Badge from '@/components/core/Badge.vue';
 import Filter from '@/components/core/Filter.vue';
 import Modal from '@/components/Modal.vue';
 import Alert from '@/components/Alert.vue';
+import TdButton from "@/components/table/TdButton.vue";
 
 const retailerStore = useRetailerStore();
-const customerStore = useCustomerStore();
-const cityStore = useCityStore();
 const alertStore = useAlertStore();
+const spinnerStore = useSpinnerStore();
 const arrayHandlers = useArrayHandlers();
+const { get, post, update, destroy } = useHttpService();
+
+const retailerURL = '/retailers';
+const cityURL = '/admin/cities';
+const customerURL = '/customers';
 
 const retailerTypes = [
     {
@@ -269,6 +351,19 @@ const state = reactive({
     isEditing: false,
 });
 
+const thFields = [
+    { column: 'id', label: 'ID', sortable: true, is_num: true, width: 6 },
+    { column: 'name', label: 'Название ТС', sortable: true, is_num: false },
+    { column: 'label', label: 'Тип ТС', sortable: true, is_num: false },
+    { column: 'customer', label: 'Контрагент', sortable: true, is_num: false },
+    { column: 'city', label: 'Город', sortable: true, is_num: false },
+    { column: 'isDirect', label: 'Прямой контракт?', sortable: true, is_num: true },
+    { column: 'isActive', label: 'Активная?', sortable: true, is_num: true },
+    { column: 'view', label: 'Просмотр', width: 10 },
+    { column: 'edit', label: 'Ред.', width: 10 },
+    { column: 'delete', label: 'Удалить', width: 10 },
+];
+
 const searchBy = reactive({
     name: '',
     city: '',
@@ -279,85 +374,112 @@ const searchBy = reactive({
 });
 
 let modalPopUp = null;
+let viewModalPopUp = null;
+
+function resetState() {
+    state.isEditing = false;
+    state.retailer = initialFormData();
+}
 
 onMounted(async () => {
     await getRetailers();
     await getCustomers();
     await getCities();
-
     modalPopUp = new bootstrap.Modal(document.getElementById('modalPopUp'));
-    modalPopUp._element.addEventListener('hide.bs.modal', () => {
-        state.isEditing = false;
-        state.retailer = initialFormData();
-    });
+    modalPopUp._element.addEventListener('hide.bs.modal', resetState);
 });
 
 const getRetailers = async () => {
-    const { data } = await retailerStore.all();
-    state.retailers = arrayHandlers.filterArray(data.data, searchBy);
+    const { data } = await get(retailerURL);
+    retailerStore.setRetailers(data.retailers);
+    state.retailers = retailerStore.getRetailers;
 };
 
 const getCustomers = async () => {
-    const { data } = await customerStore.all();
-    state.customers = data.data;
+    const { data } = await get(customerURL);
+    state.customers = data.customers;
 };
 
 const getCities = async () => {
-    const { data } = await cityStore.all();
-    state.cities = data.data;
+    const { data } = await get(cityURL);
+    state.cities = data.cities;
 };
 
 const createRetailerInit = () => {
     alertStore.clear();
     state.isEditing = false;
+    state.retailer = initialFormData();
     modalPopUp.show();
 };
 
 const editRetailerInit = (id) => {
     alertStore.clear();
     state.isEditing = true;
-    modalPopUp.show();
     state.retailer = retailerStore.oneRetailer(id);
+    modalPopUp.show();
+};
+
+const viewRetailerInit = (id) => {
+    viewModalPopUp = new bootstrap.Modal(document.getElementById('viewModalPopUp'));
+    state.retailer = retailerStore.oneRetailer(id);
+    viewModalPopUp.show();
+    viewModalPopUp._element.addEventListener('hide.bs.modal', resetState);
 };
 
 const closeModal = () => {
     modalPopUp.hide();
+    modalPopUp._element.removeEventListener('hide.bs.modal', resetState);
+};
+
+const closeViewModal = () => {
+    viewModalPopUp.hide();
+    viewModalPopUp._element.removeEventListener('hide.bs.modal', resetState);
 };
 
 watch(searchBy, () => {
-    state.retailers = arrayHandlers.filterArray(
-        retailerStore.getRetailers,
-        searchBy,
-    );
+    state.retailers = arrayHandlers.filterArray(retailerStore.getRetailers, searchBy);
 });
 
 const clearSearch = () => {
     arrayHandlers.resetSearchKeys(searchBy);
-    /* applyFilterSort(
-        (orderColumn.value = 'id'),
-        (orderDirection.value = 'asc'),
-    ); */
+    arrayHandlers.resetSortKeys();
 };
 
 const saveRetailer = async () => {
     if ( state.isEditing ) {
-        const response = await retailerStore.update(state.retailer);
+        const response = await update(`${ retailerURL }/${ state.retailer.id }`, state.retailer);
         if ( response && response.status === 'success' ) {
             alertStore.clear();
             modalPopUp.hide();
             await getRetailers();
         }
     } else {
-        const response = await retailerStore.save(state.retailer);
+        const response = await post(retailerURL, state.retailer);
         if ( response && response.status === 'success' ) {
             alertStore.clear();
             state.retailer = initialFormData();
             modalPopUp.hide();
             arrayHandlers.resetSearchKeys(searchBy);
-            orderColumn.value = 'id';
-            orderDirection.value = 'desc';
+            arrayHandlers.resetSortKeys('id', false);
             await getRetailers();
         }
     }
 };
+
+const deleteRetailer = async (id) => {
+    if ( confirm('Точно удалить торговую сеть? Уверены?') ) {
+        const response = await destroy(`${ retailerURL }/${ id }`);
+        if ( response && response.status === 'success' ) {
+            await getRetailers();
+        }
+    }
+};
+
+const sortedItems = computed(() => {
+    return arrayHandlers.sortArray(state.retailers);
+});
+
+const filteredItems = computed(() => {
+    return arrayHandlers.filterArray(sortedItems.value, searchBy);
+});
 </script>

@@ -54,7 +54,7 @@ const responseErrorHandler = (err) => {
             }
             break;
         case 404:
-            error.message = 'Маршрут не найден.';
+            error.message = 'Ошибка 404. Запрашиваемый ресурс не найден.';
             break;
         case 403:
             error.message = 'Доступ к этому ресурсу закрыт.';

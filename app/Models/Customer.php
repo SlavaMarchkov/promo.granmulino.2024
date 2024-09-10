@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Customer extends Model
+class Customer extends BaseModel
 {
     protected $fillable = [
         'name',
@@ -21,25 +20,29 @@ class Customer extends Model
 
     protected $casts = [
         'is_active' => 'boolean',
-        'data' => 'array',
+        'data'      => 'array',
     ];
 
-    public function region(): BelongsTo
+    public function region()
+    : BelongsTo
     {
         return $this->belongsTo(Region::class)->withDefault();
     }
 
-    public function city(): BelongsTo
+    public function city()
+    : BelongsTo
     {
         return $this->belongsTo(City::class)->withDefault();
     }
 
-    public function user(): BelongsTo
+    public function user()
+    : BelongsTo
     {
         return $this->belongsTo(User::class)->withDefault();
     }
 
-    public function retailers(): HasMany
+    public function retailers()
+    : HasMany
     {
         return $this->hasMany(Retailer::class);
     }
