@@ -63,7 +63,7 @@
                             <thead>
                             <tr>
                                 <template
-                                    v-for="{ column, label, sortable, is_num, width } in thFields"
+                                    v-for="{ column, label, sortable, is_num, width } in PRODUCT_TH_FIELDS"
                                     :key="column"
                                 >
                                     <ThSort
@@ -103,7 +103,7 @@
                                     {{ item.category }}
                                 </td>
                                 <td>
-                                    <Badge :is-active="item.isActive"/>
+                                    <TheBadge :is-active="item.isActive"/>
                                 </td>
                                 <TdButton
                                     :id="item.id"
@@ -269,7 +269,7 @@
                 </tr>
                 <tr>
                     <th>В продаже?</th>
-                    <td><Badge :is-active="state.product.isActive" /></td>
+                    <td><TheBadge :is-active="state.product.isActive" /></td>
                 </tr>
                 </tbody>
             </table>
@@ -289,26 +289,22 @@ import Button from '@/components/core/Button.vue';
 import Alert from '@/components/Alert.vue';
 import { computed, onMounted, reactive, watch } from 'vue';
 import { useAlertStore } from '@/stores/alerts.js';
-import { useProductStore } from '@/stores/products.js';
 import { useSpinnerStore } from '@/stores/spinners.js';
 import { useArrayHandlers } from '@/use/useArrayHandlers.js';
 import { useHttpService } from '@/use/useHttpService.js';
 import InputGroup from '@/components/form/InputGroup.vue';
 import Filter from '@/components/core/Filter.vue';
-import Badge from '@/components/core/Badge.vue';
+import TheBadge from '@/components/core/TheBadge.vue';
 import Modal from '@/components/Modal.vue';
 import ThSort from '@/components/table/ThSort.vue';
 import TdButton from '@/components/table/TdButton.vue';
+import { PRODUCT_TH_FIELDS, URLS } from '@/helpers/constants.js';
 
 const { get, post, update, destroy } = useHttpService();
 
-const productStore = useProductStore();
 const alertStore = useAlertStore();
 const spinnerStore = useSpinnerStore();
 const arrayHandlers = useArrayHandlers();
-
-const productURL = '/admin/products';
-const categoryURL = '/admin/categories';
 
 const initialFormData = () => ({
     name: '',
@@ -324,18 +320,6 @@ const state = reactive({
     product: initialFormData(),
     isEditing: false,
 });
-
-const thFields = [
-    { column: 'id', label: 'ID', sortable: true, is_num: true, width: 6 },
-    { column: 'name', label: 'Название', sortable: true, is_num: false },
-    { column: 'weight', label: 'Вес, г', sortable: true, is_num: true },
-    { column: 'price', label: 'Себестоимость, руб.', sortable: true, is_num: true },
-    { column: 'category', label: 'Группа товаров', sortable: true, is_num: false },
-    { column: 'isActive', label: 'В продаже?', sortable: true, is_num: true, width: 15 },
-    { column: 'view', label: 'Просмотр', width: 10 },
-    { column: 'edit', label: 'Ред.', width: 10 },
-    { column: 'delete', label: 'Удалить', width: 10 },
-];
 
 const searchBy = reactive({
     name: '',
@@ -361,13 +345,14 @@ onMounted(async () => {
 });
 
 const getProducts = async () => {
-    const { data } = await get(productURL);
-    productStore.setProducts(data.products);
-    state.products = productStore.getProducts;
+    const { data } = await get(URLS.PRODUCT);
+    state.products = data.products;
 };
 
+const getOneProduct = (id) => state.products.find(product => product.id === id);
+
 const getCategories = async () => {
-    const { data } = await get(categoryURL);
+    const { data } = await get(URLS.CATEGORY);
     state.categories = data.categories;
 };
 
@@ -381,13 +366,13 @@ const createProductInit = () => {
 const editProductInit = (id) => {
     alertStore.clear();
     state.isEditing = true;
-    state.product = productStore.oneProduct(id);
+    state.product = getOneProduct(id);
     modalPopUp.show();
 };
 
 const viewProductInit = (id) => {
     viewModalPopUp = new bootstrap.Modal(document.getElementById('viewModalPopUp'));
-    state.product = productStore.oneProduct(id);
+    state.product = getOneProduct(id);
     viewModalPopUp.show();
     viewModalPopUp._element.addEventListener('hide.bs.modal', resetState);
 };
@@ -402,11 +387,6 @@ const closeViewModal = () => {
     viewModalPopUp._element.removeEventListener('hide.bs.modal', resetState);
 };
 
-// TODO - сделать фильтр по весу (вес в виде массива с весами продукции)
-watch(searchBy, () => {
-    state.products = arrayHandlers.filterArray(productStore.getProducts, searchBy);
-});
-
 const clearSearch = () => {
     arrayHandlers.resetSearchKeys(searchBy);
     arrayHandlers.resetSortKeys();
@@ -414,14 +394,14 @@ const clearSearch = () => {
 
 const saveProduct = async () => {
     if ( state.isEditing ) {
-        const response = await update(`${ productURL }/${ state.product.id }`, state.product);
+        const response = await update(`${ URLS.PRODUCT }/${ state.product.id }`, state.product);
         if ( response && response.status === 'success' ) {
             alertStore.clear();
             modalPopUp.hide();
             await getProducts();
         }
     } else {
-        const response = await post(productURL, state.product);
+        const response = await post(URLS.PRODUCT, state.product);
         if ( response && response.status === 'success' ) {
             alertStore.clear();
             state.product = initialFormData();
@@ -435,7 +415,7 @@ const saveProduct = async () => {
 
 const deleteProduct = async (id) => {
     if ( confirm('Точно удалить продукт? Уверены?') ) {
-        const response = await destroy(`${ productURL }/${ id }`);
+        const response = await destroy(`${ URLS.PRODUCT }/${ id }`);
         if ( response && response.status === 'success' ) {
             await getProducts();
         }
@@ -448,5 +428,10 @@ const sortedItems = computed(() => {
 
 const filteredItems = computed(() => {
     return arrayHandlers.filterArray(sortedItems.value, searchBy);
+});
+
+// TODO - сделать фильтр по весу (вес в виде массива с весами продукции)
+watch(searchBy, () => {
+    filteredItems.value = arrayHandlers.filterArray(state.products, searchBy);
 });
 </script>

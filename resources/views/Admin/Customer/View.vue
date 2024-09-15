@@ -80,7 +80,7 @@
                             <tr>
                                 <th>Активен?</th>
                                 <td>
-                                    <Badge :is-active="item.isActive"/>
+                                    <TheBadge :is-active="item.isActive"/>
                                 </td>
                             </tr>
                             <tr>
@@ -124,8 +124,8 @@ import { computed, onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useHttpService } from '@/use/useHttpService.js';
 import { useSpinnerStore } from '@/stores/spinners.js';
-import Alert from "@/components/Alert.vue";
-import Badge from "@/components/core/Badge.vue";
+import Alert from '@/components/Alert.vue';
+import TheBadge from '@/components/core/TheBadge.vue';
 
 const route = useRoute();
 const router = useRouter();

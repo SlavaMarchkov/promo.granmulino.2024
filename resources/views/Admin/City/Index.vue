@@ -30,7 +30,7 @@
                             <thead>
                             <tr>
                                 <template
-                                    v-for="{ column, label, sortable, is_num, width } in thFields"
+                                    v-for="{ column, label, sortable, is_num, width } in CITY_TH_FIELDS"
                                     :key="column"
                                 >
                                     <ThSort
@@ -155,28 +155,23 @@
             Просмотр города <b>{{ state.city.name }}</b>
         </template>
         <template #body>
-            <pre>
-                {{ state.city }}
-            </pre>
-            <!--            <div v-if="state.region.citiesCount > 0">
-                            <p>Всего городов в регионе: <span class="fw-bold">{{ state.region.citiesCount }}</span></p>
-                            <table class="table table-bordered text-center align-middle text-nowrap"
-                                   style="width: 100%;">
-                                <tbody>
-                                <tr>
-                                    <th>ID</th>
-                                    <th class="text-start">Название города</th>
-                                </tr>
-                                <tr v-for="city in state.region.cities" :key="city.id">
-                                    <td>{{ city.id }}</td>
-                                    <td class="text-start">{{ city.name }}</td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>-->
-            <!--            <div v-else>
-                            <p class="mb-0">Регион пустой. Наполните регион городами во вкладке <b>Справочники | Города</b>.</p>
-                        </div>-->
+            <table class="table table-bordered mt-3 align-middle text-wrap"
+                   style="width: 100%;">
+                <tbody>
+                <tr>
+                    <th style="width: 30%;">ID</th>
+                    <td>{{ state.city.id }}</td>
+                </tr>
+                <tr>
+                    <th>Название</th>
+                    <td>{{ state.city.name }}</td>
+                </tr>
+                <tr>
+                    <th>Регион</th>
+                    <td>{{ state.city.regionName }}</td>
+                </tr>
+                </tbody>
+            </table>
         </template>
         <template #footer>
             <span></span>
@@ -191,7 +186,6 @@ import Button from '@/components/core/Button.vue';
 import Alert from '@/components/Alert.vue';
 import { computed, onMounted, reactive, watch } from 'vue';
 import { useAlertStore } from '@/stores/alerts.js';
-import { useCityStore } from '@/stores/cities.js';
 import { useSpinnerStore } from '@/stores/spinners.js';
 import { useHttpService } from '@/use/useHttpService.js';
 import { useArrayHandlers } from '@/use/useArrayHandlers.js';
@@ -200,15 +194,12 @@ import Filter from '@/components/core/Filter.vue';
 import Modal from '@/components/Modal.vue';
 import ThSort from '@/components/table/ThSort.vue';
 import TdButton from '@/components/table/TdButton.vue';
+import { CITY_TH_FIELDS, URLS } from '@/helpers/constants.js';
 
-const cityStore = useCityStore();
 const alertStore = useAlertStore();
 const spinnerStore = useSpinnerStore();
 const arrayHandlers = useArrayHandlers();
 const { get, post, update, destroy } = useHttpService();
-
-const cityURL = '/admin/cities';
-const regionURL = '/admin/regions';
 
 const initialFormData = () => ({
     name: '',
@@ -221,15 +212,6 @@ const state = reactive({
     city: initialFormData(),
     isEditing: false,
 });
-
-const thFields = [
-    { column: 'id', label: 'ID', sortable: true, is_num: true, width: 6 },
-    { column: 'name', label: 'Город', sortable: true, is_num: false },
-    { column: 'regionName', label: 'Регион', sortable: true, is_num: false },
-    { column: 'view', label: 'Просмотр', width: 10 },
-    { column: 'edit', label: 'Ред.', width: 10 },
-    { column: 'delete', label: 'Удалить', width: 10 },
-];
 
 const searchBy = reactive({
     name: '',
@@ -252,13 +234,14 @@ onMounted(async () => {
 });
 
 const getCities = async () => {
-    const { data } = await get(cityURL);
-    cityStore.setCities(data.cities);
-    state.cities = cityStore.getCities;
+    const { data } = await get(URLS.CITY);
+    state.cities = data.cities;
 };
 
+const getOneCity = (id) => state.cities.find(city => city.id === id);
+
 const getRegions = async () => {
-    const { data } = await get(regionURL);
+    const { data } = await get(URLS.REGION);
     state.regions = data.regions;
 };
 
@@ -272,13 +255,13 @@ const createCityInit = () => {
 const editCityInit = (id) => {
     alertStore.clear();
     state.isEditing = true;
-    state.city = cityStore.oneCity(id);
+    state.city = getOneCity(id);
     modalPopUp.show();
 };
 
 const viewCityInit = (id) => {
     viewModalPopUp = new bootstrap.Modal(document.getElementById('viewModalPopUp'));
-    state.city = cityStore.oneCity(id);
+    state.city = getOneCity(id);
     viewModalPopUp.show();
     viewModalPopUp._element.addEventListener('hide.bs.modal', resetState);
 };
@@ -293,10 +276,6 @@ const closeViewModal = () => {
     viewModalPopUp._element.removeEventListener('hide.bs.modal', resetState);
 };
 
-watch(searchBy, () => {
-    state.cities = arrayHandlers.filterArray(cityStore.getCities, searchBy);
-});
-
 const clearSearch = () => {
     arrayHandlers.resetSearchKeys(searchBy);
     arrayHandlers.resetSortKeys();
@@ -304,14 +283,14 @@ const clearSearch = () => {
 
 const saveCity = async () => {
     if ( state.isEditing ) {
-        const response = await update(`${ cityURL }/${ state.city.id }`, state.city);
+        const response = await update(`${ URLS.CITY }/${ state.city.id }`, state.city);
         if ( response && response.status === 'success' ) {
             alertStore.clear();
             modalPopUp.hide();
             await getCities();
         }
     } else {
-        const response = await post(cityURL, state.city);
+        const response = await post(URLS.CITY, state.city);
         if ( response && response.status === 'success' ) {
             alertStore.clear();
             state.city = initialFormData();
@@ -325,7 +304,7 @@ const saveCity = async () => {
 
 const deleteCity = async (id) => {
     if ( confirm('Точно удалить город? Уверены?') ) {
-        const response = await destroy(`${ cityURL }/${ id }`);
+        const response = await destroy(`${ URLS.CITY }/${ id }`);
         if ( response && response.status === 'success' ) {
             await getCities();
         }
@@ -338,5 +317,9 @@ const sortedItems = computed(() => {
 
 const filteredItems = computed(() => {
     return arrayHandlers.filterArray(sortedItems.value, searchBy);
+});
+
+watch(searchBy, () => {
+    filteredItems.value = arrayHandlers.filterArray(state.cities, searchBy);
 });
 </script>

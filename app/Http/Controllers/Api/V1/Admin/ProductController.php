@@ -50,7 +50,7 @@ final class ProductController extends ApiController
         return $this->successResponse(
             new ProductResource($product),
             'success',
-            __('crud.regions.one'),
+            __('crud.products.one'),
         );
     }
 

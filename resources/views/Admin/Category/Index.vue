@@ -40,7 +40,7 @@
                             <thead>
                             <tr>
                                 <template
-                                    v-for="{ column, label, sortable, is_num, width } in thFields"
+                                    v-for="{ column, label, sortable, is_num, width } in CATEGORY_TH_FIELDS"
                                     :key="column"
                                 >
                                     <ThSort
@@ -68,7 +68,7 @@
                                     {{ item.productsCount }}
                                 </td>
                                 <td>
-                                    <Badge :is-active="item.isActive"/>
+                                    <TheBadge :is-active="item.isActive"/>
                                 </td>
                                 <TdButton
                                     :id="item.id"
@@ -209,23 +209,20 @@ import Alert from '@/components/Alert.vue';
 import { computed, onMounted, reactive, watch } from 'vue';
 import { useAlertStore } from '@/stores/alerts.js';
 import { useSpinnerStore } from '@/stores/spinners.js';
-import { useCategoryStore } from '@/stores/categories.js';
 import { useHttpService } from '@/use/useHttpService.js';
 import { useArrayHandlers } from '@/use/useArrayHandlers.js';
 import InputGroup from '@/components/form/InputGroup.vue';
 import Filter from '@/components/core/Filter.vue';
-import Badge from '@/components/core/Badge.vue';
+import TheBadge from '@/components/core/TheBadge.vue';
 import Modal from '@/components/Modal.vue';
 import ThSort from '@/components/table/ThSort.vue';
 import TdButton from '@/components/table/TdButton.vue';
+import { CATEGORY_TH_FIELDS, URLS } from '@/helpers/constants.js';
 
-const categoryStore = useCategoryStore();
 const alertStore = useAlertStore();
 const spinnerStore = useSpinnerStore();
 const arrayHandlers = useArrayHandlers();
 const { get, post, update, destroy } = useHttpService();
-
-const categoryURL = '/admin/categories';
 
 const initialFormData = () => ({
     name: '',
@@ -237,16 +234,6 @@ const state = reactive({
     category: initialFormData(),
     isEditing: false,
 });
-
-const thFields = [
-    { column: 'id', label: 'ID', sortable: true, is_num: true, width: 6 },
-    { column: 'name', label: 'Название группы товаров', sortable: true, is_num: false },
-    { column: 'productsCount', label: 'Количество SKU в группе', sortable: true, is_num: true },
-    { column: 'isActive', label: 'В продаже?', sortable: true, is_num: true, width: 15 },
-    { column: 'view', label: 'Просмотр', width: 10 },
-    { column: 'edit', label: 'Ред.', width: 10 },
-    { column: 'delete', label: 'Удалить', width: 10 },
-];
 
 const searchBy = reactive({
     name: '',
@@ -268,10 +255,11 @@ onMounted(async () => {
 });
 
 const getCategories = async () => {
-    const { data } = await get(categoryURL);
-    categoryStore.setCategories(data.categories);
-    state.categories = categoryStore.getCategories;
+    const { data } = await get(URLS.CATEGORY);
+    state.categories = data.categories;
 };
+
+const getOneCategory = (id) => state.categories.find(category => category.id === id);
 
 const createCategoryInit = () => {
     alertStore.clear();
@@ -283,13 +271,13 @@ const createCategoryInit = () => {
 const editCategoryInit = (id) => {
     alertStore.clear();
     state.isEditing = true;
-    state.category = categoryStore.oneCategory(id);
+    state.category = getOneCategory(id);
     modalPopUp.show();
 };
 
 const viewCategoryInit = (id) => {
     viewModalPopUp = new bootstrap.Modal(document.getElementById('viewModalPopUp'));
-    state.category = categoryStore.oneCategory(id);
+    state.category = getOneCategory(id);
     viewModalPopUp.show();
     viewModalPopUp._element.addEventListener('hide.bs.modal', resetState);
 };
@@ -304,10 +292,6 @@ const closeViewModal = () => {
     viewModalPopUp._element.removeEventListener('hide.bs.modal', resetState);
 };
 
-watch(searchBy, () => {
-    state.categories = arrayHandlers.filterArray(categoryStore.getCategories, searchBy);
-});
-
 const clearSearch = () => {
     arrayHandlers.resetSearchKeys(searchBy);
     arrayHandlers.resetSortKeys();
@@ -315,14 +299,14 @@ const clearSearch = () => {
 
 const saveCategory = async () => {
     if ( state.isEditing ) {
-        const response = await update(`${ categoryURL }/${ state.category.id }`, state.category);
+        const response = await update(`${ URLS.CATEGORY }/${ state.category.id }`, state.category);
         if ( response && response.status === 'success' ) {
             alertStore.clear();
             modalPopUp.hide();
             await getCategories();
         }
     } else {
-        const response = await post(categoryURL, state.category);
+        const response = await post(URLS.CATEGORY, state.category);
         if ( response && response.status === 'success' ) {
             alertStore.clear();
             state.category = initialFormData();
@@ -336,7 +320,7 @@ const saveCategory = async () => {
 
 const deleteCategory = async (id) => {
     if ( confirm('Точно удалить группу товаров? Уверены?') ) {
-        const response = await destroy(`${ categoryURL }/${ id }`);
+        const response = await destroy(`${ URLS.CATEGORY }/${ id }`);
         if ( response && response.status === 'success' ) {
             await getCategories();
         }
@@ -349,5 +333,9 @@ const sortedItems = computed(() => {
 
 const filteredItems = computed(() => {
     return arrayHandlers.filterArray(sortedItems.value, searchBy);
+});
+
+watch(searchBy, () => {
+    filteredItems.value = arrayHandlers.filterArray(state.categories, searchBy);
 });
 </script>

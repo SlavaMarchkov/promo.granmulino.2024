@@ -23,7 +23,7 @@
                 </div>
                 <div
                     class="col-md-2 mb-2"
-                    v-for="item of retailerTypes"
+                    v-for="item of RETAILER_TYPES"
                     :key="item.id"
                 >
                     <RadioButton
@@ -70,7 +70,7 @@
                             <thead>
                             <tr>
                                 <template
-                                    v-for="{ column, label, sortable, is_num, width } in thFields"
+                                    v-for="{ column, label, sortable, is_num, width } in RETAILER_TH_FIELDS"
                                     :key="column"
                                 >
                                     <ThSort
@@ -108,10 +108,10 @@
                                     {{ item.city }}
                                 </td>
                                 <td>
-                                    <Badge :is-active="item.isDirect"/>
+                                    <TheBadge :is-active="item.isDirect"/>
                                 </td>
                                 <td>
-                                    <Badge :is-active="item.isActive"/>
+                                    <TheBadge :is-active="item.isActive"/>
                                 </td>
                                 <TdButton
                                     :id="item.id"
@@ -261,11 +261,11 @@
                 </tr>
                 <tr>
                     <th>Прямой контракт?</th>
-                    <td><Badge :is-active="state.retailer.isDirect" /></td>
+                    <td><TheBadge :is-active="state.retailer.isDirect" /></td>
                 </tr>
                 <tr>
                     <th>Активна?</th>
-                    <td><Badge :is-active="state.retailer.isActive" /></td>
+                    <td><TheBadge :is-active="state.retailer.isActive" /></td>
                 </tr>
                 <tr>
                     <th>Описание</th>
@@ -283,7 +283,6 @@
 <script setup>
 import { computed, onMounted, reactive, watch } from 'vue';
 import { useAlertStore } from '@/stores/alerts.js';
-import { useRetailerStore } from '@/stores/retailers.js';
 import { useSpinnerStore } from '@/stores/spinners.js';
 import { useHttpService } from '@/use/useHttpService.js';
 import { useArrayHandlers } from '@/use/useArrayHandlers.js';
@@ -294,44 +293,17 @@ import InputGroup from '@/components/form/InputGroup.vue';
 import RadioButton from '@/components/form/RadioButton.vue';
 import ThSort from '@/components/table/ThSort.vue';
 import Button from '@/components/core/Button.vue';
-import Badge from '@/components/core/Badge.vue';
+import TheBadge from '@/components/core/TheBadge.vue';
 import Filter from '@/components/core/Filter.vue';
 import Modal from '@/components/Modal.vue';
 import Alert from '@/components/Alert.vue';
-import TdButton from "@/components/table/TdButton.vue";
+import TdButton from '@/components/table/TdButton.vue';
+import { RETAILER_TH_FIELDS, RETAILER_TYPES, URLS } from '@/helpers/constants.js';
 
-const retailerStore = useRetailerStore();
 const alertStore = useAlertStore();
 const spinnerStore = useSpinnerStore();
 const arrayHandlers = useArrayHandlers();
 const { get, post, update, destroy } = useHttpService();
-
-const retailerURL = '/retailers';
-const cityURL = '/admin/cities';
-const customerURL = '/customers';
-
-const retailerTypes = [
-    {
-        id: 'local',
-        value: 'local',
-        title: 'Локальная',
-    },
-    {
-        id: 'regional',
-        value: 'regional',
-        title: 'Региональная',
-    },
-    {
-        id: 'federal',
-        value: 'federal',
-        title: 'Федеральная',
-    },
-    {
-        id: 'all',
-        value: '',
-        title: 'Все типы ТС',
-    },
-];
 
 const initialFormData = () => ({
     name: '',
@@ -350,19 +322,6 @@ const state = reactive({
     retailer: initialFormData(),
     isEditing: false,
 });
-
-const thFields = [
-    { column: 'id', label: 'ID', sortable: true, is_num: true, width: 6 },
-    { column: 'name', label: 'Название ТС', sortable: true, is_num: false },
-    { column: 'label', label: 'Тип ТС', sortable: true, is_num: false },
-    { column: 'customer', label: 'Контрагент', sortable: true, is_num: false },
-    { column: 'city', label: 'Город', sortable: true, is_num: false },
-    { column: 'isDirect', label: 'Прямой контракт?', sortable: true, is_num: true },
-    { column: 'isActive', label: 'Активная?', sortable: true, is_num: true },
-    { column: 'view', label: 'Просмотр', width: 10 },
-    { column: 'edit', label: 'Ред.', width: 10 },
-    { column: 'delete', label: 'Удалить', width: 10 },
-];
 
 const searchBy = reactive({
     name: '',
@@ -390,18 +349,19 @@ onMounted(async () => {
 });
 
 const getRetailers = async () => {
-    const { data } = await get(retailerURL);
-    retailerStore.setRetailers(data.retailers);
-    state.retailers = retailerStore.getRetailers;
+    const { data } = await get(URLS.RETAILER);
+    state.retailers = data.retailers;
 };
 
+const getOneRetailer = (id) => state.retailers.find(retailer => retailer.id === id);
+
 const getCustomers = async () => {
-    const { data } = await get(customerURL);
+    const { data } = await get(URLS.CUSTOMER);
     state.customers = data.customers;
 };
 
 const getCities = async () => {
-    const { data } = await get(cityURL);
+    const { data } = await get(URLS.CITY);
     state.cities = data.cities;
 };
 
@@ -415,13 +375,13 @@ const createRetailerInit = () => {
 const editRetailerInit = (id) => {
     alertStore.clear();
     state.isEditing = true;
-    state.retailer = retailerStore.oneRetailer(id);
+    state.retailer = getOneRetailer(id);
     modalPopUp.show();
 };
 
 const viewRetailerInit = (id) => {
     viewModalPopUp = new bootstrap.Modal(document.getElementById('viewModalPopUp'));
-    state.retailer = retailerStore.oneRetailer(id);
+    state.retailer = getOneRetailer(id);
     viewModalPopUp.show();
     viewModalPopUp._element.addEventListener('hide.bs.modal', resetState);
 };
@@ -436,10 +396,6 @@ const closeViewModal = () => {
     viewModalPopUp._element.removeEventListener('hide.bs.modal', resetState);
 };
 
-watch(searchBy, () => {
-    state.retailers = arrayHandlers.filterArray(retailerStore.getRetailers, searchBy);
-});
-
 const clearSearch = () => {
     arrayHandlers.resetSearchKeys(searchBy);
     arrayHandlers.resetSortKeys();
@@ -447,14 +403,14 @@ const clearSearch = () => {
 
 const saveRetailer = async () => {
     if ( state.isEditing ) {
-        const response = await update(`${ retailerURL }/${ state.retailer.id }`, state.retailer);
+        const response = await update(`${ URLS.RETAILER }/${ state.retailer.id }`, state.retailer);
         if ( response && response.status === 'success' ) {
             alertStore.clear();
             modalPopUp.hide();
             await getRetailers();
         }
     } else {
-        const response = await post(retailerURL, state.retailer);
+        const response = await post(URLS.RETAILER, state.retailer);
         if ( response && response.status === 'success' ) {
             alertStore.clear();
             state.retailer = initialFormData();
@@ -468,7 +424,7 @@ const saveRetailer = async () => {
 
 const deleteRetailer = async (id) => {
     if ( confirm('Точно удалить торговую сеть? Уверены?') ) {
-        const response = await destroy(`${ retailerURL }/${ id }`);
+        const response = await destroy(`${ URLS.RETAILER }/${ id }`);
         if ( response && response.status === 'success' ) {
             await getRetailers();
         }
@@ -481,5 +437,9 @@ const sortedItems = computed(() => {
 
 const filteredItems = computed(() => {
     return arrayHandlers.filterArray(sortedItems.value, searchBy);
+});
+
+watch(searchBy, () => {
+    filteredItems.value = arrayHandlers.filterArray(state.retailers, searchBy);
 });
 </script>

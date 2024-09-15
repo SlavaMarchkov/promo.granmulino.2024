@@ -34,7 +34,7 @@
                             <thead>
                             <tr>
                                 <template
-                                    v-for="{ column, label, sortable, is_num, width } in thFields"
+                                    v-for="{ column, label, sortable, is_num, width } in REGION_TH_FIELDS"
                                     :key="column"
                                 >
                                     <ThSort
@@ -60,7 +60,7 @@
                                         name: 'Region.View',
                                         params: {
                                             'id': item.id
-                                        },
+                                        }
                                     }">{{ item.name }}
                                     </RouterLink>
                                 </td>
@@ -199,7 +199,6 @@ import Alert from '@/components/Alert.vue';
 import { computed, onMounted, reactive, watch } from 'vue';
 import { useAlertStore } from '@/stores/alerts.js';
 import { useSpinnerStore } from '@/stores/spinners.js';
-import { useRegionStore } from '@/stores/regions.js';
 import { useHttpService } from '@/use/useHttpService.js';
 import { useArrayHandlers } from '@/use/useArrayHandlers.js';
 import InputGroup from '@/components/form/InputGroup.vue';
@@ -207,14 +206,12 @@ import Filter from '@/components/core/Filter.vue';
 import Modal from '@/components/Modal.vue';
 import ThSort from '@/components/table/ThSort.vue';
 import TdButton from '@/components/table/TdButton.vue';
+import { REGION_TH_FIELDS, URLS } from '@/helpers/constants.js';
 
-const regionStore = useRegionStore();
 const alertStore = useAlertStore();
 const spinnerStore = useSpinnerStore();
 const arrayHandlers = useArrayHandlers();
 const { get, post, update, destroy } = useHttpService();
-
-const regionURL = '/admin/regions';
 
 const initialFormData = () => ({
     code: '',
@@ -226,16 +223,6 @@ const state = reactive({
     region: initialFormData(),
     isEditing: false,
 });
-
-const thFields = [
-    { column: 'id', label: 'ID', sortable: true, is_num: true, width: 6 },
-    { column: 'name', label: 'Название региона', sortable: true, is_num: false },
-    { column: 'code', label: 'Код региона', sortable: true, is_num: false },
-    { column: 'citiesCount', label: 'Количество городов', sortable: true, is_num: true },
-    { column: 'view', label: 'Просмотр', width: 10 },
-    { column: 'edit', label: 'Ред.', width: 10 },
-    { column: 'delete', label: 'Удалить', width: 10 },
-];
 
 const searchBy = reactive({
     code: '',
@@ -257,10 +244,11 @@ onMounted(async () => {
 });
 
 const getRegions = async () => {
-    const { data } = await get(regionURL);
-    regionStore.setRegions(data.regions);
-    state.regions = regionStore.getRegions;
+    const { data } = await get(URLS.REGION);
+    state.regions = data.regions;
 };
+
+const getOneRegion = (id) => state.regions.find(region => region.id === id);
 
 const createRegionInit = () => {
     alertStore.clear();
@@ -272,13 +260,13 @@ const createRegionInit = () => {
 const editRegionInit = (id) => {
     alertStore.clear();
     state.isEditing = true;
-    state.region = regionStore.oneRegion(id);
+    state.region = getOneRegion(id);
     modalPopUp.show();
 };
 
 const viewRegionInit = (id) => {
     viewModalPopUp = new bootstrap.Modal(document.getElementById('viewModalPopUp'));
-    state.region = regionStore.oneRegion(id);
+    state.region = getOneRegion(id);
     viewModalPopUp.show();
     viewModalPopUp._element.addEventListener('hide.bs.modal', resetState);
 };
@@ -293,10 +281,6 @@ const closeViewModal = () => {
     viewModalPopUp._element.removeEventListener('hide.bs.modal', resetState);
 };
 
-watch(searchBy, () => {
-    state.regions = arrayHandlers.filterArray(regionStore.getRegions, searchBy);
-});
-
 const clearSearch = () => {
     arrayHandlers.resetSearchKeys(searchBy);
     arrayHandlers.resetSortKeys();
@@ -304,14 +288,14 @@ const clearSearch = () => {
 
 const saveRegion = async () => {
     if ( state.isEditing ) {
-        const response = await update(`${ regionURL }/${ state.region.id }`, state.region);
+        const response = await update(`${ URLS.REGION }/${ state.region.id }`, state.region);
         if ( response && response.status === 'success' ) {
             alertStore.clear();
             modalPopUp.hide();
             await getRegions();
         }
     } else {
-        const response = await post(regionURL, state.region);
+        const response = await post(URLS.REGION, state.region);
         if ( response && response.status === 'success' ) {
             alertStore.clear();
             state.region = initialFormData();
@@ -325,7 +309,7 @@ const saveRegion = async () => {
 
 const deleteRegion = async (id) => {
     if ( confirm('Точно удалить регион? Уверены?') ) {
-        const response = await destroy(`${ regionURL }/${ id }`);
+        const response = await destroy(`${ URLS.REGION }/${ id }`);
         if ( response && response.status === 'success' ) {
             await getRegions();
         }
@@ -338,5 +322,9 @@ const sortedItems = computed(() => {
 
 const filteredItems = computed(() => {
     return arrayHandlers.filterArray(sortedItems.value, searchBy);
+});
+
+watch(searchBy, () => {
+    filteredItems.value = arrayHandlers.filterArray(state.regions, searchBy);
 });
 </script>

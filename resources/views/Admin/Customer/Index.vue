@@ -69,7 +69,7 @@
                             <thead>
                             <tr>
                                 <template
-                                    v-for="{ column, label, sortable, is_num, width } in thFields"
+                                    v-for="{ column, label, sortable, is_num, width } in CUSTOMER_TH_FIELDS"
                                     :key="column"
                                 >
                                     <ThSort
@@ -105,7 +105,7 @@
                                     {{ item.city }}
                                 </td>
                                 <td>
-                                    <Badge :is-active="item.isActive"/>
+                                    <TheBadge :is-active="item.isActive"/>
                                 </td>
                                 <TdButton
                                     :id="item.id"
@@ -282,7 +282,7 @@
                 </tr>
                 <tr>
                     <th>Активен?</th>
-                    <td><Badge :is-active="state.customer.isActive" /></td>
+                    <td><TheBadge :is-active="state.customer.isActive" /></td>
                 </tr>
                 <tr>
                     <th>Описание</th>
@@ -299,14 +299,13 @@
 
 <script setup>
 import { computed, onMounted, reactive, watch } from 'vue';
-import { useCustomerStore } from '@/stores/customers.js';
 import { useAlertStore } from '@/stores/alerts.js';
 import { useSpinnerStore } from '@/stores/spinners.js';
 import { useHttpService } from '@/use/useHttpService.js';
 import { useArrayHandlers } from '@/use/useArrayHandlers.js';
 import ThSort from '@/components/table/ThSort.vue';
 import Button from '@/components/core/Button.vue';
-import Badge from '@/components/core/Badge.vue';
+import TheBadge from '@/components/core/TheBadge.vue';
 import InputGroup from '@/components/form/InputGroup.vue';
 import SelectGroup from '@/components/form/SelectGroup.vue';
 import Checkbox from '@/components/form/Checkbox.vue';
@@ -315,17 +314,13 @@ import Input from '@/components/form/Input.vue';
 import TheLabel from '@/components/form/TheLabel.vue';
 import Alert from '@/components/Alert.vue';
 import Filter from '@/components/core/Filter.vue';
-import TdButton from "@/components/table/TdButton.vue";
+import TdButton from '@/components/table/TdButton.vue';
+import { CUSTOMER_TH_FIELDS, URLS } from '@/helpers/constants.js';
 
-const customerStore = useCustomerStore();
 const alertStore = useAlertStore();
 const spinnerStore = useSpinnerStore();
 const arrayHandlers = useArrayHandlers();
 const { get, post, update, destroy } = useHttpService();
-
-const customerURL = '/customers';
-const regionURL = '/admin/regions';
-const userURL = '/users';
 
 const initialFormData = () => ({
     name: '',
@@ -344,18 +339,6 @@ const state = reactive({
     customer: initialFormData(),
     isEditing: false,
 });
-
-const thFields = [
-    { column: 'id', label: 'ID', sortable: true, is_num: true, width: 6 },
-    { column: 'name', label: 'Название', sortable: true, is_num: false },
-    { column: 'user', label: 'Менеджер', sortable: true, is_num: false },
-    { column: 'region', label: 'Регион', sortable: true, is_num: false },
-    { column: 'city', label: 'Город', sortable: true, is_num: false },
-    { column: 'isActive', label: 'Активен?', sortable: true, is_num: true },
-    { column: 'view', label: 'Просмотр', width: 10 },
-    { column: 'edit', label: 'Ред.', width: 10 },
-    { column: 'delete', label: 'Удалить', width: 10 },
-];
 
 const searchBy = reactive({
     name: '',
@@ -382,18 +365,19 @@ onMounted(async () => {
 });
 
 const getCustomers = async () => {
-    const { data } = await get(customerURL);
-    customerStore.setCustomers(data.customers);
-    state.customers = customerStore.getCustomers;
+    const { data } = await get(URLS.CUSTOMER);
+    state.customers = data.customers;
 };
 
+const getOneCustomer = (id) => state.customers.find(customer => customer.id === id);
+
 const getRegions = async () => {
-    const { data } = await get(regionURL);
+    const { data } = await get(URLS.REGION);
     state.regions = data.regions;
 };
 
 const getUsers = async () => {
-    const { data } = await get(userURL, {
+    const { data } = await get(URLS.USER, {
         params: {
             is_active: true,
         },
@@ -420,14 +404,14 @@ const createCustomerInit = () => {
 const editCustomerInit = (id) => {
     alertStore.clear();
     state.isEditing = true;
-    state.customer = customerStore.oneCustomer(id);
+    state.customer = getOneCustomer(id);
     getCitiesForRegion(state.customer.regionId);
     modalPopUp.show();
 };
 
 const viewCustomerInit = (id) => {
     viewModalPopUp = new bootstrap.Modal(document.getElementById('viewModalPopUp'));
-    state.customer = customerStore.oneCustomer(id);
+    state.customer = getOneCustomer(id);
     viewModalPopUp.show();
     viewModalPopUp._element.addEventListener('hide.bs.modal', resetState);
 };
@@ -442,10 +426,6 @@ const closeViewModal = () => {
     viewModalPopUp._element.removeEventListener('hide.bs.modal', resetState);
 };
 
-watch(searchBy, () => {
-    state.customers = arrayHandlers.filterArray(customerStore.getCustomers, searchBy);
-});
-
 const clearSearch = () => {
     arrayHandlers.resetSearchKeys(searchBy);
     arrayHandlers.resetSortKeys();
@@ -453,14 +433,14 @@ const clearSearch = () => {
 
 const saveCustomer = async () => {
     if ( state.isEditing ) {
-        const response = await update(`${ customerURL }/${ state.customer.id }`, state.customer);
+        const response = await update(`${ URLS.CUSTOMER }/${ state.customer.id }`, state.customer);
         if ( response && response.status === 'success' ) {
             alertStore.clear();
             modalPopUp.hide();
             await getCustomers();
         }
     } else {
-        const response = await post(customerURL, state.customer);
+        const response = await post(URLS.CUSTOMER, state.customer);
         if ( response && response.status === 'success' ) {
             alertStore.clear();
             state.customer = initialFormData();
@@ -474,7 +454,7 @@ const saveCustomer = async () => {
 
 const deleteCustomer = async (id) => {
     if ( confirm('Точно удалить контрагента? Уверены?') ) {
-        const response = await destroy(`${ customerURL }/${ id }`);
+        const response = await destroy(`${ URLS.CUSTOMER }/${ id }`);
         if ( response && response.status === 'success' ) {
             await getCustomers();
         }
@@ -487,5 +467,9 @@ const sortedItems = computed(() => {
 
 const filteredItems = computed(() => {
     return arrayHandlers.filterArray(sortedItems.value, searchBy);
+});
+
+watch(searchBy, () => {
+    filteredItems.value = arrayHandlers.filterArray(state.customers, searchBy);
 });
 </script>

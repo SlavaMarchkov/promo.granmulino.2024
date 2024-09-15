@@ -46,7 +46,7 @@
                             <thead>
                             <tr>
                                 <template
-                                    v-for="{ column, label, sortable, is_num, width } in thFields"
+                                    v-for="{ column, label, sortable, is_num, width } in USER_TH_FIELDS"
                                     :key="column"
                                 >
                                     <ThSort
@@ -83,7 +83,7 @@
                                     {{ item.loggedInAt }}
                                 </td>
                                 <td>
-                                    <Badge :is-active="item.isActive"/>
+                                    <TheBadge :is-active="item.isActive"/>
                                 </td>
                                 <TdButton
                                     :id="item.id"
@@ -243,11 +243,11 @@
                 </tr>
                 <tr>
                     <th>Работает?</th>
-                    <td><Badge :is-active="state.user.isActive" /></td>
+                    <td><TheBadge :is-active="state.user.isActive" /></td>
                 </tr>
                 <tr>
                     <th>Админ?</th>
-                    <td><Badge :is-active="state.user.isAdmin" /></td>
+                    <td><TheBadge :is-active="state.user.isAdmin" /></td>
                 </tr>
                 <tr>
                     <th>Последний вход</th>
@@ -277,15 +277,14 @@ import Filter from '@/components/core/Filter.vue';
 import Modal from '@/components/Modal.vue';
 import ThSort from '@/components/table/ThSort.vue';
 import TdButton from '@/components/table/TdButton.vue';
-import Checkbox from "@/components/form/Checkbox.vue";
-import Badge from "@/components/core/Badge.vue";
+import Checkbox from '@/components/form/Checkbox.vue';
+import TheBadge from '@/components/core/TheBadge.vue';
+import { URLS, USER_TH_FIELDS } from '@/helpers/constants.js';
 
 const alertStore = useAlertStore();
 const spinnerStore = useSpinnerStore();
 const arrayHandlers = useArrayHandlers();
 const { get, post, update, destroy } = useHttpService();
-
-const userURL = '/users';
 
 const initialFormData = () => ({
     firstName: '',
@@ -301,19 +300,6 @@ const state = reactive({
     user: initialFormData(),
     isEditing: false,
 });
-
-const thFields = [
-    { column: 'id', label: 'ID', sortable: true, is_num: true, width: 6 },
-    { column: 'lastName', label: 'Фамилия', sortable: true, is_num: false },
-    { column: 'firstName', label: 'Имя', sortable: true, is_num: false },
-    { column: 'middleName', label: 'Отчество', sortable: true, is_num: false },
-    { column: 'email', label: 'Email', sortable: true, is_num: false },
-    { column: 'loggedInAt', label: 'Последний вход', sortable: true, is_num: false },
-    { column: 'isActive', label: 'Работает?', sortable: true, is_num: true, width: 10 },
-    { column: 'view', label: 'Просмотр', width: 10 },
-    { column: 'edit', label: 'Ред.', width: 10 },
-    { column: 'delete', label: 'Удалить', width: 10 },
-];
 
 const searchBy = reactive({
     firstName: '',
@@ -338,7 +324,7 @@ onMounted(async () => {
 });
 
 const getUsers = async () => {
-    const { data } = await get(userURL);
+    const { data } = await get(URLS.USER);
     state.users = data.users;
 };
 
@@ -382,14 +368,14 @@ const clearSearch = () => {
 
 const saveUser = async () => {
     if ( state.isEditing ) {
-        const response = await update(`${ userURL }/${ state.user.id }`, state.user);
+        const response = await update(`${ URLS.USER }/${ state.user.id }`, state.user);
         if ( response && response.status === 'success' ) {
             alertStore.clear();
             modalPopUp.hide();
             await getUsers();
         }
     } else {
-        const response = await post(userURL, state.user);
+        const response = await post(URLS.USER, state.user);
         if ( response && response.status === 'success' ) {
             alertStore.clear();
             state.user = initialFormData();
@@ -403,7 +389,7 @@ const saveUser = async () => {
 
 const deleteUser = async (id) => {
     if ( confirm('Точно удалить пользователя? Уверены?') ) {
-        const response = await destroy(`${ userURL }/${ id }`);
+        const response = await destroy(`${ URLS.USER }/${ id }`);
         if ( response && response.status === 'success' ) {
             await getUsers();
         }

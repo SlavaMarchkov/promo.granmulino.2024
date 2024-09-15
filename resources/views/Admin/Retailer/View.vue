@@ -75,11 +75,11 @@
                             </tr>
                             <tr>
                                 <th>Прямой контракт?</th>
-                                <td><Badge :is-active="item.isDirect" /></td>
+                                <td><TheBadge :is-active="item.isDirect" /></td>
                             </tr>
                             <tr>
                                 <th>Активна?</th>
-                                <td><Badge :is-active="item.isActive" /></td>
+                                <td><TheBadge :is-active="item.isActive" /></td>
                             </tr>
                             <tr>
                                 <th>Описание</th>
@@ -122,8 +122,8 @@ import { computed, onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useHttpService } from '@/use/useHttpService.js';
 import { useSpinnerStore } from '@/stores/spinners.js';
-import Alert from "@/components/Alert.vue";
-import Badge from "@/components/core/Badge.vue";
+import Alert from '@/components/Alert.vue';
+import TheBadge from '@/components/core/TheBadge.vue';
 
 const route = useRoute();
 const router = useRouter();

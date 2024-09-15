@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Database\Seeders;
 
-use App\Models\Customer;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 
 class CustomersDumpSeeder extends Seeder
 {
-    public function run()
+    /*public function run()
     : void
     {
         $file = database_path('dumps/customers.json');
@@ -29,5 +29,13 @@ class CustomersDumpSeeder extends Seeder
                 'updated_at'  => fake()->dateTimeInInterval('-2 years'),
             ]);
         }
+    }*/
+
+    public function run()
+    : void
+    {
+        $file = database_path('dumps/customers.sql');
+        $sql = File::get($file);
+        DB::connection()->getPdo()->exec($sql);
     }
 }

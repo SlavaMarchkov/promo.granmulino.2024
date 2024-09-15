@@ -90,7 +90,7 @@ import { computed, onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useHttpService } from '@/use/useHttpService.js';
 import { useSpinnerStore } from '@/stores/spinners.js';
-import Alert from "@/components/Alert.vue";
+import Alert from '@/components/Alert.vue';
 
 const route = useRoute();
 const router = useRouter();
