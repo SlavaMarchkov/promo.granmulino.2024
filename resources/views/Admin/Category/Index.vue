@@ -114,7 +114,7 @@
             <Alert/>
             <div class="row g-3">
                 <div class="col-12">
-                    <Label for="name" required>Название группы товаров</Label>
+                    <TheLabel for="name" required>Название группы товаров</TheLabel>
                     <Input
                         id="name"
                         v-model="state.category.name"
@@ -202,7 +202,7 @@
 
 <script setup>
 import Input from '@/components/form/Input.vue';
-import Label from '@/components/form/Label.vue';
+import TheLabel from '@/components/form/TheLabel.vue';
 import Checkbox from '@/components/form/Checkbox.vue';
 import Button from '@/components/core/Button.vue';
 import Alert from '@/components/Alert.vue';

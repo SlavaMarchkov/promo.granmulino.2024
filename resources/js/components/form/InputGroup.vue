@@ -8,6 +8,7 @@
             :type="type"
             :value="modelValue"
             @input="handleInput"
+
         />
         <span class="input-group-text" style="cursor: pointer;"
               @click="clearInput"><i

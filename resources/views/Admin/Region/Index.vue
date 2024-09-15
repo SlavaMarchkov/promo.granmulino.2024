@@ -114,7 +114,7 @@
             <Alert/>
             <div class="row g-3">
                 <div class="col-12">
-                    <Label for="name" required>Наименование региона</Label>
+                    <TheLabel for="name" required>Наименование региона</TheLabel>
                     <Input
                         id="name"
                         v-model="state.region.name"
@@ -123,7 +123,7 @@
                     />
                 </div>
                 <div class="col-12">
-                    <Label for="code" required>Код региона</Label>
+                    <TheLabel for="code" required>Код региона</TheLabel>
                     <Input
                         id="code"
                         v-model="state.region.code"
@@ -193,7 +193,7 @@
 
 <script setup>
 import Input from '@/components/form/Input.vue';
-import Label from '@/components/form/Label.vue';
+import TheLabel from '@/components/form/TheLabel.vue';
 import Button from '@/components/core/Button.vue';
 import Alert from '@/components/Alert.vue';
 import { computed, onMounted, reactive, watch } from 'vue';

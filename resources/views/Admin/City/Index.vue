@@ -107,7 +107,7 @@
             <Alert/>
             <div class="row g-3">
                 <div class="col-12">
-                    <Label for="name" required>Наименование города</Label>
+                    <TheLabel for="name" required>Наименование города</TheLabel>
                     <Input
                         id="name"
                         v-model="state.city.name"
@@ -116,7 +116,7 @@
                     />
                 </div>
                 <div class="col-12">
-                    <Label for="region_id" required>Регион</Label>
+                    <TheLabel for="region_id" required>Регион</TheLabel>
                     <select id="region_id" v-model="state.city.regionId" class="form-select">
                         <option disabled selected value="">-- Выберите регион --</option>
                         <option
@@ -186,7 +186,7 @@
 
 <script setup>
 import Input from '@/components/form/Input.vue';
-import Label from '@/components/form/Label.vue';
+import TheLabel from '@/components/form/TheLabel.vue';
 import Button from '@/components/core/Button.vue';
 import Alert from '@/components/Alert.vue';
 import { computed, onMounted, reactive, watch } from 'vue';

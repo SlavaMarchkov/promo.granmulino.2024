@@ -151,7 +151,7 @@
             <Alert/>
             <div class="row g-3">
                 <div class="col-12">
-                    <Label for="name" required>Название контрагента</Label>
+                    <TheLabel for="name" required>Название контрагента</TheLabel>
                     <Input
                         v-model="state.customer.name"
                         type="text"
@@ -160,7 +160,7 @@
                     />
                 </div>
                 <div class="col-12">
-                    <Label for="region_id" required>Регион</Label>
+                    <TheLabel for="region_id" required>Регион</TheLabel>
                     <select
                         v-model="state.customer.regionId"
                         @change="getCitiesForRegion(); state.customer.cityId = null"
@@ -177,7 +177,7 @@
                     </select>
                 </div>
                 <div class="col-12" v-if="state.customer.regionId">
-                    <Label for="city_id" required>Город</Label>
+                    <TheLabel for="city_id" required>Город</TheLabel>
                     <select
                         v-model="state.customer.cityId"
                         id="city_id"
@@ -193,7 +193,7 @@
                     </select>
                 </div>
                 <div class="col-12">
-                    <Label for="user_id" required>Менеджер для контрагента</Label>
+                    <TheLabel for="user_id" required>Менеджер для контрагента</TheLabel>
                     <select
                         id="user_id"
                         v-model="state.customer.userId"
@@ -209,7 +209,7 @@
                     </select>
                 </div>
                 <div class="col-12">
-                    <Label for="description">Описание для контрагента</Label>
+                    <TheLabel for="description">Описание для контрагента</TheLabel>
                     <textarea
                         id="description"
                         v-model="state.customer.description"
@@ -312,7 +312,7 @@ import SelectGroup from '@/components/form/SelectGroup.vue';
 import Checkbox from '@/components/form/Checkbox.vue';
 import Modal from '@/components/Modal.vue';
 import Input from '@/components/form/Input.vue';
-import Label from '@/components/form/Label.vue';
+import TheLabel from '@/components/form/TheLabel.vue';
 import Alert from '@/components/Alert.vue';
 import Filter from '@/components/core/Filter.vue';
 import TdButton from "@/components/table/TdButton.vue";

@@ -28,7 +28,7 @@ if (!function_exists('process_name')) {
     function process_name($name)
     : string
     {
-        return Str::ucfirst(Str::lower($name));
+        return Str::ucfirst(Str::lower(Str::squish($name)));
     }
 }
 

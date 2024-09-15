@@ -38,30 +38,57 @@ final class UserController extends ApiController
     }
 
     public function store(StoreRequest $request)
-    : JsonResponse {
-        return response()->json([
-            'item'    => new UserResource(User::create($request->validated())),
-            'status'  => 'success',
-            'message' => 'Пользователь создан.',
-        ], Response::HTTP_CREATED);
+    : JsonResponse
+    {
+        return $this->successResponse(
+            new UserResource(User::create($request->validated())),
+            'success',
+            __('crud.users.created'),
+            Response::HTTP_CREATED,
+        );
     }
 
     public function show(User $user)
-    : UserResource {
-        return new UserResource($user);
+    : JsonResponse
+    {
+        return $this->successResponse(
+            new UserResource($user),
+            'success',
+            __('crud.users.one'),
+        );
     }
 
     public function update(UpdateRequest $request, User $user)
-    : JsonResponse {
+    : JsonResponse
+    {
         $user->update($request->validated());
-        return response()->json([
-            'item'    => new UserResource($user),
-            'status'  => 'success',
-            'message' => 'Пользователь обновлён.',
-        ], Response::HTTP_OK);
+
+        return $this->successResponse(
+            new UserResource($user),
+            'success',
+            __('crud.users.updated'),
+        );
     }
 
     public function destroy(User $user)
+    : JsonResponse
     {
+        $canBeDeleted = false;
+
+        if ($canBeDeleted) {
+            $user->delete();
+
+            return $this->successResponse(
+                new UserResource($user),
+                'success',
+                __('crud.users.deleted'),
+            );
+        } else {
+            return $this->errorResponse(
+                Response::HTTP_OK,
+                'error',
+                __('crud.users.not_deleted'),
+            );
+        }
     }
 }

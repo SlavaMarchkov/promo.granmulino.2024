@@ -149,7 +149,7 @@
             <Alert/>
             <div class="row g-3">
                 <div class="col-12">
-                    <Label for="name" required>Название продукта</Label>
+                    <TheLabel for="name" required>Название продукта</TheLabel>
                     <Input
                         id="name"
                         v-model="state.product.name"
@@ -158,7 +158,7 @@
                     />
                 </div>
                 <div class="col-6">
-                    <Label for="weight" required>Вес пачки, г</Label>
+                    <TheLabel for="weight" required>Вес пачки, г</TheLabel>
                     <Input
                         id="weight"
                         v-model="state.product.weight"
@@ -170,7 +170,7 @@
                     />
                 </div>
                 <div class="col-6">
-                    <Label for="price" required>Отпускная цена, руб.</Label>
+                    <TheLabel for="price" required>Отпускная цена, руб.</TheLabel>
                     <Input
                         id="price"
                         v-model="state.product.price"
@@ -182,7 +182,7 @@
                     />
                 </div>
                 <div class="col-12">
-                    <Label for="category_id" required>Группа товара</Label>
+                    <TheLabel for="category_id" required>Группа товара</TheLabel>
                     <select
                         id="category_id"
                         v-model="state.product.categoryId"
@@ -198,7 +198,7 @@
                     </select>
                 </div>
                 <div class="col-12">
-                    <Label for="image">Изображение продукта</Label>
+                    <TheLabel for="image">Изображение продукта</TheLabel>
                     <Input
                         id="image"
                         type="file"
@@ -282,7 +282,7 @@
 
 <script setup>
 import Input from '@/components/form/Input.vue';
-import Label from '@/components/form/Label.vue';
+import TheLabel from '@/components/form/TheLabel.vue';
 import Checkbox from '@/components/form/Checkbox.vue';
 import SelectGroup from '@/components/form/SelectGroup.vue';
 import Button from '@/components/core/Button.vue';

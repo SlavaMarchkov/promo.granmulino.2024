@@ -157,11 +157,11 @@
             <Alert/>
             <div class="row g-3">
                 <div class="col-12">
-                    <Label for="name" required>Название торговой сети</Label>
+                    <TheLabel for="name" required>Название торговой сети</TheLabel>
                     <Input id="name" v-model="state.retailer.name" placeholder="Например: Пятёрочка" type="text"/>
                 </div>
                 <div class="col-12">
-                    <Label for="customer_id" required>Контрагент</Label>
+                    <TheLabel for="customer_id" required>Контрагент</TheLabel>
                     <select id="customer_id" v-model="state.retailer.customerId" class="form-select">
                         <option disabled selected value="null">-- Выберите дистрибутора, который поставляет в эту ТС
                             --
@@ -172,7 +172,7 @@
                     </select>
                 </div>
                 <div class="col-12">
-                    <Label for="type" required>Тип торговой сети</Label>
+                    <TheLabel for="type" required>Тип торговой сети</TheLabel>
                     <select id="type" v-model="state.retailer.type" class="form-select">
                         <option disabled selected value="">-- Выберите тип торговой сети --</option>
                         <option value="local">Локальная</option>
@@ -181,7 +181,7 @@
                     </select>
                 </div>
                 <div class="col-12">
-                    <Label for="city_id" required>Город</Label>
+                    <TheLabel for="city_id" required>Город</TheLabel>
                     <select id="city_id" v-model="state.retailer.cityId" class="form-select">
                         <option disabled selected value="null">-- Выберите город, где находится штаб-квартира ТС --
                         </option>
@@ -190,7 +190,7 @@
                     </select>
                 </div>
                 <div class="col-12">
-                    <Label for="description">Описание для торговой сети</Label>
+                    <TheLabel for="description">Описание для торговой сети</TheLabel>
                     <textarea id="description" v-model="state.retailer.description" class="form-control"
                               placeholder="Укажите произвольное описание"></textarea>
                 </div>
@@ -289,7 +289,7 @@ import { useHttpService } from '@/use/useHttpService.js';
 import { useArrayHandlers } from '@/use/useArrayHandlers.js';
 import Checkbox from '@/components/form/Checkbox.vue';
 import Input from '@/components/form/Input.vue';
-import Label from '@/components/form/Label.vue';
+import TheLabel from '@/components/form/TheLabel.vue';
 import InputGroup from '@/components/form/InputGroup.vue';
 import RadioButton from '@/components/form/RadioButton.vue';
 import ThSort from '@/components/table/ThSort.vue';

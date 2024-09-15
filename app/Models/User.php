@@ -48,12 +48,6 @@ class User extends Authenticatable
         );
     }
 
-    public function setPasswordAttribute(string $password)
-    : void
-    {
-        $this->attributes['password'] = bcrypt($password);
-    }
-
     public function getUsers(bool $is_active = false)
     : Collection
     {

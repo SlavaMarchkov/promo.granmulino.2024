@@ -1,437 +1,291 @@
 <template>
     <div class="row mb-4">
         <div class="col-12">
-            <button class="btn btn-primary me-2" type="button" @click="showNewUserModal">
+            <button
+                class="btn btn-primary"
+                type="button"
+                @click="createUserInit"
+            >
                 Новый пользователь
             </button>
-            <button class="btn btn-secondary" type="button" @click="clearSearch">
-                Сбросить фильтр
-            </button>
+        </div>
+    </div>
+    <div class="row mb-2">
+        <div class="col-12">
+            <Filter @reset-filter="clearSearch">
+                <div class="col-md-4 mb-2">
+                    <InputGroup v-model="searchBy.lastName" placeholder="Поиск по фамилии">Фамилия</InputGroup>
+                </div>
+                <div class="col-md-4 mb-2">
+                    <InputGroup v-model="searchBy.firstName" placeholder="Поиск по имени">Имя</InputGroup>
+                </div>
+                <div class="col-md-4 mb-2">
+                    <InputGroup v-model="searchBy.middleName" placeholder="Поиск по отчеству">Отчество</InputGroup>
+                </div>
+                <div class="col-md-4 mb-2">
+                    <InputGroup v-model="searchBy.email" placeholder="Поиск по email">Email</InputGroup>
+                </div>
+                <div class="col-md-4 mb-2">
+                    <Checkbox
+                        id="is_active"
+                        v-model="searchBy.isActive"
+                    >
+                        Работает?
+                    </Checkbox>
+                </div>
+            </Filter>
         </div>
     </div>
     <div class="row mb-4">
         <div class="col-12">
             <div class="card">
                 <div class="card-body pb-0">
-                    <div class="table-responsive">
-                        <table class="table table-bordered mt-4 mb-0 text-center align-middle">
-                            <tbody>
-                            <tr>
-                                <td class="py-1" style="width: 5%;"></td>
-                                <td class="py-1" style="width: 15%;">
-                                    <div class="input-group">
-                                        <input
-                                            v-model="searchBy.lastName"
-                                            class="form-control"
-                                            placeholder="Поиск по фамилии"
-                                            type="text"
-                                        />
-                                        <span class="input-group-text" style="cursor: pointer;"
-                                              @click="searchBy.lastName = ''"><i
-                                            class="bi bi-x-lg"></i></span>
-                                    </div>
-                                </td>
-                                <td class="py-1" style="width: 15%;">
-                                    <div class="input-group">
-                                        <input
-                                            v-model="searchBy.firstName"
-                                            class="form-control"
-                                            placeholder="Поиск по имени"
-                                            type="text"
-                                        />
-                                        <span class="input-group-text" style="cursor: pointer;"
-                                              @click="searchBy.firstName = ''"><i
-                                            class="bi bi-x-lg"></i></span>
-                                    </div>
-                                </td>
-                                <td class="py-1" style="width: 15%;">
-                                    <div class="input-group">
-                                        <input
-                                            v-model="searchBy.middleName"
-                                            class="form-control"
-                                            placeholder="Поиск по отчеству"
-                                            type="text"
-                                        />
-                                        <span class="input-group-text" style="cursor: pointer;"
-                                              @click="searchBy.middleName = ''"><i
-                                            class="bi bi-x-lg"></i></span>
-                                    </div>
-                                </td>
-                                <td class="py-1" style="width: 15%;">
-                                    <div class="input-group">
-                                        <input
-                                            v-model="searchBy.email"
-                                            class="form-control"
-                                            placeholder="Поиск по email"
-                                            type="text"
-                                        />
-                                        <span class="input-group-text" style="cursor: pointer;"
-                                              @click="searchBy.email = ''"><i
-                                            class="bi bi-x-lg"></i></span>
-                                    </div>
-                                </td>
-                                <td class="py-1" style="width: 15%;">
-                                    <div class="input-group">
-                                        <div class="input-group-text">
-                                            <input
-                                                id="is_active"
-                                                v-model="searchBy.isActive"
-                                                class="form-check-input mt-0"
-                                                type="checkbox"
-                                            >
-                                        </div>
-                                        <label class="form-control text-start" for="is_active">Работает?</label>
-                                    </div>
-                                </td>
-                                <td class="py-1" style="width: 10%;"></td>
-                                <td class="py-1" style="width: 10%;"></td>
-                            </tr>
-                            </tbody>
-                        </table>
-                        <table v-if="users.length > 0" class="table table-bordered mb-4 text-center align-middle"
-                               style="margin-top: -1px;">
+                    <div v-if="filteredItems.length > 0" class="table-responsive">
+                        <table class="table table-bordered my-4 text-center align-middle text-nowrap"
+                               style="width: 100%;">
                             <thead>
                             <tr>
-                                <ThSort
-                                    :id="'id'"
-                                    :order-column="orderColumn"
-                                    :order-direction="orderDirection"
-                                    :width='5'
-                                    sort-type="numeric"
-                                    @sortByColumn="applyFilterSort(
-                                        'id',
-                                        orderDirection === 'asc' ? 'desc' : 'asc',
-                                    )"
-                                >ID
-                                </ThSort>
-                                <ThSort
-                                    :id="'lastName'"
-                                    :order-column="orderColumn"
-                                    :order-direction="orderDirection"
-                                    :width='15'
-                                    class="text-start"
-                                    sort-type="alpha"
-                                    @sortByColumn="applyFilterSort(
-                                        'lastName',
-                                        orderDirection === 'asc' ? 'desc' : 'asc',
-                                        false,
-                                    )"
-                                >Фамилия
-                                </ThSort>
-                                <ThSort
-                                    :id="'firstName'"
-                                    :order-column="orderColumn"
-                                    :order-direction="orderDirection"
-                                    :width='15'
-                                    class="text-start"
-                                    sort-type="alpha"
-                                    @sortByColumn="applyFilterSort(
-                                        'firstName',
-                                        orderDirection === 'asc' ? 'desc' : 'asc',
-                                        false,
-                                    )"
-                                >Имя
-                                </ThSort>
-                                <ThSort
-                                    :id="'middleName'"
-                                    :order-column="orderColumn"
-                                    :order-direction="orderDirection"
-                                    :width='15'
-                                    class="text-start"
-                                    sort-type="alpha"
-                                    @sortByColumn="applyFilterSort(
-                                        'middleName',
-                                        orderDirection === 'asc' ? 'desc' : 'asc',
-                                        false,
-                                    )"
-                                >Отчество
-                                </ThSort>
-                                <ThSort
-                                    :id="'email'"
-                                    :order-column="orderColumn"
-                                    :order-direction="orderDirection"
-                                    :width='15'
-                                    class="text-start"
-                                    sort-type="alpha"
-                                    @sortByColumn="applyFilterSort(
-                                        'email',
-                                        orderDirection === 'asc' ? 'desc' : 'asc',
-                                        false,
-                                    )"
-                                >Email
-                                </ThSort>
-                                <ThSort
-                                    :id="'isActive'"
-                                    :order-column="orderColumn"
-                                    :order-direction="orderDirection"
-                                    :width='15'
-                                    @sortByColumn="applyFilterSort(
-                                        'isActive',
-                                        orderDirection === 'asc' ? 'desc' : 'asc',
-                                    )"
-                                >Работает?
-                                </ThSort>
-                                <th scope="col" style="width: 10%;">Просмотр</th>
-                                <th scope="col" style="width: 10%;">Ред.</th>
+                                <template
+                                    v-for="{ column, label, sortable, is_num, width } in thFields"
+                                    :key="column"
+                                >
+                                    <ThSort
+                                        :column="column"
+                                        :is-numeric="is_num"
+                                        :sort-by-asc="arrayHandlers.sortBy.asc"
+                                        :sort-by-column="arrayHandlers.sortBy.column === column"
+                                        :sortable="sortable"
+                                        :width="width"
+                                        @setSort="arrayHandlers.setSort(column, is_num)"
+                                    >{{ label }}
+                                    </ThSort>
+                                </template>
                             </tr>
                             </thead>
                             <tbody>
-                            <tr v-for="user in users" :key="user.id">
-                                <th scope="row">{{ user.id }}</th>
-                                <td class="text-start" style="cursor: pointer;"
-                                    @click="showViewUserModal(user.id)">
-                                    {{ user.lastName }}
+                            <tr v-for="item in filteredItems" :key="item.id">
+                                <th scope="row">
+                                    {{ item.id }}
+                                </th>
+                                <td class="text-start">
+                                    {{ item.lastName }}
                                 </td>
                                 <td class="text-start">
-                                    {{ user.firstName }}
+                                    {{ item.firstName }}
                                 </td>
                                 <td class="text-start">
-                                    {{ user.middleName }}
+                                    {{ item.middleName }}
                                 </td>
                                 <td class="text-start">
-                                    {{ user.email }}
+                                    {{ item.email }}
+                                </td>
+                                <td class="text-start">
+                                    {{ item.loggedInAt }}
                                 </td>
                                 <td>
-                                    <Badge :is-active="user.isActive"/>
+                                    <Badge :is-active="item.isActive"/>
                                 </td>
-                                <td>
-                                    <button
-                                        class="btn btn-sm btn-primary"
-                                        @click="showViewUserModal(user.id)"
-                                    ><i class="bi bi-eye-fill"></i>
-                                        View
-                                    </button>
-                                </td>
-                                <td>
-                                    <button
-                                        class="btn btn-sm btn-warning"
-                                        @click="showEditUserModal(user.id)"
-                                    ><i class="bi bi-pencil-square"></i>
-                                        Edit
-                                    </button>
-                                </td>
+                                <TdButton
+                                    :id="item.id"
+                                    intent="view"
+                                    @runButtonHandler="viewUserInit"
+                                >View
+                                </TdButton>
+                                <TdButton
+                                    :id="item.id"
+                                    intent="edit"
+                                    @runButtonHandler="editUserInit"
+                                >Edit
+                                </TdButton>
+                                <TdButton
+                                    :id="item.id"
+                                    intent="delete"
+                                    @runButtonHandler="deleteUser"
+                                >Delete
+                                </TdButton>
                             </tr>
                             </tbody>
                         </table>
-                        <p v-else class="mt-3 text-center lead">
-                            {{ userStore.isContentLoading ? 'Подождите, загружаю...' : 'Записей не найдено...' }}
-                        </p>
                     </div>
-                    <p>Всего записей: <span class="fw-bold">{{ users.length }}</span></p>
+                    <p v-else class="mt-3 text-center lead">
+                        {{ spinnerStore.isLoading ? 'Подождите, загружаю...' : 'Записей не найдено...' }}
+                    </p>
+                    <p>Всего записей: <span class="fw-bold">{{ filteredItems.length }}</span></p>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- New User Modal Start -->
-    <div id="newUser" aria-hidden="true" class="modal fade" style="display: none;" tabindex="-1">
-        <div class="modal-dialog">
-            <form @submit.prevent="saveUser">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Добавление пользователя</h5>
-                        <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"></button>
-                    </div>
-                    <div class="modal-body">
-                        <Alert/>
-                        <div class="row g-3">
-                            <div class="col-12">
-                                <Label for="last-name" required>Фамилия</Label>
-                                <Input
-                                    id="last-name"
-                                    v-model="form.lastName"
-                                    placeholder="Палкина"
-                                    type="text"
-                                />
-                            </div>
-                            <div class="col-md-6">
-                                <Label for="first-name" required>Имя</Label>
-                                <Input
-                                    id="first-name"
-                                    v-model="form.firstName"
-                                    placeholder="Евдокия"
-                                    type="text"
-                                />
-                            </div>
-                            <div class="col-md-6">
-                                <Label for="middle-name">Отчество</Label>
-                                <Input
-                                    id="middle-name"
-                                    v-model="form.middleName"
-                                    placeholder="Никифоровна"
-                                    type="text"
-                                />
-                            </div>
-                            <div class="col-md-6">
-                                <Label for="email" required>Email</Label>
-                                <Input
-                                    id="email"
-                                    v-model="form.email"
-                                    placeholder="email@mail.ru"
-                                    type="text"
-                                />
-                            </div>
-                            <div class="col-md-6">
-                                <Label for="password" required>Пароль</Label>
-                                <Input
-                                    id="password"
-                                    v-model="form.password"
-                                    placeholder="Придумайте пароль"
-                                    type="text"
-                                />
-                            </div>
-                            <div class="col-12">
-                                <p class="text-secondary mb-0 small">Сообщите email и пароль пользователю системы. Эти
-                                    данные потребуются для входа в личный кабинет.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <Button
-                            :disabled="userStore.isButtonDisabled"
-                            :loading="userStore.isButtonDisabled"
-                            class="w-25"
-                            type="submit"
-                        >Сохранить
-                        </Button>
-                        <button class="btn btn-secondary" data-bs-dismiss="modal" type="button">Закрыть</button>
-                    </div>
+    <Modal
+        id="modalPopUp"
+        :close-func="closeModal"
+        :custom-classes="['']"
+    >
+        <template #title>
+            <span v-if="state.isEditing">Редактирование пользователя <b>{{ state.user.fullName }}</b></span>
+            <span v-else>Добавление пользователя</span>
+        </template>
+        <template #body>
+            <Alert/>
+            <div class="row g-3">
+                <div class="col-12">
+                    <TheLabel for="last-name" required>Фамилия</TheLabel>
+                    <Input
+                        id="last-name"
+                        v-model="state.user.lastName"
+                        placeholder="Например: Овчинникова"
+                        type="text"
+                    />
                 </div>
-            </form>
-        </div>
-    </div>
-    <!-- New User Modal End -->
-
-    <!-- Edit One User Modal Start -->
-    <div id="editUser" aria-hidden="true" class="modal fade" style="display: none;" tabindex="-1">
-        <div class="modal-dialog">
-            <form @submit.prevent="updateUser(user)">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Редактирование пользователя</h5>
-                        <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"></button>
-                    </div>
-                    <div class="modal-body">
-                        <Alert/>
-                        <div class="row g-3">
-                            <div class="col-12">
-                                <Label for="edit-name" required>Фамилия</Label>
-                                <Input
-                                    id="edit-name"
-                                    v-model="user.lastName"
-                                    placeholder="Палкина"
-                                    type="text"
-                                />
-                            </div>
-                            <div class="col-md-6">
-                                <Label for="edit-first-name" required>Имя</Label>
-                                <Input
-                                    id="edit-first-name"
-                                    v-model="user.firstName"
-                                    placeholder="Евдокия"
-                                    type="text"
-                                />
-                            </div>
-                            <div class="col-md-6">
-                                <Label for="edit-middle-name">Отчество</Label>
-                                <Input
-                                    id="edit-middle-name"
-                                    v-model="user.middleName"
-                                    placeholder="Никифоровна"
-                                    type="text"
-                                />
-                            </div>
-                            <div class="col-md-6">
-                                <Label for="edit-email" required>Email</Label>
-                                <Input
-                                    id="edit-email"
-                                    v-model="user.email"
-                                    placeholder="email@mail.ru"
-                                    type="text"
-                                />
-                            </div>
-                            <div class="col-md-6">
-                                <Label for="edit-password">Пароль</Label>
-                                <Input
-                                    id="edit-password"
-                                    v-model="user.password"
-                                    placeholder="Обновите пароль, если нужно"
-                                    type="text"
-                                />
-                            </div>
-                            <div class="col-12">
-                                <div class="form-check">
-                                    <input
-                                        id="edit-isActive"
-                                        v-model="user.isActive"
-                                        :checked="user.isActive"
-                                        class="form-check-input"
-                                        type="checkbox"
-                                    >
-                                    <label class="form-check-label" for="edit-isActive">
-                                        Работает?
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <p class="text-secondary mb-0 small">Сообщите пользователю обновлённый пароль, если он
-                                    был изменён.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <Button
-                            :disabled="userStore.isButtonDisabled"
-                            :loading="userStore.isButtonDisabled"
-                            class="w-25"
-                            type="submit"
-                        >Сохранить
-                        </Button>
-                        <button class="btn btn-secondary" data-bs-dismiss="modal" type="button">Закрыть</button>
-                    </div>
+                <div class="col-12">
+                    <TheLabel for="first-name" required>Имя</TheLabel>
+                    <Input
+                        id="first-name"
+                        v-model="state.user.firstName"
+                        placeholder="Например: Екатерина"
+                        type="text"
+                    />
                 </div>
-            </form>
-        </div>
-    </div>
-    <!-- Edit One User Modal End -->
-
-    <!-- View One User Modal Start -->
-    <div id="viewUser" aria-hidden="true" class="modal fade" style="display: none;" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Просмотр пользователя</h5>
-                    <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"></button>
+                <div class="col-12">
+                    <TheLabel for="middle-name">Отчество</TheLabel>
+                    <Input
+                        id="middle-name"
+                        v-model="state.user.middleName"
+                        placeholder="Например: Александровна"
+                        type="text"
+                    />
                 </div>
-                <div class="modal-body">
-                    <pre>
-                        {{ user }}
-                    </pre>
+                <div class="col-12">
+                    <TheLabel for="email" required>Email</TheLabel>
+                    <Input
+                        id="email"
+                        v-model="state.user.email"
+                        placeholder="Например: 508@altan.ru"
+                        type="email"
+                    />
                 </div>
-                <div class="modal-footer">
-                    <button class="btn btn-secondary" data-bs-dismiss="modal" type="button">Закрыть</button>
+                <div class="col-12">
+                    <TheLabel for="password" :required="!state.isEditing">{{ state.isEditing ? 'Пароль (оставьте пустым, если не изменяете пароль)': 'Пароль' }}</TheLabel>
+                    <Input
+                        id="password"
+                        v-model="state.user.password"
+                        type="password"
+                    />
+                </div>
+                <div class="col-12">
+                    <div class="form-check">
+                        <input
+                            id="is-active"
+                            v-model="state.user.isActive"
+                            :checked="state.user.isActive"
+                            class="form-check-input"
+                            type="checkbox"
+                        >
+                        <label class="form-check-label" for="is-active">
+                            Работает?
+                        </label>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
-    <!-- View One User Modal End -->
+        </template>
+        <template #footer>
+            <Button
+                :class="state.isEditing
+                    ? 'btn-warning'
+                    : 'btn-primary'"
+                :disabled="spinnerStore.isButtonDisabled"
+                :loading="spinnerStore.isButtonDisabled"
+                class="w-25"
+                type="button"
+                @click="saveUser"
+            >
+                <span v-if="state.isEditing">Сохранить</span>
+                <span v-else>Создать</span>
+            </Button>
+        </template>
+    </Modal>
+
+    <Modal
+        id="viewModalPopUp"
+        :close-func="closeViewModal"
+        :custom-classes="['']"
+    >
+        <template #title>
+            Просмотр пользователя <b>{{ state.user.fullName }}</b>
+        </template>
+        <template #body>
+            <table class="table table-bordered mt-3 align-middle text-wrap"
+                   style="width: 100%;">
+                <tbody>
+                <tr>
+                    <th style="width: 35%;">ID</th>
+                    <td>{{ state.user.id }}</td>
+                </tr>
+                <tr>
+                    <th>Фамилия</th>
+                    <td>{{ state.user.lastName }}</td>
+                </tr>
+                <tr>
+                    <th>Имя</th>
+                    <td>{{ state.user.firstName }}</td>
+                </tr>
+                <tr>
+                    <th>Отчество</th>
+                    <td>{{ state.user.middleName }}</td>
+                </tr>
+                <tr>
+                    <th>Системное имя</th>
+                    <td>{{ state.user.fullName }}</td>
+                </tr>
+                <tr>
+                    <th>Email</th>
+                    <td>{{ state.user.email }}</td>
+                </tr>
+                <tr>
+                    <th>Работает?</th>
+                    <td><Badge :is-active="state.user.isActive" /></td>
+                </tr>
+                <tr>
+                    <th>Админ?</th>
+                    <td><Badge :is-active="state.user.isAdmin" /></td>
+                </tr>
+                <tr>
+                    <th>Последний вход</th>
+                    <td>{{ state.user.loggedInAt }}</td>
+                </tr>
+                </tbody>
+            </table>
+        </template>
+        <template #footer>
+            <span></span>
+        </template>
+    </Modal>
 </template>
 
 <script setup>
-/*import Input from '@/components/core/Input.vue';
-import Label from '@/components/core/Label.vue';
+import Input from '@/components/form/Input.vue';
+import TheLabel from '@/components/form/TheLabel.vue';
 import Button from '@/components/core/Button.vue';
 import Alert from '@/components/Alert.vue';
-import { onMounted, reactive, ref, watch } from 'vue';
-import { useUserStore } from '@/stores/users.js';
+import { computed, onMounted, reactive, watch } from 'vue';
 import { useAlertStore } from '@/stores/alerts.js';
-import ThSort from '@/components/core/ThSort.vue';
-import Badge from '@/components/core/Badge.vue';*/
-// import { arrFilter, arrSort } from '@/helpers/arrHandlers.js';
-// import { resetSearchKeys } from '@/helpers/searchHandlers.js';
+import { useSpinnerStore } from '@/stores/spinners.js';
+import { useHttpService } from '@/use/useHttpService.js';
+import { useArrayHandlers } from '@/use/useArrayHandlers.js';
+import InputGroup from '@/components/form/InputGroup.vue';
+import Filter from '@/components/core/Filter.vue';
+import Modal from '@/components/Modal.vue';
+import ThSort from '@/components/table/ThSort.vue';
+import TdButton from '@/components/table/TdButton.vue';
+import Checkbox from "@/components/form/Checkbox.vue";
+import Badge from "@/components/core/Badge.vue";
 
-const userStore = useUserStore();
 const alertStore = useAlertStore();
+const spinnerStore = useSpinnerStore();
+const arrayHandlers = useArrayHandlers();
+const { get, post, update, destroy } = useHttpService();
+
+const userURL = '/users';
 
 const initialFormData = () => ({
     firstName: '',
@@ -439,12 +293,27 @@ const initialFormData = () => ({
     middleName: '',
     email: '',
     password: '',
+    isActive: true,
 });
 
-let form = reactive(initialFormData());
+const state = reactive({
+    users: [],
+    user: initialFormData(),
+    isEditing: false,
+});
 
-const users = ref([]);
-const user = ref({});
+const thFields = [
+    { column: 'id', label: 'ID', sortable: true, is_num: true, width: 6 },
+    { column: 'lastName', label: 'Фамилия', sortable: true, is_num: false },
+    { column: 'firstName', label: 'Имя', sortable: true, is_num: false },
+    { column: 'middleName', label: 'Отчество', sortable: true, is_num: false },
+    { column: 'email', label: 'Email', sortable: true, is_num: false },
+    { column: 'loggedInAt', label: 'Последний вход', sortable: true, is_num: false },
+    { column: 'isActive', label: 'Работает?', sortable: true, is_num: true, width: 10 },
+    { column: 'view', label: 'Просмотр', width: 10 },
+    { column: 'edit', label: 'Ред.', width: 10 },
+    { column: 'delete', label: 'Удалить', width: 10 },
+];
 
 const searchBy = reactive({
     firstName: '',
@@ -454,94 +323,102 @@ const searchBy = reactive({
     isActive: false,
 });
 
-let orderColumn = 'id';
-let orderDirection = 'asc';
+let modalPopUp = null;
+let viewModalPopUp = null;
 
-let newUserModal = null;
-let editUserModal = null;
-let viewUserModal = null;
+function resetState() {
+    state.isEditing = false;
+    state.user = initialFormData();
+}
 
 onMounted(async () => {
     await getUsers();
+    modalPopUp = new bootstrap.Modal(document.getElementById('modalPopUp'));
+    modalPopUp._element.addEventListener('hide.bs.modal', resetState);
 });
 
 const getUsers = async () => {
-    await userStore.all();
-    applyFilterSort();
+    const { data } = await get(userURL);
+    state.users = data.users;
 };
 
-const getUser = (id) => {
-    user.value = userStore.getUsers
-        .find(item => item.id === id);
-};
+const getOneUser = (id) => state.users.find(user => user.id === id);
 
-const showNewUserModal = () => {
+const createUserInit = () => {
     alertStore.clear();
-    form = initialFormData();
-    newUserModal = new bootstrap.Modal(document.getElementById('newUser'));
-    newUserModal.show();
+    state.isEditing = false;
+    state.user = initialFormData();
+    modalPopUp.show();
 };
 
-const showEditUserModal = (id) => {
+const editUserInit = (id) => {
     alertStore.clear();
-    editUserModal = new bootstrap.Modal(document.getElementById('editUser'));
-    editUserModal.show();
-    getUser(id);
+    state.isEditing = true;
+    state.user = getOneUser(id);
+    modalPopUp.show();
 };
 
-// TODO: make view
-const showViewUserModal = (id) => {
-    viewUserModal = new bootstrap.Modal(document.getElementById('viewUser'));
-    viewUserModal.show();
-    getUser(id);
+const viewUserInit = (id) => {
+    viewModalPopUp = new bootstrap.Modal(document.getElementById('viewModalPopUp'));
+    state.user = getOneUser(id);
+    viewModalPopUp.show();
+    viewModalPopUp._element.addEventListener('hide.bs.modal', resetState);
 };
 
-// TODO: upload images
-const saveUser = async () => {
-    const response = await userStore.save(form);
-    if ( response && response.status === 'success' ) {
-        form = initialFormData();
-        alertStore.clear();
-        newUserModal.hide();
-        resetSearchKeys(searchBy);
-        orderColumn = 'id';
-        orderDirection = 'desc';
-        await getUsers();
-    }
+const closeModal = () => {
+    modalPopUp.hide();
+    modalPopUp._element.removeEventListener('hide.bs.modal', resetState);
 };
 
-const updateUser = async (user) => {
-    const response = await userStore.update(user);
-    if ( response && response.status === 'success' ) {
-        alertStore.clear();
-        editUserModal.hide();
-        await getUsers();
-    }
+const closeViewModal = () => {
+    viewModalPopUp.hide();
+    viewModalPopUp._element.removeEventListener('hide.bs.modal', resetState);
 };
 
 const clearSearch = () => {
-    resetSearchKeys(searchBy);
-    applyFilterSort(
-        (orderColumn = 'id'),
-        (orderDirection = 'asc'),
-    );
+    arrayHandlers.resetSearchKeys(searchBy);
+    arrayHandlers.resetSortKeys();
 };
 
-watch(searchBy, () => applyFilterSort());
-
-const applyFilterSort = (
-    column = orderColumn,
-    direction = orderDirection,
-    sort_by_numeric = true,
-) => {
-    orderColumn = column;
-    orderDirection = direction;
-
-    let tempArr = userStore.getUsers.slice();
-
-    tempArr = arrSort(tempArr, sort_by_numeric, direction, column);
-    tempArr = arrFilter(tempArr, searchBy);
-
-    users.value = tempArr;
+const saveUser = async () => {
+    if ( state.isEditing ) {
+        const response = await update(`${ userURL }/${ state.user.id }`, state.user);
+        if ( response && response.status === 'success' ) {
+            alertStore.clear();
+            modalPopUp.hide();
+            await getUsers();
+        }
+    } else {
+        const response = await post(userURL, state.user);
+        if ( response && response.status === 'success' ) {
+            alertStore.clear();
+            state.user = initialFormData();
+            modalPopUp.hide();
+            arrayHandlers.resetSearchKeys(searchBy);
+            arrayHandlers.resetSortKeys('id', false);
+            await getUsers();
+        }
+    }
 };
+
+const deleteUser = async (id) => {
+    if ( confirm('Точно удалить пользователя? Уверены?') ) {
+        const response = await destroy(`${ userURL }/${ id }`);
+        if ( response && response.status === 'success' ) {
+            await getUsers();
+        }
+    }
+};
+
+const sortedItems = computed(() => {
+    return arrayHandlers.sortArray(state.users);
+});
+
+const filteredItems = computed(() => {
+    return arrayHandlers.filterArray(sortedItems.value, searchBy);
+});
+
+watch(searchBy, () => {
+    filteredItems.value = arrayHandlers.filterArray(state.users, searchBy);
+});
 </script>
