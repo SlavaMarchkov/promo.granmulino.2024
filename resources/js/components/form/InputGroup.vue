@@ -3,7 +3,7 @@
         <span class="input-group-text">
             <slot/>
         </span>
-        <Input
+        <TheInput
             :placeholder="placeholder"
             :type="type"
             :value="modelValue"
@@ -17,7 +17,7 @@
 </template>
 
 <script setup>
-import Input from '@/components/form/Input.vue';
+import TheInput from '@/components/form/TheInput.vue';
 
 const props = defineProps({
     modelValue: {

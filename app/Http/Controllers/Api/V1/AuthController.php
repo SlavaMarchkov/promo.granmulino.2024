@@ -47,13 +47,13 @@ final class AuthController extends Controller
             // Notification::send($administrators, new AdminNewUserNotification($user));
 
             return response()->json([
-                'user'    => new UserResource($user),
+                //'user'    => new UserResource($user),
                 'token'   => $token->plainTextToken,
-                'message' => 'Вы успешно авторизовались в системе.',
+                'message' => __('messages.auth.auth_successful'),
             ]);
         } else {
             throw ValidationException::withMessages([
-                'email' => ['Пароль или email введены неверно.'],
+                'email' => [__('messages.auth.invalid_credentials')],
             ]);
         }
     }
@@ -68,7 +68,7 @@ final class AuthController extends Controller
         $request->user()->tokens()->delete();
 
         return response()->json([
-            'message' => 'Вы вышли из системы.',
+            'message' => __('messages.auth.logged_out'),
         ]);
     }
 }

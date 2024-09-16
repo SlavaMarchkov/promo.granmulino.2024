@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import { useAuthStore } from '@/stores/auth.js';
 import { useAlertStore } from '@/stores/alerts.js';
 import adminRoutes from '@/router/admin.routes.js';
 import authRoutes from '@/router/auth.routes.js';
@@ -19,7 +18,6 @@ const routes = [
 
 const router = createRouter({
     history: createWebHistory(),
-    linkExactActiveClass: 'active',
     routes,
 });
 
@@ -30,21 +28,32 @@ router.beforeEach((to, from, next) => {
     const { title } = to.meta;
     document.title = `${brand} ${title ? ' :: ' + title : ''}`;
 
-    const { getToken: authToken } = useAuthStore();
+    const authToken = localStorage.getItem('token');
+
     const isAdmin = localStorage.getItem('user')
         ? JSON.parse(localStorage.getItem('user')).isAdmin
         : false;
 
-    if ( to.meta.requiresAuth && to.meta.adminAuth && !authToken ) {
-        next({ name: 'AdminLogin' });
-    } else if ( to.meta.requiresAuth && to.meta.managerAuth && !authToken ) {
-        next({ name: 'Login' });
-    } else if ( to.meta.requiresGuest && authToken && isAdmin ) {
-        next({ name: 'Admin.Index' });
-    } else if ( to.meta.requiresGuest && authToken && !isAdmin ) {
-        next({ name: 'Manager.Index' });
-    } else {
-        next();
+    if (to.meta.requiresAuth) {
+        if (to.meta.adminAuth && !authToken) {
+            next({ name: 'AdminLogin' });
+        } else if (to.meta.managerAuth && !authToken) {
+            next({ name: 'Login' });
+        } else if (to.meta.managerAuth && authToken && isAdmin) {
+            next({ name: 'Admin.Index' });
+        } else if (!to.meta.managerAuth && authToken && !isAdmin) {
+            next({ name: 'Manager.Index' });
+        } else {
+            next();
+        }
+    } else if (to.meta.requiresGuest) {
+        if (authToken && isAdmin) {
+            next({ name: 'Admin.Index' });
+        } else if (authToken && !isAdmin) {
+            next({ name: 'Manager.Index' });
+        } else {
+            next();
+        }
     }
 });
 

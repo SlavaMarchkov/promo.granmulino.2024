@@ -8,6 +8,12 @@ use Illuminate\Foundation\Http\FormRequest;
 
 final class LoginRequest extends FormRequest
 {
+    public function authorize()
+    : bool
+    {
+        return true;
+    }
+
     public function rules()
     : array
     {
@@ -32,11 +38,5 @@ final class LoginRequest extends FormRequest
         return [
             'required' => 'Поле ":attribute" нужно заполнить.',
         ];
-    }
-
-    public function authorize()
-    : bool
-    {
-        return true;
     }
 }

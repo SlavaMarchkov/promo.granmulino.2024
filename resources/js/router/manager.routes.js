@@ -1,4 +1,5 @@
 import { Customer, Index, Layout, Profile, Retailer } from '../../views/Manager/index.js';
+import { Report } from '../../views/Admin/index.js';
 
 export default {
     path: '/',
@@ -14,7 +15,7 @@ export default {
         },
         {
             path: 'customers',
-            name: 'Manager.Customer',
+            name: 'Manager.Customer.Index',
             component: Customer,
             meta: {
                 title: 'Мои контрагенты',
@@ -22,7 +23,7 @@ export default {
         },
         {
             path: 'retailers',
-            name: 'Manager.Retailer',
+            name: 'Manager.Retailer.Index',
             component: Retailer,
             meta: {
                 title: 'Мои торговые сети',
@@ -30,10 +31,18 @@ export default {
         },
         {
             path: 'profile',
-            name: 'Manager.Profile',
+            name: 'Manager.Profile.Index',
             component: Profile,
             meta: {
                 title: 'Мой профиль',
+            },
+        },
+        {
+            path: 'reports',
+            name: 'Manager.Report.Index',
+            component: Report,
+            meta: {
+                title: 'Генератор отчётов',
             },
         },
     ],

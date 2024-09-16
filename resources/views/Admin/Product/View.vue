@@ -83,12 +83,11 @@ import { useRoute, useRouter } from 'vue-router';
 import { useHttpService } from '@/use/useHttpService.js';
 import { useSpinnerStore } from '@/stores/spinners.js';
 import Alert from '@/components/Alert.vue';
+import { URLS } from '@/helpers/constants.js';
 
 const route = useRoute();
 const router = useRouter();
 const spinnerStore = useSpinnerStore();
-
-const productURL = '/admin/products';
 
 const { get } = useHttpService();
 const id = +route.params.id;
@@ -100,7 +99,7 @@ onMounted(async () => {
 });
 
 const fetchDetails = async (id) => {
-    const response = await get(`${ productURL }/${ id }`);
+    const response = await get(`${ URLS.PRODUCT }/${ id }`);
     if ( response.status === 'success' ) item.value = response.data;
 };
 

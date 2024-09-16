@@ -158,7 +158,7 @@
             <div class="row g-3">
                 <div class="col-12">
                     <TheLabel for="name" required>Название торговой сети</TheLabel>
-                    <Input id="name" v-model="state.retailer.name" placeholder="Например: Пятёрочка" type="text"/>
+                    <TheInput id="name" v-model="state.retailer.name" placeholder="Например: Пятёрочка" type="text"/>
                 </div>
                 <div class="col-12">
                     <TheLabel for="customer_id" required>Контрагент</TheLabel>
@@ -287,7 +287,7 @@ import { useSpinnerStore } from '@/stores/spinners.js';
 import { useHttpService } from '@/use/useHttpService.js';
 import { useArrayHandlers } from '@/use/useArrayHandlers.js';
 import Checkbox from '@/components/form/Checkbox.vue';
-import Input from '@/components/form/Input.vue';
+import TheInput from '@/components/form/TheInput.vue';
 import TheLabel from '@/components/form/TheLabel.vue';
 import InputGroup from '@/components/form/InputGroup.vue';
 import RadioButton from '@/components/form/RadioButton.vue';

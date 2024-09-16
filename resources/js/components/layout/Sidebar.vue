@@ -13,7 +13,11 @@
                         data-bs-parent="#sidebar-nav"
                     >
                         <li v-for="item in menuItem.items">
-                            <RouterLink :to="{ name: item.route }" :id="item.route">
+                            <RouterLink
+                                :to="{ name: item.route }"
+                                :id="item.route"
+                                active-class="active"
+                            >
                                 <i class="bi bi-circle"></i><span>{{ item.title }}</span>
                             </RouterLink>
                         </li>
@@ -27,6 +31,7 @@
                             ? 'nav-link'
                             : 'nav-link collapsed'"
                         :to="{ name: menuItem.route }"
+                        active-class="active"
                     >
                         <i :class="menuItem.icon"></i>
                         <span>{{ menuItem.title }}</span>
@@ -39,7 +44,7 @@
 
 <script setup>
 import { onMounted, onUpdated } from 'vue';
-import { useDOMHandlers } from "@/use/useDOMHandlers.js";
+import { useDOMHandlers } from '@/use/useDOMHandlers.js';
 
 const { closeOpenedMenuItems, openActiveRouteMenuItem, collapse } = useDOMHandlers();
 

@@ -152,7 +152,7 @@
             <div class="row g-3">
                 <div class="col-12">
                     <TheLabel for="name" required>Название контрагента</TheLabel>
-                    <Input
+                    <TheInput
                         v-model="state.customer.name"
                         type="text"
                         id="name"
@@ -310,7 +310,7 @@ import InputGroup from '@/components/form/InputGroup.vue';
 import SelectGroup from '@/components/form/SelectGroup.vue';
 import Checkbox from '@/components/form/Checkbox.vue';
 import Modal from '@/components/Modal.vue';
-import Input from '@/components/form/Input.vue';
+import TheInput from '@/components/form/TheInput.vue';
 import TheLabel from '@/components/form/TheLabel.vue';
 import Alert from '@/components/Alert.vue';
 import Filter from '@/components/core/Filter.vue';

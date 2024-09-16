@@ -115,7 +115,7 @@
             <div class="row g-3">
                 <div class="col-12">
                     <TheLabel for="name" required>Название группы товаров</TheLabel>
-                    <Input
+                    <TheInput
                         id="name"
                         v-model="state.category.name"
                         placeholder="Например: Granmulino Премиум"
@@ -201,7 +201,7 @@
 </template>
 
 <script setup>
-import Input from '@/components/form/Input.vue';
+import TheInput from '@/components/form/TheInput.vue';
 import TheLabel from '@/components/form/TheLabel.vue';
 import Checkbox from '@/components/form/Checkbox.vue';
 import Button from '@/components/core/Button.vue';

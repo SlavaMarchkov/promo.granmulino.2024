@@ -130,7 +130,7 @@
             <div class="row g-3">
                 <div class="col-12">
                     <TheLabel for="last-name" required>Фамилия</TheLabel>
-                    <Input
+                    <TheInput
                         id="last-name"
                         v-model="state.user.lastName"
                         placeholder="Например: Овчинникова"
@@ -139,7 +139,7 @@
                 </div>
                 <div class="col-12">
                     <TheLabel for="first-name" required>Имя</TheLabel>
-                    <Input
+                    <TheInput
                         id="first-name"
                         v-model="state.user.firstName"
                         placeholder="Например: Екатерина"
@@ -148,7 +148,7 @@
                 </div>
                 <div class="col-12">
                     <TheLabel for="middle-name">Отчество</TheLabel>
-                    <Input
+                    <TheInput
                         id="middle-name"
                         v-model="state.user.middleName"
                         placeholder="Например: Александровна"
@@ -157,7 +157,7 @@
                 </div>
                 <div class="col-12">
                     <TheLabel for="email" required>Email</TheLabel>
-                    <Input
+                    <TheInput
                         id="email"
                         v-model="state.user.email"
                         placeholder="Например: 508@altan.ru"
@@ -166,7 +166,7 @@
                 </div>
                 <div class="col-12">
                     <TheLabel for="password" :required="!state.isEditing">{{ state.isEditing ? 'Пароль (оставьте пустым, если не изменяете пароль)': 'Пароль' }}</TheLabel>
-                    <Input
+                    <TheInput
                         id="password"
                         v-model="state.user.password"
                         type="password"
@@ -263,7 +263,7 @@
 </template>
 
 <script setup>
-import Input from '@/components/form/Input.vue';
+import TheInput from '@/components/form/TheInput.vue';
 import TheLabel from '@/components/form/TheLabel.vue';
 import Button from '@/components/core/Button.vue';
 import Alert from '@/components/Alert.vue';

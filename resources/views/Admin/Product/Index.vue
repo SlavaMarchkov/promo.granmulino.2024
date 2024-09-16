@@ -89,7 +89,7 @@
                                         name: 'Product.View',
                                         params: {
                                             'id': item.id
-                                        },
+                                        }
                                     }">{{ item.name }}
                                     </RouterLink>
                                 </td>
@@ -150,7 +150,7 @@
             <div class="row g-3">
                 <div class="col-12">
                     <TheLabel for="name" required>Название продукта</TheLabel>
-                    <Input
+                    <TheInput
                         id="name"
                         v-model="state.product.name"
                         placeholder="Например: Бантики, 400 г"
@@ -159,7 +159,7 @@
                 </div>
                 <div class="col-6">
                     <TheLabel for="weight" required>Вес пачки, г</TheLabel>
-                    <Input
+                    <TheInput
                         id="weight"
                         v-model="state.product.weight"
                         max="50000"
@@ -171,7 +171,7 @@
                 </div>
                 <div class="col-6">
                     <TheLabel for="price" required>Отпускная цена, руб.</TheLabel>
-                    <Input
+                    <TheInput
                         id="price"
                         v-model="state.product.price"
                         max="299.99"
@@ -199,7 +199,7 @@
                 </div>
                 <div class="col-12">
                     <TheLabel for="image">Изображение продукта</TheLabel>
-                    <Input
+                    <TheInput
                         id="image"
                         type="file"
                     />
@@ -281,7 +281,7 @@
 </template>
 
 <script setup>
-import Input from '@/components/form/Input.vue';
+import TheInput from '@/components/form/TheInput.vue';
 import TheLabel from '@/components/form/TheLabel.vue';
 import Checkbox from '@/components/form/Checkbox.vue';
 import SelectGroup from '@/components/form/SelectGroup.vue';

@@ -115,7 +115,7 @@
             <div class="row g-3">
                 <div class="col-12">
                     <TheLabel for="name" required>Наименование региона</TheLabel>
-                    <Input
+                    <TheInput
                         id="name"
                         v-model="state.region.name"
                         placeholder="Например: Уральский федеральный округ"
@@ -124,7 +124,7 @@
                 </div>
                 <div class="col-12">
                     <TheLabel for="code" required>Код региона</TheLabel>
-                    <Input
+                    <TheInput
                         id="code"
                         v-model="state.region.code"
                         placeholder="Например: УФО"
@@ -192,7 +192,7 @@
 </template>
 
 <script setup>
-import Input from '@/components/form/Input.vue';
+import TheInput from '@/components/form/TheInput.vue';
 import TheLabel from '@/components/form/TheLabel.vue';
 import Button from '@/components/core/Button.vue';
 import Alert from '@/components/Alert.vue';

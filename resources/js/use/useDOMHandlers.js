@@ -1,4 +1,4 @@
-import { useRoute } from "vue-router";
+import { useRoute } from 'vue-router';
 
 export function useDOMHandlers() {
     const route = useRoute();
@@ -15,7 +15,7 @@ export function useDOMHandlers() {
     const openActiveRouteMenuItem = () => {
         const routeNameList = document.querySelectorAll('ul.nav-content > li > a');
         routeNameList.forEach(el => {
-            if ( el.id === route.name || el.id.startsWith(route.name.split('.')[0]) ) {
+            if ( el.id === route.name ) {
                 el.classList.add('active');
                 el.parentElement.parentElement.classList.add('show');
                 el.parentElement.parentElement.previousElementSibling.classList.remove('collapsed');

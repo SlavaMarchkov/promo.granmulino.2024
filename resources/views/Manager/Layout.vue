@@ -1,6 +1,6 @@
 <template>
     <ManagerHeader/>
-    <Sidebar :menuItems="menuItems"/>
+    <Sidebar :menuItems="MANAGER_MENU_ITEMS"/>
     <main id="main" class="main">
         <div class="pagetitle">
             <h1>{{ $route.meta.title }}</h1>
@@ -24,54 +24,5 @@
 import ManagerHeader from '@/components/layout/ManagerHeader.vue';
 import Sidebar from '@/components/layout/Sidebar.vue';
 import Footer from '@/components/layout/Footer.vue';
-
-const menuItems = [
-    {
-        isCollapsible: false,
-        id: 'dashboard',
-        route: 'Manager.Index',
-        title: 'Главная страница',
-        icon: 'bi bi-speedometer',
-    },
-    {
-        isCollapsible: true,
-        id: 'reports',
-        title: 'Отчёты',
-        icon: 'bi bi-server',
-        items: [
-            {
-                route: 'Report.Index',
-                title: 'Генератор отчётов',
-            },
-        ],
-    },
-    {
-        isCollapsible: true,
-        id: 'references',
-        title: 'Справочники',
-        icon: 'bi bi-boxes',
-        items: [
-            {
-                route: 'Manager.Customer',
-                title: 'Контрагенты',
-            },
-            {
-                route: 'Manager.Retailer',
-                title: 'Торговые сети',
-            },
-        ],
-    },
-    {
-        isCollapsible: true,
-        id: 'settings',
-        title: 'Настройки',
-        icon: 'bi bi-gear',
-        items: [
-            {
-                route: 'Manager.Profile',
-                title: 'Мой профиль',
-            },
-        ],
-    },
-];
+import { MANAGER_MENU_ITEMS } from '@/helpers/constants.js';
 </script>
