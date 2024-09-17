@@ -267,7 +267,7 @@ import TheInput from '@/components/form/TheInput.vue';
 import TheLabel from '@/components/form/TheLabel.vue';
 import Button from '@/components/core/Button.vue';
 import Alert from '@/components/Alert.vue';
-import { computed, onMounted, reactive, watch } from 'vue';
+import { computed, onMounted, reactive } from 'vue';
 import { useAlertStore } from '@/stores/alerts.js';
 import { useSpinnerStore } from '@/stores/spinners.js';
 import { useHttpService } from '@/use/useHttpService.js';
@@ -279,7 +279,7 @@ import ThSort from '@/components/table/ThSort.vue';
 import TdButton from '@/components/table/TdButton.vue';
 import Checkbox from '@/components/form/Checkbox.vue';
 import TheBadge from '@/components/core/TheBadge.vue';
-import { URLS, USER_TH_FIELDS } from '@/helpers/constants.js';
+import { ADMIN_URLS, USER_TH_FIELDS } from '@/helpers/constants.js';
 
 const alertStore = useAlertStore();
 const spinnerStore = useSpinnerStore();
@@ -324,7 +324,7 @@ onMounted(async () => {
 });
 
 const getUsers = async () => {
-    const { data } = await get(URLS.USER);
+    const { data } = await get(ADMIN_URLS.USER);
     state.users = data.users;
 };
 
@@ -368,14 +368,14 @@ const clearSearch = () => {
 
 const saveUser = async () => {
     if ( state.isEditing ) {
-        const response = await update(`${ URLS.USER }/${ state.user.id }`, state.user);
+        const response = await update(`${ ADMIN_URLS.USER }/${ state.user.id }`, state.user);
         if ( response && response.status === 'success' ) {
             alertStore.clear();
             modalPopUp.hide();
             await getUsers();
         }
     } else {
-        const response = await post(URLS.USER, state.user);
+        const response = await post(ADMIN_URLS.USER, state.user);
         if ( response && response.status === 'success' ) {
             alertStore.clear();
             state.user = initialFormData();
@@ -389,7 +389,7 @@ const saveUser = async () => {
 
 const deleteUser = async (id) => {
     if ( confirm('Точно удалить пользователя? Уверены?') ) {
-        const response = await destroy(`${ URLS.USER }/${ id }`);
+        const response = await destroy(`${ ADMIN_URLS.USER }/${ id }`);
         if ( response && response.status === 'success' ) {
             await getUsers();
         }
@@ -402,9 +402,5 @@ const sortedItems = computed(() => {
 
 const filteredItems = computed(() => {
     return arrayHandlers.filterArray(sortedItems.value, searchBy);
-});
-
-watch(searchBy, () => {
-    filteredItems.value = arrayHandlers.filterArray(state.users, searchBy);
 });
 </script>

@@ -184,7 +184,7 @@ import TheLabel from '@/components/form/TheLabel.vue';
 import TheInput from '@/components/form/TheInput.vue';
 import Button from '@/components/core/Button.vue';
 import Alert from '@/components/Alert.vue';
-import { computed, onMounted, reactive, watch } from 'vue';
+import { computed, onMounted, reactive } from 'vue';
 import { useAlertStore } from '@/stores/alerts.js';
 import { useSpinnerStore } from '@/stores/spinners.js';
 import { useHttpService } from '@/use/useHttpService.js';
@@ -194,7 +194,7 @@ import Filter from '@/components/core/Filter.vue';
 import Modal from '@/components/Modal.vue';
 import ThSort from '@/components/table/ThSort.vue';
 import TdButton from '@/components/table/TdButton.vue';
-import { CITY_TH_FIELDS, URLS } from '@/helpers/constants.js';
+import { ADMIN_URLS, CITY_TH_FIELDS } from '@/helpers/constants.js';
 
 const alertStore = useAlertStore();
 const spinnerStore = useSpinnerStore();
@@ -234,14 +234,14 @@ onMounted(async () => {
 });
 
 const getCities = async () => {
-    const { data } = await get(URLS.CITY);
+    const { data } = await get(ADMIN_URLS.CITY);
     state.cities = data.cities;
 };
 
 const getOneCity = (id) => state.cities.find(city => city.id === id);
 
 const getRegions = async () => {
-    const { data } = await get(URLS.REGION);
+    const { data } = await get(ADMIN_URLS.REGION);
     state.regions = data.regions;
 };
 
@@ -283,14 +283,14 @@ const clearSearch = () => {
 
 const saveCity = async () => {
     if ( state.isEditing ) {
-        const response = await update(`${ URLS.CITY }/${ state.city.id }`, state.city);
+        const response = await update(`${ ADMIN_URLS.CITY }/${ state.city.id }`, state.city);
         if ( response && response.status === 'success' ) {
             alertStore.clear();
             modalPopUp.hide();
             await getCities();
         }
     } else {
-        const response = await post(URLS.CITY, state.city);
+        const response = await post(ADMIN_URLS.CITY, state.city);
         if ( response && response.status === 'success' ) {
             alertStore.clear();
             state.city = initialFormData();
@@ -304,7 +304,7 @@ const saveCity = async () => {
 
 const deleteCity = async (id) => {
     if ( confirm('Точно удалить город? Уверены?') ) {
-        const response = await destroy(`${ URLS.CITY }/${ id }`);
+        const response = await destroy(`${ ADMIN_URLS.CITY }/${ id }`);
         if ( response && response.status === 'success' ) {
             await getCities();
         }
@@ -317,9 +317,5 @@ const sortedItems = computed(() => {
 
 const filteredItems = computed(() => {
     return arrayHandlers.filterArray(sortedItems.value, searchBy);
-});
-
-watch(searchBy, () => {
-    filteredItems.value = arrayHandlers.filterArray(state.cities, searchBy);
 });
 </script>

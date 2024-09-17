@@ -206,7 +206,7 @@ import TheLabel from '@/components/form/TheLabel.vue';
 import Checkbox from '@/components/form/Checkbox.vue';
 import Button from '@/components/core/Button.vue';
 import Alert from '@/components/Alert.vue';
-import { computed, onMounted, reactive, watch } from 'vue';
+import { computed, onMounted, reactive } from 'vue';
 import { useAlertStore } from '@/stores/alerts.js';
 import { useSpinnerStore } from '@/stores/spinners.js';
 import { useHttpService } from '@/use/useHttpService.js';
@@ -217,7 +217,7 @@ import TheBadge from '@/components/core/TheBadge.vue';
 import Modal from '@/components/Modal.vue';
 import ThSort from '@/components/table/ThSort.vue';
 import TdButton from '@/components/table/TdButton.vue';
-import { CATEGORY_TH_FIELDS, URLS } from '@/helpers/constants.js';
+import { ADMIN_URLS, CATEGORY_TH_FIELDS } from '@/helpers/constants.js';
 
 const alertStore = useAlertStore();
 const spinnerStore = useSpinnerStore();
@@ -255,7 +255,7 @@ onMounted(async () => {
 });
 
 const getCategories = async () => {
-    const { data } = await get(URLS.CATEGORY);
+    const { data } = await get(ADMIN_URLS.CATEGORY);
     state.categories = data.categories;
 };
 
@@ -299,14 +299,14 @@ const clearSearch = () => {
 
 const saveCategory = async () => {
     if ( state.isEditing ) {
-        const response = await update(`${ URLS.CATEGORY }/${ state.category.id }`, state.category);
+        const response = await update(`${ ADMIN_URLS.CATEGORY }/${ state.category.id }`, state.category);
         if ( response && response.status === 'success' ) {
             alertStore.clear();
             modalPopUp.hide();
             await getCategories();
         }
     } else {
-        const response = await post(URLS.CATEGORY, state.category);
+        const response = await post(ADMIN_URLS.CATEGORY, state.category);
         if ( response && response.status === 'success' ) {
             alertStore.clear();
             state.category = initialFormData();
@@ -320,7 +320,7 @@ const saveCategory = async () => {
 
 const deleteCategory = async (id) => {
     if ( confirm('Точно удалить группу товаров? Уверены?') ) {
-        const response = await destroy(`${ URLS.CATEGORY }/${ id }`);
+        const response = await destroy(`${ ADMIN_URLS.CATEGORY }/${ id }`);
         if ( response && response.status === 'success' ) {
             await getCategories();
         }
@@ -333,9 +333,5 @@ const sortedItems = computed(() => {
 
 const filteredItems = computed(() => {
     return arrayHandlers.filterArray(sortedItems.value, searchBy);
-});
-
-watch(searchBy, () => {
-    filteredItems.value = arrayHandlers.filterArray(state.categories, searchBy);
 });
 </script>

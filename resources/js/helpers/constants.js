@@ -21,12 +21,17 @@ export const RETAILER_TYPES = [
     },
 ];
 
-export const URLS = {
+export const ADMIN_URLS = {
     CITY: '/admin/cities',
     REGION: '/admin/regions',
     CATEGORY: '/admin/categories',
     PRODUCT: '/admin/products',
+    RETAILER: '/admin/retailers',
+    CUSTOMER: '/admin/customers',
+    USER: '/admin/users',
+};
 
+export const MANAGER_URLS = {
     RETAILER: '/retailers',
     CUSTOMER: '/customers',
     USER: '/users',
@@ -119,7 +124,7 @@ export const MANAGER_MENU_ITEMS = [
         title: 'Главная страница',
         icon: 'bi bi-speedometer',
     },
-    {
+    /*{
         isCollapsible: true,
         id: 'reports',
         title: 'Отчёты',
@@ -130,7 +135,7 @@ export const MANAGER_MENU_ITEMS = [
                 title: 'Генератор отчётов',
             },
         ],
-    },
+    },*/
     {
         isCollapsible: true,
         id: 'references',

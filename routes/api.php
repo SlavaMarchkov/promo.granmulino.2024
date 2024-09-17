@@ -1,14 +1,15 @@
 <?php
 
 use App\Http\Controllers\Api\V1\Admin\AuthController as AdminAuthController;
-use App\Http\Controllers\Api\V1\Admin\CategoryController;
-use App\Http\Controllers\Api\V1\Admin\CityController;
-use App\Http\Controllers\Api\V1\Admin\ProductController;
-use App\Http\Controllers\Api\V1\Admin\RegionController;
+use App\Http\Controllers\Api\V1\Admin\CategoryController as AdminCategoryController;
+use App\Http\Controllers\Api\V1\Admin\CityController as AdminCityController;
+use App\Http\Controllers\Api\V1\Admin\CustomerController as AdminCustomerController;
+use App\Http\Controllers\Api\V1\Admin\ProductController as AdminProductController;
+use App\Http\Controllers\Api\V1\Admin\RegionController as AdminRegionController;
+use App\Http\Controllers\Api\V1\Admin\RetailerController as AdminRetailerController;
+use App\Http\Controllers\Api\V1\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Api\V1\AuthController;
-use App\Http\Controllers\Api\V1\CustomerController;
-use App\Http\Controllers\Api\V1\RetailerController;
-use App\Http\Controllers\Api\V1\UserController;
+use App\Http\Controllers\Api\V1\Manager\CustomerController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')
@@ -38,10 +39,13 @@ Route::prefix('v1/admin')
         'auth:sanctum',
     ])
     ->group(function () {
-        Route::apiResource('regions', RegionController::class);
-        Route::apiResource('cities', CityController::class);
-        Route::apiResource('categories', CategoryController::class);
-        Route::apiResource('products', ProductController::class);
+        Route::apiResource('regions', AdminRegionController::class);
+        Route::apiResource('cities', AdminCityController::class);
+        Route::apiResource('categories', AdminCategoryController::class);
+        Route::apiResource('products', AdminProductController::class);
+        Route::apiResource('customers', AdminCustomerController::class);
+        Route::apiResource('retailers', AdminRetailerController::class);
+        Route::apiResource('users', AdminUserController::class);
     });
 
 Route::prefix('v1')
@@ -49,7 +53,5 @@ Route::prefix('v1')
         'auth:sanctum',
     ])
     ->group(function () {
-        Route::resource('customers', CustomerController::class);
-        Route::resource('retailers', RetailerController::class);
-        Route::resource('users', UserController::class);
+        Route::apiResource('customers', CustomerController::class);
     });

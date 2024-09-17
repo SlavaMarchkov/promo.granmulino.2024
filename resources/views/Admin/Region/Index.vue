@@ -196,7 +196,7 @@ import TheInput from '@/components/form/TheInput.vue';
 import TheLabel from '@/components/form/TheLabel.vue';
 import Button from '@/components/core/Button.vue';
 import Alert from '@/components/Alert.vue';
-import { computed, onMounted, reactive, watch } from 'vue';
+import { computed, onMounted, reactive } from 'vue';
 import { useAlertStore } from '@/stores/alerts.js';
 import { useSpinnerStore } from '@/stores/spinners.js';
 import { useHttpService } from '@/use/useHttpService.js';
@@ -206,7 +206,7 @@ import Filter from '@/components/core/Filter.vue';
 import Modal from '@/components/Modal.vue';
 import ThSort from '@/components/table/ThSort.vue';
 import TdButton from '@/components/table/TdButton.vue';
-import { REGION_TH_FIELDS, URLS } from '@/helpers/constants.js';
+import { ADMIN_URLS, REGION_TH_FIELDS } from '@/helpers/constants.js';
 
 const alertStore = useAlertStore();
 const spinnerStore = useSpinnerStore();
@@ -244,7 +244,7 @@ onMounted(async () => {
 });
 
 const getRegions = async () => {
-    const { data } = await get(URLS.REGION);
+    const { data } = await get(ADMIN_URLS.REGION);
     state.regions = data.regions;
 };
 
@@ -288,14 +288,14 @@ const clearSearch = () => {
 
 const saveRegion = async () => {
     if ( state.isEditing ) {
-        const response = await update(`${ URLS.REGION }/${ state.region.id }`, state.region);
+        const response = await update(`${ ADMIN_URLS.REGION }/${ state.region.id }`, state.region);
         if ( response && response.status === 'success' ) {
             alertStore.clear();
             modalPopUp.hide();
             await getRegions();
         }
     } else {
-        const response = await post(URLS.REGION, state.region);
+        const response = await post(ADMIN_URLS.REGION, state.region);
         if ( response && response.status === 'success' ) {
             alertStore.clear();
             state.region = initialFormData();
@@ -309,7 +309,7 @@ const saveRegion = async () => {
 
 const deleteRegion = async (id) => {
     if ( confirm('Точно удалить регион? Уверены?') ) {
-        const response = await destroy(`${ URLS.REGION }/${ id }`);
+        const response = await destroy(`${ ADMIN_URLS.REGION }/${ id }`);
         if ( response && response.status === 'success' ) {
             await getRegions();
         }
@@ -322,9 +322,5 @@ const sortedItems = computed(() => {
 
 const filteredItems = computed(() => {
     return arrayHandlers.filterArray(sortedItems.value, searchBy);
-});
-
-watch(searchBy, () => {
-    filteredItems.value = arrayHandlers.filterArray(state.regions, searchBy);
 });
 </script>

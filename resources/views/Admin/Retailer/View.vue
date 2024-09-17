@@ -124,7 +124,7 @@ import { useHttpService } from '@/use/useHttpService.js';
 import { useSpinnerStore } from '@/stores/spinners.js';
 import Alert from '@/components/Alert.vue';
 import TheBadge from '@/components/core/TheBadge.vue';
-import { URLS } from '@/helpers/constants.js';
+import { ADMIN_URLS } from '@/helpers/constants.js';
 
 const route = useRoute();
 const router = useRouter();
@@ -140,7 +140,7 @@ onMounted(async () => {
 })
 
 const fetchDetails = async (id) => {
-    const response = await get(`${ URLS.RETAILER }/${ id }`);
+    const response = await get(`${ ADMIN_URLS.RETAILER }/${ id }`);
     if ( response.status === 'success' ) item.value = response.data;
 };
 

@@ -281,7 +281,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, reactive, watch } from 'vue';
+import { computed, onMounted, reactive } from 'vue';
 import { useAlertStore } from '@/stores/alerts.js';
 import { useSpinnerStore } from '@/stores/spinners.js';
 import { useHttpService } from '@/use/useHttpService.js';
@@ -298,7 +298,7 @@ import Filter from '@/components/core/Filter.vue';
 import Modal from '@/components/Modal.vue';
 import Alert from '@/components/Alert.vue';
 import TdButton from '@/components/table/TdButton.vue';
-import { RETAILER_TH_FIELDS, RETAILER_TYPES, URLS } from '@/helpers/constants.js';
+import { ADMIN_URLS, RETAILER_TH_FIELDS, RETAILER_TYPES } from '@/helpers/constants.js';
 
 const alertStore = useAlertStore();
 const spinnerStore = useSpinnerStore();
@@ -349,19 +349,19 @@ onMounted(async () => {
 });
 
 const getRetailers = async () => {
-    const { data } = await get(URLS.RETAILER);
+    const { data } = await get(ADMIN_URLS.RETAILER);
     state.retailers = data.retailers;
 };
 
 const getOneRetailer = (id) => state.retailers.find(retailer => retailer.id === id);
 
 const getCustomers = async () => {
-    const { data } = await get(URLS.CUSTOMER);
+    const { data } = await get(ADMIN_URLS.CUSTOMER);
     state.customers = data.customers;
 };
 
 const getCities = async () => {
-    const { data } = await get(URLS.CITY);
+    const { data } = await get(ADMIN_URLS.CITY);
     state.cities = data.cities;
 };
 
@@ -403,14 +403,14 @@ const clearSearch = () => {
 
 const saveRetailer = async () => {
     if ( state.isEditing ) {
-        const response = await update(`${ URLS.RETAILER }/${ state.retailer.id }`, state.retailer);
+        const response = await update(`${ ADMIN_URLS.RETAILER }/${ state.retailer.id }`, state.retailer);
         if ( response && response.status === 'success' ) {
             alertStore.clear();
             modalPopUp.hide();
             await getRetailers();
         }
     } else {
-        const response = await post(URLS.RETAILER, state.retailer);
+        const response = await post(ADMIN_URLS.RETAILER, state.retailer);
         if ( response && response.status === 'success' ) {
             alertStore.clear();
             state.retailer = initialFormData();
@@ -424,7 +424,7 @@ const saveRetailer = async () => {
 
 const deleteRetailer = async (id) => {
     if ( confirm('Точно удалить торговую сеть? Уверены?') ) {
-        const response = await destroy(`${ URLS.RETAILER }/${ id }`);
+        const response = await destroy(`${ ADMIN_URLS.RETAILER }/${ id }`);
         if ( response && response.status === 'success' ) {
             await getRetailers();
         }
@@ -437,9 +437,5 @@ const sortedItems = computed(() => {
 
 const filteredItems = computed(() => {
     return arrayHandlers.filterArray(sortedItems.value, searchBy);
-});
-
-watch(searchBy, () => {
-    filteredItems.value = arrayHandlers.filterArray(state.retailers, searchBy);
 });
 </script>

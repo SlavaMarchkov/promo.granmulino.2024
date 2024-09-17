@@ -287,7 +287,7 @@ import Checkbox from '@/components/form/Checkbox.vue';
 import SelectGroup from '@/components/form/SelectGroup.vue';
 import Button from '@/components/core/Button.vue';
 import Alert from '@/components/Alert.vue';
-import { computed, onMounted, reactive, watch } from 'vue';
+import { computed, onMounted, reactive } from 'vue';
 import { useAlertStore } from '@/stores/alerts.js';
 import { useSpinnerStore } from '@/stores/spinners.js';
 import { useArrayHandlers } from '@/use/useArrayHandlers.js';
@@ -298,7 +298,7 @@ import TheBadge from '@/components/core/TheBadge.vue';
 import Modal from '@/components/Modal.vue';
 import ThSort from '@/components/table/ThSort.vue';
 import TdButton from '@/components/table/TdButton.vue';
-import { PRODUCT_TH_FIELDS, URLS } from '@/helpers/constants.js';
+import { ADMIN_URLS, PRODUCT_TH_FIELDS } from '@/helpers/constants.js';
 
 const { get, post, update, destroy } = useHttpService();
 
@@ -321,6 +321,7 @@ const state = reactive({
     isEditing: false,
 });
 
+// TODO - сделать фильтр по весу (вес в виде массива с весами продукции)
 const searchBy = reactive({
     name: '',
     weight: '',
@@ -345,14 +346,14 @@ onMounted(async () => {
 });
 
 const getProducts = async () => {
-    const { data } = await get(URLS.PRODUCT);
+    const { data } = await get(ADMIN_URLS.PRODUCT);
     state.products = data.products;
 };
 
 const getOneProduct = (id) => state.products.find(product => product.id === id);
 
 const getCategories = async () => {
-    const { data } = await get(URLS.CATEGORY);
+    const { data } = await get(ADMIN_URLS.CATEGORY);
     state.categories = data.categories;
 };
 
@@ -394,14 +395,14 @@ const clearSearch = () => {
 
 const saveProduct = async () => {
     if ( state.isEditing ) {
-        const response = await update(`${ URLS.PRODUCT }/${ state.product.id }`, state.product);
+        const response = await update(`${ ADMIN_URLS.PRODUCT }/${ state.product.id }`, state.product);
         if ( response && response.status === 'success' ) {
             alertStore.clear();
             modalPopUp.hide();
             await getProducts();
         }
     } else {
-        const response = await post(URLS.PRODUCT, state.product);
+        const response = await post(ADMIN_URLS.PRODUCT, state.product);
         if ( response && response.status === 'success' ) {
             alertStore.clear();
             state.product = initialFormData();
@@ -415,7 +416,7 @@ const saveProduct = async () => {
 
 const deleteProduct = async (id) => {
     if ( confirm('Точно удалить продукт? Уверены?') ) {
-        const response = await destroy(`${ URLS.PRODUCT }/${ id }`);
+        const response = await destroy(`${ ADMIN_URLS.PRODUCT }/${ id }`);
         if ( response && response.status === 'success' ) {
             await getProducts();
         }
@@ -428,10 +429,5 @@ const sortedItems = computed(() => {
 
 const filteredItems = computed(() => {
     return arrayHandlers.filterArray(sortedItems.value, searchBy);
-});
-
-// TODO - сделать фильтр по весу (вес в виде массива с весами продукции)
-watch(searchBy, () => {
-    filteredItems.value = arrayHandlers.filterArray(state.products, searchBy);
 });
 </script>

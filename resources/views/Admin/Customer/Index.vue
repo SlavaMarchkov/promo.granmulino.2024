@@ -298,7 +298,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, reactive, watch } from 'vue';
+import { computed, onMounted, reactive } from 'vue';
 import { useAlertStore } from '@/stores/alerts.js';
 import { useSpinnerStore } from '@/stores/spinners.js';
 import { useHttpService } from '@/use/useHttpService.js';
@@ -315,7 +315,7 @@ import TheLabel from '@/components/form/TheLabel.vue';
 import Alert from '@/components/Alert.vue';
 import Filter from '@/components/core/Filter.vue';
 import TdButton from '@/components/table/TdButton.vue';
-import { CUSTOMER_TH_FIELDS, URLS } from '@/helpers/constants.js';
+import { ADMIN_URLS, CUSTOMER_TH_FIELDS } from '@/helpers/constants.js';
 
 const alertStore = useAlertStore();
 const spinnerStore = useSpinnerStore();
@@ -365,19 +365,19 @@ onMounted(async () => {
 });
 
 const getCustomers = async () => {
-    const { data } = await get(URLS.CUSTOMER);
+    const { data } = await get(ADMIN_URLS.CUSTOMER);
     state.customers = data.customers;
 };
 
 const getOneCustomer = (id) => state.customers.find(customer => customer.id === id);
 
 const getRegions = async () => {
-    const { data } = await get(URLS.REGION);
+    const { data } = await get(ADMIN_URLS.REGION);
     state.regions = data.regions;
 };
 
 const getUsers = async () => {
-    const { data } = await get(URLS.USER, {
+    const { data } = await get(ADMIN_URLS.USER, {
         params: {
             is_active: true,
         },
@@ -433,14 +433,14 @@ const clearSearch = () => {
 
 const saveCustomer = async () => {
     if ( state.isEditing ) {
-        const response = await update(`${ URLS.CUSTOMER }/${ state.customer.id }`, state.customer);
+        const response = await update(`${ ADMIN_URLS.CUSTOMER }/${ state.customer.id }`, state.customer);
         if ( response && response.status === 'success' ) {
             alertStore.clear();
             modalPopUp.hide();
             await getCustomers();
         }
     } else {
-        const response = await post(URLS.CUSTOMER, state.customer);
+        const response = await post(ADMIN_URLS.CUSTOMER, state.customer);
         if ( response && response.status === 'success' ) {
             alertStore.clear();
             state.customer = initialFormData();
@@ -454,7 +454,7 @@ const saveCustomer = async () => {
 
 const deleteCustomer = async (id) => {
     if ( confirm('Точно удалить контрагента? Уверены?') ) {
-        const response = await destroy(`${ URLS.CUSTOMER }/${ id }`);
+        const response = await destroy(`${ ADMIN_URLS.CUSTOMER }/${ id }`);
         if ( response && response.status === 'success' ) {
             await getCustomers();
         }
@@ -467,9 +467,5 @@ const sortedItems = computed(() => {
 
 const filteredItems = computed(() => {
     return arrayHandlers.filterArray(sortedItems.value, searchBy);
-});
-
-watch(searchBy, () => {
-    filteredItems.value = arrayHandlers.filterArray(state.customers, searchBy);
 });
 </script>
