@@ -5,6 +5,7 @@
                 class="btn btn-primary"
                 type="button"
                 @click="createCategoryInit"
+                :disabled="role !== ADMIN_ROLES.SUPER_ADMIN"
             >
                 Новая группа товаров
             </button>
@@ -40,7 +41,7 @@
                             <thead>
                             <tr>
                                 <template
-                                    v-for="{ column, label, sortable, is_num, width } in CATEGORY_TH_FIELDS"
+                                    v-for="{ column, label, sortable, is_num, width } in thItems"
                                     :key="column"
                                 >
                                     <ThSort
@@ -76,18 +77,22 @@
                                     @runButtonHandler="viewCategoryInit"
                                 >View
                                 </TdButton>
-                                <TdButton
-                                    :id="item.id"
-                                    intent="edit"
-                                    @runButtonHandler="editCategoryInit"
-                                >Edit
-                                </TdButton>
-                                <TdButton
-                                    :id="item.id"
-                                    intent="delete"
-                                    @runButtonHandler="deleteCategory"
-                                >Delete
-                                </TdButton>
+                                <template
+                                    v-if="role === ADMIN_ROLES.SUPER_ADMIN"
+                                >
+                                    <TdButton
+                                        :id="item.id"
+                                        intent="edit"
+                                        @runButtonHandler="editCategoryInit"
+                                    >Edit
+                                    </TdButton>
+                                    <TdButton
+                                        :id="item.id"
+                                        intent="delete"
+                                        @runButtonHandler="deleteCategory"
+                                    >Delete
+                                    </TdButton>
+                                </template>
                             </tr>
                             </tbody>
                         </table>
@@ -175,15 +180,15 @@
                         <th>ID</th>
                         <th class="text-start">Формат</th>
                         <th>Вес, г</th>
-                        <th>Цена, руб.</th>
+                        <th v-if="role === ADMIN_ROLES.PRICE_ADMIN">Цена, руб.</th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr v-for="product in state.category.products" :key="product.id">
                         <td>{{ product.id }}</td>
                         <td class="text-start">{{ product.name }}</td>
-                        <td>{{ product.weight }}</td>
-                        <td>{{ product.price }}</td>
+                        <td>{{ formatNumber(product.weight) }}</td>
+                        <td v-if="role === ADMIN_ROLES.PRICE_ADMIN">{{ product.price }}</td>
                     </tr>
                     </tbody>
                 </table>
@@ -201,28 +206,39 @@
 </template>
 
 <script setup>
+import { computed, onMounted, reactive } from 'vue';
+import { useAlertStore } from '@/stores/alerts.js';
+import { useSpinnerStore } from '@/stores/spinners.js';
+import { useAuthStore } from '@/stores/auth.js';
+import { useHttpService } from '@/use/useHttpService.js';
+import { useArrayHandlers } from '@/use/useArrayHandlers.js';
 import TheInput from '@/components/form/TheInput.vue';
 import TheLabel from '@/components/form/TheLabel.vue';
 import Checkbox from '@/components/form/Checkbox.vue';
 import Button from '@/components/core/Button.vue';
 import Alert from '@/components/Alert.vue';
-import { computed, onMounted, reactive } from 'vue';
-import { useAlertStore } from '@/stores/alerts.js';
-import { useSpinnerStore } from '@/stores/spinners.js';
-import { useHttpService } from '@/use/useHttpService.js';
-import { useArrayHandlers } from '@/use/useArrayHandlers.js';
 import InputGroup from '@/components/form/InputGroup.vue';
 import Filter from '@/components/core/Filter.vue';
 import TheBadge from '@/components/core/TheBadge.vue';
 import Modal from '@/components/Modal.vue';
 import ThSort from '@/components/table/ThSort.vue';
 import TdButton from '@/components/table/TdButton.vue';
-import { ADMIN_URLS, CATEGORY_TH_FIELDS } from '@/helpers/constants.js';
+import { ADMIN_ROLES, ADMIN_URLS, CATEGORY_TH_FIELDS, DELETE_TH_FIELD, EDIT_TH_FIELD } from '@/helpers/constants.js';
+import { formatNumber } from '@/helpers/formatters.js';
 
 const alertStore = useAlertStore();
 const spinnerStore = useSpinnerStore();
+const authStore = useAuthStore();
 const arrayHandlers = useArrayHandlers();
 const { get, post, update, destroy } = useHttpService();
+
+const role = authStore.getUser.role;
+
+const thItems = computed(() => {
+    return role === ADMIN_ROLES.SUPER_ADMIN
+        ? CATEGORY_TH_FIELDS.concat(EDIT_TH_FIELD, DELETE_TH_FIELD)
+        : CATEGORY_TH_FIELDS;
+});
 
 const initialFormData = () => ({
     name: '',

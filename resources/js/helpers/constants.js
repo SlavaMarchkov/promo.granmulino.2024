@@ -21,6 +21,12 @@ export const RETAILER_TYPES = [
     },
 ];
 
+export const ADMIN_ROLES = {
+    SUPER_ADMIN: 'super_admin',
+    PRICE_ADMIN: 'price_admin',
+    ADMIN: 'admin',
+};
+
 export const ADMIN_URLS = {
     CITY: '/admin/cities',
     REGION: '/admin/regions',
@@ -37,6 +43,18 @@ export const MANAGER_URLS = {
     USER: '/users',
 };
 
+export const EDIT_TH_FIELD = [
+    { column: 'edit', label: 'Ред.', sortable: false, is_num: false, width: 10 },
+];
+
+export const DELETE_TH_FIELD = [
+    { column: 'delete', label: 'Удалить', sortable: false, is_num: false, width: 10 },
+];
+
+export const PRICE_TH_FIELD = [
+    { column: 'price', label: 'Себестоимость, руб.', sortable: true, is_num: true },
+];
+
 export const RETAILER_TH_FIELDS = [
     { column: 'id', label: 'ID', sortable: true, is_num: true, width: 6 },
     { column: 'name', label: 'Название ТС', sortable: true, is_num: false },
@@ -45,9 +63,7 @@ export const RETAILER_TH_FIELDS = [
     { column: 'city', label: 'Город', sortable: true, is_num: false },
     { column: 'isDirect', label: 'Прямой контракт?', sortable: true, is_num: true },
     { column: 'isActive', label: 'Активная?', sortable: true, is_num: true },
-    { column: 'view', label: 'Просмотр', width: 10 },
-    { column: 'edit', label: 'Ред.', width: 10 },
-    { column: 'delete', label: 'Удалить', width: 10 },
+    { column: 'view', label: 'Просмотр', sortable: false, is_num: false, width: 10 },
 ];
 
 export const CUSTOMER_TH_FIELDS = [
@@ -57,9 +73,7 @@ export const CUSTOMER_TH_FIELDS = [
     { column: 'region', label: 'Регион', sortable: true, is_num: false },
     { column: 'city', label: 'Город', sortable: true, is_num: false },
     { column: 'isActive', label: 'Активен?', sortable: true, is_num: true },
-    { column: 'view', label: 'Просмотр', width: 10 },
-    { column: 'edit', label: 'Ред.', width: 10 },
-    { column: 'delete', label: 'Удалить', width: 10 },
+    { column: 'view', label: 'Просмотр', sortable: false, is_num: false, width: 10 },
 ];
 
 export const REGION_TH_FIELDS = [
@@ -67,18 +81,14 @@ export const REGION_TH_FIELDS = [
     { column: 'name', label: 'Название региона', sortable: true, is_num: false },
     { column: 'code', label: 'Код региона', sortable: true, is_num: false },
     { column: 'citiesCount', label: 'Количество городов', sortable: true, is_num: true },
-    { column: 'view', label: 'Просмотр', width: 10 },
-    { column: 'edit', label: 'Ред.', width: 10 },
-    { column: 'delete', label: 'Удалить', width: 10 },
+    { column: 'view', label: 'Просмотр', sortable: false, is_num: false, width: 10 },
 ];
 
 export const CITY_TH_FIELDS = [
     { column: 'id', label: 'ID', sortable: true, is_num: true, width: 6 },
     { column: 'name', label: 'Город', sortable: true, is_num: false },
     { column: 'regionName', label: 'Регион', sortable: true, is_num: false },
-    { column: 'view', label: 'Просмотр', width: 10 },
-    { column: 'edit', label: 'Ред.', width: 10 },
-    { column: 'delete', label: 'Удалить', width: 10 },
+    { column: 'view', label: 'Просмотр', sortable: false, is_num: false, width: 10 },
 ];
 
 export const CATEGORY_TH_FIELDS = [
@@ -86,21 +96,16 @@ export const CATEGORY_TH_FIELDS = [
     { column: 'name', label: 'Название группы товаров', sortable: true, is_num: false },
     { column: 'productsCount', label: 'Количество SKU в группе', sortable: true, is_num: true },
     { column: 'isActive', label: 'В продаже?', sortable: true, is_num: true, width: 15 },
-    { column: 'view', label: 'Просмотр', width: 10 },
-    { column: 'edit', label: 'Ред.', width: 10 },
-    { column: 'delete', label: 'Удалить', width: 10 },
+    { column: 'view', label: 'Просмотр', sortable: false, is_num: false, width: 10 },
 ];
 
 export const PRODUCT_TH_FIELDS = [
     { column: 'id', label: 'ID', sortable: true, is_num: true, width: 6 },
     { column: 'name', label: 'Название', sortable: true, is_num: false },
     { column: 'weight', label: 'Вес, г', sortable: true, is_num: true },
-    { column: 'price', label: 'Себестоимость, руб.', sortable: true, is_num: true },
     { column: 'category', label: 'Группа товаров', sortable: true, is_num: false },
     { column: 'isActive', label: 'В продаже?', sortable: true, is_num: true, width: 15 },
-    { column: 'view', label: 'Просмотр', width: 10 },
-    { column: 'edit', label: 'Ред.', width: 10 },
-    { column: 'delete', label: 'Удалить', width: 10 },
+    { column: 'view', label: 'Просмотр', sortable: false, is_num: false, width: 10 },
 ];
 
 export const USER_TH_FIELDS = [
@@ -111,9 +116,7 @@ export const USER_TH_FIELDS = [
     { column: 'email', label: 'Email', sortable: true, is_num: false },
     { column: 'loggedInAt', label: 'Последний вход', sortable: true, is_num: false },
     { column: 'isActive', label: 'Работает?', sortable: true, is_num: true, width: 10 },
-    { column: 'view', label: 'Просмотр', width: 10 },
-    { column: 'edit', label: 'Ред.', width: 10 },
-    { column: 'delete', label: 'Удалить', width: 10 },
+    { column: 'view', label: 'Просмотр', sortable: false, is_num: false, width: 10 },
 ];
 
 export const MANAGER_MENU_ITEMS = [

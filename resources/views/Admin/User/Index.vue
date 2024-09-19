@@ -46,7 +46,7 @@
                             <thead>
                             <tr>
                                 <template
-                                    v-for="{ column, label, sortable, is_num, width } in USER_TH_FIELDS"
+                                    v-for="{ column, label, sortable, is_num, width } in thItems"
                                     :key="column"
                                 >
                                     <ThSort
@@ -91,18 +91,22 @@
                                     @runButtonHandler="viewUserInit"
                                 >View
                                 </TdButton>
-                                <TdButton
-                                    :id="item.id"
-                                    intent="edit"
-                                    @runButtonHandler="editUserInit"
-                                >Edit
-                                </TdButton>
-                                <TdButton
-                                    :id="item.id"
-                                    intent="delete"
-                                    @runButtonHandler="deleteUser"
-                                >Delete
-                                </TdButton>
+                                <template
+                                    v-if="role === ADMIN_ROLES.SUPER_ADMIN"
+                                >
+                                    <TdButton
+                                        :id="item.id"
+                                        intent="edit"
+                                        @runButtonHandler="editUserInit"
+                                    >Edit
+                                    </TdButton>
+                                    <TdButton
+                                        :id="item.id"
+                                        intent="delete"
+                                        @runButtonHandler="deleteUser"
+                                    >Delete
+                                    </TdButton>
+                                </template>
                             </tr>
                             </tbody>
                         </table>
@@ -270,6 +274,7 @@ import Alert from '@/components/Alert.vue';
 import { computed, onMounted, reactive } from 'vue';
 import { useAlertStore } from '@/stores/alerts.js';
 import { useSpinnerStore } from '@/stores/spinners.js';
+import { useAuthStore } from '@/stores/auth.js';
 import { useHttpService } from '@/use/useHttpService.js';
 import { useArrayHandlers } from '@/use/useArrayHandlers.js';
 import InputGroup from '@/components/form/InputGroup.vue';
@@ -279,12 +284,21 @@ import ThSort from '@/components/table/ThSort.vue';
 import TdButton from '@/components/table/TdButton.vue';
 import Checkbox from '@/components/form/Checkbox.vue';
 import TheBadge from '@/components/core/TheBadge.vue';
-import { ADMIN_URLS, USER_TH_FIELDS } from '@/helpers/constants.js';
+import { ADMIN_ROLES, ADMIN_URLS, DELETE_TH_FIELD, EDIT_TH_FIELD, USER_TH_FIELDS } from '@/helpers/constants.js';
 
 const alertStore = useAlertStore();
 const spinnerStore = useSpinnerStore();
+const authStore = useAuthStore();
 const arrayHandlers = useArrayHandlers();
 const { get, post, update, destroy } = useHttpService();
+
+const role = authStore.getUser.role;
+
+const thItems = computed(() => {
+    return role === ADMIN_ROLES.SUPER_ADMIN
+        ? USER_TH_FIELDS.concat(EDIT_TH_FIELD, DELETE_TH_FIELD)
+        : USER_TH_FIELDS;
+});
 
 const initialFormData = () => ({
     firstName: '',

@@ -70,7 +70,7 @@
                             <thead>
                             <tr>
                                 <template
-                                    v-for="{ column, label, sortable, is_num, width } in RETAILER_TH_FIELDS"
+                                    v-for="{ column, label, sortable, is_num, width } in thItems"
                                     :key="column"
                                 >
                                     <ThSort
@@ -125,12 +125,16 @@
                                     @runButtonHandler="editRetailerInit"
                                 >Edit
                                 </TdButton>
-                                <TdButton
-                                    :id="item.id"
-                                    intent="delete"
-                                    @runButtonHandler="deleteRetailer"
-                                >Delete
-                                </TdButton>
+                                <template
+                                    v-if="role === ADMIN_ROLES.SUPER_ADMIN"
+                                >
+                                    <TdButton
+                                        :id="item.id"
+                                        intent="delete"
+                                        @runButtonHandler="deleteRetailer"
+                                    >Delete
+                                    </TdButton>
+                                </template>
                             </tr>
                             </tbody>
                         </table>
@@ -284,6 +288,7 @@
 import { computed, onMounted, reactive } from 'vue';
 import { useAlertStore } from '@/stores/alerts.js';
 import { useSpinnerStore } from '@/stores/spinners.js';
+import { useAuthStore } from '@/stores/auth.js';
 import { useHttpService } from '@/use/useHttpService.js';
 import { useArrayHandlers } from '@/use/useArrayHandlers.js';
 import Checkbox from '@/components/form/Checkbox.vue';
@@ -298,12 +303,28 @@ import Filter from '@/components/core/Filter.vue';
 import Modal from '@/components/Modal.vue';
 import Alert from '@/components/Alert.vue';
 import TdButton from '@/components/table/TdButton.vue';
-import { ADMIN_URLS, RETAILER_TH_FIELDS, RETAILER_TYPES } from '@/helpers/constants.js';
+import {
+    ADMIN_ROLES,
+    ADMIN_URLS,
+    DELETE_TH_FIELD,
+    EDIT_TH_FIELD,
+    RETAILER_TH_FIELDS,
+    RETAILER_TYPES,
+} from '@/helpers/constants.js';
 
 const alertStore = useAlertStore();
 const spinnerStore = useSpinnerStore();
+const authStore = useAuthStore();
 const arrayHandlers = useArrayHandlers();
 const { get, post, update, destroy } = useHttpService();
+
+const role = authStore.getUser.role;
+
+const thItems = computed(() => {
+    return role === ADMIN_ROLES.SUPER_ADMIN
+        ? RETAILER_TH_FIELDS.concat(EDIT_TH_FIELD, DELETE_TH_FIELD)
+        : RETAILER_TH_FIELDS.concat(EDIT_TH_FIELD);
+});
 
 const initialFormData = () => ({
     name: '',

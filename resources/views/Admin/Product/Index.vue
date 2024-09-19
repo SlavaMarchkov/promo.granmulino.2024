@@ -5,6 +5,7 @@
                 class="btn btn-primary"
                 type="button"
                 @click="createProductInit"
+                :disabled="role !== ADMIN_ROLES.SUPER_ADMIN"
             >
                 Новый продукт
             </button>
@@ -43,7 +44,7 @@
                     >Макс. вес
                     </InputGroup>
                 </div>
-                <div class="col-md-4 mb-2">
+                <div v-if="role === ADMIN_ROLES.PRICE_ADMIN" class="col-md-4 mb-2">
                     <InputGroup
                         v-model="searchBy.price"
                         placeholder="Поиск по цене"
@@ -63,7 +64,7 @@
                             <thead>
                             <tr>
                                 <template
-                                    v-for="{ column, label, sortable, is_num, width } in PRODUCT_TH_FIELDS"
+                                    v-for="{ column, label, sortable, is_num, width } in thItems"
                                     :key="column"
                                 >
                                     <ThSort
@@ -94,10 +95,7 @@
                                     </RouterLink>
                                 </td>
                                 <td>
-                                    {{ item.weight }}
-                                </td>
-                                <td>
-                                    {{ item.price }}
+                                    {{ formatNumber(item.weight) }}
                                 </td>
                                 <td class="text-start">
                                     {{ item.category }}
@@ -111,18 +109,35 @@
                                     @runButtonHandler="viewProductInit"
                                 >View
                                 </TdButton>
-                                <TdButton
-                                    :id="item.id"
-                                    intent="edit"
-                                    @runButtonHandler="editProductInit"
-                                >Edit
-                                </TdButton>
-                                <TdButton
-                                    :id="item.id"
-                                    intent="delete"
-                                    @runButtonHandler="deleteProduct"
-                                >Delete
-                                </TdButton>
+                                <template
+                                    v-if="role === ADMIN_ROLES.PRICE_ADMIN"
+                                >
+                                    <td>
+                                        {{ item.price }}
+                                    </td>
+                                    <TdButton
+                                        :id="item.id"
+                                        intent="edit"
+                                        @runButtonHandler="editProductInit"
+                                    >Edit
+                                    </TdButton>
+                                </template>
+                                <template
+                                    v-if="role === ADMIN_ROLES.SUPER_ADMIN"
+                                >
+                                    <TdButton
+                                        :id="item.id"
+                                        intent="edit"
+                                        @runButtonHandler="editProductInit"
+                                    >Edit
+                                    </TdButton>
+                                    <TdButton
+                                        :id="item.id"
+                                        intent="delete"
+                                        @runButtonHandler="deleteProduct"
+                                    >Delete
+                                    </TdButton>
+                                </template>
                             </tr>
                             </tbody>
                         </table>
@@ -170,7 +185,7 @@
                     />
                 </div>
                 <div class="col-6">
-                    <TheLabel for="price" required>Отпускная цена, руб.</TheLabel>
+                    <TheLabel for="price">Отпускная цена, руб.</TheLabel>
                     <TheInput
                         id="price"
                         v-model="state.product.price"
@@ -257,9 +272,9 @@
                 </tr>
                 <tr>
                     <th>Вес, г</th>
-                    <td>{{ state.product.weight }}</td>
+                    <td>{{ formatNumber(state.product.weight) }}</td>
                 </tr>
-                <tr>
+                <tr v-if="role === ADMIN_ROLES.PRICE_ADMIN">
                     <th>Себестоимость, руб.</th>
                     <td>{{ state.product.price }}</td>
                 </tr>
@@ -281,30 +296,40 @@
 </template>
 
 <script setup>
+import { computed, onMounted, reactive } from 'vue';
+import { useAlertStore } from '@/stores/alerts.js';
+import { useSpinnerStore } from '@/stores/spinners.js';
+import { useAuthStore } from '@/stores/auth.js';
+import { useArrayHandlers } from '@/use/useArrayHandlers.js';
+import { useHttpService } from '@/use/useHttpService.js';
 import TheInput from '@/components/form/TheInput.vue';
 import TheLabel from '@/components/form/TheLabel.vue';
 import Checkbox from '@/components/form/Checkbox.vue';
 import SelectGroup from '@/components/form/SelectGroup.vue';
 import Button from '@/components/core/Button.vue';
 import Alert from '@/components/Alert.vue';
-import { computed, onMounted, reactive } from 'vue';
-import { useAlertStore } from '@/stores/alerts.js';
-import { useSpinnerStore } from '@/stores/spinners.js';
-import { useArrayHandlers } from '@/use/useArrayHandlers.js';
-import { useHttpService } from '@/use/useHttpService.js';
 import InputGroup from '@/components/form/InputGroup.vue';
 import Filter from '@/components/core/Filter.vue';
 import TheBadge from '@/components/core/TheBadge.vue';
 import Modal from '@/components/Modal.vue';
 import ThSort from '@/components/table/ThSort.vue';
 import TdButton from '@/components/table/TdButton.vue';
-import { ADMIN_URLS, PRODUCT_TH_FIELDS } from '@/helpers/constants.js';
-
-const { get, post, update, destroy } = useHttpService();
+import { ADMIN_ROLES, ADMIN_URLS, DELETE_TH_FIELD, EDIT_TH_FIELD, PRODUCT_TH_FIELDS } from '@/helpers/constants.js';
+import { formatNumber } from '@/helpers/formatters.js';
 
 const alertStore = useAlertStore();
 const spinnerStore = useSpinnerStore();
+const authStore = useAuthStore();
 const arrayHandlers = useArrayHandlers();
+const { get, post, update, destroy } = useHttpService();
+
+const role = authStore.getUser.role;
+
+const thItems = computed(() => {
+    return role === ADMIN_ROLES.SUPER_ADMIN
+        ? PRODUCT_TH_FIELDS.concat(EDIT_TH_FIELD, DELETE_TH_FIELD)
+        : PRODUCT_TH_FIELDS;
+});
 
 const initialFormData = () => ({
     name: '',

@@ -69,7 +69,7 @@
                             <thead>
                             <tr>
                                 <template
-                                    v-for="{ column, label, sortable, is_num, width } in CUSTOMER_TH_FIELDS"
+                                    v-for="{ column, label, sortable, is_num, width } in thItems"
                                     :key="column"
                                 >
                                     <ThSort
@@ -119,12 +119,16 @@
                                     @runButtonHandler="editCustomerInit"
                                 >Edit
                                 </TdButton>
-                                <TdButton
-                                    :id="item.id"
-                                    intent="delete"
-                                    @runButtonHandler="deleteCustomer"
-                                >Delete
-                                </TdButton>
+                                <template
+                                    v-if="role === ADMIN_ROLES.SUPER_ADMIN"
+                                >
+                                    <TdButton
+                                        :id="item.id"
+                                        intent="delete"
+                                        @runButtonHandler="deleteCustomer"
+                                    >Delete
+                                    </TdButton>
+                                </template>
                             </tr>
                             </tbody>
                         </table>
@@ -301,6 +305,7 @@
 import { computed, onMounted, reactive } from 'vue';
 import { useAlertStore } from '@/stores/alerts.js';
 import { useSpinnerStore } from '@/stores/spinners.js';
+import { useAuthStore } from '@/stores/auth.js';
 import { useHttpService } from '@/use/useHttpService.js';
 import { useArrayHandlers } from '@/use/useArrayHandlers.js';
 import ThSort from '@/components/table/ThSort.vue';
@@ -315,12 +320,21 @@ import TheLabel from '@/components/form/TheLabel.vue';
 import Alert from '@/components/Alert.vue';
 import Filter from '@/components/core/Filter.vue';
 import TdButton from '@/components/table/TdButton.vue';
-import { ADMIN_URLS, CUSTOMER_TH_FIELDS } from '@/helpers/constants.js';
+import { ADMIN_ROLES, ADMIN_URLS, CUSTOMER_TH_FIELDS, DELETE_TH_FIELD, EDIT_TH_FIELD } from '@/helpers/constants.js';
 
 const alertStore = useAlertStore();
 const spinnerStore = useSpinnerStore();
+const authStore = useAuthStore();
 const arrayHandlers = useArrayHandlers();
 const { get, post, update, destroy } = useHttpService();
+
+const role = authStore.getUser.role;
+
+const thItems = computed(() => {
+    return role === ADMIN_ROLES.SUPER_ADMIN
+        ? CUSTOMER_TH_FIELDS.concat(EDIT_TH_FIELD, DELETE_TH_FIELD)
+        : CUSTOMER_TH_FIELDS.concat(EDIT_TH_FIELD);
+});
 
 const initialFormData = () => ({
     name: '',
