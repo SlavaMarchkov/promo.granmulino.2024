@@ -40,13 +40,13 @@ Route::prefix('v1/admin')
     ])
     ->group(function () {
         Route::apiResources([
-            'regions', AdminRegionController::class,
-            'cities', AdminCityController::class,
-            'categories', AdminCategoryController::class,
-            'products', AdminProductController::class,
-            'customers', AdminCustomerController::class,
-            'retailers', AdminRetailerController::class,
-            'users', AdminUserController::class,
+            'regions'    => AdminRegionController::class,
+            'cities'     => AdminCityController::class,
+            'categories' => AdminCategoryController::class,
+            'products'   => AdminProductController::class,
+            'customers'  => AdminCustomerController::class,
+            'retailers'  => AdminRetailerController::class,
+            'users'      => AdminUserController::class,
         ]);
     });
 
@@ -56,6 +56,6 @@ Route::prefix('v1')
     ])
     ->group(function () {
         Route::apiResources([
-            'customers', CustomerController::class,
+            'customers' => CustomerController::class,
         ]);
     });

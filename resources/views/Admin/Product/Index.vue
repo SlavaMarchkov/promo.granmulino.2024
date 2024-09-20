@@ -184,8 +184,8 @@
                         type="number"
                     />
                 </div>
-                <div class="col-6">
-                    <TheLabel for="price">Отпускная цена, руб.</TheLabel>
+                <div v-if="role === ADMIN_ROLES.PRICE_ADMIN" class="col-6">
+                    <TheLabel for="price" required>Отпускная цена, руб.</TheLabel>
                     <TheInput
                         id="price"
                         v-model="state.product.price"
@@ -314,7 +314,14 @@ import TheBadge from '@/components/core/TheBadge.vue';
 import Modal from '@/components/Modal.vue';
 import ThSort from '@/components/table/ThSort.vue';
 import TdButton from '@/components/table/TdButton.vue';
-import { ADMIN_ROLES, ADMIN_URLS, DELETE_TH_FIELD, EDIT_TH_FIELD, PRODUCT_TH_FIELDS } from '@/helpers/constants.js';
+import {
+    ADMIN_ROLES,
+    ADMIN_URLS,
+    DELETE_TH_FIELD,
+    EDIT_TH_FIELD,
+    PRICE_TH_FIELD,
+    PRODUCT_TH_FIELDS,
+} from '@/helpers/constants.js';
 import { formatNumber } from '@/helpers/formatters.js';
 
 const alertStore = useAlertStore();
@@ -328,7 +335,9 @@ const role = authStore.getUser.role;
 const thItems = computed(() => {
     return role === ADMIN_ROLES.SUPER_ADMIN
         ? PRODUCT_TH_FIELDS.concat(EDIT_TH_FIELD, DELETE_TH_FIELD)
-        : PRODUCT_TH_FIELDS;
+        : role === ADMIN_ROLES.PRICE_ADMIN
+            ? PRODUCT_TH_FIELDS.concat(PRICE_TH_FIELD, EDIT_TH_FIELD)
+            : PRODUCT_TH_FIELDS;
 });
 
 const initialFormData = () => ({
