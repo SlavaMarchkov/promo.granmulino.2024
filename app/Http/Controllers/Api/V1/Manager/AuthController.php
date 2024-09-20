@@ -7,10 +7,12 @@ namespace App\Http\Controllers\Api\V1\Manager;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\User\LoginRequest;
 use App\Http\Resources\V1\UserResource;
+use App\Mail\LoginMail;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\ValidationException;
 
 final class AuthController extends Controller
@@ -35,6 +37,7 @@ final class AuthController extends Controller
 
             // TODO: email or TG notification when user signs in
             // Notification::send($administrators, new AdminNewUserNotification($user));
+            Mail::to('slavamarchkov@gmail.com')->send(new LoginMail($user));
 
             return response()->json([
                 'token'   => $token->plainTextToken,
