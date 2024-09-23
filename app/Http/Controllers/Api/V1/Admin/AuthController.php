@@ -7,9 +7,13 @@ namespace App\Http\Controllers\Api\V1\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\User\LoginRequest;
 use App\Http\Resources\V1\AdminResource;
+use App\Mail\Admin\LoginMail;
+use App\Mail\Admin\LogoutMail;
 use App\Models\Admin;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\ValidationException;
 
 final class AuthController extends Controller
@@ -27,11 +31,14 @@ final class AuthController extends Controller
         )) {
             $admin = Admin::where('email', $credentials['email'])->first();
 
-            // TODO: email or TG notification
-            // Notification::send($administrators, new AdminNewUserNotification($user));
-
             $admin->tokens()->delete();
             $token = $admin->createToken("Token for admin: $admin->name", ['*'], now()->addHours(24));
+
+            try {
+                Mail::to(config('mail.to.admin'))->send(new LoginMail($admin));
+            } catch (Exception $exception) {
+                // TODO: log exception
+            }
 
             $admin->update([
                 'logged_in_at' => now(),
@@ -53,6 +60,14 @@ final class AuthController extends Controller
     {
         $user = Auth::guard('admin')->user();
         $user->tokens()->delete();
+
+        try {
+            Mail::to(config('mail.to.admin'))->send(new LogoutMail($user));
+        } catch (Exception $exception) {
+            // TODO: log exception
+        }
+
+        Auth::guard('admin')->logout();
 
         return response()->json([
             'message' => __('messages.auth.admin_logged_out'),

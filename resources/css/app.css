@@ -18,6 +18,11 @@
     --bs-body-color: #141414;
     --bd-callout-link: 10, 88, 202;
     --bd-callout-code-color: #ab296a;
+
+    ul li:not([class="nav-item"]) {
+        margin: 0.5rem 0;
+        line-height: 1.2;
+    }
 }
 
 body {
@@ -1168,11 +1173,6 @@ legend {
 
 .alert {
     --bs-alert-padding-y: 0.5rem;
-}
-
-.alert ul li {
-    margin: 0.5rem 0;
-    line-height: 1.2;
 }
 
 /*--------------------------------------------------------------

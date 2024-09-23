@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Mail;
+namespace App\Mail\Manager;
 
 use App\Models\User;
 use Illuminate\Bus\Queueable;
@@ -9,13 +9,13 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class LoginMail extends Mailable
+class LogoutMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    protected User $user;
+    protected User|null $user;
 
-    public function __construct(User $user)
+    public function __construct(User|null $user)
     {
         $this->user = $user;
     }
@@ -24,7 +24,7 @@ class LoginMail extends Mailable
     : Envelope
     {
         return new Envelope(
-            subject: 'Manager Login',
+            subject: '[Alert] ' . config('app.name') . ' - Выход менеджера',
         );
     }
 
@@ -32,10 +32,10 @@ class LoginMail extends Mailable
     : Content
     {
         return new Content(
-            markdown: 'emails.login',
+            markdown: 'Manager.emails.logout',
             with: [
-                'userName' => $this->user->fullName,
-                'userEmail' => $this->user->email,
+                'userName' => $this->user?->fullName,
+                'userEmail' => $this->user?->email,
             ],
         );
     }

@@ -23,22 +23,15 @@ Route::prefix('v1')
         Route::post('logout', [AuthController::class, 'logout']);
     });
 
-Route::prefix('v1/admin')
-    ->middleware([
-        'throttle:api',
-    ])
-    ->group(function () {
-        Route::get('user', [AdminAuthController::class, 'user'])
-            ->middleware('auth:sanctum');
-        Route::post('login', [AdminAuthController::class, 'login']);
+Route::group(['middleware' => 'auth:sanctum'], function () {
+    Route::group([
+        'prefix'     => 'v1/admin',
+        'middleware' => 'throttle:api',
+    ], function () {
+        Route::get('user', [AdminAuthController::class, 'user']);
+        Route::post('login', [AdminAuthController::class, 'login'])
+            ->withoutMiddleware('auth:sanctum');
         Route::post('logout', [AdminAuthController::class, 'logout']);
-    });
-
-Route::prefix('v1/admin')
-    ->middleware([
-        'auth:sanctum',
-    ])
-    ->group(function () {
         Route::apiResources([
             'regions'    => AdminRegionController::class,
             'cities'     => AdminCityController::class,
@@ -49,13 +42,11 @@ Route::prefix('v1/admin')
             'users'      => AdminUserController::class,
         ]);
     });
-
-Route::prefix('v1')
-    ->middleware([
-        'auth:sanctum',
-    ])
-    ->group(function () {
+    Route::group([
+        'prefix' => 'v1',
+    ], function () {
         Route::apiResources([
             'customers' => CustomerController::class,
         ]);
     });
+});

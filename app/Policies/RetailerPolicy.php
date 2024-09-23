@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Policies;
 
+use App\Enums\Admin\RoleEnum;
+use App\Models\Admin;
 use App\Models\Retailer;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
@@ -16,7 +18,7 @@ class RetailerPolicy
     : bool {
     }
 
-    public function view(User $user, Retailer $directRetailer)
+    public function view(User $user, Retailer $retailer)
     : bool {
     }
 
@@ -24,19 +26,25 @@ class RetailerPolicy
     : bool {
     }
 
-    public function update(User $user, Retailer $directRetailer)
+    public function update(User $user, Retailer $retailer)
     : bool {
     }
 
-    public function delete(User $user, Retailer $directRetailer)
+    public function delete(Admin $admin, Retailer $retailer)
+    : bool {
+        // TODO: check delete method
+        dump($retailer);
+        dump($admin);
+        dump(RoleEnum::SUPER_ADMIN->getValue());
+        dd($admin->role);
+//        return $admin->role === RoleEnum::SUPER_ADMIN->getValue();
+    }
+
+    public function restore(User $user, Retailer $retailer)
     : bool {
     }
 
-    public function restore(User $user, Retailer $directRetailer)
-    : bool {
-    }
-
-    public function forceDelete(User $user, Retailer $directRetailer)
+    public function forceDelete(User $user, Retailer $retailer)
     : bool {
     }
 }

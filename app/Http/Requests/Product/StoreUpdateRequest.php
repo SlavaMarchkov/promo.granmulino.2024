@@ -11,6 +11,12 @@ use Illuminate\Validation\Rule;
 
 final class StoreUpdateRequest extends FormRequest
 {
+    public function authorize()
+    : bool
+    {
+        return auth('admin')->check();
+    }
+
     public function rules()
     : array
     {
@@ -61,11 +67,5 @@ final class StoreUpdateRequest extends FormRequest
         $this->merge([
             'is_active' => to_boolean($is_active),
         ]);
-    }
-
-    public function authorize()
-    : bool
-    {
-        return true;
     }
 }
