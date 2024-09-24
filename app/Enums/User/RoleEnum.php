@@ -2,13 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\Enums\Admin;
+namespace App\Enums\User;
 
 enum RoleEnum: string
 {
-    case SUPER_ADMIN = 'super_admin';
-    case PRICE_ADMIN = 'price_admin';
-    case ADMIN = 'admin';
+    case SUPER_ADMIN = 'Супер-Администратор';
+    case PRICE_ADMIN = 'Прайс-Администратор';
+    case ADMIN       = 'Администратор';
+    case MANAGER     = 'Менеджер';
 
     /**
      * @return string

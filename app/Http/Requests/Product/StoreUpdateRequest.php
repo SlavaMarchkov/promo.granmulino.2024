@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Product;
 
-use App\Enums\Admin\RoleEnum;
+use App\Enums\User\RoleEnum;
 use App\Rules\BooleanRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;

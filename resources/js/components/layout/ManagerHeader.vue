@@ -23,24 +23,27 @@
                             <h6>{{ user.lastName }} {{ user.firstName }} {{ user.middleName }}</h6>
                             <span>{{ user.email }}</span>
                         </li>
-<!--                        <li>
+                        <li>
                             <hr class="dropdown-divider">
                         </li>
                         <li>
-                            <a class="dropdown-item d-flex align-items-center" href="#">
+                            <RouterLink
+                                :to="{ name: 'Manager.Profile.Index' }"
+                                class="dropdown-item d-flex align-items-center"
+                            >
                                 <i class="bi bi-person"></i>
-                                <span>My Profile</span>
-                            </a>
+                                <span>Мой профиль</span>
+                            </RouterLink>
                         </li>
                         <li>
                             <hr class="dropdown-divider">
                         </li>
                         <li>
-                            <a class="dropdown-item d-flex align-items-center" href="#">
-                                <i class="bi bi-gear"></i>
-                                <span>Account Settings</span>
-                            </a>
-                        </li>-->
+                            <div class="dropdown-item d-flex align-items-center">
+                                <i class="bi bi-person-badge"></i>
+                                <span>{{ user.roleName }}</span>
+                            </div>
+                        </li>
                         <li>
                             <hr class="dropdown-divider">
                         </li>
@@ -63,9 +66,11 @@
 
 <script setup>
 import { useAuthStore } from '@/stores/auth.js';
+import { useRouter } from 'vue-router';
 import { useDOMHandlers } from '@/use/useDOMHandlers.js';
 
 const authStore = useAuthStore();
+const router = useRouter();
 const { closeOpenedMenuItems, toggleSidebar } = useDOMHandlers();
 
 const props = {
@@ -76,7 +81,12 @@ const { user } = authStore;
 
 const handleLogout = async () => {
     if ( confirm('Вы действительно хотите выйти?') ) {
-        await authStore.logout();
+        const { status } = await authStore.logout();
+        if (status && status === 'success') {
+            await router.push({
+                name: 'Login'
+            });
+        }
     }
 };
 </script>

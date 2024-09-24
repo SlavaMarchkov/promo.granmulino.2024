@@ -12,25 +12,14 @@ use App\Http\Controllers\Api\V1\Manager\AuthController;
 use App\Http\Controllers\Api\V1\Manager\CustomerController;
 use Illuminate\Support\Facades\Route;
 
-Route::prefix('v1')
-    ->middleware([
-        'throttle:api',
-    ])
-    ->group(function () {
-        Route::get('user', [AuthController::class, 'user'])
-            ->middleware('auth:sanctum');
-        Route::post('login', [AuthController::class, 'login']);
-        Route::post('logout', [AuthController::class, 'logout']);
-    });
-
 Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::group([
         'prefix'     => 'v1/admin',
-        'middleware' => 'throttle:api',
+        'middleware' => ['throttle:api', 'admin'],
     ], function () {
         Route::get('user', [AdminAuthController::class, 'user']);
         Route::post('login', [AdminAuthController::class, 'login'])
-            ->withoutMiddleware('auth:sanctum');
+            ->withoutMiddleware(['auth:sanctum', 'admin']);
         Route::post('logout', [AdminAuthController::class, 'logout']);
         Route::apiResources([
             'regions'    => AdminRegionController::class,
@@ -44,7 +33,12 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     });
     Route::group([
         'prefix' => 'v1',
+        'middleware' => 'throttle:api',
     ], function () {
+        Route::get('user', [AuthController::class, 'user']);
+        Route::post('login', [AuthController::class, 'login'])
+            ->withoutMiddleware('auth:sanctum');
+        Route::post('logout', [AuthController::class, 'logout']);
         Route::apiResources([
             'customers' => CustomerController::class,
         ]);

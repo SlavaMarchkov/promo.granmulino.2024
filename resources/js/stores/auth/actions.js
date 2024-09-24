@@ -1,14 +1,7 @@
 import http from '@/api/http.js';
-import router from '@/router/index.js';
 import { useAlertStore } from '@/stores/alerts.js';
 import { useSpinnerStore } from '@/stores/spinners.js';
 import { resetAllPiniaStores } from '@/use/useResetStore.js';
-import { useToast } from 'vue-toast-notification';
-import 'vue-toast-notification/dist/theme-bootstrap.css';
-
-const $toast = useToast({
-    position: 'top-right',
-});
 
 export default {
     setUser(data) {
@@ -28,10 +21,8 @@ export default {
             return;
         }
 
-        const path = isAdmin ? '/admin/user' : '/user';
-
         try {
-            const { data } = await http.get(path);
+            const { data } = await http.get(`${ isAdmin ? '/admin/user' : '/user' }`);
             this.setUser(data.data);
             localStorage.setItem('user', JSON.stringify(data.data));
         } catch ( error ) {
@@ -42,16 +33,13 @@ export default {
         }
     },
 
-    async login(credentials) {
+    async login(credentials, isAdmin = false) {
         const spinnerStore = useSpinnerStore();
         spinnerStore.showSpinner();
         try {
-            const { data } = await http.post('/login', credentials);
-            await this.loadUser(data.token, false);
-            $toast.success(data.message);
-            await router.push({
-                name: 'Manager.Index',
-            });
+            const { data } = await http.post(`${ isAdmin ? '/admin/login' : '/login' }`, credentials);
+            await this.loadUser(data.data.token, isAdmin);
+            return data;
         } catch ( error ) {
             const alertStore = useAlertStore();
             alertStore.error(error);
@@ -60,64 +48,17 @@ export default {
         }
     },
 
-    async adminLogin(credentials) {
-        const spinnerStore = useSpinnerStore();
-        spinnerStore.showSpinner();
+    async logout(isAdmin = false) {
         try {
-            const { data } = await http.post('/admin/login', credentials);
-            await this.loadUser(data.token, true);
-            $toast.success(data.message);
-            await router.push({
-                name: 'Admin.Index',
-            });
-        } catch ( error ) {
-            const alertStore = useAlertStore();
-            alertStore.error(error);
-        } finally {
-            spinnerStore.hideSpinner();
-        }
-    },
-
-    async logout() {
-        try {
-            const response = await http.post('/logout');
+            const { data } = await http.post(`${ isAdmin ? '/admin/logout' : '/logout' }`);
 
             localStorage.removeItem('token');
             localStorage.removeItem('user');
             this.clear();
-
-            $toast.success(response.data.message);
 
             resetAllPiniaStores();
 
-            await router.push({
-                name: 'Login',
-            });
-        } catch ( error ) {
-            this.clear();
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-
-            const alertStore = useAlertStore();
-            alertStore.error(error);
-        }
-    },
-
-    async adminLogout() {
-        try {
-            const response = await http.post('/admin/logout');
-
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-            this.clear();
-
-            $toast.success(response.data.message);
-
-            resetAllPiniaStores();
-
-            await router.push({
-                name: 'AdminLogin',
-            });
+            return data;
         } catch ( error ) {
             this.clear();
             localStorage.removeItem('token');

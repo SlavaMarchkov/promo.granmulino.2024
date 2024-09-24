@@ -31,12 +31,4 @@ final class LoginRequest extends FormRequest
             'password' => 'Пароль',
         ];
     }
-
-    public function messages()
-    : array
-    {
-        return [
-            'required' => 'Поле ":attribute" нужно заполнить.',
-        ];
-    }
 }

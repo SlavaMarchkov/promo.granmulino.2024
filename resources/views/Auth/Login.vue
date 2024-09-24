@@ -49,12 +49,14 @@
 import { reactive } from 'vue';
 import { useAuthStore } from '@/stores/auth.js';
 import { useSpinnerStore } from '@/stores/spinners.js';
+import { useRouter } from 'vue-router';
 import Alert from '@/components/Alert.vue';
 import Button from '@/components/core/Button.vue';
 import TheLabel from '@/components/form/TheLabel.vue';
 import TheInput from '@/components/form/TheInput.vue';
 
 const authStore = useAuthStore();
+const router = useRouter();
 const spinnerStore = useSpinnerStore();
 
 const credentials = reactive({
@@ -63,6 +65,11 @@ const credentials = reactive({
 });
 
 const handleLogin = async () => {
-    await authStore.login(credentials);
+    const { status } = await authStore.login(credentials);
+    if (status && status === 'success') {
+        await router.push({
+            name: 'Manager.Index'
+        });
+    }
 };
 </script>

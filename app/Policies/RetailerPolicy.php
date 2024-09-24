@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Policies;
 
-use App\Enums\Admin\RoleEnum;
+use App\Enums\User\RoleEnum;
 use App\Models\Admin;
 use App\Models\Retailer;
 use App\Models\User;
