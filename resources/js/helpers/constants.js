@@ -21,10 +21,11 @@ export const RETAILER_TYPES = [
     },
 ];
 
-export const ADMIN_ROLES = {
-    SUPER_ADMIN: 'super_admin',
-    PRICE_ADMIN: 'price_admin',
-    ADMIN: 'admin',
+export const ROLES = {
+    SUPER_ADMIN: 'SUPER_ADMIN',
+    PRICE_ADMIN: 'PRICE_ADMIN',
+    ADMIN: 'ADMIN',
+    MANAGER: 'MANAGER',
 };
 
 export const ADMIN_URLS = {

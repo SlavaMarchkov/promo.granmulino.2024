@@ -7,6 +7,7 @@ export { default as RegionView } from './Region/View.vue';
 export { default as Product } from './Product/Index.vue';
 export { default as ProductView } from './Product/View.vue';
 export { default as User } from './User/Index.vue';
+export { default as UserView } from './User/View.vue';
 export { default as Report } from './Report.vue';
 export { default as Customer } from './Customer/Index.vue';
 export { default as CustomerView } from './Customer/View.vue';

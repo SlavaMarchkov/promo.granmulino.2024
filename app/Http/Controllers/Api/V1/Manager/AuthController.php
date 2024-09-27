@@ -10,18 +10,18 @@ use App\Http\Requests\User\LoginRequest;
 use App\Http\Resources\V1\UserResource;
 use App\Mail\Manager\LoginMail;
 use App\Mail\Manager\LogoutMail;
+use App\Models\Role;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Symfony\Component\HttpFoundation\Response;
 
 final class AuthController extends ApiController
 {
-    public function login(LoginRequest $request)
+    public function login(LoginRequest $request, Role $role)
     : JsonResponse
     {
         $credentials = $request->validated();
@@ -34,17 +34,18 @@ final class AuthController extends ApiController
                 'is_admin'  => false,
             ],
         )) {
-            $role_id = DB::table('roles')
+            //$role_id = $role->getRoleId(RoleEnum::MANAGER->getName())
+            /*DB::table('roles')
                            ->where(
                                'slug',
-                               RoleEnum::MANAGER->getName(),
+                               ,
                            )
-                           ->pluck('id')[0];
+                           ->value('id');*/
 
             $user = User::query()
                 ->where('email', $credentials['email'])
                 ->where('is_admin', false)
-                ->where('role_id', $role_id)
+                ->where('role_id', $role->getRoleId(RoleEnum::MANAGER->getName()))
                 ->first();
 
             $role = $user->role->slug;

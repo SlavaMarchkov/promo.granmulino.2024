@@ -68,7 +68,14 @@
                                     {{ item.id }}
                                 </th>
                                 <td class="text-start">
-                                    {{ item.lastName }}
+                                    <RouterLink :to="{
+                                        name: 'User.View',
+                                        params: {
+                                            'id': item.id
+                                        }
+                                    }">
+                                        {{ item.lastName }}
+                                    </RouterLink>
                                 </td>
                                 <td class="text-start">
                                     {{ item.firstName }}
@@ -92,7 +99,7 @@
                                 >View
                                 </TdButton>
                                 <template
-                                    v-if="role === ADMIN_ROLES.SUPER_ADMIN"
+                                    v-if="isSuperAdmin"
                                 >
                                     <TdButton
                                         :id="item.id"
@@ -284,7 +291,7 @@ import ThSort from '@/components/table/ThSort.vue';
 import TdButton from '@/components/table/TdButton.vue';
 import Checkbox from '@/components/form/Checkbox.vue';
 import TheBadge from '@/components/core/TheBadge.vue';
-import { ADMIN_ROLES, ADMIN_URLS, DELETE_TH_FIELD, EDIT_TH_FIELD, USER_TH_FIELDS } from '@/helpers/constants.js';
+import { ADMIN_URLS, DELETE_TH_FIELD, EDIT_TH_FIELD, ROLES, USER_TH_FIELDS } from '@/helpers/constants.js';
 
 const alertStore = useAlertStore();
 const spinnerStore = useSpinnerStore();
@@ -293,9 +300,10 @@ const arrayHandlers = useArrayHandlers();
 const { get, post, update, destroy } = useHttpService();
 
 const role = authStore.getUser.role;
+const isSuperAdmin = computed(() => role === ROLES.SUPER_ADMIN);
 
 const thItems = computed(() => {
-    return role === ADMIN_ROLES.SUPER_ADMIN
+    return isSuperAdmin.value
         ? USER_TH_FIELDS.concat(EDIT_TH_FIELD, DELETE_TH_FIELD)
         : USER_TH_FIELDS;
 });
@@ -304,6 +312,7 @@ const initialFormData = () => ({
     firstName: '',
     lastName: '',
     middleName: '',
+    displayName: '',
     email: '',
     password: '',
     isActive: true,

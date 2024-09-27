@@ -120,7 +120,7 @@
                                 >Edit
                                 </TdButton>
                                 <template
-                                    v-if="role === ADMIN_ROLES.SUPER_ADMIN"
+                                    v-if="role === ROLES['SUPER_ADMIN']"
                                 >
                                     <TdButton
                                         :id="item.id"
@@ -320,7 +320,7 @@ import TheLabel from '@/components/form/TheLabel.vue';
 import Alert from '@/components/Alert.vue';
 import Filter from '@/components/core/Filter.vue';
 import TdButton from '@/components/table/TdButton.vue';
-import { ADMIN_ROLES, ADMIN_URLS, CUSTOMER_TH_FIELDS, DELETE_TH_FIELD, EDIT_TH_FIELD } from '@/helpers/constants.js';
+import { ADMIN_URLS, CUSTOMER_TH_FIELDS, DELETE_TH_FIELD, EDIT_TH_FIELD, ROLES } from '@/helpers/constants.js';
 
 const alertStore = useAlertStore();
 const spinnerStore = useSpinnerStore();
@@ -331,7 +331,7 @@ const { get, post, update, destroy } = useHttpService();
 const role = authStore.getUser.role;
 
 const thItems = computed(() => {
-    return role === ADMIN_ROLES.SUPER_ADMIN
+    return role === ROLES['SUPER_ADMIN']
         ? CUSTOMER_TH_FIELDS.concat(EDIT_TH_FIELD, DELETE_TH_FIELD)
         : CUSTOMER_TH_FIELDS.concat(EDIT_TH_FIELD);
 });

@@ -10,4 +10,12 @@ class Role extends Model
         'name',
         'slug',
     ];
+
+    public function getRoleId(string $role)
+    : int
+    {
+        return $this->query()
+            ->where('slug', $role)
+            ->value('id');
+    }
 }

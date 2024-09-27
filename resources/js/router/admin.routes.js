@@ -13,6 +13,7 @@ import {
     Retailer,
     RetailerView,
     User,
+    UserView,
 } from '../../views/Admin/index.js';
 
 export default {
@@ -33,6 +34,14 @@ export default {
             component: User,
             meta: {
                 title: 'Пользователи',
+            },
+        },
+        {
+            path: 'users/:id',
+            name: 'User.View',
+            component: UserView,
+            meta: {
+                title: 'Просмотр пользователя',
             },
         },
         {

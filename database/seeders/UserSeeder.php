@@ -24,7 +24,7 @@ class UserSeeder extends Seeder
                 'role_id'      => DB::table('roles')
                                       ->select('id')
                                       ->where('slug', RoleEnum::MANAGER->getName())
-                                      ->pluck('id')[0],
+                                      ->value('id'),
             ],
         );
 
@@ -40,7 +40,7 @@ class UserSeeder extends Seeder
                 'role_id'      => DB::table('roles')
                                       ->select('id')
                                       ->where('slug', RoleEnum::ADMIN->getName())
-                                      ->pluck('id')[0],
+                                      ->value('id'),
             ],
         );
 
@@ -56,7 +56,7 @@ class UserSeeder extends Seeder
                 'role_id'      => DB::table('roles')
                                       ->select('id')
                                       ->where('slug', RoleEnum::SUPER_ADMIN->getName())
-                                      ->pluck('id')[0],
+                                      ->value('id'),
             ],
         );
 
@@ -72,7 +72,7 @@ class UserSeeder extends Seeder
                 'role_id'      => DB::table('roles')
                                       ->select('id')
                                       ->where('slug', RoleEnum::PRICE_ADMIN->getName())
-                                      ->pluck('id')[0],
+                                      ->value('id'),
             ],
         );
     }

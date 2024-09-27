@@ -25,8 +25,8 @@ class UserResource extends JsonResource
             'email'       => $this->email,
             'isAdmin'     => $this->is_admin,
             'isActive'    => $this->is_active,
-            'roleName'    => $this->role->name,
-            'role'        => $this->role->slug,
+            'roleName'    => $this->role?->name,
+            'role'        => $this->role?->slug,
             'loggedInAt'  => Carbon::make($this->logged_in_at)?->diffForHumans(),
         ];
     }
