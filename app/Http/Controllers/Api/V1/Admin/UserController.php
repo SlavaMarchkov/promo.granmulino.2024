@@ -6,8 +6,7 @@ namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Enums\User\RoleEnum;
 use App\Http\Controllers\ApiController;
-use App\Http\Requests\User\StoreRequest;
-use App\Http\Requests\User\UpdateRequest;
+use App\Http\Requests\User\StoreUpdateRequest;
 use App\Http\Resources\V1\UserCollection;
 use App\Http\Resources\V1\UserResource;
 use App\Models\Role;
@@ -42,7 +41,7 @@ final class UserController extends ApiController
         );
     }
 
-    public function store(StoreRequest $request)
+    public function store(StoreUpdateRequest $request)
     : JsonResponse
     {
         $user = $this->userService->storeUser($request->validated());
@@ -67,7 +66,7 @@ final class UserController extends ApiController
         );
     }
 
-    public function update(UpdateRequest $request, User $user)
+    public function update(StoreUpdateRequest $request, User $user)
     : JsonResponse
     {
         $data = $request->validated();

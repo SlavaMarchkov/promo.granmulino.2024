@@ -12,7 +12,7 @@ use Illuminate\Database\Query\Builder;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class StoreRequest extends FormRequest
+class StoreUpdateRequest extends FormRequest
 {
     public function authorize()
     : bool
@@ -32,10 +32,11 @@ class StoreRequest extends FormRequest
                 'email:dns',
                 'max:255',
                 Rule::unique('users')
-                    ->where(fn(Builder $qb) => $qb->where('role_id', $role->getRoleId(RoleEnum::MANAGER->getName()))),
+                    ->where(fn(Builder $qb) => $qb->where('role_id', $role->getRoleId(RoleEnum::MANAGER->getName())))
+                    ->ignore($this->request->get('id')),
             ],
             'is_active'   => ['required', new BooleanRule],
-            'password'    => ['required'],
+            'password'    => ['required', 'sometimes', 'string', 'min:6'],
         ];
     }
 
