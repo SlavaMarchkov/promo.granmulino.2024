@@ -4,80 +4,113 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\V1\Admin;
 
-use App\Http\Controllers\Controller;
+use App\Enums\User\RoleEnum;
+use App\Http\Controllers\ApiController;
 use App\Http\Requests\User\LoginRequest;
-use App\Http\Resources\V1\AdminResource;
+use App\Http\Resources\V1\UserResource;
 use App\Mail\Admin\LoginMail;
 use App\Mail\Admin\LogoutMail;
-use App\Models\Admin;
+use App\Models\User;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpFoundation\Response;
 
-final class AuthController extends Controller
+final class AuthController extends ApiController
 {
     public function login(LoginRequest $request)
-    : JsonResponse {
+    : JsonResponse
+    {
         $credentials = $request->validated();
 
-        if (Auth::guard('admin')->attempt(
+        if (Auth::attempt(
             [
                 'email'     => $credentials['email'],
                 'password'  => $credentials['password'],
                 'is_active' => true,
-            ]
+                'is_admin'  => true,
+            ],
         )) {
-            $admin = Admin::where('email', $credentials['email'])->first();
+            $role_ids = DB::table('roles')
+                           ->where(
+                               'slug',
+                               '!=',
+                               RoleEnum::MANAGER->getName(),
+                           )
+                           ->pluck('id');
+
+            $admin = User::query()
+                ->where('email', $credentials['email'])
+                ->where('is_admin', true)
+                ->whereIn('role_id', $role_ids)
+                ->first();
+
+            $role = $admin->role->slug;
 
             $admin->tokens()->delete();
-            $token = $admin->createToken("Token for admin: $admin->name", ['*'], now()->addHours(24));
 
+            // $request->session()->regenerate();
+
+            $token = $admin
+                ->createToken("Token for $role: $admin->display_name", ['*'], now()->addHours(24))
+                ->plainTextToken;
+
+            $admin->update([
+                'logged_in_at' => now(),
+            ]);
+
+            // TODO: email or TG notification when user signs in
+            // Notification::send($administrators, new AdminNewUserNotification($user));
             try {
                 Mail::to(config('mail.to.admin'))->send(new LoginMail($admin));
             } catch (Exception $exception) {
                 // TODO: log exception
             }
 
-            $admin->update([
-                'logged_in_at' => now(),
-            ]);
-
-            return response()->json([
-                'token'   => $token->plainTextToken,
-                'message' => __('messages.auth.admin_auth_successful'),
-            ]);
-        } else {
-            throw ValidationException::withMessages([
-                'email' => [__('messages.auth.invalid_credentials')],
-            ]);
+            return $this->successResponse(
+                ['token' => $token],
+                'success',
+                __('messages.auth.admin_auth_successful'),
+            );
         }
+
+        return $this->errorResponse(
+            Response::HTTP_UNAUTHORIZED,
+            'error',
+            __('messages.auth.invalid_credentials'),
+        );
+    }
+
+    public function user()
+    : UserResource
+    {
+        $user = auth()->user();
+        return new UserResource($user);
     }
 
     public function logout()
     : JsonResponse
     {
-        $user = Auth::guard('admin')->user();
-        $user->tokens()->delete();
+        $admin = auth()->user();
+        $admin->tokens()->delete();
 
         try {
-            Mail::to(config('mail.to.admin'))->send(new LogoutMail($user));
+            Mail::to(config('mail.to.admin'))->send(new LogoutMail($admin));
         } catch (Exception $exception) {
             // TODO: log exception
         }
 
-        Auth::guard('admin')->logout();
 
-        return response()->json([
-            'message' => __('messages.auth.admin_logged_out'),
-        ]);
-    }
+//        Auth::guard('web')->logout();
+//        $request->session()->invalidate();
+//        $request->session()->regenerateToken();
 
-    public function user()
-    : AdminResource
-    {
-        $user = Auth::guard('admin')->user();
-        return new AdminResource($user);
+        return $this->successResponse(
+            '',
+            'success',
+            __('messages.auth.admin_logged_out'),
+        );
     }
 }

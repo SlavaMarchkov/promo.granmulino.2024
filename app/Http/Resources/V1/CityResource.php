@@ -12,12 +12,15 @@ use Illuminate\Http\Resources\Json\JsonResource;
 class CityResource extends JsonResource
 {
     public function toArray(Request $request)
-    : array {
+    : array
+    {
         return [
             'id'         => $this->id,
             'name'       => $this->name,
             'regionId'   => $this->region_id,
             'regionName' => $this->region->name,
+            'longitude'  => $this->longitude,
+            'latitude'   => $this->latitude,
         ];
     }
 }

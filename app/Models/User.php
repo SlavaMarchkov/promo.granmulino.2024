@@ -4,7 +4,7 @@ namespace App\Models;
 
 use App\Traits\Models\HasCapitalize;
 use Illuminate\Database\Eloquent\Casts\Attribute;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -17,12 +17,15 @@ class User extends Authenticatable
     use HasCapitalize;
 
     protected $fillable = [
-        'first_name',
         'last_name',
+        'first_name',
         'middle_name',
+        'display_name',
         'email',
         'password',
         'is_active',
+        'is_admin',
+        'role_id',
         'logged_in_at',
     ];
 
@@ -36,9 +39,16 @@ class User extends Authenticatable
     {
         return [
             'is_active'         => 'boolean',
+            'is_admin'          => 'boolean',
             'email_verified_at' => 'datetime',
             'password'          => 'hashed',
         ];
+    }
+
+    public function role()
+    : BelongsTo
+    {
+        return $this->belongsTo(Role::class);
     }
 
     public function customers()
@@ -55,11 +65,15 @@ class User extends Authenticatable
         );
     }
 
-    public function getUsers(bool $is_active = false)
-    : Collection
+    public function isManager()
+    : bool
     {
-        return $this->query()
-            ->when($is_active, fn($query) => $query->where('is_active', true))
-            ->get();
+        return $this->is_admin === false;
+    }
+
+    public function isAdmin()
+    : bool
+    {
+        return $this->is_admin === true;
     }
 }

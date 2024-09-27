@@ -5,7 +5,7 @@
                 class="btn btn-primary"
                 type="button"
                 @click="createCategoryInit"
-                :disabled="role !== ADMIN_ROLES.SUPER_ADMIN"
+                :disabled="role !== ROLES['SUPER_ADMIN']"
             >
                 Новая группа товаров
             </button>
@@ -78,7 +78,7 @@
                                 >View
                                 </TdButton>
                                 <template
-                                    v-if="role === ADMIN_ROLES.SUPER_ADMIN"
+                                    v-if="role === ROLES['SUPER_ADMIN']"
                                 >
                                     <TdButton
                                         :id="item.id"
@@ -180,7 +180,7 @@
                         <th>ID</th>
                         <th class="text-start">Формат</th>
                         <th>Вес, г</th>
-                        <th v-if="role === ADMIN_ROLES.PRICE_ADMIN">Цена, руб.</th>
+                        <th v-if="role === ROLES['PRICE_ADMIN']">Цена, руб.</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -188,7 +188,7 @@
                         <td>{{ product.id }}</td>
                         <td class="text-start">{{ product.name }}</td>
                         <td>{{ formatNumber(product.weight) }}</td>
-                        <td v-if="role === ADMIN_ROLES.PRICE_ADMIN">{{ product.price }}</td>
+                        <td v-if="role === ROLES['PRICE_ADMIN']">{{ product.price }}</td>
                     </tr>
                     </tbody>
                 </table>
@@ -223,7 +223,7 @@ import TheBadge from '@/components/core/TheBadge.vue';
 import Modal from '@/components/Modal.vue';
 import ThSort from '@/components/table/ThSort.vue';
 import TdButton from '@/components/table/TdButton.vue';
-import { ADMIN_ROLES, ADMIN_URLS, CATEGORY_TH_FIELDS, DELETE_TH_FIELD, EDIT_TH_FIELD } from '@/helpers/constants.js';
+import { ADMIN_URLS, CATEGORY_TH_FIELDS, DELETE_TH_FIELD, EDIT_TH_FIELD, ROLES } from '@/helpers/constants.js';
 import { formatNumber } from '@/helpers/formatters.js';
 
 const alertStore = useAlertStore();
@@ -235,7 +235,7 @@ const { get, post, update, destroy } = useHttpService();
 const role = authStore.getUser.role;
 
 const thItems = computed(() => {
-    return role === ADMIN_ROLES.SUPER_ADMIN
+    return role === ROLES['SUPER_ADMIN']
         ? CATEGORY_TH_FIELDS.concat(EDIT_TH_FIELD, DELETE_TH_FIELD)
         : CATEGORY_TH_FIELDS;
 });

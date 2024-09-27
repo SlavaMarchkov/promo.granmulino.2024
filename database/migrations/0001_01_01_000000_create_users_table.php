@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Role;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -17,9 +18,12 @@ return new class extends Migration {
             $table->string('last_name', 32);
             $table->string('first_name', 16);
             $table->string('middle_name', 32)->nullable();
-            $table->string('email')->unique();
+            $table->string('display_name', 64)->nullable();
+            $table->string('email');
             $table->string('password');
             $table->boolean('is_active')->default(true);
+            $table->boolean('is_admin')->default(false);
+            $table->foreignIdFor(Role::class)->nullable();
             $table->timestamp('logged_in_at')->nullable();
 
             $table->rememberToken();

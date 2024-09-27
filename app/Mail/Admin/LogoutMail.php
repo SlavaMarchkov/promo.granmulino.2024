@@ -2,7 +2,7 @@
 
 namespace App\Mail\Admin;
 
-use App\Models\Admin;
+use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
@@ -13,9 +13,9 @@ class LogoutMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    protected Admin|null $admin;
+    protected User|null $admin;
 
-    public function __construct(Admin|null $admin)
+    public function __construct(User|null $admin)
     {
         $this->admin = $admin;
     }
@@ -34,7 +34,7 @@ class LogoutMail extends Mailable
         return new Content(
             markdown: 'Admin.emails.logout',
             with: [
-                'name' => $this->admin?->name,
+                'name'  => $this->admin?->display_name,
                 'email' => $this->admin?->email,
             ],
         );

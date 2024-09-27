@@ -4,37 +4,57 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\V1\Manager;
 
-use App\Http\Controllers\Controller;
+use App\Enums\User\RoleEnum;
+use App\Http\Controllers\ApiController;
 use App\Http\Requests\User\LoginRequest;
 use App\Http\Resources\V1\UserResource;
 use App\Mail\Manager\LoginMail;
 use App\Mail\Manager\LogoutMail;
+use App\Models\Role;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpFoundation\Response;
 
-final class AuthController extends Controller
+final class AuthController extends ApiController
 {
-    public function login(LoginRequest $request)
+    public function login(LoginRequest $request, Role $role)
     : JsonResponse
     {
         $credentials = $request->validated();
 
-        if (Auth::guard('web')->attempt(
+        if (Auth::attempt(
             [
                 'email'     => $credentials['email'],
                 'password'  => $credentials['password'],
                 'is_active' => true,
+                'is_admin'  => false,
             ],
         )) {
-            $user = User::where('email', $credentials['email'])->first();
+            //$role_id = $role->getRoleId(RoleEnum::MANAGER->getName())
+            /*DB::table('roles')
+                           ->where(
+                               'slug',
+                               ,
+                           )
+                           ->value('id');*/
+
+            $user = User::query()
+                ->where('email', $credentials['email'])
+                ->where('is_admin', false)
+                ->where('role_id', $role->getRoleId(RoleEnum::MANAGER->getName()))
+                ->first();
+
+            $role = $user->role->slug;
 
             $user->tokens()->delete();
-            $token = $user->createToken("Token for user: $user->full_name");
+
+            $token = $user
+                ->createToken("Token for $role: $user->full_name")
+                ->plainTextToken;
 
             $user->update([
                 'logged_in_at' => now(),
@@ -48,22 +68,24 @@ final class AuthController extends Controller
                 // TODO: log exception
             }
 
-            return response()->json([
-                'token'   => $token->plainTextToken,
-                'message' => __('messages.auth.auth_successful'),
-            ]);
-        } else {
-            throw ValidationException::withMessages([
-                'email' => [__('messages.auth.invalid_credentials')],
-            ]);
+            return $this->successResponse(
+                ['token' => $token],
+                'success',
+                __('messages.auth.auth_successful'),
+            );
         }
+
+        return $this->errorResponse(
+            Response::HTTP_UNAUTHORIZED,
+            'error',
+            __('messages.auth.invalid_credentials'),
+        );
     }
 
     public function user()
     : UserResource
     {
-//        dump('here');
-        $user = Auth::guard('web')->user();
+        $user = auth()->user();
         return new UserResource($user);
     }
 
@@ -78,10 +100,12 @@ final class AuthController extends Controller
             // TODO: log exception
         }
 
-        Auth::guard('web')->logout();
+//        Auth::guard('web')->logout();
 
-        return response()->json([
-            'message' => __('messages.auth.logged_out'),
-        ]);
+        return $this->successResponse(
+            '',
+            'success',
+            __('messages.auth.logged_out'),
+        );
     }
 }

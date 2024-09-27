@@ -5,7 +5,7 @@
                 class="btn btn-primary"
                 type="button"
                 @click="createProductInit"
-                :disabled="role !== ADMIN_ROLES.SUPER_ADMIN"
+                :disabled="role !== ROLES['SUPER_ADMIN']"
             >
                 Новый продукт
             </button>
@@ -44,7 +44,7 @@
                     >Макс. вес
                     </InputGroup>
                 </div>
-                <div v-if="role === ADMIN_ROLES.PRICE_ADMIN" class="col-md-4 mb-2">
+                <div v-if="role === ROLES['PRICE_ADMIN']" class="col-md-4 mb-2">
                     <InputGroup
                         v-model="searchBy.price"
                         placeholder="Поиск по цене"
@@ -110,7 +110,7 @@
                                 >View
                                 </TdButton>
                                 <template
-                                    v-if="role === ADMIN_ROLES.PRICE_ADMIN"
+                                    v-if="role === ROLES['PRICE_ADMIN']"
                                 >
                                     <td>
                                         {{ item.price }}
@@ -123,7 +123,7 @@
                                     </TdButton>
                                 </template>
                                 <template
-                                    v-if="role === ADMIN_ROLES.SUPER_ADMIN"
+                                    v-if="role === ROLES['SUPER_ADMIN']"
                                 >
                                     <TdButton
                                         :id="item.id"
@@ -184,7 +184,7 @@
                         type="number"
                     />
                 </div>
-                <div v-if="role === ADMIN_ROLES.PRICE_ADMIN" class="col-6">
+                <div v-if="role === ROLES['PRICE_ADMIN']" class="col-6">
                     <TheLabel for="price" required>Отпускная цена, руб.</TheLabel>
                     <TheInput
                         id="price"
@@ -274,7 +274,7 @@
                     <th>Вес, г</th>
                     <td>{{ formatNumber(state.product.weight) }}</td>
                 </tr>
-                <tr v-if="role === ADMIN_ROLES.PRICE_ADMIN">
+                <tr v-if="role === ROLES['PRICE_ADMIN']">
                     <th>Себестоимость, руб.</th>
                     <td>{{ state.product.price }}</td>
                 </tr>
@@ -315,12 +315,12 @@ import Modal from '@/components/Modal.vue';
 import ThSort from '@/components/table/ThSort.vue';
 import TdButton from '@/components/table/TdButton.vue';
 import {
-    ADMIN_ROLES,
     ADMIN_URLS,
     DELETE_TH_FIELD,
     EDIT_TH_FIELD,
     PRICE_TH_FIELD,
     PRODUCT_TH_FIELDS,
+    ROLES,
 } from '@/helpers/constants.js';
 import { formatNumber } from '@/helpers/formatters.js';
 
@@ -333,9 +333,9 @@ const { get, post, update, destroy } = useHttpService();
 const role = authStore.getUser.role;
 
 const thItems = computed(() => {
-    return role === ADMIN_ROLES.SUPER_ADMIN
+    return role === ROLES['SUPER_ADMIN']
         ? PRODUCT_TH_FIELDS.concat(EDIT_TH_FIELD, DELETE_TH_FIELD)
-        : role === ADMIN_ROLES.PRICE_ADMIN
+        : role === ROLES['PRICE_ADMIN']
             ? PRODUCT_TH_FIELDS.concat(PRICE_TH_FIELD, EDIT_TH_FIELD)
             : PRODUCT_TH_FIELDS;
 });

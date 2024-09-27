@@ -2,17 +2,19 @@
 
 namespace App\Providers;
 
+use App\Services\Users\Repositories\EloquentUserRepository;
+use App\Services\Users\Repositories\UserRepositoryInterface;
 use Illuminate\Cache\RateLimiting\Limit;
-use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
     public function register()
     : void
     {
-        //
+        $this->app->bind(UserRepositoryInterface::class, EloquentUserRepository::class);
     }
 
     public function boot()

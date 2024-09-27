@@ -16,15 +16,18 @@ class UserResource extends JsonResource
     : array
     {
         return [
-            'id'         => $this->id,
-            'lastName'   => $this->last_name,
-            'firstName'  => $this->first_name,
-            'middleName' => $this->middle_name,
-            'fullName'   => $this->full_name,
-            'email'      => $this->email,
-            'isAdmin'    => false,
-            'isActive'   => $this->is_active,
-            'loggedInAt' => Carbon::make($this->logged_in_at)?->diffForHumans(),
+            'id'          => $this->id,
+            'lastName'    => $this->last_name,
+            'firstName'   => $this->first_name,
+            'middleName'  => $this->middle_name,
+            'fullName'    => $this->full_name,
+            'displayName' => $this->display_name,
+            'email'       => $this->email,
+            'isAdmin'     => $this->is_admin,
+            'isActive'    => $this->is_active,
+            'roleName'    => $this->role?->name,
+            'role'        => $this->role?->slug,
+            'loggedInAt'  => Carbon::make($this->logged_in_at)?->diffForHumans(),
         ];
     }
 }

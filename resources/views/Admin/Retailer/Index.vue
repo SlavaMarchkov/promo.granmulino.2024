@@ -126,7 +126,7 @@
                                 >Edit
                                 </TdButton>
                                 <template
-                                    v-if="role === ADMIN_ROLES.SUPER_ADMIN"
+                                    v-if="role === ROLES['SUPER_ADMIN']"
                                 >
                                     <TdButton
                                         :id="item.id"
@@ -304,12 +304,12 @@ import Modal from '@/components/Modal.vue';
 import Alert from '@/components/Alert.vue';
 import TdButton from '@/components/table/TdButton.vue';
 import {
-    ADMIN_ROLES,
     ADMIN_URLS,
     DELETE_TH_FIELD,
     EDIT_TH_FIELD,
     RETAILER_TH_FIELDS,
     RETAILER_TYPES,
+    ROLES,
 } from '@/helpers/constants.js';
 
 const alertStore = useAlertStore();
@@ -321,7 +321,7 @@ const { get, post, update, destroy } = useHttpService();
 const role = authStore.getUser.role;
 
 const thItems = computed(() => {
-    return role === ADMIN_ROLES.SUPER_ADMIN
+    return role === ROLES['SUPER_ADMIN']
         ? RETAILER_TH_FIELDS.concat(EDIT_TH_FIELD, DELETE_TH_FIELD)
         : RETAILER_TH_FIELDS.concat(EDIT_TH_FIELD);
 });
