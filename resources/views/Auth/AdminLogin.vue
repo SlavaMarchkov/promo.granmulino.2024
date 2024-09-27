@@ -8,32 +8,30 @@
             <Alert/>
             <form class="row g-3" @submit.prevent="handleAdminLogin">
                 <div class="col-12">
-                    <label class="form-label" for="email">Email</label>
-                    <input
+                    <TheLabel for="email">Email</TheLabel>
+                    <TheInput
                         id="email"
                         v-model="credentials.email"
-                        autocomplete="current-email"
-                        class="form-control"
                         placeholder="email@mail.ru"
+                        autocomplete="current-email"
                         type="email"
-                    >
+                    />
                 </div>
                 <div class="col-12">
-                    <label class="form-label" for="password">Пароль</label>
-                    <input
+                    <TheLabel for="password">Пароль</TheLabel>
+                    <TheInput
                         id="password"
                         v-model="credentials.password"
                         autocomplete="current-password"
-                        class="form-control"
                         type="password"
-                    >
+                    />
                 </div>
                 <div class="col-12">
                     <Button
-                        :loading="authStore.isLoading"
-                        class="btn-primary w-100"
-                        :disabled="authStore.isLoading"
                         type="submit"
+                        :loading="spinnerStore.isLoading"
+                        :disabled="spinnerStore.isLoading"
+                        class="btn-primary w-100"
                     >Войти в админку
                     </Button>
                 </div>
@@ -50,10 +48,14 @@
 <script setup>
 import { reactive } from 'vue';
 import { useAuthStore } from '@/stores/auth.js';
+import { useSpinnerStore } from '@/stores/spinners.js';
 import Alert from '@/components/Alert.vue';
 import Button from '@/components/core/Button.vue';
+import TheLabel from '@/components/form/TheLabel.vue';
+import TheInput from '@/components/form/TheInput.vue';
 
 const authStore = useAuthStore();
+const spinnerStore = useSpinnerStore();
 
 const credentials = reactive({
     email: '',

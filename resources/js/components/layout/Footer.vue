@@ -25,10 +25,13 @@ onMounted(() => {
 
 const toggleBackToTop = () => {
     const backToTopBtn = document.querySelector('.back-to-top');
-    if ( window.scrollY > 100 ) {
-        backToTopBtn.classList.add('active');
-    } else {
-        backToTopBtn.classList.remove('active');
+
+    if ( backToTopBtn ) {
+        if ( window.scrollY > 100 ) {
+            backToTopBtn.classList.add('active');
+        } else {
+            backToTopBtn.classList.remove('active');
+        }
     }
 };
 

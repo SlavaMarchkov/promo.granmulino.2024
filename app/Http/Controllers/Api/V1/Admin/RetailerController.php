@@ -76,6 +76,8 @@ final class RetailerController extends ApiController
     public function destroy(Retailer $retailer)
     : JsonResponse
     {
+        $this->authorize('delete', $retailer);
+
         $canBeDeleted = true; // TODO
 
         if ($canBeDeleted) {

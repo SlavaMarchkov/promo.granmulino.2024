@@ -11,7 +11,7 @@ final class StoreUpdateRequest extends FormRequest
     public function authorize()
     : bool
     {
-        return auth('admin')->check(); // TODO: check for managers
+        return auth('admin')->check();
     }
 
     public function rules()
