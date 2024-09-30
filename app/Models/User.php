@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Enums\User\RoleEnum;
 use App\Traits\Models\HasCapitalize;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -79,7 +78,23 @@ class User extends Authenticatable
     }
 
     public function isSuperAdmin(Role $role)
+    : bool
     {
-        return $this->role_id === $role->getRoleId(RoleEnum::SUPER_ADMIN->getName());
+        return $this->isAdmin()
+            && $this->role_id === $role->superAdminRoleId();
+    }
+
+    public function isPriceAdmin(Role $role)
+    : bool
+    {
+        return $this->isAdmin()
+            && $this->role_id === $role->priceAdminRoleId();
+    }
+
+    public function isPlainAdmin(Role $role)
+    : bool
+    {
+        return $this->isAdmin()
+            && $this->role_id === $role->plainAdminRoleId();
     }
 }

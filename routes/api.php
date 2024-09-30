@@ -16,11 +16,15 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::group([
         'prefix'     => 'v1/admin',
         'middleware' => ['throttle:api', 'admin'],
+        'as'         => 'admin.',
     ], function () {
-        Route::get('user', [AdminAuthController::class, 'user']);
+        Route::get('user', [AdminAuthController::class, 'user'])
+            ->name('user');
         Route::post('login', [AdminAuthController::class, 'login'])
+            ->name('login')
             ->withoutMiddleware(['auth:sanctum', 'admin']);
-        Route::post('logout', [AdminAuthController::class, 'logout']);
+        Route::post('logout', [AdminAuthController::class, 'logout'])
+            ->name('logout');
         Route::apiResources([
             'regions'    => AdminRegionController::class,
             'cities'     => AdminCityController::class,
@@ -32,13 +36,16 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         ]);
     });
     Route::group([
-        'prefix' => 'v1',
+        'prefix'     => 'v1',
         'middleware' => 'throttle:api',
     ], function () {
-        Route::get('user', [AuthController::class, 'user']);
+        Route::get('user', [AuthController::class, 'user'])
+            ->name('user');
         Route::post('login', [AuthController::class, 'login'])
+            ->name('login')
             ->withoutMiddleware('auth:sanctum');
-        Route::post('logout', [AuthController::class, 'logout']);
+        Route::post('logout', [AuthController::class, 'logout'])
+            ->name('logout');
         Route::apiResources([
             'customers' => CustomerController::class,
         ]);
