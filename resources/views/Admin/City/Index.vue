@@ -14,6 +14,10 @@
                     </InputGroup>
                 </div>
                 <div class="col-md-4 mb-2">
+                    <InputGroup v-model="searchBy.state" placeholder="Поиск по локации (EN)">Локация
+                    </InputGroup>
+                </div>
+                <div class="col-md-4 mb-2">
                     <InputGroup v-model="searchBy.regionName" placeholder="Поиск по названию региона">Регион
                     </InputGroup>
                 </div>
@@ -52,7 +56,23 @@
                                     {{ item.id }}
                                 </th>
                                 <td class="text-start">
-                                    {{ item.name }}
+                                    <RouterLink :to="{
+                                        name: 'City.View',
+                                        params: {
+                                            'id': item.id
+                                        }
+                                    }">
+                                        {{ item.name }}
+                                    </RouterLink>
+                                </td>
+                                <td class="text-start">
+                                    {{ item.latitude }}
+                                </td>
+                                <td class="text-start">
+                                    {{ item.longitude }}
+                                </td>
+                                <td class="text-start">
+                                    {{ item.state }}
                                 </td>
                                 <td class="text-start">
                                     <RouterLink :to="{
@@ -76,7 +96,7 @@
                                 >Edit
                                 </TdButton>
                                 <template
-                                    v-if="role === ROLES['SUPER_ADMIN']"
+                                    v-if="isSuperAdmin"
                                 >
                                     <TdButton
                                         :id="item.id"
@@ -115,8 +135,45 @@
                     <TheInput
                         id="name"
                         v-model="state.city.name"
+                        @blur="fetchCoords(state.city.name)"
                         placeholder="Например: Новосибирск"
                         type="text"
+                    />
+                </div>
+                <div class="col-6">
+                    <TheLabel for="latitude">Геокоординаты. Широта</TheLabel>
+                    <TheInput
+                        id="latitude"
+                        v-model="state.city.latitude"
+                        type="text"
+                        readonly="readonly"
+                    />
+                </div>
+                <div class="col-6">
+                    <TheLabel for="longitude">Геокоординаты. Долгота</TheLabel>
+                    <TheInput
+                        id="longitude"
+                        v-model="state.city.longitude"
+                        type="text"
+                        readonly="readonly"
+                    />
+                </div>
+                <div class="col-6">
+                    <TheLabel for="country">Страна</TheLabel>
+                    <TheInput
+                        id="country"
+                        v-model="state.city.country"
+                        type="text"
+                        readonly="readonly"
+                    />
+                </div>
+                <div class="col-6">
+                    <TheLabel for="state">Локация</TheLabel>
+                    <TheInput
+                        id="state"
+                        v-model="state.city.state"
+                        type="text"
+                        readonly="readonly"
                     />
                 </div>
                 <div class="col-12">
@@ -174,6 +231,20 @@
                     <th>Регион</th>
                     <td>{{ state.city.regionName }}</td>
                 </tr>
+                <tr>
+                    <th>Широта</th>
+                    <td>{{ state.city.latitude }}</td>
+                </tr>
+                <tr>
+                    <th>Долгота</th>
+                    <td>{{ state.city.longitude }}</td>
+                </tr><tr>
+                    <th>Страна</th>
+                    <td>{{ state.city.country }}</td>
+                </tr><tr>
+                    <th>Локация</th>
+                    <td>{{ state.city.state }}</td>
+                </tr>
                 </tbody>
             </table>
         </template>
@@ -208,9 +279,10 @@ const arrayHandlers = useArrayHandlers();
 const { get, post, update, destroy } = useHttpService();
 
 const role = authStore.getUser.role;
+const isSuperAdmin = computed(() => role === ROLES.SUPER_ADMIN);
 
 const thItems = computed(() => {
-    return role === ROLES['SUPER_ADMIN']
+    return isSuperAdmin
         ? CITY_TH_FIELDS.concat(EDIT_TH_FIELD, DELETE_TH_FIELD)
         : CITY_TH_FIELDS.concat(EDIT_TH_FIELD);
 });
@@ -218,6 +290,10 @@ const thItems = computed(() => {
 const initialFormData = () => ({
     name: '',
     regionId: '',
+    longitude: '',
+    latitude: '',
+    country: '',
+    state: '',
 });
 
 const state = reactive({
@@ -229,6 +305,7 @@ const state = reactive({
 
 const searchBy = reactive({
     name: '',
+    state: '',
     regionName: '',
 });
 
@@ -332,4 +409,23 @@ const sortedItems = computed(() => {
 const filteredItems = computed(() => {
     return arrayHandlers.filterArray(sortedItems.value, searchBy);
 });
+
+const fetchCoords = async (search) => {
+    try {
+        const response = await fetch(`https://api.openweathermap.org/geo/1.0/direct?q=${ search }&appid=595bcd47150b44c6f35370cf46d45220`, {
+            headers: {
+                'Accept': 'application/json',
+            },
+            timeout: 10_000,
+        });
+        const data = await response.json();
+        const details = data[0];
+        state.city.latitude = details.lat;
+        state.city.longitude = details.lon;
+        state.city.country = details.country;
+        state.city.state = details.state;
+    } catch (error) {
+        alert('Error: ' + error.message);
+    }
+};
 </script>

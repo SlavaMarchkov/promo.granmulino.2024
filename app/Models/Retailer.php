@@ -5,11 +5,15 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Enums\Retailer\TypeEnum;
+use App\Traits\Models\HasPreviousNext;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Retailer extends BaseModel
+class Retailer extends Model
 {
+    use HasPreviousNext;
+
     protected $fillable = [
         'name',
         'type',

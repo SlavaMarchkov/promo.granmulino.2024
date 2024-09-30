@@ -15,7 +15,7 @@ final readonly class CreateUserHandler
 {
     public function __construct(
         private UserRepositoryInterface $userRepository,
-        private Role $role,
+        private Role                    $role,
     )
     {
     }

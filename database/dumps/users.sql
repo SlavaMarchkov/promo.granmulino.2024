@@ -1,25 +1,8 @@
-INSERT INTO users (id, first_name, last_name, middle_name, email, password, is_active, logged_in_at, remember_token,
-                   created_at, updated_at)
-VALUES (1, 'Ольга', 'Данилова', 'Анатольевна', 'o_danilova@altan.ru',
-        '$2y$12$AiHbQ8.Js/SRPVlbNQM.ZuHk9TVRZHfzMD61Kp1XaNTGWX9//VNnW', 1, null, null, '2024-08-04 16:07:39',
-        '2024-08-04 16:30:03');
-INSERT INTO users (id, first_name, last_name, middle_name, email, password, is_active, logged_in_at, remember_token,
-                   created_at, updated_at)
-VALUES (2, 'Галина', 'Сотникова', 'Александровна', '110@altan.ru',
-        '$2y$12$Z83rNSqS.vv5fgdzgIUxSuhBoF.8zp/nNnewfKSmRW2PRhzKDbxsW', 1, null, null, '2024-08-04 16:08:44',
-        '2024-08-04 16:08:44');
-INSERT INTO users (id, first_name, last_name, middle_name, email, password, is_active, logged_in_at, remember_token,
-                   created_at, updated_at)
-VALUES (3, 'Ольга', 'Карюкина', 'Михайловна', 'o_karjukina@altan.ru',
-        '$2y$12$sh/F1flf6f8QYA8NrES70eUayCg5PKlh8tM5TzTu.oQeWxrMJgolm', 1, null, null, '2024-08-04 16:09:45',
-        '2024-08-04 16:09:45');
-INSERT INTO users (id, first_name, last_name, middle_name, email, password, is_active, logged_in_at, remember_token,
-                   created_at, updated_at)
-VALUES (4, 'Наталья', 'Шинкоренко', 'Георгиевна', '24@altan.ru',
-        '$2y$12$hMdBt8wPRYVaX7/oWbsli.w4TEQa.60xrPsYSrkS0Nolb/sr.KEr.', 1, null, null, '2024-08-04 16:10:51',
-        '2024-08-04 16:10:51');
-INSERT INTO users (id, first_name, last_name, middle_name, email, password, is_active, logged_in_at, remember_token,
-                   created_at, updated_at)
-VALUES (5, 'Юлия', 'Банчикова', 'Андреевна', '209@altan.ru',
-        '$2y$12$ggo37GJRiD46r/fzNURpC.4TYVu9MjTLDBLPkef/5329rsTlJTrNy', 1, null, null, '2024-08-04 16:11:52',
-        '2024-08-04 16:30:28');
+INSERT INTO users (id, last_name, first_name, middle_name, display_name, email, password, is_active, is_admin, role_id, logged_in_at, remember_token, created_at, updated_at) VALUES (1, 'Сотникова', 'Галина', 'Александровна', null, '110@altan.ru', '$2y$12$XXmZCZcHz9.lBSobQG.bLeNcSorc83.ueBBh7gnMXjj7KUCjIy7xe', 1, 0, 4, null, null, '2024-09-28 00:57:34', '2024-09-28 00:57:34');
+INSERT INTO users (id, last_name, first_name, middle_name, display_name, email, password, is_active, is_admin, role_id, logged_in_at, remember_token, created_at, updated_at) VALUES (2, 'Сотникова', 'Галина', 'Александровна', 'Сотникова Галина (админ)', '110@altan.ru', '$2y$12$5B.ERS7SndJla0gnlXPsl.IrC.3MuKmLzXF05jqMkjrOpOwPPZsUG', 1, 1, 3, null, null, '2024-09-28 00:57:34', '2024-09-28 00:57:34');
+INSERT INTO users (id, last_name, first_name, middle_name, display_name, email, password, is_active, is_admin, role_id, logged_in_at, remember_token, created_at, updated_at) VALUES (3, 'Марчков', 'Вячеслав', 'Александрович', 'Марчков Вячеслав (супер-админ)', 'slavamarchkov@gmail.com', '$2y$12$V9quHWO8jqtXNAxmnezTZeb4lGO8EeURoAS03ps17zgUhRoJBEnu6', 1, 1, 1, null, null, '2024-09-28 00:57:34', '2024-09-30 11:22:19');
+INSERT INTO users (id, last_name, first_name, middle_name, display_name, email, password, is_active, is_admin, role_id, logged_in_at, remember_token, created_at, updated_at) VALUES (4, 'Карюкина', 'Ольга', 'Михайловна', 'Карюкина О.М. (админ)', '103@altan.ru', '$2y$12$JjrTFsyUWvxyoT.VW/J6auDWRGgxLRU5Xt8ISUTVX9kGDbLir72Um', 1, 1, 2, null, null, '2024-09-28 00:57:34', '2024-09-28 00:57:34');
+INSERT INTO users (id, last_name, first_name, middle_name, display_name, email, password, is_active, is_admin, role_id, logged_in_at, remember_token, created_at, updated_at) VALUES (5, 'Данилова', 'Ольга', 'Анатольевна', null, 'o_danilova@altan.ru', '$2y$12$Bl9FpxpnMXgXnnMA2Hw3veg8k63HlmpW0Q39qs7wIRCoYlcoxkm72', 1, 0, 4, null, null, '2024-09-30 11:23:51', '2024-09-30 11:23:51');
+INSERT INTO users (id, last_name, first_name, middle_name, display_name, email, password, is_active, is_admin, role_id, logged_in_at, remember_token, created_at, updated_at) VALUES (6, 'Карюкина', 'Ольга', 'Михайловна', null, '103@altan.ru', '$2y$12$0kRDDwb8tI3rS8c/gYn2yOodiXRzhiBFAureoLhzUAUMZPMdGYcbu', 1, 0, 4, null, null, '2024-09-30 11:26:11', '2024-09-30 11:26:11');
+INSERT INTO users (id, last_name, first_name, middle_name, display_name, email, password, is_active, is_admin, role_id, logged_in_at, remember_token, created_at, updated_at) VALUES (7, 'Шинкоренко', 'Наталья', 'Георгиевна', null, '24@altan.ru', '$2y$12$DRXJfaPQbIBgLOCxzayD6.dbIAQdlLkGsuS3gqx6bxWkThRqLEvWq', 1, 0, 4, null, null, '2024-09-30 11:26:54', '2024-09-30 11:26:54');
+INSERT INTO users (id, last_name, first_name, middle_name, display_name, email, password, is_active, is_admin, role_id, logged_in_at, remember_token, created_at, updated_at) VALUES (8, 'Банчикова', 'Юлия', 'Андреевна', null, '209@altan.ru', '$2y$12$kJ6HG0tJVaZzPtlljYa37ewVzdioNb/gbA8cakgxYE9B0/72PWDpS', 1, 0, 4, null, null, '2024-09-30 11:27:32', '2024-09-30 11:27:32');

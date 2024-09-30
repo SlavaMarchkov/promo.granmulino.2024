@@ -13,7 +13,6 @@ use App\Models\Role;
 use App\Models\User;
 use App\Services\Users\UserService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 final class UserController extends ApiController
@@ -25,11 +24,11 @@ final class UserController extends ApiController
     {
     }
 
-    public function index(Request $request)
+    public function index()
     : JsonResponse
     {
         $users = $this->userService->getUsers([
-            'is_active' => $request->boolean('is_active'),
+            'is_active' => request()->boolean('is_active'),
             'is_admin'  => false,
             'role_id'   => $this->role->getRoleId(RoleEnum::MANAGER->getName()),
         ]);
@@ -44,7 +43,8 @@ final class UserController extends ApiController
     public function store(StoreUpdateRequest $request)
     : JsonResponse
     {
-        $user = $this->userService->storeUser($request->validated());
+        $data = $request->validated();
+        $user = $this->userService->storeUser($data);
 
         return $this->successResponse(
             new UserResource($user),

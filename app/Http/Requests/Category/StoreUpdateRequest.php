@@ -12,7 +12,7 @@ final class StoreUpdateRequest extends FormRequest
     public function authorize()
     : bool
     {
-        return auth('admin')->check();
+        return auth()->user()->isAdmin();
     }
 
     public function rules()

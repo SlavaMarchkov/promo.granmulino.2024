@@ -51,8 +51,6 @@ final class AuthController extends ApiController
 
             $admin->tokens()->delete();
 
-            // $request->session()->regenerate();
-
             $token = $admin
                 ->createToken("Token for $role: $admin->display_name", ['*'], now()->addHours(24))
                 ->plainTextToken;
@@ -101,11 +99,6 @@ final class AuthController extends ApiController
         } catch (Exception $exception) {
             // TODO: log exception
         }
-
-
-//        TODO: Auth::guard('web')->logout();
-//        $request->session()->invalidate();
-//        $request->session()->regenerateToken();
 
         return $this->successResponse(
             '',

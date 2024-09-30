@@ -5,7 +5,7 @@
                 class="btn btn-primary"
                 type="button"
                 @click="createCategoryInit"
-                :disabled="role !== ROLES['SUPER_ADMIN']"
+                :disabled="!isSuperAdmin"
             >
                 Новая группа товаров
             </button>
@@ -63,7 +63,11 @@
                                     {{ item.id }}
                                 </th>
                                 <td class="text-start">
-                                    {{ item.name }}
+                                    <RouterLink
+                                        :to="{ name: 'Category.View', params: { id: item.id } }"
+                                    >
+                                        {{ item.name }}
+                                    </RouterLink>
                                 </td>
                                 <td>
                                     {{ item.productsCount }}
@@ -78,7 +82,7 @@
                                 >View
                                 </TdButton>
                                 <template
-                                    v-if="role === ROLES['SUPER_ADMIN']"
+                                    v-if="isSuperAdmin"
                                 >
                                     <TdButton
                                         :id="item.id"
@@ -181,6 +185,7 @@
                         <th class="text-start">Формат</th>
                         <th>Вес, г</th>
                         <th v-if="role === ROLES['PRICE_ADMIN']">Цена, руб.</th>
+                        <th>В продаже?</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -189,6 +194,9 @@
                         <td class="text-start">{{ product.name }}</td>
                         <td>{{ formatNumber(product.weight) }}</td>
                         <td v-if="role === ROLES['PRICE_ADMIN']">{{ product.price }}</td>
+                        <td>
+                            <TheBadge :is-active="product.isActive" />
+                        </td>
                     </tr>
                     </tbody>
                 </table>
@@ -233,9 +241,10 @@ const arrayHandlers = useArrayHandlers();
 const { get, post, update, destroy } = useHttpService();
 
 const role = authStore.getUser.role;
+const isSuperAdmin = computed(() => role === ROLES.SUPER_ADMIN);
 
 const thItems = computed(() => {
-    return role === ROLES['SUPER_ADMIN']
+    return isSuperAdmin
         ? CATEGORY_TH_FIELDS.concat(EDIT_TH_FIELD, DELETE_TH_FIELD)
         : CATEGORY_TH_FIELDS;
 });

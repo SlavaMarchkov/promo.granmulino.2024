@@ -9,22 +9,24 @@ use App\Http\Requests\Product\StoreUpdateRequest;
 use App\Http\Resources\V1\ProductCollection;
 use App\Http\Resources\V1\ProductResource;
 use App\Models\Product;
+use App\Services\Products\ProductService;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 final class ProductController extends ApiController
 {
-    protected Product $product;
-
-    public function __construct(Product $product)
+    public function __construct(
+        private readonly ProductService $productService,
+    )
     {
-        $this->product = $product;
     }
 
     public function index()
     : JsonResponse
     {
-        $products = Product::all();
+        $products = $this->productService->getProducts([
+            'is_active' => request()->boolean('is_active'),
+        ]);
 
         return $this->successResponse(
             new ProductCollection($products),
@@ -36,8 +38,11 @@ final class ProductController extends ApiController
     public function store(StoreUpdateRequest $request)
     : JsonResponse
     {
+        $data = $request->validated();
+        $product = $this->productService->storeProduct($data);
+
         return $this->successResponse(
-            new ProductResource(Product::create($request->validated())),
+            new ProductResource($product),
             'success',
             __('crud.products.created'),
             Response::HTTP_CREATED,

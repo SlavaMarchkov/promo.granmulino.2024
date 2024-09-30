@@ -1,7 +1,10 @@
 export { default as Layout } from './Layout.vue';
 export { default as Index } from './Index.vue';
+export { default as Administrator } from './Administrator/Index.vue';
 export { default as Category } from './Category/Index.vue';
+export { default as CategoryView } from './Category/View.vue';
 export { default as City } from './City/Index.vue';
+export { default as CityView } from './City/View.vue';
 export { default as Region } from './Region/Index.vue';
 export { default as RegionView } from './Region/View.vue';
 export { default as Product } from './Product/Index.vue';

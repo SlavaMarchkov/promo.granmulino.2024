@@ -9,22 +9,22 @@ use App\Http\Requests\City\StoreUpdateRequest;
 use App\Http\Resources\V1\CityCollection;
 use App\Http\Resources\V1\CityResource;
 use App\Models\City;
+use App\Services\Cities\CityService;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 final class CityController extends ApiController
 {
-    protected City $city;
-
-    public function __construct(City $city)
+    public function __construct(
+        private readonly CityService $cityService,
+    )
     {
-        $this->city = $city;
     }
 
     public function index()
     : JsonResponse
     {
-        $cities = $this->city->getCitiesWithRegion();
+        $cities = $this->cityService->getCities();
 
         return $this->successResponse(
             new CityCollection($cities),
@@ -36,8 +36,11 @@ final class CityController extends ApiController
     public function store(StoreUpdateRequest $request)
     : JsonResponse
     {
+        $data = $request->validated();
+        $city = $this->cityService->storeCity($data);
+
         return $this->successResponse(
-            new CityResource(City::create($request->validated())),
+            new CityResource($city),
             'success',
             __('crud.cities.created'),
             Response::HTTP_CREATED,
@@ -47,17 +50,20 @@ final class CityController extends ApiController
     public function show(City $city)
     : JsonResponse
     {
+        $city = $this->cityService->findCity($city);
+
         return $this->successResponse(
             new CityResource($city),
             'success',
-            __('crud.regions.one'),
+            __('crud.cities.one'),
         );
     }
 
     public function update(StoreUpdateRequest $request, City $city)
     : JsonResponse
     {
-        $city->update($request->validated());
+        $data = $request->validated();
+        $city = $this->cityService->updateCity($city, $data);
 
         return $this->successResponse(
             new CityResource($city),
@@ -69,22 +75,18 @@ final class CityController extends ApiController
     public function destroy(City $city)
     : JsonResponse
     {
-        $canBeDeleted = false; // TODO: проверить на привязанные города у Customer и Retailer
+        $result = $this->cityService->deleteCity($city);
 
-        if ($canBeDeleted) {
-            $city->delete();
-
-            return $this->successResponse(
+        return ($result === null)
+            ? $this->successResponse(
                 new CityResource($city),
                 'success',
                 __('crud.cities.deleted'),
-            );
-        } else {
-            return $this->errorResponse(
+            )
+            : $this->errorResponse(
                 Response::HTTP_OK,
                 'error',
                 __('crud.cities.not_deleted'),
             );
-        }
     }
 }

@@ -21,6 +21,11 @@ class CityResource extends JsonResource
             'regionName' => $this->region->name,
             'longitude'  => $this->longitude,
             'latitude'   => $this->latitude,
+            'country'    => $this->country,
+            'state'      => $this->state,
+
+            'next' => $this->findNext($this->id),
+            'prev' => $this->findPrevious($this->id),
         ];
     }
 }

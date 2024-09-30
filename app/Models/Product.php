@@ -4,10 +4,14 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Traits\Models\HasPreviousNext;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Product extends BaseModel
+class Product extends Model
 {
+    use HasPreviousNext;
+
     protected $fillable = [
         'name',
         'weight',

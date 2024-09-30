@@ -12,7 +12,7 @@ final class StoreUpdateRequest extends FormRequest
     public function authorize()
     : bool
     {
-        return auth('admin')->check();
+        return auth()->user()->isAdmin();
     }
 
     public function rules()
@@ -30,6 +30,10 @@ final class StoreUpdateRequest extends FormRequest
                 'integer',
                 'exists:regions,id',
             ],
+            'latitude'  => ['nullable', 'sometimes', 'numeric'],
+            'longitude' => ['nullable', 'sometimes', 'numeric'],
+            'country'   => ['nullable', 'sometimes', 'string', 'max:16'],
+            'state'     => ['nullable', 'sometimes', 'string', 'max:64'],
         ];
     }
 

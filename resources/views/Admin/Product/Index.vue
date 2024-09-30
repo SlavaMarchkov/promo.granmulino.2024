@@ -5,7 +5,7 @@
                 class="btn btn-primary"
                 type="button"
                 @click="createProductInit"
-                :disabled="role !== ROLES['SUPER_ADMIN']"
+                :disabled="!isSuperAdmin"
             >
                 Новый продукт
             </button>
@@ -44,7 +44,7 @@
                     >Макс. вес
                     </InputGroup>
                 </div>
-                <div v-if="role === ROLES['PRICE_ADMIN']" class="col-md-4 mb-2">
+                <div v-if="isPriceAdmin" class="col-md-4 mb-2">
                     <InputGroup
                         v-model="searchBy.price"
                         placeholder="Поиск по цене"
@@ -110,7 +110,7 @@
                                 >View
                                 </TdButton>
                                 <template
-                                    v-if="role === ROLES['PRICE_ADMIN']"
+                                    v-if="isPriceAdmin"
                                 >
                                     <td>
                                         {{ item.price }}
@@ -123,7 +123,7 @@
                                     </TdButton>
                                 </template>
                                 <template
-                                    v-if="role === ROLES['SUPER_ADMIN']"
+                                    v-if="isSuperAdmin"
                                 >
                                     <TdButton
                                         :id="item.id"
@@ -184,7 +184,7 @@
                         type="number"
                     />
                 </div>
-                <div v-if="role === ROLES['PRICE_ADMIN']" class="col-6">
+                <div v-if="isPriceAdmin" class="col-6">
                     <TheLabel for="price" required>Отпускная цена, руб.</TheLabel>
                     <TheInput
                         id="price"
@@ -274,7 +274,7 @@
                     <th>Вес, г</th>
                     <td>{{ formatNumber(state.product.weight) }}</td>
                 </tr>
-                <tr v-if="role === ROLES['PRICE_ADMIN']">
+                <tr v-if="isPriceAdmin">
                     <th>Себестоимость, руб.</th>
                     <td>{{ state.product.price }}</td>
                 </tr>
@@ -331,11 +331,13 @@ const arrayHandlers = useArrayHandlers();
 const { get, post, update, destroy } = useHttpService();
 
 const role = authStore.getUser.role;
+const isSuperAdmin = computed(() => role === ROLES.SUPER_ADMIN);
+const isPriceAdmin = computed(() => role === ROLES.PRICE_ADMIN);
 
 const thItems = computed(() => {
-    return role === ROLES['SUPER_ADMIN']
+    return isSuperAdmin
         ? PRODUCT_TH_FIELDS.concat(EDIT_TH_FIELD, DELETE_TH_FIELD)
-        : role === ROLES['PRICE_ADMIN']
+        : isPriceAdmin
             ? PRODUCT_TH_FIELDS.concat(PRICE_TH_FIELD, EDIT_TH_FIELD)
             : PRODUCT_TH_FIELDS;
 });
@@ -387,7 +389,11 @@ const getProducts = async () => {
 const getOneProduct = (id) => state.products.find(product => product.id === id);
 
 const getCategories = async () => {
-    const { data } = await get(ADMIN_URLS.CATEGORY);
+    const { data } = await get(ADMIN_URLS.CATEGORY, {
+        params: {
+            'is_active': true,
+        },
+    });
     state.categories = data.categories;
 };
 

@@ -9,22 +9,25 @@ use App\Http\Requests\Category\StoreUpdateRequest;
 use App\Http\Resources\V1\CategoryCollection;
 use App\Http\Resources\V1\CategoryResource;
 use App\Models\Category;
+use App\Services\Categories\CategoryService;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 final class CategoryController extends ApiController
 {
-    protected Category $category;
-
-    public function __construct(Category $category)
+    public function __construct(
+        private readonly CategoryService $categoryService,
+    )
     {
-        $this->category = $category;
     }
 
     public function index()
     : JsonResponse
     {
-        $categories = $this->category->getCategoriesWithActiveProducts();
+        $categories = $this->categoryService->getCategories([
+            'category_is_active' => request()->boolean('is_active'),
+            'product_is_active' => true,
+        ]);
 
         return $this->successResponse(
             new CategoryCollection($categories),
@@ -36,8 +39,11 @@ final class CategoryController extends ApiController
     public function store(StoreUpdateRequest $request)
     : JsonResponse
     {
+        $data = $request->validated();
+        $category = $this->categoryService->storeCategory($data);
+
         return $this->successResponse(
-            new CategoryResource(Category::create($request->validated())),
+            new CategoryResource($category),
             'success',
             __('crud.categories.created'),
             Response::HTTP_CREATED,
@@ -47,17 +53,20 @@ final class CategoryController extends ApiController
     public function show(Category $category)
     : JsonResponse
     {
+        $category = $this->categoryService->findCategory($category);
+
         return $this->successResponse(
             new CategoryResource($category),
             'success',
-            __('crud.regions.one'),
+            __('crud.categories.one'),
         );
     }
 
     public function update(StoreUpdateRequest $request, Category $category)
     : JsonResponse
     {
-        $category->update($request->validated());
+        $data = $request->validated();
+        $category = $this->categoryService->updateCategory($category, $data);
 
         return $this->successResponse(
             new CategoryResource($category),
@@ -66,10 +75,11 @@ final class CategoryController extends ApiController
         );
     }
 
+    // TODO: реализовать
     public function destroy(Category $category)
     : JsonResponse
     {
-        $canBeDeleted = false; // TODO: проверить на кол-во городов в регионе и у Customer
+        $canBeDeleted = false;
 
         if ($canBeDeleted) {
             $category->delete();

@@ -2,6 +2,12 @@
 
 namespace App\Providers;
 
+use App\Services\Categories\Repositories\CategoryRepositoryInterface;
+use App\Services\Categories\Repositories\EloquentCategoryRepository;
+use App\Services\Cities\Repositories\CityRepositoryInterface;
+use App\Services\Cities\Repositories\EloquentCityRepository;
+use App\Services\Products\Repositories\EloquentProductRepository;
+use App\Services\Products\Repositories\ProductRepositoryInterface;
 use App\Services\Users\Repositories\EloquentUserRepository;
 use App\Services\Users\Repositories\UserRepositoryInterface;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -14,7 +20,22 @@ class AppServiceProvider extends ServiceProvider
     public function register()
     : void
     {
-        $this->app->bind(UserRepositoryInterface::class, EloquentUserRepository::class);
+        $this->app->bind(
+            UserRepositoryInterface::class,
+            EloquentUserRepository::class
+        );
+        $this->app->bind(
+            CategoryRepositoryInterface::class,
+            EloquentCategoryRepository::class
+        );
+        $this->app->bind(
+            CityRepositoryInterface::class,
+            EloquentCityRepository::class
+        );
+        $this->app->bind(
+            ProductRepositoryInterface::class,
+            EloquentProductRepository::class
+        );
     }
 
     public function boot()

@@ -1,6 +1,9 @@
 import {
+    Administrator,
     Category,
+    CategoryView,
     City,
+    CityView,
     Customer,
     CustomerView,
     Index,
@@ -26,6 +29,14 @@ export default {
             component: Index,
             meta: {
                 title: 'Главная страница',
+            },
+        },
+        {
+            path: 'administrators',
+            name: 'Administrator.Index',
+            component: Administrator,
+            meta: {
+                title: 'Администраторы',
             },
         },
         {
@@ -69,11 +80,27 @@ export default {
             },
         },
         {
+            path: 'cities/:id',
+            name: 'City.View',
+            component: CityView,
+            meta: {
+                title: 'Просмотр города',
+            },
+        },
+        {
             path: 'categories',
             name: 'Category.Index',
             component: Category,
             meta: {
                 title: 'Группы товаров',
+            },
+        },
+        {
+            path: 'categories/:id',
+            name: 'Category.View',
+            component: CategoryView,
+            meta: {
+                title: 'Просмотр группы товаров',
             },
         },
         {

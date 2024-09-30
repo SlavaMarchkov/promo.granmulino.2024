@@ -303,7 +303,7 @@ const role = authStore.getUser.role;
 const isSuperAdmin = computed(() => role === ROLES.SUPER_ADMIN);
 
 const thItems = computed(() => {
-    return isSuperAdmin.value
+    return isSuperAdmin
         ? USER_TH_FIELDS.concat(EDIT_TH_FIELD, DELETE_TH_FIELD)
         : USER_TH_FIELDS;
 });

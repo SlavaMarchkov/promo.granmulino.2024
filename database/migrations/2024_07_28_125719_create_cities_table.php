@@ -18,6 +18,8 @@ return new class extends Migration {
             $table->foreignIdFor(Region::class)->nullable();
             $table->float('longitude')->nullable();
             $table->float('latitude')->nullable();
+            $table->string('country', 16)->nullable();
+            $table->string('state', 64)->nullable();
 
             $table->unique(['region_id', 'name'], 'city_in_region_unique');
 

@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
+use App\Traits\Models\HasPreviousNext;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Category extends Model
 {
+    use HasPreviousNext;
+
     protected $fillable = [
         'name',
         'is_active',
@@ -24,18 +25,5 @@ class Category extends Model
     : HasMany
     {
         return $this->hasMany(Product::class);
-    }
-
-    public function getCategoriesWithActiveProducts()
-    : Collection
-    {
-        return $this->query()
-            ->withCount([
-                'products' => function (Builder $query) {
-                    $query->where('is_active', true);
-                },
-            ])
-            ->with('products')
-            ->get();
     }
 }

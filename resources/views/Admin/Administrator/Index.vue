@@ -4,9 +4,9 @@
             <button
                 class="btn btn-primary"
                 type="button"
-                @click="createRegionInit"
+                @click="createUserInit"
             >
-                Новый регион
+                Новый пользователь
             </button>
         </div>
     </div>
@@ -14,12 +14,24 @@
         <div class="col-12">
             <Filter @reset-filter="clearSearch">
                 <div class="col-md-4 mb-2">
-                    <InputGroup v-model="searchBy.name" placeholder="Поиск по названию региона">Название
-                    </InputGroup>
+                    <InputGroup v-model="searchBy.lastName" placeholder="Поиск по фамилии">Фамилия</InputGroup>
                 </div>
                 <div class="col-md-4 mb-2">
-                    <InputGroup v-model="searchBy.code" placeholder="Поиск по коду региона">Код
-                    </InputGroup>
+                    <InputGroup v-model="searchBy.firstName" placeholder="Поиск по имени">Имя</InputGroup>
+                </div>
+                <div class="col-md-4 mb-2">
+                    <InputGroup v-model="searchBy.middleName" placeholder="Поиск по отчеству">Отчество</InputGroup>
+                </div>
+                <div class="col-md-4 mb-2">
+                    <InputGroup v-model="searchBy.email" placeholder="Поиск по email">Email</InputGroup>
+                </div>
+                <div class="col-md-4 mb-2">
+                    <Checkbox
+                        id="is_active"
+                        v-model="searchBy.isActive"
+                    >
+                        Работает?
+                    </Checkbox>
                 </div>
             </Filter>
         </div>
@@ -57,38 +69,48 @@
                                 </th>
                                 <td class="text-start">
                                     <RouterLink :to="{
-                                        name: 'Region.View',
+                                        name: 'User.View',
                                         params: {
                                             'id': item.id
                                         }
-                                    }">{{ item.name }}
+                                    }">
+                                        {{ item.lastName }}
                                     </RouterLink>
                                 </td>
                                 <td class="text-start">
-                                    {{ item.code }}
+                                    {{ item.firstName }}
+                                </td>
+                                <td class="text-start">
+                                    {{ item.middleName }}
+                                </td>
+                                <td class="text-start">
+                                    {{ item.email }}
+                                </td>
+                                <td class="text-start">
+                                    {{ item.loggedInAt }}
                                 </td>
                                 <td>
-                                    {{ item.citiesCount }}
+                                    <TheBadge :is-active="item.isActive"/>
                                 </td>
                                 <TdButton
                                     :id="item.id"
                                     intent="view"
-                                    @runButtonHandler="viewRegionInit"
+                                    @runButtonHandler="viewUserInit"
                                 >View
-                                </TdButton>
-                                <TdButton
-                                    :id="item.id"
-                                    intent="edit"
-                                    @runButtonHandler="editRegionInit"
-                                >Edit
                                 </TdButton>
                                 <template
                                     v-if="isSuperAdmin"
                                 >
                                     <TdButton
                                         :id="item.id"
+                                        intent="edit"
+                                        @runButtonHandler="editUserInit"
+                                    >Edit
+                                    </TdButton>
+                                    <TdButton
+                                        :id="item.id"
                                         intent="delete"
-                                        @runButtonHandler="deleteRegion"
+                                        @runButtonHandler="deleteUser"
                                     >Delete
                                     </TdButton>
                                 </template>
@@ -111,29 +133,69 @@
         :custom-classes="['']"
     >
         <template #title>
-            <span v-if="state.isEditing">Редактирование региона <b>{{ state.region.name }}</b></span>
-            <span v-else>Добавление региона</span>
+            <span v-if="state.isEditing">Редактирование пользователя <b>{{ state.user.fullName }}</b></span>
+            <span v-else>Добавление пользователя</span>
         </template>
         <template #body>
             <Alert/>
             <div class="row g-3">
                 <div class="col-12">
-                    <TheLabel for="name" required>Наименование региона</TheLabel>
+                    <TheLabel for="last-name" required>Фамилия</TheLabel>
                     <TheInput
-                        id="name"
-                        v-model="state.region.name"
-                        placeholder="Например: Уральский федеральный округ"
+                        id="last-name"
+                        v-model="state.user.lastName"
+                        placeholder="Например: Овчинникова"
                         type="text"
                     />
                 </div>
                 <div class="col-12">
-                    <TheLabel for="code" required>Код региона</TheLabel>
+                    <TheLabel for="first-name" required>Имя</TheLabel>
                     <TheInput
-                        id="code"
-                        v-model="state.region.code"
-                        placeholder="Например: УФО"
+                        id="first-name"
+                        v-model="state.user.firstName"
+                        placeholder="Например: Екатерина"
                         type="text"
                     />
+                </div>
+                <div class="col-12">
+                    <TheLabel for="middle-name">Отчество</TheLabel>
+                    <TheInput
+                        id="middle-name"
+                        v-model="state.user.middleName"
+                        placeholder="Например: Александровна"
+                        type="text"
+                    />
+                </div>
+                <div class="col-12">
+                    <TheLabel for="email" required>Email</TheLabel>
+                    <TheInput
+                        id="email"
+                        v-model="state.user.email"
+                        placeholder="Например: 508@altan.ru"
+                        type="email"
+                    />
+                </div>
+                <div class="col-12">
+                    <TheLabel for="password" :required="!state.isEditing">{{ state.isEditing ? 'Пароль (оставьте пустым, если не изменяете пароль)': 'Пароль' }}</TheLabel>
+                    <TheInput
+                        id="password"
+                        v-model="state.user.password"
+                        type="password"
+                    />
+                </div>
+                <div class="col-12">
+                    <div class="form-check">
+                        <input
+                            id="is-active"
+                            v-model="state.user.isActive"
+                            :checked="state.user.isActive"
+                            class="form-check-input"
+                            type="checkbox"
+                        >
+                        <label class="form-check-label" for="is-active">
+                            Работает?
+                        </label>
+                    </div>
                 </div>
             </div>
         </template>
@@ -146,7 +208,7 @@
                 :loading="spinnerStore.isButtonDisabled"
                 class="w-25"
                 type="button"
-                @click="saveRegion"
+                @click="saveUser"
             >
                 <span v-if="state.isEditing">Сохранить</span>
                 <span v-else>Создать</span>
@@ -157,37 +219,53 @@
     <Modal
         id="viewModalPopUp"
         :close-func="closeViewModal"
-        :custom-classes="['modal-dialog-scrollable']"
+        :custom-classes="['']"
     >
         <template #title>
-            Просмотр региона <b>{{ state.region.name }}</b>
+            Просмотр пользователя <b>{{ state.user.fullName }}</b>
         </template>
         <template #body>
-            <div v-if="state.region.citiesCount > 0">
-                <div class="bd-callout bd-callout-info">
-                    <p>Всего городов в регионе: <strong>{{ state.region.citiesCount }}</strong></p>
-                </div>
-                <table class="table table-bordered text-center align-middle text-wrap"
-                       style="width: 100%;">
-                    <thead class="table-light">
-                    <tr>
-                        <th>ID</th>
-                        <th class="text-start">Название города</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr v-for="city in state.region.cities" :key="city.id">
-                        <td>{{ city.id }}</td>
-                        <td class="text-start">{{ city.name }}</td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
-            <div v-else class="bd-callout bd-callout-warning">
-                <h5>Регион пустой</h5>
-                <hr>
-                <p>Наполните регион городами во вкладке <b>Справочники | Города</b>.</p>
-            </div>
+            <table class="table table-bordered mt-3 align-middle text-wrap"
+                   style="width: 100%;">
+                <tbody>
+                <tr>
+                    <th style="width: 35%;">ID</th>
+                    <td>{{ state.user.id }}</td>
+                </tr>
+                <tr>
+                    <th>Фамилия</th>
+                    <td>{{ state.user.lastName }}</td>
+                </tr>
+                <tr>
+                    <th>Имя</th>
+                    <td>{{ state.user.firstName }}</td>
+                </tr>
+                <tr>
+                    <th>Отчество</th>
+                    <td>{{ state.user.middleName }}</td>
+                </tr>
+                <tr>
+                    <th>Системное имя</th>
+                    <td>{{ state.user.fullName }}</td>
+                </tr>
+                <tr>
+                    <th>Email</th>
+                    <td>{{ state.user.email }}</td>
+                </tr>
+                <tr>
+                    <th>Работает?</th>
+                    <td><TheBadge :is-active="state.user.isActive" /></td>
+                </tr>
+                <tr>
+                    <th>Админ?</th>
+                    <td><TheBadge :is-active="state.user.isAdmin" /></td>
+                </tr>
+                <tr>
+                    <th>Последний вход</th>
+                    <td>{{ state.user.loggedInAt }}</td>
+                </tr>
+                </tbody>
+            </table>
         </template>
         <template #footer>
             <span></span>
@@ -211,7 +289,9 @@ import Filter from '@/components/core/Filter.vue';
 import Modal from '@/components/Modal.vue';
 import ThSort from '@/components/table/ThSort.vue';
 import TdButton from '@/components/table/TdButton.vue';
-import { ADMIN_URLS, DELETE_TH_FIELD, EDIT_TH_FIELD, REGION_TH_FIELDS, ROLES } from '@/helpers/constants.js';
+import Checkbox from '@/components/form/Checkbox.vue';
+import TheBadge from '@/components/core/TheBadge.vue';
+import { ADMIN_URLS, DELETE_TH_FIELD, EDIT_TH_FIELD, ROLES, USER_TH_FIELDS } from '@/helpers/constants.js';
 
 const alertStore = useAlertStore();
 const spinnerStore = useSpinnerStore();
@@ -223,25 +303,33 @@ const role = authStore.getUser.role;
 const isSuperAdmin = computed(() => role === ROLES.SUPER_ADMIN);
 
 const thItems = computed(() => {
-    return isSuperAdmin
-        ? REGION_TH_FIELDS.concat(EDIT_TH_FIELD, DELETE_TH_FIELD)
-        : REGION_TH_FIELDS.concat(EDIT_TH_FIELD);
+    return isSuperAdmin.value
+        ? USER_TH_FIELDS.concat(EDIT_TH_FIELD, DELETE_TH_FIELD)
+        : USER_TH_FIELDS;
 });
 
 const initialFormData = () => ({
-    code: '',
-    name: '',
+    firstName: '',
+    lastName: '',
+    middleName: '',
+    displayName: '',
+    email: '',
+    password: '',
+    isActive: true,
 });
 
 const state = reactive({
-    regions: [],
-    region: initialFormData(),
+    users: [],
+    user: initialFormData(),
     isEditing: false,
 });
 
 const searchBy = reactive({
-    code: '',
-    name: '',
+    firstName: '',
+    lastName: '',
+    middleName: '',
+    email: '',
+    isActive: false,
 });
 
 let modalPopUp = null;
@@ -249,39 +337,39 @@ let viewModalPopUp = null;
 
 function resetState() {
     state.isEditing = false;
-    state.region = initialFormData();
+    state.user = initialFormData();
 }
 
 onMounted(async () => {
-    await getRegions();
+    await getUsers();
     modalPopUp = new bootstrap.Modal(document.getElementById('modalPopUp'));
     modalPopUp._element.addEventListener('hide.bs.modal', resetState);
 });
 
-const getRegions = async () => {
-    const { data } = await get(ADMIN_URLS.REGION);
-    state.regions = data.regions;
+const getUsers = async () => {
+    const { data } = await get(ADMIN_URLS.USER);
+    state.users = data.users;
 };
 
-const getOneRegion = (id) => state.regions.find(region => region.id === id);
+const getOneUser = (id) => state.users.find(user => user.id === id);
 
-const createRegionInit = () => {
+const createUserInit = () => {
     alertStore.clear();
     state.isEditing = false;
-    state.region = initialFormData();
+    state.user = initialFormData();
     modalPopUp.show();
 };
 
-const editRegionInit = (id) => {
+const editUserInit = (id) => {
     alertStore.clear();
     state.isEditing = true;
-    state.region = getOneRegion(id);
+    state.user = getOneUser(id);
     modalPopUp.show();
 };
 
-const viewRegionInit = (id) => {
+const viewUserInit = (id) => {
     viewModalPopUp = new bootstrap.Modal(document.getElementById('viewModalPopUp'));
-    state.region = getOneRegion(id);
+    state.user = getOneUser(id);
     viewModalPopUp.show();
     viewModalPopUp._element.addEventListener('hide.bs.modal', resetState);
 };
@@ -301,38 +389,38 @@ const clearSearch = () => {
     arrayHandlers.resetSortKeys();
 };
 
-const saveRegion = async () => {
+const saveUser = async () => {
     if ( state.isEditing ) {
-        const response = await update(`${ ADMIN_URLS.REGION }/${ state.region.id }`, state.region);
+        const response = await update(`${ ADMIN_URLS.USER }/${ state.user.id }`, state.user);
         if ( response && response.status === 'success' ) {
             alertStore.clear();
             modalPopUp.hide();
-            await getRegions();
+            await getUsers();
         }
     } else {
-        const response = await post(ADMIN_URLS.REGION, state.region);
+        const response = await post(ADMIN_URLS.USER, state.user);
         if ( response && response.status === 'success' ) {
             alertStore.clear();
-            state.region = initialFormData();
+            state.user = initialFormData();
             modalPopUp.hide();
             arrayHandlers.resetSearchKeys(searchBy);
             arrayHandlers.resetSortKeys('id', false);
-            await getRegions();
+            await getUsers();
         }
     }
 };
 
-const deleteRegion = async (id) => {
-    if ( confirm('Точно удалить регион? Уверены?') ) {
-        const response = await destroy(`${ ADMIN_URLS.REGION }/${ id }`);
+const deleteUser = async (id) => {
+    if ( confirm('Точно удалить пользователя? Уверены?') ) {
+        const response = await destroy(`${ ADMIN_URLS.USER }/${ id }`);
         if ( response && response.status === 'success' ) {
-            await getRegions();
+            await getUsers();
         }
     }
 };
 
 const sortedItems = computed(() => {
-    return arrayHandlers.sortArray(state.regions);
+    return arrayHandlers.sortArray(state.users);
 });
 
 const filteredItems = computed(() => {

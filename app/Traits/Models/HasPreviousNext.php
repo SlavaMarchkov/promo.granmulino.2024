@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Models;
+declare(strict_types=1);
 
-use Illuminate\Database\Eloquent\Model;
+// 30.09.2024 at 15:51:39
+namespace App\Traits\Models;
 
-class BaseModel extends Model
+trait HasPreviousNext
 {
     public function findPrevious($id)
     : ?int
