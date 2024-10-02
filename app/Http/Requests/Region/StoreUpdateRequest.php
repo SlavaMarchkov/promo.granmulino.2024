@@ -11,7 +11,7 @@ final class StoreUpdateRequest extends FormRequest
     public function authorize()
     : bool
     {
-        return auth('admin')->check();
+        return auth()->user()->isAdmin();
     }
 
     public function rules()
@@ -30,15 +30,5 @@ final class StoreUpdateRequest extends FormRequest
             'code' => 'Код',
             'name' => 'Название',
         ];
-    }
-
-    protected function prepareForValidation()
-    : void
-    {
-        // TODO - services
-        $code = $this->input('code', true);
-        $this->merge([
-            'code' => process_code($code),
-        ]);
     }
 }

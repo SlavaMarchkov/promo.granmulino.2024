@@ -39,14 +39,6 @@ final class EloquentUserRepository implements UserRepositoryInterface
         return $user;
     }
 
-    private function applyFilters(Builder $qb, array $params)
-    : void
-    {
-        $qb->when($params['is_active'] == true, fn($qb) => $qb->where('is_active', true))
-            ->when($params['is_admin'] == true, fn($qb) => $qb->where('is_admin', true))
-            ->where('role_id', $params['role_id']);
-    }
-
     public function delete(User $user)
     : ?int
     {
@@ -57,5 +49,13 @@ final class EloquentUserRepository implements UserRepositoryInterface
         }
 
         return $customers_count;
+    }
+
+    private function applyFilters(Builder $qb, array $params)
+    : void
+    {
+        $qb->when($params['is_active'] == true, fn($qb) => $qb->where('is_active', true))
+            ->when($params['is_admin'] == true, fn($qb) => $qb->where('is_admin', true))
+            ->where('role_id', $params['role_id']);
     }
 }

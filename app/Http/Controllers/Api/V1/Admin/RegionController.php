@@ -9,22 +9,23 @@ use App\Http\Requests\Region\StoreUpdateRequest;
 use App\Http\Resources\V1\RegionCollection;
 use App\Http\Resources\V1\RegionResource;
 use App\Models\Region;
+use App\Services\Regions\RegionService;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 final class RegionController extends ApiController
 {
-    protected Region $region;
-
-    public function __construct(Region $region)
-    {
-        $this->region = $region;
-    }
+    public function __construct(
+        private readonly RegionService $regionService,
+    )
+    {}
 
     public function index()
     : JsonResponse
     {
-        $regions = $this->region->getRegionsWithCities();
+        $regions = $this->regionService->getRegions([
+            'with_cities' => true,
+        ]);
 
         return $this->successResponse(
             new RegionCollection($regions),
@@ -36,8 +37,11 @@ final class RegionController extends ApiController
     public function store(StoreUpdateRequest $request)
     : JsonResponse
     {
+        $data = $request->validated();
+        $region = $this->regionService->storeRegion($data);
+
         return $this->successResponse(
-            new RegionResource(Region::create($request->validated())),
+            new RegionResource($region),
             'success',
             __('crud.regions.created'),
             Response::HTTP_CREATED,
@@ -47,6 +51,8 @@ final class RegionController extends ApiController
     public function show(Region $region)
     : JsonResponse
     {
+        $region = $this->regionService->findRegion($region);
+
         return $this->successResponse(
             new RegionResource($region),
             'success',
@@ -57,7 +63,8 @@ final class RegionController extends ApiController
     public function update(StoreUpdateRequest $request, Region $region)
     : JsonResponse
     {
-        $region->update($request->validated());
+        $data = $request->validated();
+        $region = $this->regionService->updateRegion($region, $data);
 
         return $this->successResponse(
             new RegionResource($region),
@@ -66,10 +73,13 @@ final class RegionController extends ApiController
         );
     }
 
+    // TODO: проверить на кол-во городов в регионе и у Customer
     public function destroy(Region $region)
     : JsonResponse
     {
-        $canBeDeleted = false; // TODO: проверить на кол-во городов в регионе и у Customer
+        $region = $this->regionService->deleteRegion($region);
+
+        $canBeDeleted = false;
 
         if ($canBeDeleted) {
             $region->delete();

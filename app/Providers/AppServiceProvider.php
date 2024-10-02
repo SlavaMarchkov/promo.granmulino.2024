@@ -10,6 +10,8 @@ use App\Services\Customers\Repositories\CustomerRepositoryInterface;
 use App\Services\Customers\Repositories\EloquentCustomerRepository;
 use App\Services\Products\Repositories\EloquentProductRepository;
 use App\Services\Products\Repositories\ProductRepositoryInterface;
+use App\Services\Regions\Repositories\EloquentRegionRepository;
+use App\Services\Regions\Repositories\RegionRepositoryInterface;
 use App\Services\Users\Repositories\EloquentUserRepository;
 use App\Services\Users\Repositories\UserRepositoryInterface;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -41,6 +43,10 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             CustomerRepositoryInterface::class,
             EloquentCustomerRepository::class,
+        );
+        $this->app->bind(
+            RegionRepositoryInterface::class,
+            EloquentRegionRepository::class,
         );
     }
 

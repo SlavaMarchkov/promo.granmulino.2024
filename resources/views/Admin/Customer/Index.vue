@@ -12,7 +12,7 @@
     </div>
     <div class="row mb-2">
         <div class="col-12">
-            <Filter
+            <TheFilter
                 @reset-filter="clearSearch"
             >
                 <div class="col-md-4 mb-2">
@@ -56,7 +56,7 @@
                         Показать только активных
                     </TheCheckbox>
                 </div>
-            </Filter>
+            </TheFilter>
         </div>
     </div>
     <div class="row mb-4">
@@ -334,7 +334,7 @@ import Modal from '@/components/Modal.vue';
 import TheInput from '@/components/form/TheInput.vue';
 import TheLabel from '@/components/form/TheLabel.vue';
 import Alert from '@/components/Alert.vue';
-import Filter from '@/components/core/Filter.vue';
+import TheFilter from '@/components/core/TheFilter.vue';
 import TdButton from '@/components/table/TdButton.vue';
 import { ADMIN_URLS, CUSTOMER_TH_FIELDS, DELETE_TH_FIELD, EDIT_TH_FIELD, ROLES } from '@/helpers/constants.js';
 

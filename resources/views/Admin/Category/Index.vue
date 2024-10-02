@@ -13,7 +13,9 @@
     </div>
     <div class="row mb-2">
         <div class="col-12">
-            <Filter @reset-filter="clearSearch">
+            <TheFilter
+                @reset-filter="clearSearch"
+            >
                 <div class="col-md-4 mb-2">
                     <InputGroup
                         v-model="searchBy.name"
@@ -28,7 +30,7 @@
                     >В продаже?
                     </TheCheckbox>
                 </div>
-            </Filter>
+            </TheFilter>
         </div>
     </div>
     <div class="row mb-4">
@@ -226,7 +228,7 @@ import TheCheckbox from '@/components/form/TheCheckbox.vue';
 import Button from '@/components/core/Button.vue';
 import Alert from '@/components/Alert.vue';
 import InputGroup from '@/components/form/InputGroup.vue';
-import Filter from '@/components/core/Filter.vue';
+import TheFilter from '@/components/core/TheFilter.vue';
 import TheBadge from '@/components/core/TheBadge.vue';
 import Modal from '@/components/Modal.vue';
 import ThSort from '@/components/table/ThSort.vue';

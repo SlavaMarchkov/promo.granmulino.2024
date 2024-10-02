@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Traits\Models\HasPreviousNext;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -22,14 +21,5 @@ class Region extends Model
     : HasMany
     {
         return $this->hasMany(City::class);
-    }
-
-    public function getRegionsWithCities()
-    : Collection
-    {
-        return $this->query()
-            ->with('cities')
-            ->withCount('cities')
-            ->get();
     }
 }

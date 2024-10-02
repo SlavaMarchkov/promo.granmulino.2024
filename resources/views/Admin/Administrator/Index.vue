@@ -12,7 +12,9 @@
     </div>
     <div class="row mb-2">
         <div class="col-12">
-            <Filter @reset-filter="clearSearch">
+            <TheFilter
+                @reset-filter="clearSearch"
+            >
                 <div class="col-md-4 mb-2">
                     <InputGroup v-model="searchBy.lastName" placeholder="Поиск по фамилии">Фамилия</InputGroup>
                 </div>
@@ -33,7 +35,7 @@
                         Работает?
                     </TheCheckbox>
                 </div>
-            </Filter>
+            </TheFilter>
         </div>
     </div>
     <div class="row mb-4">
@@ -285,7 +287,7 @@ import { useAuthStore } from '@/stores/auth.js';
 import { useHttpService } from '@/use/useHttpService.js';
 import { useArrayHandlers } from '@/use/useArrayHandlers.js';
 import InputGroup from '@/components/form/InputGroup.vue';
-import Filter from '@/components/core/Filter.vue';
+import TheFilter from '@/components/core/TheFilter.vue';
 import Modal from '@/components/Modal.vue';
 import ThSort from '@/components/table/ThSort.vue';
 import TdButton from '@/components/table/TdButton.vue';

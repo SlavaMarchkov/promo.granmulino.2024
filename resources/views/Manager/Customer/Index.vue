@@ -1,7 +1,7 @@
 <template>
     <div class="row my-3">
         <div class="col-12">
-            <Filter
+            <TheFilter
                 @reset-filter="clearSearch"
             >
                 <div class="col-md-4 mb-2">
@@ -28,7 +28,7 @@
                         Показать только активных
                     </TheCheckbox>
                 </div>
-            </Filter>
+            </TheFilter>
         </div>
     </div>
     <div v-if="filteredItems.length > 0" class="row row-cols-xl-4 row-cols-lg-3 row-cols-md-3 row-cols-sm-2 row-cols-1 g-3">
@@ -72,7 +72,7 @@ import { useArrayHandlers } from '@/use/useArrayHandlers.js';
 import { useHttpService } from '@/use/useHttpService.js';
 import InputGroup from '@/components/form/InputGroup.vue';
 import TheCheckbox from '@/components/form/TheCheckbox.vue';
-import Filter from '@/components/core/Filter.vue';
+import TheFilter from '@/components/core/TheFilter.vue';
 import { MANAGER_URLS } from '@/helpers/constants.js';
 
 const alertStore = useAlertStore();

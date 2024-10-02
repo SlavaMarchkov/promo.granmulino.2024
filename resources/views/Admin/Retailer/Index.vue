@@ -12,7 +12,7 @@
     </div>
     <div class="row mb-2">
         <div class="col-12">
-            <Filter
+            <TheFilter
                 @reset-filter="clearSearch"
             >
                 <div class="col-md-4 mb-2">
@@ -57,7 +57,7 @@
                         v-model="searchBy.isDirect"
                     >Только прямые</TheCheckbox>
                 </div>
-            </Filter>
+            </TheFilter>
         </div>
     </div>
     <div class="row mb-4">
@@ -299,7 +299,7 @@ import RadioButton from '@/components/form/RadioButton.vue';
 import ThSort from '@/components/table/ThSort.vue';
 import Button from '@/components/core/Button.vue';
 import TheBadge from '@/components/core/TheBadge.vue';
-import Filter from '@/components/core/Filter.vue';
+import TheFilter from '@/components/core/TheFilter.vue';
 import Modal from '@/components/Modal.vue';
 import Alert from '@/components/Alert.vue';
 import TdButton from '@/components/table/TdButton.vue';
