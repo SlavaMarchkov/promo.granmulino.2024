@@ -46,16 +46,16 @@
                     >Контрагент</InputGroup>
                 </div>
                 <div class="col-md-2 mb-2">
-                    <Checkbox
+                    <TheCheckbox
                         id="is_active"
                         v-model="searchBy.isActive"
-                    >Только активные</Checkbox>
+                    >Только активные</TheCheckbox>
                 </div>
                 <div class="col-md-2 mb-2">
-                    <Checkbox
+                    <TheCheckbox
                         id="is_direct"
                         v-model="searchBy.isDirect"
-                    >Только прямые</Checkbox>
+                    >Только прямые</TheCheckbox>
                 </div>
             </Filter>
         </div>
@@ -291,7 +291,7 @@ import { useSpinnerStore } from '@/stores/spinners.js';
 import { useAuthStore } from '@/stores/auth.js';
 import { useHttpService } from '@/use/useHttpService.js';
 import { useArrayHandlers } from '@/use/useArrayHandlers.js';
-import Checkbox from '@/components/form/Checkbox.vue';
+import TheCheckbox from '@/components/form/TheCheckbox.vue';
 import TheInput from '@/components/form/TheInput.vue';
 import TheLabel from '@/components/form/TheLabel.vue';
 import InputGroup from '@/components/form/InputGroup.vue';

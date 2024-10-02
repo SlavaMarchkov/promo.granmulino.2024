@@ -30,12 +30,12 @@
                     </SelectGroup>
                 </div>
                 <div class="col-md-4 mb-2">
-                    <Checkbox
+                    <TheCheckbox
                         id="is_active"
                         v-model="searchBy.isActive"
                     >
                         Продукт в продаже?
-                    </Checkbox>
+                    </TheCheckbox>
                 </div>
                 <div class="col-md-4 mb-2">
                     <InputGroup
@@ -304,7 +304,7 @@ import { useArrayHandlers } from '@/use/useArrayHandlers.js';
 import { useHttpService } from '@/use/useHttpService.js';
 import TheInput from '@/components/form/TheInput.vue';
 import TheLabel from '@/components/form/TheLabel.vue';
-import Checkbox from '@/components/form/Checkbox.vue';
+import TheCheckbox from '@/components/form/TheCheckbox.vue';
 import SelectGroup from '@/components/form/SelectGroup.vue';
 import Button from '@/components/core/Button.vue';
 import Alert from '@/components/Alert.vue';

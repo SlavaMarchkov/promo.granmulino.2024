@@ -49,12 +49,12 @@
                     </InputGroup>
                 </div>
                 <div class="col-md-4 mb-2">
-                    <Checkbox
+                    <TheCheckbox
                         id="is_active"
                         v-model="searchBy.isActive"
                     >
                         Показать только активных
-                    </Checkbox>
+                    </TheCheckbox>
                 </div>
             </Filter>
         </div>
@@ -120,7 +120,7 @@
                                 >Edit
                                 </TdButton>
                                 <template
-                                    v-if="role === ROLES['SUPER_ADMIN']"
+                                    v-if="isSuperAdmin"
                                 >
                                     <TdButton
                                         :id="item.id"
@@ -196,8 +196,8 @@
                         </option>
                     </select>
                 </div>
-                <div class="col-12">
-                    <TheLabel for="user_id" required>Менеджер для контрагента</TheLabel>
+                <div class="col-6">
+                    <TheLabel for="user_id">Менеджер для контрагента</TheLabel>
                     <select
                         id="user_id"
                         v-model="state.customer.userId"
@@ -211,6 +211,22 @@
                         >{{ user.fullName }}
                         </option>
                     </select>
+                </div>
+                <div class="col-6">
+                    <TheLabel>Сброс привязки менеджера</TheLabel>
+                    <Button
+                        @click="state.customer.userId = null"
+                        type="button"
+                        :class="[
+                            'btn-light',
+                            {
+                                'btn-disabled': state.customer.userId === null,
+                            }
+                        ]"
+                        :disabled="state.customer.userId === null"
+                    >
+                        Сбросить
+                    </Button>
                 </div>
                 <div class="col-12">
                     <TheLabel for="description">Описание для контрагента</TheLabel>
@@ -313,7 +329,7 @@ import Button from '@/components/core/Button.vue';
 import TheBadge from '@/components/core/TheBadge.vue';
 import InputGroup from '@/components/form/InputGroup.vue';
 import SelectGroup from '@/components/form/SelectGroup.vue';
-import Checkbox from '@/components/form/Checkbox.vue';
+import TheCheckbox from '@/components/form/TheCheckbox.vue';
 import Modal from '@/components/Modal.vue';
 import TheInput from '@/components/form/TheInput.vue';
 import TheLabel from '@/components/form/TheLabel.vue';
@@ -329,9 +345,10 @@ const arrayHandlers = useArrayHandlers();
 const { get, post, update, destroy } = useHttpService();
 
 const role = authStore.getUser.role;
+const isSuperAdmin = computed(() => role === ROLES.SUPER_ADMIN);
 
 const thItems = computed(() => {
-    return role === ROLES['SUPER_ADMIN']
+    return isSuperAdmin
         ? CUSTOMER_TH_FIELDS.concat(EDIT_TH_FIELD, DELETE_TH_FIELD)
         : CUSTOMER_TH_FIELDS.concat(EDIT_TH_FIELD);
 });

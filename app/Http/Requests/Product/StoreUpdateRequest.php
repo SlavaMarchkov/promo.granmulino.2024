@@ -64,6 +64,7 @@ final class StoreUpdateRequest extends FormRequest
     : void
     {
         $is_active = $this->input('is_active', true);
+
         $this->merge([
             'is_active' => to_boolean($is_active),
         ]);

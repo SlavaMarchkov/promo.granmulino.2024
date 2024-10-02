@@ -22,11 +22,11 @@
                     </InputGroup>
                 </div>
                 <div class="col-md-4 mb-2">
-                    <Checkbox
+                    <TheCheckbox
                         id="is_active"
                         v-model="searchBy.isActive"
                     >В продаже?
-                    </Checkbox>
+                    </TheCheckbox>
                 </div>
             </Filter>
         </div>
@@ -222,7 +222,7 @@ import { useHttpService } from '@/use/useHttpService.js';
 import { useArrayHandlers } from '@/use/useArrayHandlers.js';
 import TheInput from '@/components/form/TheInput.vue';
 import TheLabel from '@/components/form/TheLabel.vue';
-import Checkbox from '@/components/form/Checkbox.vue';
+import TheCheckbox from '@/components/form/TheCheckbox.vue';
 import Button from '@/components/core/Button.vue';
 import Alert from '@/components/Alert.vue';
 import InputGroup from '@/components/form/InputGroup.vue';

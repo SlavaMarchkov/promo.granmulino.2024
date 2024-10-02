@@ -7,12 +7,12 @@ namespace App\Http\Requests\Customer;
 use App\Rules\BooleanRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreRequest extends FormRequest
+final class StoreUpdateRequest extends FormRequest
 {
     public function authorize()
     : bool
     {
-        return auth('admin')->check();
+        return auth()->user()->isAdmin();
     }
 
     public function rules()
@@ -25,7 +25,7 @@ class StoreRequest extends FormRequest
 
             'region_id' => ['required', 'nullable', 'exists:regions,id'],
             'city_id'   => ['required', 'nullable', 'exists:cities,id'],
-            'user_id'   => ['required', 'nullable', 'exists:users,id'],
+            'user_id'   => ['nullable'],
         ];
     }
 
@@ -33,20 +33,21 @@ class StoreRequest extends FormRequest
     : array
     {
         return [
-            'name'      => 'Название компании',
-            'region_id' => 'Регион',
-            'city_id'   => 'Город',
-            'user_id'   => 'Менеджер',
-            'is_active' => 'Активный',
+            'name'        => 'Название',
+            'region_id'   => 'Регион',
+            'city_id'     => 'Город',
+            'user_id'     => 'Менеджер',
+            'is_active'   => 'Активный',
+            'description' => 'Описание',
         ];
     }
 
     protected function prepareForValidation()
     : void
     {
-        $is_active = $this->input('is_active', true);
         $this->merge([
-            'is_active' => to_boolean($is_active),
+            'is_active' => to_boolean(request('is_active')),
+            'user_id'   => check_id_for_empty_array(request('user_id')),
         ]);
     }
 }

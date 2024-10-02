@@ -92,7 +92,8 @@ import { useHttpService } from '@/use/useHttpService.js';
 import { useSpinnerStore } from '@/stores/spinners.js';
 import Alert from '@/components/Alert.vue';
 import { ADMIN_URLS } from '@/helpers/constants.js';
-
+// TODO - реализовать кнопки подсчета расстояний между этим городом и выбранным другим (или другими)
+// https://www.myprogrammingtutorials.com/find-distance-between-two-addresses-google-api-php.html
 const route = useRoute();
 const router = useRouter();
 const spinnerStore = useSpinnerStore();

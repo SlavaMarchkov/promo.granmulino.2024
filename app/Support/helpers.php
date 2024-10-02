@@ -45,3 +45,18 @@ if (!function_exists('process_code')) {
         return Str::upper($code);
     }
 }
+
+if (!function_exists('check_id_for_empty_array')) {
+    /**
+     * Checks form input $item_id and, in case it is an empty array, makes this input null.
+     * The function is needed in form request validations when updating an entry.
+     *
+     * @param mixed $item_id
+     * @return int|string|null
+     */
+    function check_id_for_empty_array(mixed $item_id)
+    : int|string|null
+    {
+        return (is_array($item_id) && empty($item_id)) ? null : $item_id;
+    }
+}

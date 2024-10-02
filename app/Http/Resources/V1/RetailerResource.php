@@ -21,7 +21,7 @@ class RetailerResource extends JsonResource
             'label'           => $this->type->label(),
             'typeDescription' => $this->type->description(),
             'typeBgColor'     => $this->type->backgroundColor(),
-            'description'     => $this->description,
+            'description'     => $this->description ?? '',
 
             'isActive' => $this->is_active,
             'isDirect' => $this->is_direct,

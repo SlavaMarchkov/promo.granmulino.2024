@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api\V1\Manager;
 
 use App\Http\Controllers\ApiController;
-use App\Http\Requests\Customer\StoreRequest;
+use App\Http\Requests\Customer\StoreUpdateRequest;
 use App\Http\Requests\Customer\UpdateRequest;
 use App\Http\Resources\V1\CustomerCollection;
 use App\Http\Resources\V1\CustomerResource;
@@ -37,7 +37,7 @@ final class CustomerController extends ApiController
         );
     }
 
-    public function store(StoreRequest $request)
+    public function store(StoreUpdateRequest $request)
     : JsonResponse
     {
         return $this->successResponse(

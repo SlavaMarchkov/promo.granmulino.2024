@@ -20,6 +20,8 @@ final readonly class CreateCityHandler
     public function handle(array $data)
     : City
     {
+        $data['name'] = process_name($data['name']);
+
         return $this->cityRepository->createFromArray($data);
     }
 }

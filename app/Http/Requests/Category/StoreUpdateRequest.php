@@ -36,9 +36,8 @@ final class StoreUpdateRequest extends FormRequest
     protected function prepareForValidation()
     : void
     {
-        $is_active = $this->input('is_active', true);
         $this->merge([
-            'is_active' => to_boolean($is_active),
+            'is_active' => to_boolean(request('is_active')),
         ]);
     }
 }

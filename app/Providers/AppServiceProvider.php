@@ -6,6 +6,8 @@ use App\Services\Categories\Repositories\CategoryRepositoryInterface;
 use App\Services\Categories\Repositories\EloquentCategoryRepository;
 use App\Services\Cities\Repositories\CityRepositoryInterface;
 use App\Services\Cities\Repositories\EloquentCityRepository;
+use App\Services\Customers\Repositories\CustomerRepositoryInterface;
+use App\Services\Customers\Repositories\EloquentCustomerRepository;
 use App\Services\Products\Repositories\EloquentProductRepository;
 use App\Services\Products\Repositories\ProductRepositoryInterface;
 use App\Services\Users\Repositories\EloquentUserRepository;
@@ -22,19 +24,23 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->bind(
             UserRepositoryInterface::class,
-            EloquentUserRepository::class
+            EloquentUserRepository::class,
         );
         $this->app->bind(
             CategoryRepositoryInterface::class,
-            EloquentCategoryRepository::class
+            EloquentCategoryRepository::class,
         );
         $this->app->bind(
             CityRepositoryInterface::class,
-            EloquentCityRepository::class
+            EloquentCityRepository::class,
         );
         $this->app->bind(
             ProductRepositoryInterface::class,
-            EloquentProductRepository::class
+            EloquentProductRepository::class,
+        );
+        $this->app->bind(
+            CustomerRepositoryInterface::class,
+            EloquentCustomerRepository::class,
         );
     }
 
@@ -43,7 +49,7 @@ class AppServiceProvider extends ServiceProvider
     {
         RateLimiter::for('api', function (Request $request) {
             return Limit::perMinute(60)
-                ->by($request->user()?->id ? : $request->ip())
+                ->by($request->user()?->id ?: $request->ip())
                 ->response(function () {
                     return response()->json([
                         'message' => 'Too many attempts.',

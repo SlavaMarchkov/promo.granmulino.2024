@@ -22,6 +22,9 @@ const convertPostToFormData = (config) => {
         const formData = new FormData();
         for ( const item in config.data ) {
             if ( config.data.hasOwnProperty(item) ) {
+                if (typeof config.data[item] === 'object') {
+                    config.data[item] = null;
+                }
                 formData.append(item, config.data[item]);
             }
         }

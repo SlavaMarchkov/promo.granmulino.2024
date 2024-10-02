@@ -26,12 +26,12 @@
                     <InputGroup v-model="searchBy.email" placeholder="Поиск по email">Email</InputGroup>
                 </div>
                 <div class="col-md-4 mb-2">
-                    <Checkbox
+                    <TheCheckbox
                         id="is_active"
                         v-model="searchBy.isActive"
                     >
                         Работает?
-                    </Checkbox>
+                    </TheCheckbox>
                 </div>
             </Filter>
         </div>
@@ -289,7 +289,7 @@ import Filter from '@/components/core/Filter.vue';
 import Modal from '@/components/Modal.vue';
 import ThSort from '@/components/table/ThSort.vue';
 import TdButton from '@/components/table/TdButton.vue';
-import Checkbox from '@/components/form/Checkbox.vue';
+import TheCheckbox from '@/components/form/TheCheckbox.vue';
 import TheBadge from '@/components/core/TheBadge.vue';
 import { ADMIN_URLS, DELETE_TH_FIELD, EDIT_TH_FIELD, ROLES, USER_TH_FIELDS } from '@/helpers/constants.js';
 

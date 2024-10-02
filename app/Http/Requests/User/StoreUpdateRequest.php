@@ -12,7 +12,7 @@ use Illuminate\Database\Query\Builder;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class StoreUpdateRequest extends FormRequest
+final class StoreUpdateRequest extends FormRequest
 {
     public function authorize()
     : bool

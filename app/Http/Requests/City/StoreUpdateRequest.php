@@ -53,13 +53,4 @@ final class StoreUpdateRequest extends FormRequest
             'name.unique' => 'Такой город уже есть в базе данных.',
         ];
     }
-
-    protected function prepareForValidation()
-    : void
-    {
-        $name = $this->input('name', true);
-        $this->merge([
-            'name' => process_name($name),
-        ]);
-    }
 }
