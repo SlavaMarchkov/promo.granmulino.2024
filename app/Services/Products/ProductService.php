@@ -20,6 +20,12 @@ final readonly class ProductService
     {
     }
 
+    public function findProduct(Product $product)
+    : ?Product
+    {
+        return $this->productRepository->find($product);
+    }
+
     public function getProducts(array $params)
     : Collection
     {
@@ -30,5 +36,17 @@ final readonly class ProductService
     : Product
     {
         return $this->createProductHandler->handle($data);
+    }
+
+    public function updateProduct(Product $product, array $data)
+    : Product
+    {
+        return $this->productRepository->updateFromArray($product, $data);
+    }
+
+    public function deleteProduct(Product $product)
+    : int
+    {
+        return $this->productRepository->delete($product);
     }
 }

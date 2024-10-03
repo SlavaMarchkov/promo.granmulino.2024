@@ -23,5 +23,5 @@ interface CategoryRepositoryInterface
     : Category;
 
     public function delete(Category $category)
-    : void;
+    : int;
 }

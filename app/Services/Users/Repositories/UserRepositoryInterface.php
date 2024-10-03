@@ -23,5 +23,5 @@ interface UserRepositoryInterface
     : User;
 
     public function delete(User $user)
-    : ?int;
+    : int;
 }

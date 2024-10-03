@@ -40,15 +40,22 @@ final class EloquentRegionRepository implements RegionRepositoryInterface
     }
 
     public function delete(Region $region)
-    : void
+    : int
     {
-        // TODO: Implement delete() method.
+        $cities_count = $region->cities->count();
+
+        if ($cities_count == 0) {
+            $region->delete();
+        }
+
+        return $cities_count;
     }
 
     private function applyFilters(Builder $qb, array $params)
     : void
     {
-        // TODO: применить $params
-        $qb->with('cities')->withCount('cities');
+        $qb->when($params['with_cities'] == true, function ($query) use ($params) {
+            return $query->with('cities')->withCount('cities');
+        });
     }
 }

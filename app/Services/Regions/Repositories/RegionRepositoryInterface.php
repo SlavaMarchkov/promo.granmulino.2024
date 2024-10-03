@@ -23,5 +23,5 @@ interface RegionRepositoryInterface
     : Region;
 
     public function delete(Region $region)
-    : void;
+    : int;
 }

@@ -40,9 +40,17 @@ final class EloquentCustomerRepository implements CustomerRepositoryInterface
     }
 
     public function delete(Customer $customer)
-    : void
+    : int
     {
-        // TODO: Implement delete() method.
+        // TODO: Проверить, есть ли привязанный менеджер и брифы
+        return 1;
+        /*$users_count = $customer->user->count();
+
+        if ($users_count == 0) {
+            $customer->delete();
+        }
+
+        return $users_count;*/
     }
 
     private function applyFilters(Builder $qb, array $params)

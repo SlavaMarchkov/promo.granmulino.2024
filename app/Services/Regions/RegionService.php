@@ -8,6 +8,7 @@ namespace App\Services\Regions;
 
 use App\Models\Region;
 use App\Services\Regions\Handlers\CreateRegionHandler;
+use App\Services\Regions\Handlers\UpdateRegionHandler;
 use App\Services\Regions\Repositories\RegionRepositoryInterface;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -16,6 +17,7 @@ final readonly class RegionService
     public function __construct(
         private RegionRepositoryInterface $regionRepository,
         private CreateRegionHandler       $createRegionHandler,
+        private UpdateRegionHandler $updateRegionHandler,
     )
     {
     }
@@ -41,10 +43,11 @@ final readonly class RegionService
     public function updateRegion(Region $region, array $data)
     : Region
     {
-        return $this->regionRepository->updateFromArray($region, $data);
+        return $this->updateRegionHandler->handle($region, $data);
     }
 
     public function deleteRegion(Region $region)
+    : int
     {
         return $this->regionRepository->delete($region);
     }

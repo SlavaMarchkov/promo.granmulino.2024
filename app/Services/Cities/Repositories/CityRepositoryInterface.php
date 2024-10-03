@@ -23,5 +23,5 @@ interface CityRepositoryInterface
     : City;
 
     public function delete(City $city)
-    : void;
+    : int;
 }

@@ -23,5 +23,5 @@ interface ProductRepositoryInterface
     : Product;
 
     public function delete(Product $product)
-    : void;
+    : int;
 }

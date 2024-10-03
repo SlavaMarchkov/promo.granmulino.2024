@@ -26,7 +26,7 @@ final class CategoryController extends ApiController
     {
         $categories = $this->categoryService->getCategories([
             'category_is_active' => request()->boolean('is_active'),
-            'product_is_active' => true,
+            'product_is_active'  => true,
         ]);
 
         return $this->successResponse(
@@ -75,26 +75,21 @@ final class CategoryController extends ApiController
         );
     }
 
-    // TODO: реализовать
     public function destroy(Category $category)
     : JsonResponse
     {
-        $canBeDeleted = false;
+        $result = $this->categoryService->deleteCategory($category);
 
-        if ($canBeDeleted) {
-            $category->delete();
-
-            return $this->successResponse(
+        return ($result == 0)
+            ? $this->successResponse(
                 new CategoryResource($category),
                 'success',
                 __('crud.categories.deleted'),
-            );
-        } else {
-            return $this->errorResponse(
+            )
+            : $this->errorResponse(
                 Response::HTTP_OK,
                 'error',
                 __('crud.categories.not_deleted'),
             );
-        }
     }
 }

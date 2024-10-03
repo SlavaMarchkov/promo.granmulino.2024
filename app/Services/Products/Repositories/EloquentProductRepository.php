@@ -15,7 +15,7 @@ final class EloquentProductRepository implements ProductRepositoryInterface
     public function find(Product $product)
     : ?Product
     {
-        // TODO: Implement find() method.
+        return Product::query()->where('id', $product->id)->first();
     }
 
     public function get(array $params = [])
@@ -35,13 +35,22 @@ final class EloquentProductRepository implements ProductRepositoryInterface
     public function updateFromArray(Product $product, array $data)
     : Product
     {
-        // TODO: Implement updateFromArray() method.
+        $product->update($data);
+        return $product;
     }
 
     public function delete(Product $product)
-    : void
+    : int
     {
-        // TODO: Implement delete() method.
+        // TODO: связать с продуктами в брифе ПА
+        return 1;
+        /*$cities_count = $product->
+
+        if ($cities_count == 0) {
+            $region->delete();
+        }
+
+        return $cities_count;*/
     }
 
     private function applyFilters(Builder $qb, array $params)

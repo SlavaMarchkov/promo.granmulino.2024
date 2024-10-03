@@ -45,7 +45,7 @@ final readonly class CategoryService
     }
 
     public function deleteCategory(Category $category)
-    : ?int
+    : int
     {
         return $this->categoryRepository->delete($category);
     }

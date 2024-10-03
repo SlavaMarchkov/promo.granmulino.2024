@@ -84,7 +84,7 @@ final class UserController extends ApiController
     {
         $result = $this->userService->deleteUser($user);
 
-        return ($result === null)
+        return ($result == 0)
             ? $this->successResponse(
                 new UserResource($user),
                 'success',

@@ -45,7 +45,7 @@ final readonly class CityService
     }
 
     public function deleteCity(City $city)
-    : ?int
+    : int
     {
         return $this->cityRepository->delete($city);
     }

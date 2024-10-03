@@ -34,7 +34,8 @@ final class CustomerController extends ApiController
     }
 
     public function store(StoreUpdateRequest $request)
-    : JsonResponse {
+    : JsonResponse
+    {
         $data = $request->validated();
         $customer = $this->customerService->storeCustomer($data);
 
@@ -71,26 +72,21 @@ final class CustomerController extends ApiController
         );
     }
 
-    // TODO - реализовать удаление контрагента с проверкой
     public function destroy(Customer $customer)
     : JsonResponse
     {
-        $canBeDeleted = true;
+        $result = $this->customerService->deleteCustomer($customer);
 
-        if ($canBeDeleted) {
-            $customer->delete();
-
-            return $this->successResponse(
+        return ($result == 0)
+            ? $this->successResponse(
                 new CustomerResource($customer),
                 'success',
                 __('crud.customers.deleted'),
-            );
-        } else {
-            return $this->errorResponse(
+            )
+            : $this->errorResponse(
                 Response::HTTP_OK,
                 'error',
                 __('crud.customers.not_deleted'),
             );
-        }
     }
 }

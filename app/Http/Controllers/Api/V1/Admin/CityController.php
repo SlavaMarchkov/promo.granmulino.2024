@@ -77,7 +77,7 @@ final class CityController extends ApiController
     {
         $result = $this->cityService->deleteCity($city);
 
-        return ($result === null)
+        return ($result == 0)
             ? $this->successResponse(
                 new CityResource($city),
                 'success',

@@ -23,5 +23,5 @@ interface CustomerRepositoryInterface
     : Customer;
 
     public function delete(Customer $customer)
-    : void;
+    : int;
 }

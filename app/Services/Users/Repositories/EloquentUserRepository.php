@@ -40,11 +40,11 @@ final class EloquentUserRepository implements UserRepositoryInterface
     }
 
     public function delete(User $user)
-    : ?int
+    : int
     {
-        $customers_count = $user->customers_count;
+        $customers_count = $user->customers->count();
 
-        if (!$customers_count) {
+        if ($customers_count == 0) {
             $user->delete();
         }
 

@@ -38,8 +38,14 @@ final class EloquentCityRepository implements CityRepositoryInterface
     }
 
     public function delete(City $city)
-    : void
+    : int
     {
-        $city->delete();
+        $customers_count = $city->customers->count();
+
+        if ($customers_count == 0) {
+            $city->delete();
+        }
+
+        return $customers_count;
     }
 }

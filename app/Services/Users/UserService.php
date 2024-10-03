@@ -48,7 +48,7 @@ final readonly class UserService
     }
 
     public function deleteUser(User $user)
-    : ?int
+    : int
     {
         return $this->userRepository->delete($user);
     }

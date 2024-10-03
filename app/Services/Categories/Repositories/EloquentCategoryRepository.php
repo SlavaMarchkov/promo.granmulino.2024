@@ -41,9 +41,15 @@ final class EloquentCategoryRepository implements CategoryRepositoryInterface
     }
 
     public function delete(Category $category)
-    : void
+    : int
     {
-        // TODO: Implement delete() method.
+        $products_count = $category->products->count();
+
+        if ($products_count == 0) {
+            $category->delete();
+        }
+
+        return $products_count;
     }
 
     private function applyFilters(Builder $qb, array $params)

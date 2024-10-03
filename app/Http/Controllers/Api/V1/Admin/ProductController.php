@@ -52,6 +52,8 @@ final class ProductController extends ApiController
     public function show(Product $product)
     : JsonResponse
     {
+        $product = $this->productService->findProduct($product);
+
         return $this->successResponse(
             new ProductResource($product),
             'success',
@@ -62,7 +64,8 @@ final class ProductController extends ApiController
     public function update(StoreUpdateRequest $request, Product $product)
     : JsonResponse
     {
-        $product->update($request->validated());
+        $data = $request->validated();
+        $product = $this->productService->updateProduct($product, $data);
 
         return $this->successResponse(
             new ProductResource($product),
@@ -74,22 +77,18 @@ final class ProductController extends ApiController
     public function destroy(Product $product)
     : JsonResponse
     {
-        $canBeDeleted = false;
+        $result = $this->productService->deleteProduct($product);
 
-        if ($canBeDeleted) {
-            $product->delete();
-
-            return $this->successResponse(
+        return ($result == 0)
+            ? $this->successResponse(
                 new ProductResource($product),
                 'success',
                 __('crud.products.deleted'),
-            );
-        } else {
-            return $this->errorResponse(
+            )
+            : $this->errorResponse(
                 Response::HTTP_OK,
                 'error',
                 __('crud.products.not_deleted'),
             );
-        }
     }
 }

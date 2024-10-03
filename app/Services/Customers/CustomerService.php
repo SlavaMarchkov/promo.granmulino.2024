@@ -43,4 +43,10 @@ final readonly class CustomerService
     {
         return $this->customerRepository->updateFromArray($customer, $data);
     }
+
+    public function deleteCustomer(Customer $customer)
+    : int
+    {
+        return $this->customerRepository->delete($customer);
+    }
 }

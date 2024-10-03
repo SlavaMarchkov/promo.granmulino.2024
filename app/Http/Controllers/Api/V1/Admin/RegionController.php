@@ -73,28 +73,21 @@ final class RegionController extends ApiController
         );
     }
 
-    // TODO: проверить на кол-во городов в регионе и у Customer
     public function destroy(Region $region)
     : JsonResponse
     {
-        $region = $this->regionService->deleteRegion($region);
+        $result = $this->regionService->deleteRegion($region);
 
-        $canBeDeleted = false;
-
-        if ($canBeDeleted) {
-            $region->delete();
-
-            return $this->successResponse(
+        return ($result == 0)
+            ? $this->successResponse(
                 new RegionResource($region),
                 'success',
                 __('crud.regions.deleted'),
-            );
-        } else {
-            return $this->errorResponse(
+            )
+            : $this->errorResponse(
                 Response::HTTP_OK,
                 'error',
                 __('crud.regions.not_deleted'),
             );
-        }
     }
 }
