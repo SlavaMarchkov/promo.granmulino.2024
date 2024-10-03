@@ -7,12 +7,12 @@ namespace App\Http\Requests\Retailer;
 use App\Rules\BooleanRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreRequest extends FormRequest
+class StoreUpdateRequest extends FormRequest
 {
     public function authorize()
     : bool
     {
-        return auth('admin')->check();
+        return auth()->user()->isAdmin();
     }
 
     public function rules()
@@ -47,11 +47,9 @@ class StoreRequest extends FormRequest
     protected function prepareForValidation()
     : void
     {
-        $is_active = $this->input('is_active', true);
-        $is_direct = $this->input('is_direct', false);
         $this->merge([
-            'is_active' => to_boolean($is_active),
-            'is_direct' => to_boolean($is_direct),
+            'is_active' => to_boolean(request('is_active')),
+            'is_direct' => to_boolean(request('is_direct')),
         ]);
     }
 }

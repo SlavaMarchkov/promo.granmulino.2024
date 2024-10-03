@@ -5,31 +5,29 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\ApiController;
-use App\Http\Requests\Retailer\StoreRequest;
+use App\Http\Requests\Retailer\StoreUpdateRequest;
 use App\Http\Resources\V1\RetailerCollection;
 use App\Http\Resources\V1\RetailerResource;
 use App\Models\Retailer;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use App\Services\Retailers\RetailerService;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 final class RetailerController extends ApiController
 {
-    use AuthorizesRequests;
-
-    protected Retailer $retailer;
-
-    public function __construct(Retailer $retailer)
+    public function __construct(
+        private readonly RetailerService $retailerService,
+    )
     {
-        $this->retailer = $retailer;
     }
 
     public function index()
     : JsonResponse
     {
-        // $this->authorize('viewAny', Retailer::class);
-
-        $retailers = $this->retailer->getRetailersWithCityAndCustomer();
+        $retailers = $this->retailerService->getRetailers([
+            'with_city'     => true,
+            'with_customer' => true,
+        ]);
 
         return $this->successResponse(
             new RetailerCollection($retailers),
@@ -38,12 +36,14 @@ final class RetailerController extends ApiController
         );
     }
 
-    public function store(StoreRequest $request)
+    public function store(StoreUpdateRequest $request)
     : JsonResponse
     {
-        // $this->authorize('create', Retailer::class);
+        $data = $request->validated();
+        $retailer = $this->retailerService->storeRetailer($data);
+
         return $this->successResponse(
-            new RetailerResource(Retailer::create($request->validated())),
+            new RetailerResource($retailer),
             'success',
             __('crud.retailers.created'),
             Response::HTTP_CREATED,
@@ -53,6 +53,8 @@ final class RetailerController extends ApiController
     public function show(Retailer $retailer)
     : JsonResponse
     {
+        $retailer = $this->retailerService->findRetailer($retailer);
+
         return $this->successResponse(
             new RetailerResource($retailer),
             'success',
@@ -60,11 +62,11 @@ final class RetailerController extends ApiController
         );
     }
 
-    public function update(StoreRequest $request, Retailer $retailer)
+    public function update(StoreUpdateRequest $request, Retailer $retailer)
     : JsonResponse
     {
-        // $this->authorize('update', $retailer);
-        $retailer->update($request->validated());
+        $data = $request->validated();
+        $retailer = $this->retailerService->updateRetailer($retailer, $data);
 
         return $this->successResponse(
             new RetailerResource($retailer),
@@ -76,24 +78,18 @@ final class RetailerController extends ApiController
     public function destroy(Retailer $retailer)
     : JsonResponse
     {
-        $this->authorize('delete', $retailer);
+        $result = $this->retailerService->deleteRetailer($retailer);
 
-        $canBeDeleted = true; // TODO
-
-        if ($canBeDeleted) {
-            $retailer->delete();
-
-            return $this->successResponse(
+        return ($result == 0)
+            ? $this->successResponse(
                 new RetailerResource($retailer),
                 'success',
                 __('crud.retailers.deleted'),
-            );
-        } else {
-            return $this->errorResponse(
+            )
+            : $this->errorResponse(
                 Response::HTTP_OK,
                 'error',
                 __('crud.retailers.not_deleted'),
             );
-        }
     }
 }

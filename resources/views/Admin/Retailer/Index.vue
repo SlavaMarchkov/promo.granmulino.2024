@@ -126,7 +126,7 @@
                                 >Edit
                                 </TdButton>
                                 <template
-                                    v-if="role === ROLES['SUPER_ADMIN']"
+                                    v-if="isSuperAdmin"
                                 >
                                     <TdButton
                                         :id="item.id"
@@ -319,9 +319,10 @@ const arrayHandlers = useArrayHandlers();
 const { get, post, update, destroy } = useHttpService();
 
 const role = authStore.getUser.role;
+const isSuperAdmin = computed(() => role === ROLES.SUPER_ADMIN);
 
 const thItems = computed(() => {
-    return role === ROLES['SUPER_ADMIN']
+    return isSuperAdmin
         ? RETAILER_TH_FIELDS.concat(EDIT_TH_FIELD, DELETE_TH_FIELD)
         : RETAILER_TH_FIELDS.concat(EDIT_TH_FIELD);
 });
