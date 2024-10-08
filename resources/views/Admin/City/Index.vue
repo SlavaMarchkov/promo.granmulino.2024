@@ -272,7 +272,15 @@ import TheFilter from '@/components/core/TheFilter.vue';
 import Modal from '@/components/Modal.vue';
 import ThSort from '@/components/table/ThSort.vue';
 import TdButton from '@/components/table/TdButton.vue';
-import { ADMIN_URLS, CITY_TH_FIELDS, DELETE_TH_FIELD, EDIT_TH_FIELD, ROLES } from '@/helpers/constants.js';
+import {
+    ADMIN_URLS,
+    CITY_TH_FIELDS,
+    DELETE_TH_FIELD,
+    EDIT_TH_FIELD,
+    OPEN_WEATHER_API_KEY,
+    OPEN_WEATHER_BASE_URL,
+    ROLES,
+} from '@/helpers/constants.js';
 
 const alertStore = useAlertStore();
 const spinnerStore = useSpinnerStore();
@@ -413,13 +421,12 @@ const filteredItems = computed(() => {
 });
 
 const fetchCoords = async (search) => {
+    const url = new URL(OPEN_WEATHER_BASE_URL);
+    url.searchParams.set('q', search);
+    url.searchParams.set('appid', OPEN_WEATHER_API_KEY);
+
     try {
-        const response = await fetch(`https://api.openweathermap.org/geo/1.0/direct?q=${ search }&appid=595bcd47150b44c6f35370cf46d45220`, {
-            headers: {
-                'Accept': 'application/json',
-            },
-            timeout: 10_000,
-        });
+        const response = await fetch(url.toString());
         const data = await response.json();
         const details = data[0];
         state.city.latitude = details.lat;

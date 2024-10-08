@@ -26,6 +26,21 @@ class AppServiceProvider extends ServiceProvider
     public function register()
     : void
     {
+        $this->registerBindings();
+    }
+
+    public function boot()
+    : void
+    {
+        $this->bootRateLimiter();
+        $this->bootBindingEvents();
+    }
+
+    private function registerBindings()
+    : void
+    {
+        $this->registerSMSBindings();
+
         $this->app->bind(
             UserRepositoryInterface::class,
             EloquentUserRepository::class,
@@ -56,7 +71,10 @@ class AppServiceProvider extends ServiceProvider
         );
     }
 
-    public function boot()
+    /**
+     * @return void
+     */
+    private function bootRateLimiter()
     : void
     {
         RateLimiter::for('api', function (Request $request) {
@@ -68,5 +86,19 @@ class AppServiceProvider extends ServiceProvider
                     ], 429);
                 });
         });
+    }
+
+    private function registerSMSBindings()
+    {
+        // B2BSMS
+        // SMSAero
+        // SMSRU
+        // FlySMS
+    }
+
+    private function bootBindingEvents()
+    {
+        // logging
+        // $this->app->resolving();
     }
 }
