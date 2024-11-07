@@ -10,6 +10,7 @@ use App\Http\Requests\Customer\UpdateRequest;
 use App\Http\Resources\V1\CustomerCollection;
 use App\Http\Resources\V1\CustomerResource;
 use App\Models\Customer;
+use App\Services\Customers\CustomerService;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,17 +19,15 @@ final class CustomerController extends ApiController
 {
     use AuthorizesRequests;
 
-    protected Customer $customer;
-
-    public function __construct(Customer $customer)
-    {
-        $this->customer = $customer;
-    }
+    public function __construct(
+        private readonly CustomerService $customerService,
+    )
+    {}
 
     public function index()
     : JsonResponse
     {
-        $customers = auth('web')->user()->customers;
+        $customers = auth()->user()->customers;
 
         return $this->successResponse(
             new CustomerCollection($customers),
@@ -52,6 +51,7 @@ final class CustomerController extends ApiController
     : JsonResponse
     {
         $this->authorize('view', $customer);
+        $customer = $this->customerService->findCustomer($customer);
 
         return $this->successResponse(
             new CustomerResource($customer),

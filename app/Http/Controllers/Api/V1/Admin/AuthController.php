@@ -25,21 +25,20 @@ final class AuthController extends ApiController
     {
         $credentials = $request->validated();
 
-        if (Auth::attempt(
-            [
-                'email'     => $credentials['email'],
-                'password'  => $credentials['password'],
-                'is_active' => true,
-                'is_admin'  => true,
-            ],
+        if (Auth::attempt([
+            'email'     => $credentials['email'],
+            'password'  => $credentials['password'],
+            'is_active' => true,
+            'is_admin'  => true,
+        ],
         )) {
             $role_ids = DB::table('roles')
-                           ->where(
-                               'slug',
-                               '!=',
-                               RoleEnum::MANAGER->getName(),
-                           )
-                           ->pluck('id');
+                ->where(
+                    'slug',
+                    '!=',
+                    RoleEnum::MANAGER->getName(),
+                )
+                ->pluck('id');
 
             $admin = User::query()
                 ->where('email', $credentials['email'])
@@ -95,6 +94,7 @@ final class AuthController extends ApiController
         $admin->tokens()->delete();
 
         try {
+            // TODO: сделать отправку уведомления асинхронной
             Mail::to(config('mail.to.admin'))->send(new LogoutMail($admin));
         } catch (Exception $exception) {
             // TODO: log exception

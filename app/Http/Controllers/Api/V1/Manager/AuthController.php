@@ -14,7 +14,6 @@ use App\Models\Role;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Symfony\Component\HttpFoundation\Response;
@@ -26,29 +25,20 @@ final class AuthController extends ApiController
     {
         $credentials = $request->validated();
 
-        if (Auth::attempt(
-            [
-                'email'     => $credentials['email'],
-                'password'  => $credentials['password'],
-                'is_active' => true,
-                'is_admin'  => false,
-            ],
+        if (Auth::attempt([
+            'email'     => $credentials['email'],
+            'password'  => $credentials['password'],
+            'is_active' => true,
+            'is_admin'  => false,
+        ],
         )) {
-            //$role_id = $role->getRoleId(RoleEnum::MANAGER->getName())
-            /*DB::table('roles')
-                           ->where(
-                               'slug',
-                               ,
-                           )
-                           ->value('id');*/
-
             $user = User::query()
                 ->where('email', $credentials['email'])
                 ->where('is_admin', false)
                 ->where('role_id', $role->getRoleId(RoleEnum::MANAGER->getName()))
                 ->first();
 
-            $role = $user->role->slug;
+            $role = $user->role->slug; // "MANAGER"
 
             $user->tokens()->delete();
 
@@ -89,18 +79,17 @@ final class AuthController extends ApiController
         return new UserResource($user);
     }
 
-    public function logout(Request $request)
+    public function logout()
     : JsonResponse
     {
-        $request->user()->tokens()->delete();
+        $user = auth()->user();
+        $user->tokens()->delete();
 
         try {
-            Mail::to(config('mail.to.admin'))->send(new LogoutMail($request->user()));
+            Mail::to(config('mail.to.admin'))->send(new LogoutMail($user));
         } catch (Exception $exception) {
             // TODO: log exception
         }
-
-//        Auth::guard('web')->logout();
 
         return $this->successResponse(
             '',

@@ -13,7 +13,7 @@ class CustomerPolicy
 {
     use HandlesAuthorization;
 
-    public function viewAny(User $user)
+    public function viewAny()
     : bool
     {
         return true;
