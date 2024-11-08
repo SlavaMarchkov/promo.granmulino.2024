@@ -54,8 +54,12 @@ final class EloquentRegionRepository implements RegionRepositoryInterface
     private function applyFilters(Builder $qb, array $params)
     : void
     {
-        $qb->when($params['with_cities'] == true, function ($query) use ($params) {
-            return $query->with('cities')->withCount('cities');
-        });
+        $qb->when(
+            isset($params['cities']) && to_boolean($params['cities']),
+            fn(Builder $query) => $query->with('cities')->withCount('cities'),
+        )->when(
+            isset($params['customers']) && to_boolean($params['customers']),
+            fn(Builder $query) => $query->with('customers')->withCount('customers'),
+        );
     }
 }

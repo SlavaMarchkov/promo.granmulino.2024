@@ -11,9 +11,41 @@
                 >
                     Добавить
                 </button>
-                <pre>
-                    {{ addedProducts }}
-                </pre>
+                <hr>
+                <table v-if="addedProducts.length > 0" class="table table-striped align-middle">
+                    <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Группа товара</th>
+                        <th scope="col">Формат</th>
+                        <th scope="col">До</th>
+                        <th scope="col">Во время</th>
+                        <th scope="col">Прирост</th>
+                        <th scope="col">Бюджет</th>
+                        <th scope="col">Del</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr
+                        v-for="(pr, index) in addedProducts"
+                        :key="index"
+                    >
+                        <th scope="row">{{ index + 1 }}</th>
+                        <td>{{ pr.categoryName }}</td>
+                        <td>{{ pr.productName }}</td>
+                        <td>{{ pr.salesBefore }}</td>
+                        <td>{{ pr.salesPlan }}</td>
+                        <td>{{ pr.surplusPlan }}</td>
+                        <td>{{ pr.budgetPlan }}</td>
+                        <td>
+                            <button
+                                class="btn btn-danger"
+                                @click="removeProduct(index)"
+                            >X</button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
         <Modal
@@ -175,6 +207,7 @@ const props = defineProps({
 
 const emit = defineEmits([
     'addProductToPromo',
+    'removeProductFromPromo',
 ]);
 
 const initialFormData = () => ({
@@ -224,9 +257,32 @@ const displayProduct = () => {
 };
 
 const addProduct = () => {
-    addedProducts.value.push(state.form);
+    addedProducts.value.push({
+        categoryName: getCategoryName(),
+        productName: getProductName(),
+        salesBefore: state.form.salesBefore,
+        salesPlan: state.form.salesPlan,
+        surplusPlan: state.form.surplusPlan,
+        budgetPlan: state.form.budgetPlan,
+    });
     emit('addProductToPromo', state.form);
     closeModal();
+};
+
+const removeProduct = (index) => {
+    addedProducts.value.splice(index, 1);
+    emit('removeProductFromPromo', index);
+};
+
+const getCategoryName = () => {
+  const catIdx = props.categories.findIndex(c => c.id === +state.form.categoryId);
+  return props.categories[catIdx].name;
+};
+
+const getProductName = () => {
+  const catIdx = props.categories.findIndex(c => c.id === +state.form.categoryId);
+  const prodIdx = props.categories[catIdx].products.findIndex(p => p.id === +state.form.productId);
+  return props.categories[catIdx].products[prodIdx].name;
 };
 
 const isFormValid = computed(() => {

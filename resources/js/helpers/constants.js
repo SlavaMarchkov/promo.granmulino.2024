@@ -47,21 +47,22 @@ export const ROLES = {
 };
 
 export const ADMIN_URLS = {
-    CITY: '/admin/cities',
-    REGION: '/admin/regions',
     CATEGORY: '/admin/categories',
-    PRODUCT: '/admin/products',
-    RETAILER: '/admin/retailers',
+    CITY: '/admin/cities',
     CUSTOMER: '/admin/customers',
+    PRODUCT: '/admin/products',
+    REGION: '/admin/regions',
+    RETAILER: '/admin/retailers',
     USER: '/admin/users',
 };
 
 export const MANAGER_URLS = {
     CATEGORY: '/categories',
-    PRODUCT: '/products',
-    RETAILER: '/retailers',
+    CHANNEL: '/channels',
     CUSTOMER: '/customers',
+    PRODUCT: '/products',
     PROMO: '/promos',
+    RETAILER: '/retailers',
     USER: '/users',
 };
 

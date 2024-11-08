@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\V1\Admin\RetailerController as AdminRetailerControl
 use App\Http\Controllers\Api\V1\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Api\V1\Manager\AuthController;
 use App\Http\Controllers\Api\V1\Manager\CategoryController;
+use App\Http\Controllers\Api\V1\Manager\ChannelController;
 use App\Http\Controllers\Api\V1\Manager\CityController;
 use App\Http\Controllers\Api\V1\Manager\CustomerController;
 use App\Http\Controllers\Api\V1\Manager\ProductController;
@@ -55,6 +56,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::get('products', [ProductController::class, 'index'])->name('manager.products');
         Route::get('regions', [RegionController::class, 'index'])->name('manager.regions');
         Route::get('cities', [CityController::class, 'index'])->name('manager.cities');
+        Route::get('channels', [ChannelController::class, 'index'])->name('manager.channels');
         Route::apiResources([
             'promos'    => PromoController::class,
             'customers' => CustomerController::class,

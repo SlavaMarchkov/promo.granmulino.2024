@@ -15,13 +15,15 @@ final class RegionController extends ApiController
     public function __construct(
         private readonly RegionService $regionService,
     )
-    {}
+    {
+    }
 
     public function index()
     : JsonResponse
     {
         $regions = $this->regionService->getRegions([
-            'with_cities' => true,
+            'cities'    => true,
+            'customers' => true,
         ]);
 
         return $this->successResponse(
