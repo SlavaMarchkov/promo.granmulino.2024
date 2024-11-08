@@ -1,4 +1,13 @@
-import { Customer, CustomerView, Index, Layout, Profile, Retailer } from '../../views/Manager/index.js';
+import {
+    Customer,
+    CustomerView,
+    Index,
+    Layout,
+    Profile,
+    Promo,
+    PromoCreate,
+    Retailer,
+} from '../../views/Manager/index.js';
 
 export default {
     path: '/',
@@ -42,6 +51,22 @@ export default {
             component: Profile,
             meta: {
                 title: 'Мой профиль',
+            },
+        },
+        {
+            path: 'promo',
+            name: 'Manager.Promo.Index',
+            component: Promo,
+            meta: {
+                title: 'Мои промо-акции',
+            },
+        },
+        {
+            path: 'promo/create',
+            name: 'Manager.Promo.Create',
+            component: PromoCreate,
+            meta: {
+                title: 'Новая промо-акция',
             },
         },
     ],

@@ -27,6 +27,15 @@
                             <hr class="dropdown-divider">
                         </li>
                         <li>
+                            <div class="dropdown-item d-flex align-items-center">
+                                <i class="bi bi-person-badge"></i>
+                                <span>Роль в системе: {{ user.roleName }}</span>
+                            </div>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li>
                             <RouterLink
                                 :to="{ name: 'Manager.Profile.Index' }"
                                 class="dropdown-item d-flex align-items-center"
@@ -34,15 +43,6 @@
                                 <i class="bi bi-person"></i>
                                 <span>Мой профиль</span>
                             </RouterLink>
-                        </li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-                        <li>
-                            <div class="dropdown-item d-flex align-items-center">
-                                <i class="bi bi-person-badge"></i>
-                                <span>{{ user.roleName }}</span>
-                            </div>
                         </li>
                         <li>
                             <hr class="dropdown-divider">

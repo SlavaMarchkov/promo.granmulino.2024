@@ -21,6 +21,24 @@ export const RETAILER_TYPES = [
     },
 ];
 
+export const PROMO_TYPES = [
+    {
+        id: 1,
+        value: 'discount',
+        title: 'Скидка в цене',
+    },
+    {
+        id: 2,
+        value: 'sales_people_boost',
+        title: 'Мотивация торгового персонала',
+    },
+    {
+        id: 3,
+        value: 'gift_for_purchase',
+        title: 'Подарок за покупку',
+    },
+];
+
 export const ROLES = {
     SUPER_ADMIN: 'SUPER_ADMIN',
     PRICE_ADMIN: 'PRICE_ADMIN',
@@ -39,8 +57,11 @@ export const ADMIN_URLS = {
 };
 
 export const MANAGER_URLS = {
+    CATEGORY: '/categories',
+    PRODUCT: '/products',
     RETAILER: '/retailers',
     CUSTOMER: '/customers',
+    PROMO: '/promos',
     USER: '/users',
 };
 
@@ -131,18 +152,22 @@ export const MANAGER_MENU_ITEMS = [
         title: 'Главная страница',
         icon: 'bi bi-speedometer',
     },
-    /*{
+    {
         isCollapsible: true,
-        id: 'reports',
-        title: 'Отчёты',
+        id: 'promo',
+        title: 'Промо-акции',
         icon: 'bi bi-server',
         items: [
             {
-                route: 'Manager.Report.Index',
-                title: 'Генератор отчётов',
+                route: 'Manager.Promo.Create',
+                title: 'Новая промо-акция',
+            },
+            {
+                route: 'Manager.Promo.Index',
+                title: 'Мои промо-акции',
             },
         ],
-    },*/
+    },
     {
         isCollapsible: true,
         id: 'references',
