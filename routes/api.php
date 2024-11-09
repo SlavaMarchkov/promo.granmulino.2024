@@ -44,6 +44,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::group([
         'prefix'     => 'v1',
         'middleware' => 'throttle:api',
+        'as'         => 'manager.',
     ], function () {
         Route::get('user', [AuthController::class, 'user'])
             ->name('user');
@@ -52,11 +53,11 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
             ->withoutMiddleware('auth:sanctum');
         Route::post('logout', [AuthController::class, 'logout'])
             ->name('logout');
-        Route::get('categories', [CategoryController::class, 'index'])->name('manager.categories');
-        Route::get('products', [ProductController::class, 'index'])->name('manager.products');
-        Route::get('regions', [RegionController::class, 'index'])->name('manager.regions');
-        Route::get('cities', [CityController::class, 'index'])->name('manager.cities');
-        Route::get('channels', [ChannelController::class, 'index'])->name('manager.channels');
+        Route::get('categories', [CategoryController::class, 'index'])->name('categories');
+        Route::get('products', [ProductController::class, 'index'])->name('products');
+        Route::get('regions', [RegionController::class, 'index'])->name('regions');
+        Route::get('cities', [CityController::class, 'index'])->name('cities');
+        Route::get('channels', [ChannelController::class, 'index'])->name('channels');
         Route::apiResources([
             'promos'    => PromoController::class,
             'customers' => CustomerController::class,

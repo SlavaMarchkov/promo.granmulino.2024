@@ -46,8 +46,8 @@
                         </li>
                         <li>
                             <a
-                                class="dropdown-item d-flex align-items-center"
                                 href="#"
+                                class="dropdown-item d-flex align-items-center"
                                 @click="handleAdminLogout"
                             >
                                 <i class="bi bi-box-arrow-right"></i>

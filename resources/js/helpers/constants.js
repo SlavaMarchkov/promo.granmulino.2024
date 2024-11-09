@@ -23,19 +23,40 @@ export const RETAILER_TYPES = [
 
 export const PROMO_TYPES = [
     {
-        id: 1,
-        value: 'discount',
+        id: 'discount',
+        type: 'DISCOUNT',
         title: 'Скидка в цене',
+        code: 'ЖЦ',
     },
     {
-        id: 2,
-        value: 'sales_people_boost',
+        id: 'sales_people_boost',
+        type: 'SALES_PEOPLE_BOOST',
         title: 'Мотивация торгового персонала',
+        code: 'МТП',
     },
     {
-        id: 3,
-        value: 'gift_for_purchase',
+        id: 'gift_for_purchase',
+        type: 'GIFT_FOR_PURCHASE',
         title: 'Подарок за покупку',
+        code: 'ПП',
+    },
+    {
+        id: 'retailers_boost',
+        type: 'RETAILERS_BOOST',
+        title: 'Мотивация розничных точек',
+        code: 'МРТ',
+    },
+    {
+        id: 'coverage_increase',
+        type: 'COVERAGE_INCREASE',
+        title: 'Увеличение покрытия',
+        code: 'УП',
+    },
+    {
+        id: 'in_out',
+        type: 'IN_OUT',
+        title: 'In-Out',
+        code: 'IN-OUT',
     },
 ];
 

@@ -16,10 +16,21 @@ class PromoResource extends JsonResource
     : array
     {
         return [
-            'id'         => $this->id,
-            'title'      => $this->title,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'id'          => $this->id,
+            'status'      => $this->status,
+            'promo_type'  => $this->promo_type,
+            'discount'    => $this->discount,
+            'user_id'     => $this->user_id,
+            'region_id'   => $this->region_id,
+            'city_id'     => $this->city_id,
+            'channel_id'  => $this->channel_id,
+            'customer_id' => $this->customer_id,
+            'retailer_id' => $this->retailer_id,
+            'start_date'  => $this->start_date,
+            'end_date'    => $this->end_date,
+            'comments'    => $this->comments,
+            'created_at'  => $this->created_at,
+            'updated_at'  => $this->updated_at,
         ];
     }
 }

@@ -20,6 +20,7 @@ final class ChannelController extends ApiController
         return $this->successResponse(
             new ChannelCollection($channels),
             'success',
+            __('crud.channels.all'),
         );
     }
 }
