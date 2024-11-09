@@ -54,6 +54,12 @@ final class EloquentCustomerRepository implements CustomerRepositoryInterface
     }
 
     private function applyFilters(Builder $qb, array $params)
+    : void
     {
+        $qb->when(isset($params['user_id']), fn(Builder $query) => $query->where('user_id', (int)$params['user_id']))
+            ->when(isset($params['region']) && to_boolean($params['region']), fn(Builder $query) => $query->with('region'))
+            ->when(isset($params['city']) && to_boolean($params['city']), fn(Builder $query) => $query->with('city'))
+            ->when(isset($params['user']) && to_boolean($params['user']), fn(Builder $query) => $query->with('user'))
+            ->when(isset($params['retailers']) && to_boolean($params['retailers']), fn(Builder $query) => $query->with('retailers'));
     }
 }

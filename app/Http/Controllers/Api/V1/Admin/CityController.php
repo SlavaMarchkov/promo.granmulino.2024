@@ -18,8 +18,7 @@ final class CityController extends ApiController
     public function __construct(
         private readonly CityService $cityService,
     )
-    {
-    }
+    {}
 
     public function index()
     : JsonResponse

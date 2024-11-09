@@ -21,6 +21,45 @@ export const RETAILER_TYPES = [
     },
 ];
 
+export const PROMO_TYPES = [
+    {
+        id: 'discount',
+        type: 'DISCOUNT',
+        title: 'Скидка в цене',
+        code: 'ЖЦ',
+    },
+    {
+        id: 'sales_people_boost',
+        type: 'SALES_PEOPLE_BOOST',
+        title: 'Мотивация торгового персонала',
+        code: 'МТП',
+    },
+    {
+        id: 'gift_for_purchase',
+        type: 'GIFT_FOR_PURCHASE',
+        title: 'Подарок за покупку',
+        code: 'ПП',
+    },
+    {
+        id: 'retailers_boost',
+        type: 'RETAILERS_BOOST',
+        title: 'Мотивация розничных точек',
+        code: 'МРТ',
+    },
+    {
+        id: 'coverage_increase',
+        type: 'COVERAGE_INCREASE',
+        title: 'Увеличение покрытия',
+        code: 'УП',
+    },
+    {
+        id: 'in_out',
+        type: 'IN_OUT',
+        title: 'In-Out',
+        code: 'IN-OUT',
+    },
+];
+
 export const ROLES = {
     SUPER_ADMIN: 'SUPER_ADMIN',
     PRICE_ADMIN: 'PRICE_ADMIN',
@@ -29,18 +68,22 @@ export const ROLES = {
 };
 
 export const ADMIN_URLS = {
-    CITY: '/admin/cities',
-    REGION: '/admin/regions',
     CATEGORY: '/admin/categories',
-    PRODUCT: '/admin/products',
-    RETAILER: '/admin/retailers',
+    CITY: '/admin/cities',
     CUSTOMER: '/admin/customers',
+    PRODUCT: '/admin/products',
+    REGION: '/admin/regions',
+    RETAILER: '/admin/retailers',
     USER: '/admin/users',
 };
 
 export const MANAGER_URLS = {
-    RETAILER: '/retailers',
+    CATEGORY: '/categories',
+    CHANNEL: '/channels',
     CUSTOMER: '/customers',
+    PRODUCT: '/products',
+    PROMO: '/promos',
+    RETAILER: '/retailers',
     USER: '/users',
 };
 
@@ -131,18 +174,22 @@ export const MANAGER_MENU_ITEMS = [
         title: 'Главная страница',
         icon: 'bi bi-speedometer',
     },
-    /*{
+    {
         isCollapsible: true,
-        id: 'reports',
-        title: 'Отчёты',
+        id: 'promo',
+        title: 'Промо-акции',
         icon: 'bi bi-server',
         items: [
             {
-                route: 'Manager.Report.Index',
-                title: 'Генератор отчётов',
+                route: 'Manager.Promo.Create',
+                title: 'Новая промо-акция',
+            },
+            {
+                route: 'Manager.Promo.Index',
+                title: 'Мои промо-акции',
             },
         ],
-    },*/
+    },
     {
         isCollapsible: true,
         id: 'references',

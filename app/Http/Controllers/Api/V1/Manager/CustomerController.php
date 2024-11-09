@@ -27,7 +27,10 @@ final class CustomerController extends ApiController
     public function index()
     : JsonResponse
     {
-        $customers = auth()->user()->customers;
+        $customers = $this->customerService->getCustomers([
+            'user_id' => auth()->id(),
+            ...request()->all()
+        ]);
 
         return $this->successResponse(
             new CustomerCollection($customers),

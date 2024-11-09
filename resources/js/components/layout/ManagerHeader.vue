@@ -27,6 +27,15 @@
                             <hr class="dropdown-divider">
                         </li>
                         <li>
+                            <div class="dropdown-item d-flex align-items-center">
+                                <i class="bi bi-person-badge"></i>
+                                <span>Роль в системе: {{ user.roleName }}</span>
+                            </div>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li>
                             <RouterLink
                                 :to="{ name: 'Manager.Profile.Index' }"
                                 class="dropdown-item d-flex align-items-center"
@@ -39,19 +48,10 @@
                             <hr class="dropdown-divider">
                         </li>
                         <li>
-                            <div class="dropdown-item d-flex align-items-center">
-                                <i class="bi bi-person-badge"></i>
-                                <span>{{ user.roleName }}</span>
-                            </div>
-                        </li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-                        <li>
                             <a
-                                @click="handleLogout"
-                                class="dropdown-item d-flex align-items-center"
                                 href="#"
+                                class="dropdown-item d-flex align-items-center"
+                                @click="handleLogout"
                             >
                                 <i class="bi bi-box-arrow-right"></i>
                                 <span>Выйти</span>
@@ -81,12 +81,13 @@ const { user } = authStore;
 
 const handleLogout = async () => {
     if ( confirm('Вы действительно хотите выйти?') ) {
-        const { status } = await authStore.logout();
-        if (status && status === 'success') {
+        const data = await authStore.logout();
+        console.log(data);
+        /*if (status && status === 'success') {
             await router.push({
                 name: 'Login'
             });
-        }
+        }*/
     }
 };
 </script>

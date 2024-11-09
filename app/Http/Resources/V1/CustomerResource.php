@@ -20,14 +20,10 @@ class CustomerResource extends JsonResource
             'description' => $this->description ?? '',
             'isActive'    => $this->is_active,
 
-            'regionId' => $this->region_id,
-            'cityId'   => $this->city_id,
-            'userId'   => $this->user_id,
-
-            'regionCode' => $this->region->code,
-            'region'     => $this->region->name,
-            'city'       => $this->city->name,
-            'user'       => $this->user->full_name,
+            'user'      => new UserResource($this->whenLoaded('user')),
+            'region'    => new RegionResource($this->whenLoaded('region')),
+            'city'      => new CityResource($this->whenLoaded('city')),
+            'retailers' => RetailerResource::collection($this->whenLoaded('retailers')),
 
             'next' => $this->findNext($this->id),
             'prev' => $this->findPrevious($this->id),

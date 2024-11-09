@@ -10,6 +10,8 @@ use App\Services\Customers\Repositories\CustomerRepositoryInterface;
 use App\Services\Customers\Repositories\EloquentCustomerRepository;
 use App\Services\Products\Repositories\EloquentProductRepository;
 use App\Services\Products\Repositories\ProductRepositoryInterface;
+use App\Services\Promos\Repositories\EloquentPromoRepository;
+use App\Services\Promos\Repositories\PromoRepositoryInterface;
 use App\Services\Regions\Repositories\EloquentRegionRepository;
 use App\Services\Regions\Repositories\RegionRepositoryInterface;
 use App\Services\Retailers\Repositories\EloquentRetailerRepository;
@@ -68,6 +70,10 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             RetailerRepositoryInterface::class,
             EloquentRetailerRepository::class,
+        );
+        $this->app->bind(
+            PromoRepositoryInterface::class,
+            EloquentPromoRepository::class,
         );
     }
 

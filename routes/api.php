@@ -9,7 +9,13 @@ use App\Http\Controllers\Api\V1\Admin\RegionController as AdminRegionController;
 use App\Http\Controllers\Api\V1\Admin\RetailerController as AdminRetailerController;
 use App\Http\Controllers\Api\V1\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Api\V1\Manager\AuthController;
+use App\Http\Controllers\Api\V1\Manager\CategoryController;
+use App\Http\Controllers\Api\V1\Manager\ChannelController;
+use App\Http\Controllers\Api\V1\Manager\CityController;
 use App\Http\Controllers\Api\V1\Manager\CustomerController;
+use App\Http\Controllers\Api\V1\Manager\ProductController;
+use App\Http\Controllers\Api\V1\Manager\PromoController;
+use App\Http\Controllers\Api\V1\Manager\RegionController;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['middleware' => 'auth:sanctum'], function () {
@@ -38,6 +44,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::group([
         'prefix'     => 'v1',
         'middleware' => 'throttle:api',
+        'as'         => 'manager.',
     ], function () {
         Route::get('user', [AuthController::class, 'user'])
             ->name('user');
@@ -46,7 +53,13 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
             ->withoutMiddleware('auth:sanctum');
         Route::post('logout', [AuthController::class, 'logout'])
             ->name('logout');
+        Route::get('categories', [CategoryController::class, 'index'])->name('categories');
+        Route::get('products', [ProductController::class, 'index'])->name('products');
+        Route::get('regions', [RegionController::class, 'index'])->name('regions');
+        Route::get('cities', [CityController::class, 'index'])->name('cities');
+        Route::get('channels', [ChannelController::class, 'index'])->name('channels');
         Route::apiResources([
+            'promos'    => PromoController::class,
             'customers' => CustomerController::class,
         ]);
     });

@@ -17,18 +17,21 @@ const http = Axios.create({
     },
 });
 
+const convertToFormData = (obj, fd = new FormData(), prevKey = null) => {
+    Object.entries(obj).forEach(([key, value]) => {
+        const fieldName = prevKey ? `${ prevKey }[${ key }]` : key;
+        if ( value instanceof Object && !(value instanceof File || value instanceof Date) ) {
+            convertToFormData(value, fd, fieldName);
+        } else {
+            fd.append(fieldName, value);
+        }
+    });
+    return fd;
+};
+
 const convertPostToFormData = (config) => {
     if ( config.method === 'post' && !(config.data instanceof FormData) ) {
-        const formData = new FormData();
-        for ( const item in config.data ) {
-            if ( config.data.hasOwnProperty(item) ) {
-                if (typeof config.data[item] === 'object') {
-                    config.data[item] = null;
-                }
-                formData.append(item, config.data[item]);
-            }
-        }
-        config.data = formData;
+        config.data = convertToFormData(config.data);
     }
     return config;
 };

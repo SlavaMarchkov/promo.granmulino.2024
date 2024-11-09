@@ -4,3 +4,7 @@ export function formatNumber(number) {
     });
     return formatter.format(number);
 }
+
+export function formatDateToISO(date) {
+    return new Date(date.getTime() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0];
+}

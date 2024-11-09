@@ -24,7 +24,7 @@ final class RegionController extends ApiController
     : JsonResponse
     {
         $regions = $this->regionService->getRegions([
-            'with_cities' => true,
+            'cities' => true,
         ]);
 
         return $this->successResponse(

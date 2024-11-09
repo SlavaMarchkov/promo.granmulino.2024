@@ -11,17 +11,17 @@ use Illuminate\Http\Resources\Json\JsonResource;
 /** @mixin Region */
 class RegionResource extends JsonResource
 {
-    public static $wrap = 'region';
-
     public function toArray(Request $request)
     : array
     {
         return [
-            'id'          => $this->id,
-            'code'        => $this->code,
-            'name'        => $this->name,
-            'citiesCount' => $this->cities_count,
-            'cities'      => CityResource::collection($this->whenLoaded('cities')),
+            'id'             => $this->id,
+            'code'           => $this->code,
+            'name'           => $this->name,
+            'citiesCount'    => $this->cities_count,
+            'customersCount' => $this->customers_count,
+            'cities'         => CityResource::collection($this->whenLoaded('cities')),
+            'customers'      => CustomerResource::collection($this->whenLoaded('customers')),
 
             'next' => $this->findNext($this->id),
             'prev' => $this->findPrevious($this->id),
