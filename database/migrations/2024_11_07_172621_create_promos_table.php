@@ -17,20 +17,22 @@ return new class extends Migration {
             $table->id();
 
             $table->enum('status', [
-                StatusEnum::ON_APPROVAL->name,
-                StatusEnum::IN_PROCESS->name,
-                StatusEnum::WAITING_FOR_REPORT->name,
-                StatusEnum::DONE->name,
-                StatusEnum::DECLINED->name,
-            ])->default(StatusEnum::ON_APPROVAL->name);
+                StatusEnum::ON_APPROVAL->value,
+                StatusEnum::IN_PROCESS->value,
+                StatusEnum::WAITING_FOR_REPORT->value,
+                StatusEnum::DONE->value,
+                StatusEnum::DECLINED->value,
+            ])->default(StatusEnum::ON_APPROVAL->value);
+
             $table->enum('promo_type', [
-                TypeEnum::DISCOUNT->name,
-                TypeEnum::SALES_PEOPLE_BOOST->name,
-                TypeEnum::RETAILERS_BOOST->name,
-                TypeEnum::GIFT_FOR_PURCHASE->name,
-                TypeEnum::COVERAGE_INCREASE->name,
-                TypeEnum::IN_OUT->name,
-            ]);
+                TypeEnum::DISCOUNT->value,
+                TypeEnum::SALES_PEOPLE_BOOST->value,
+                TypeEnum::RETAILERS_BOOST->value,
+                TypeEnum::GIFT_FOR_PURCHASE->value,
+                TypeEnum::COVERAGE_INCREASE->value,
+                TypeEnum::IN_OUT->value,
+            ])->nullable()->default(null);
+
             $table->unsignedTinyInteger('discount')->nullable();
             $table->foreignId('user_id')->nullable();
             $table->foreignId('region_id')->nullable();

@@ -65,8 +65,8 @@ const credentials = reactive({
 });
 
 const handleLogin = async () => {
-    const { status } = await authStore.login(credentials);
-    if (status && status === 'success') {
+    const response = await authStore.login(credentials);
+    if ( response && response.status === 'success' ) {
         await router.push({
             name: 'Manager.Index'
         });

@@ -31,7 +31,9 @@ const convertToFormData = (obj, fd = new FormData(), prevKey = null) => {
 
 const convertPostToFormData = (config) => {
     if ( config.method === 'post' && !(config.data instanceof FormData) ) {
-        config.data = convertToFormData(config.data);
+        if ( config.data !== undefined ) {
+            config.data = convertToFormData(config.data);
+        }
     }
     return config;
 };

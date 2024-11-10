@@ -8,6 +8,7 @@ namespace App\Models;
 use App\Enums\Promo\StatusEnum;
 use App\Enums\Promo\TypeEnum;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Promo extends Model
 {
@@ -32,4 +33,10 @@ class Promo extends Model
         'start_date' => 'date',
         'end_date'   => 'date',
     ];
+
+    public function promo_products()
+    : HasMany
+    {
+        return $this->hasMany(PromoProduct::class);
+    }
 }

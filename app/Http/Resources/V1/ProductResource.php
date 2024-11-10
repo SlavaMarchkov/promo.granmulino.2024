@@ -19,6 +19,7 @@ class ProductResource extends JsonResource
             'name'       => $this->name,
             'weight'     => $this->weight,
             'price'      => $this->price,
+            // TODO: hide price except for PRICE_ADMIN
             'image'      => $this->image,
             'isActive'   => $this->is_active,
             'categoryId' => $this->category_id,

@@ -22,11 +22,11 @@
                             <h6 class="card-header py-2 fw-bold text-primary">{{ pr.productName }}</h6>
                             <div class="card-body mt-2 pb-2">
                                 <div class="row">
-                                    <div class="col-7">Продажи «До»</div>
+                                    <div class="col-7">Продажи "До"</div>
                                     <div class="col-5 fw-bold text-end">{{ formatNumber(pr.salesBefore) }} шт.</div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-7">План «Во время»</div>
+                                    <div class="col-7">План</div>
                                     <div class="col-5 fw-bold text-end">{{ formatNumber(pr.salesPlan) }} шт.</div>
                                 </div>
                                 <div class="row">

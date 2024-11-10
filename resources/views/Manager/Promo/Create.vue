@@ -4,12 +4,17 @@
             <div class="card">
                 <div class="card-header bg-primary text-white">Укажите общие данные промо-акции</div>
                 <div class="card-body mt-3">
+                    <Alert/>
+                    <pre>
+                        {{ state.promo }}
+                    </pre>
                     <div class="row g-3">
                         <div class="col-md-6">
                             <TheLabel for="promo_type" required>Вид промо-акции</TheLabel>
+                            <!--                            @change="displayPromoType"-->
                             <select
                                 v-model="state.promo.promoType"
-                                @change="displayPromoType"
+
                                 id="promo_type"
                                 class="form-select"
                             >
@@ -134,6 +139,7 @@
                             <TheLabel for="start_date" required>Начало промо-акции</TheLabel>
                             <TheInput
                                 id="start_date"
+                                v-model="state.promo.startDate"
                                 type="text"
                                 readonly="readonly"
                                 aria-describedby="start_date_help"
@@ -144,6 +150,7 @@
                             <TheLabel for="end_date" required>Окончание промо-акции</TheLabel>
                             <TheInput
                                 id="end_date"
+                                v-model="state.promo.endDate"
                                 type="text"
                                 readonly="readonly"
                                 aria-describedby="end_date_help"
@@ -174,7 +181,7 @@
         </div>
         <div class="col-lg-7">
             <TheDiscount
-                v-show="currentPromoType === 'DISCOUNT'"
+                v-if="currentPromoType === 'DISCOUNT'"
                 :categories="state.categories"
                 @add-product-to-promo="addProductHandler"
                 @remove-product-from-promo="removeProductHandler"
@@ -196,7 +203,8 @@
 </template>
 
 <script setup>
-import { computed, onMounted, reactive, ref } from 'vue';
+import { computed, onMounted, reactive, ref, watch } from 'vue';
+import Alert from '@/components/Alert.vue';
 import { useAuthStore } from '@/stores/auth.js';
 import { useHttpService } from '@/use/useHttpService.js';
 import { formatDateToISO } from '@/helpers/formatters.js';
@@ -207,13 +215,15 @@ import TheDiscount from '@/pages/TheDiscount.vue';
 import Button from '@/components/core/Button.vue';
 import TheInput from '@/components/form/TheInput.vue';
 import localeRu from 'air-datepicker/locale/ru';
+import { useAlertStore } from '@/stores/alerts.js';
 
 const { get, post } = useHttpService();
+const alertStore = useAlertStore();
 const authUser = useAuthStore().getUser;
 
 useDatepicker('#start_date', {
     locale: localeRu,
-    onSelect: ({ date, formattedDate, datepicker }) => {
+    onSelect: ({ date, datepicker }) => {
         state.promo.startDate = formatDateToISO(date);
         datepicker.hide();
     },
@@ -221,7 +231,7 @@ useDatepicker('#start_date', {
 
 useDatepicker('#end_date', {
     locale: localeRu,
-    onSelect: ({ date, formattedDate, datepicker }) => {
+    onSelect: ({ date, datepicker }) => {
         state.promo.endDate = formatDateToISO(date);
         datepicker.hide();
     },
@@ -229,7 +239,7 @@ useDatepicker('#end_date', {
 
 const initialFormData = () => ({
     promoType: '',
-    discount: 0,
+    discount: null,
     userId: authUser.id,
     regionId: '',
     cityId: '',
@@ -284,11 +294,22 @@ const getCustomers = async () => {
     });
     state.customers = data.customers;
 };
+// TODO - check after saving
+watch(
+    () => state.promo.promoType,
+    (newValue, oldValue) => {
+        console.log(typeof newValue);
+        state.promo.products = [];
+        state.promo.discount = null;
+        const promoType = newValue;
+        currentPromoType.value = PROMO_TYPES.find(pt => pt.type === promoType).type;
+    },
+);
 
-const displayPromoType = () => {
+/*const displayPromoType = () => {
     const promoType = state.promo.promoType;
     currentPromoType.value = PROMO_TYPES.find(pt => pt.type === promoType).type;
-};
+};*/
 
 const addProductHandler = (product) => {
     state.promo.products.push(product);
@@ -299,6 +320,7 @@ const removeProductHandler = (index) => {
 };
 
 const getRetailersForCustomer = () => {
+    state.promo.retailerId = '';
     state.customers.map((customer) => {
         if ( +customer.id === +state.promo.customerId ) {
             state.retailers = customer.retailers;
@@ -315,17 +337,13 @@ const getCitiesForRegion = () => {
                 accumulator.push(current);
             }
             return accumulator;
-        }, [])
-        .sort((a, b) => {
-            const fa = a.name.toLocaleLowerCase();
-            const fb = b.name.toLocaleLowerCase();
-            return (fa < fb) ? -1 : (fa > fb) ? 1 : 0;
-        });
+        }, []);
 };
 
 const savePromo = async () => {
     const response = await post(MANAGER_URLS.PROMO, state.promo);
     if ( response && response.status === 'success' ) {
+        alertStore.clear();
         state.promo = initialFormData();
     }
 };

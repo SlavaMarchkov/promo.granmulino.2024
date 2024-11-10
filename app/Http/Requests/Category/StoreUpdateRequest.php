@@ -20,7 +20,7 @@ final class StoreUpdateRequest extends FormRequest
     {
         return [
             'name'      => ['required', 'string', 'min:5', 'max:32'],
-            'is_active' => ['required', new BooleanRule],
+            'is_active' => ['required', new BooleanRule()],
         ];
     }
 

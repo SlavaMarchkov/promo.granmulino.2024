@@ -81,13 +81,12 @@ const { user } = authStore;
 
 const handleLogout = async () => {
     if ( confirm('Вы действительно хотите выйти?') ) {
-        const data = await authStore.logout();
-        console.log(data);
-        /*if (status && status === 'success') {
+        const { status } = await authStore.logout();
+        if ( status && status === 'success' ) {
             await router.push({
                 name: 'Login'
             });
-        }*/
+        }
     }
 };
 </script>

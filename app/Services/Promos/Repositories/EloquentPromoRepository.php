@@ -14,6 +14,12 @@ final class EloquentPromoRepository implements PromoRepositoryInterface
     public function createFromArray(array $data)
     : Promo
     {
-        return Promo::query()->create($data);
+        $products = $data['products'];
+        unset($data['products']);
+
+        $promo = Promo::query()->create($data);
+        $promo->promo_products()->createMany($products);
+
+        return $promo;
     }
 }
