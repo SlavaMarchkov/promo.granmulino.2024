@@ -139,7 +139,6 @@
                             <TheLabel for="start_date" required>Начало промо-акции</TheLabel>
                             <TheInput
                                 id="start_date"
-                                v-model="state.promo.startDate"
                                 type="text"
                                 readonly="readonly"
                                 aria-describedby="start_date_help"
@@ -150,7 +149,6 @@
                             <TheLabel for="end_date" required>Окончание промо-акции</TheLabel>
                             <TheInput
                                 id="end_date"
-                                v-model="state.promo.endDate"
                                 type="text"
                                 readonly="readonly"
                                 aria-describedby="end_date_help"
@@ -185,19 +183,22 @@
                 :categories="state.categories"
                 @add-product-to-promo="addProductHandler"
                 @remove-product-from-promo="removeProductHandler"
-            ></TheDiscount>
-            <div v-show="currentPromoType === 'SALES_PEOPLE_BOOST'" class="card">
-                <div class="card-header bg-secondary text-white">Мотивация торгового персонала</div>
-                <div class="card-body">
-                    Участники из команды ТП
-                </div>
-            </div>
-            <div v-show="currentPromoType === 'GIFT_FOR_PURCHASE'" class="card">
-                <div class="card-header bg-danger-light text-white">Подарок за покупку</div>
-                <div class="card-body">
-                    Ассортимент для подарков за покупку
-                </div>
-            </div>
+            />
+            <SalesPeopleBoost
+                v-if="currentPromoType === 'SALES_PEOPLE_BOOST'"
+            />
+            <GiftForPurchase
+                v-if="currentPromoType === 'GIFT_FOR_PURCHASE'"
+            />
+            <RetailersBoost
+                v-if="currentPromoType === 'RETAILERS_BOOST'"
+            />
+            <CoverageIncrease
+                v-if="currentPromoType === 'COVERAGE_INCREASE'"
+            />
+            <TheInOut
+                v-if="currentPromoType === 'IN_OUT'"
+            />
         </div>
     </div>
 </template>
@@ -211,11 +212,16 @@ import { formatDateToISO } from '@/helpers/formatters.js';
 import { useDatepicker } from 'vue-air-datepicker';
 import TheLabel from '@/components/form/TheLabel.vue';
 import { MANAGER_URLS, PROMO_TYPES } from '@/helpers/constants.js';
-import TheDiscount from '@/pages/TheDiscount.vue';
 import Button from '@/components/core/Button.vue';
 import TheInput from '@/components/form/TheInput.vue';
 import localeRu from 'air-datepicker/locale/ru';
 import { useAlertStore } from '@/stores/alerts.js';
+import TheDiscount from '@/pages/TheDiscount.vue';
+import SalesPeopleBoost from '@/pages/SalesPeopleBoost.vue';
+import GiftForPurchase from '@/pages/GiftForPurchase.vue';
+import RetailersBoost from '@/pages/RetailersBoost.vue';
+import CoverageIncrease from '@/pages/CoverageIncrease.vue';
+import TheInOut from '@/pages/TheInOut.vue';
 
 const { get, post } = useHttpService();
 const alertStore = useAlertStore();
