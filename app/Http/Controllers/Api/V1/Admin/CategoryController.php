@@ -6,8 +6,8 @@ namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\ApiController;
 use App\Http\Requests\Category\StoreUpdateRequest;
-use App\Http\Resources\V1\CategoryCollection;
-use App\Http\Resources\V1\CategoryResource;
+use App\Http\Resources\V1\Category\CategoryCollection;
+use App\Http\Resources\V1\Category\CategoryResource;
 use App\Models\Category;
 use App\Services\Categories\CategoryService;
 use Illuminate\Http\JsonResponse;
@@ -25,8 +25,7 @@ final class CategoryController extends ApiController
     : JsonResponse
     {
         $categories = $this->categoryService->getCategories([
-            'category_is_active' => request()->boolean('is_active'),
-            'product_is_active'  => true,
+            ...request()->all()
         ]);
 
         return $this->successResponse(

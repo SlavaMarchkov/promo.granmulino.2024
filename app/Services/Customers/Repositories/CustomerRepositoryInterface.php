@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Collection;
 
 interface CustomerRepositoryInterface
 {
-    public function find(Customer $customer)
+    public function find(Customer $customer, array $params = [])
     : ?Customer;
 
     public function get(array $params = [])

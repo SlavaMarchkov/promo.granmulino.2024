@@ -12,14 +12,15 @@ use Illuminate\Http\Resources\Json\JsonResource;
 class ProductResource extends JsonResource
 {
     public function toArray(Request $request)
-    : array
-    {
+    : array {
+        $role = $request->user()->role;
+        $isPriceAdmin = $request->user()->isPriceAdmin($role);
+
         return [
             'id'         => $this->id,
             'name'       => $this->name,
             'weight'     => $this->weight,
-            'price'      => $this->price,
-            // TODO: hide price except for PRICE_ADMIN
+            'price'      => $this->when($isPriceAdmin, fn() => $this->price),
             'image'      => $this->image,
             'isActive'   => $this->is_active,
             'categoryId' => $this->category_id,

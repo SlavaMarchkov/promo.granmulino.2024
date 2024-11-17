@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Resources\V1;
+namespace App\Http\Resources\V1\Category;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
-/** @see \App\Models\Customer */
-class CustomerCollection extends ResourceCollection
+/** @see \App\Models\Category */
+class CategoryCollection extends ResourceCollection
 {
     public static $wrap = '';
 
@@ -16,8 +16,8 @@ class CustomerCollection extends ResourceCollection
     : array
     {
         return [
-            'customers'      => $this->collection,
-            'customersCount' => $this->count(),
+            'categories'      => $this->collection,
+            'categoriesCount' => $this->count(),
         ];
     }
 }

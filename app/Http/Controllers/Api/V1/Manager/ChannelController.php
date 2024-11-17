@@ -6,7 +6,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api\V1\Manager;
 
 use App\Http\Controllers\ApiController;
-use App\Http\Resources\V1\ChannelCollection;
+use App\Http\Resources\V1\Channel\ChannelCollection;
 use App\Models\Channel;
 use Illuminate\Http\JsonResponse;
 

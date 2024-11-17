@@ -7,7 +7,7 @@ namespace App\Http\Controllers\Api\V1\Manager;
 
 use App\Http\Controllers\ApiController;
 use App\Http\Requests\Promo\StoreRequest;
-use App\Http\Resources\V1\PromoResource;
+use App\Http\Resources\V1\Promo\PromoResource;
 use App\Services\Promos\PromoService;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;

@@ -38,11 +38,9 @@
                             <li class="nav-item" role="presentation">
                                 <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-settings" aria-selected="false" tabindex="-1" role="tab">Settings</button>
                             </li>
-
                             <li class="nav-item" role="presentation">
-                                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-change-password" aria-selected="false" tabindex="-1" role="tab">Change Password</button>
+                                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#the-sellers" aria-selected="false" tabindex="-1" role="tab">Команда ТП</button>
                             </li>
-
                         </ul>
                         <div class="tab-content pt-2">
 
@@ -96,6 +94,7 @@
                                     <div class="row mb-3">
                                         <label for="profileImage" class="col-md-4 col-lg-3 col-form-label">Profile Image</label>
                                         <div class="col-md-8 col-lg-9">
+                                            <img src="assets/img/profile-img.jpg" alt="Profile">
                                             <div class="pt-2">
                                                 <a href="#" class="btn btn-primary btn-sm" title="Upload new profile image"><i class="bi bi-upload"></i></a>
                                                 <a href="#" class="btn btn-danger btn-sm" title="Remove my profile image"><i class="bi bi-trash"></i></a>
@@ -235,44 +234,16 @@
                                 </form><!-- End settings Form -->
 
                             </div>
-
-                            <div class="tab-pane fade pt-3" id="profile-change-password" role="tabpanel">
-                                <!-- Change Password Form -->
-                                <form>
-
-                                    <div class="row mb-3">
-                                        <label for="currentPassword" class="col-md-4 col-lg-3 col-form-label">Current Password</label>
-                                        <div class="col-md-8 col-lg-9">
-                                            <input name="password" type="password" class="form-control" id="currentPassword">
-                                        </div>
-                                    </div>
-
-                                    <div class="row mb-3">
-                                        <label for="newPassword" class="col-md-4 col-lg-3 col-form-label">New Password</label>
-                                        <div class="col-md-8 col-lg-9">
-                                            <input name="newpassword" type="password" class="form-control" id="newPassword">
-                                        </div>
-                                    </div>
-
-                                    <div class="row mb-3">
-                                        <label for="renewPassword" class="col-md-4 col-lg-3 col-form-label">Re-enter New Password</label>
-                                        <div class="col-md-8 col-lg-9">
-                                            <input name="renewpassword" type="password" class="form-control" id="renewPassword">
-                                        </div>
-                                    </div>
-
-                                    <div class="text-center">
-                                        <button type="submit" class="btn btn-primary">Change Password</button>
-                                    </div>
-                                </form><!-- End Change Password Form -->
-
+                            <div class="tab-pane fade pt-3" id="the-sellers" role="tabpanel">
+                                <TheSellers
+                                    :customer-id="customerId"
+                                    :sellers="sellers"
+                                    @update-sellers="updateSellers"
+                                />
                             </div>
-
-                        </div><!-- End Bordered Tabs -->
-
+                        </div>
                     </div>
                 </div>
-
             </div>
         </div>
         <Alert v-else class="mt-3"/>
@@ -290,26 +261,45 @@
 import { computed, onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useHttpService } from '@/use/useHttpService.js';
+import { useArrayHandlers } from '@/use/useArrayHandlers.js';
 import { useSpinnerStore } from '@/stores/spinners.js';
 import { MANAGER_URLS } from '@/helpers/constants.js';
 import Alert from '@/components/Alert.vue';
+import TheSellers from '@/pages/Customer/TheSellers.vue';
 
 const route = useRoute();
 const router = useRouter();
 const spinnerStore = useSpinnerStore();
+const arrayHandlers = useArrayHandlers();
 
 const { get } = useHttpService();
-const id = +route.params.id;
+const customerId = +route.params.id;
 
 const item = ref({});
+const sellers = ref([]);
 
 onMounted(async () => {
-    await fetchDetails(id);
-})
+    await fetchDetails(customerId);
+});
 
-const fetchDetails = async (id) => {
-    const response = await get(`${ MANAGER_URLS.CUSTOMER }/${ id }`);
-    if ( response.status === 'success' ) item.value = response.data;
+const fetchDetails = async (customerId) => {
+    await get(`${ MANAGER_URLS.CUSTOMER }/${ customerId }`, {
+        params: {
+            city: true,
+            region: true,
+            retailers: true,
+            customer_sellers: false,
+        }
+    }).then(({ status, data }) => {
+        if ( status === 'success' ) item.value = data;
+    }).then(async () => await get(MANAGER_URLS.CUSTOMER_SELLER, {
+        params: {
+            'customer_id': customerId,
+            'customer': false,
+        },
+    })).then(({ status, data }) => {
+        if (status === 'success') sellers.value = data.sellers;
+    });
 };
 
 watch(
@@ -322,4 +312,15 @@ watch(
 const isItemFound = computed(() => {
     return Object.keys(item.value).length !== 0;
 });
+
+const updateSellers = (seller) => {
+    const idx = sellers.value.findIndex(s => s.id === seller.id);
+    if (idx === -1) {
+        sellers.value.push(seller);
+    } else {
+        sellers.value[idx] = seller;
+    }
+    const tempArr = arrayHandlers.sortArrayByStringColumn(sellers.value, 'name');
+    sellers.value = arrayHandlers.sortArrayByBoolean(tempArr, 'isActive');
+};
 </script>

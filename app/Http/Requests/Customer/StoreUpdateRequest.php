@@ -21,7 +21,7 @@ final class StoreUpdateRequest extends FormRequest
         return [
             'name'        => ['required', 'string', 'min:8', 'max:64'],
             'description' => ['nullable', 'string'],
-            'is_active'   => ['required', new BooleanRule],
+            'is_active'   => ['required', new BooleanRule()],
 
             'region_id' => ['required', 'nullable', 'exists:regions,id'],
             'city_id'   => ['required', 'nullable', 'exists:cities,id'],

@@ -6,8 +6,8 @@ namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\ApiController;
 use App\Http\Requests\Customer\StoreUpdateRequest;
-use App\Http\Resources\V1\CustomerCollection;
-use App\Http\Resources\V1\CustomerResource;
+use App\Http\Resources\V1\Customer\CustomerCollection;
+use App\Http\Resources\V1\Customer\CustomerResource;
 use App\Models\Customer;
 use App\Services\Customers\CustomerService;
 use Illuminate\Http\JsonResponse;

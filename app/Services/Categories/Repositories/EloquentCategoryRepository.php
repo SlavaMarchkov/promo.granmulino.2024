@@ -55,18 +55,21 @@ final class EloquentCategoryRepository implements CategoryRepositoryInterface
     private function applyFilters(Builder $qb, array $params)
     : void
     {
-        $qb->withCount([
+        $qb->when(
+                isset($params['category_is_active']) && to_boolean($params['category_is_active']),
+                fn($qb) => $qb->where('is_active', true)
+            )
+            ->when(
+                isset($params['products']) && to_boolean($params['products']),
+                fn(Builder $query) => $query->with('products'))
+            ->withCount([
                 'products' => function (Builder $query) use ($params) {
                     $query->when(
-                        $params['product_is_active'] == true,
+                        isset($params['product_is_active']) && to_boolean($params['product_is_active']),
                         fn($qb) => $qb->where('is_active', true)
                     );
                 },
             ])
-            ->when(
-                $params['category_is_active'] == true,
-                fn($qb) => $qb->where('is_active', true)
-            )
-            ->with('products');
+        ;
     }
 }

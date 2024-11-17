@@ -282,7 +282,13 @@ onMounted(async () => {
 });
 
 const getCategories = async () => {
-    const { data } = await get(ADMIN_URLS.CATEGORY);
+    const { data } = await get(ADMIN_URLS.CATEGORY, {
+        params: {
+            'category_is_active': false,
+            'product_is_active': true,
+            'products': true,
+        },
+    });
     state.categories = data.categories;
 };
 
@@ -347,8 +353,8 @@ const saveCategory = async () => {
 
 const deleteCategory = async (id) => {
     if ( confirm('Точно удалить группу товаров? Уверены?') ) {
-        const response = await destroy(`${ ADMIN_URLS.CATEGORY }/${ id }`);
-        if ( response && response.status === 'success' ) {
+        const { status } = await destroy(`${ ADMIN_URLS.CATEGORY }/${ id }`);
+        if ( status === 'success' ) {
             await getCategories();
         }
     }

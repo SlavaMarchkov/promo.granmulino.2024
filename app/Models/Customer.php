@@ -50,4 +50,10 @@ class Customer extends Model
     {
         return $this->hasMany(Retailer::class);
     }
+
+    public function customer_sellers()
+    : HasMany
+    {
+        return $this->hasMany(CustomerSeller::class);
+    }
 }

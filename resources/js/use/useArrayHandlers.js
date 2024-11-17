@@ -82,6 +82,24 @@ export function useArrayHandlers() {
         });
     };
 
+    const sortArrayByStringColumn = (arr, column) => {
+        let tempArr = arr.slice();
+
+        return tempArr.sort((a, b) => {
+            const fa = a[column].toLowerCase();
+            const fb = b[column].toLowerCase();
+            return (fa < fb) ? -1 : (fa > fb) ? 1 : 0;
+        });
+    };
+
+    const sortArrayByBoolean = (arr, column) => {
+        let tempArr = arr.slice();
+
+        return tempArr.sort((x, y) => {
+            return (x[column] === y[column]) ? 0 : x[column] ? -1 : 1;
+        });
+    };
+
     return {
         sortBy,
         setSort,
@@ -89,5 +107,7 @@ export function useArrayHandlers() {
         resetSortKeys,
         filterArray,
         sortArray,
+        sortArrayByStringColumn,
+        sortArrayByBoolean,
     };
 }

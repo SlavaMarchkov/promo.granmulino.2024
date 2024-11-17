@@ -180,12 +180,12 @@
         <div class="col-lg-7">
             <TheDiscount
                 v-if="currentPromoType === 'DISCOUNT'"
-                :categories="state.categories"
                 @add-product-to-promo="addProductHandler"
                 @remove-product-from-promo="removeProductHandler"
             />
             <SalesPeopleBoost
                 v-if="currentPromoType === 'SALES_PEOPLE_BOOST'"
+                :customer-id="state.promo.customerId"
             />
             <GiftForPurchase
                 v-if="currentPromoType === 'GIFT_FOR_PURCHASE'"
@@ -205,17 +205,18 @@
 
 <script setup>
 import { computed, onMounted, reactive, ref, watch } from 'vue';
-import Alert from '@/components/Alert.vue';
 import { useAuthStore } from '@/stores/auth.js';
+import { useAlertStore } from '@/stores/alerts.js';
 import { useHttpService } from '@/use/useHttpService.js';
 import { formatDateToISO } from '@/helpers/formatters.js';
 import { useDatepicker } from 'vue-air-datepicker';
-import TheLabel from '@/components/form/TheLabel.vue';
+import { useArrayHandlers } from '@/use/useArrayHandlers.js';
 import { MANAGER_URLS, PROMO_TYPES } from '@/helpers/constants.js';
+import Alert from '@/components/Alert.vue';
+import TheLabel from '@/components/form/TheLabel.vue';
 import Button from '@/components/core/Button.vue';
 import TheInput from '@/components/form/TheInput.vue';
 import localeRu from 'air-datepicker/locale/ru';
-import { useAlertStore } from '@/stores/alerts.js';
 import TheDiscount from '@/pages/TheDiscount.vue';
 import SalesPeopleBoost from '@/pages/SalesPeopleBoost.vue';
 import GiftForPurchase from '@/pages/GiftForPurchase.vue';
@@ -226,6 +227,7 @@ import TheInOut from '@/pages/TheInOut.vue';
 const { get, post } = useHttpService();
 const alertStore = useAlertStore();
 const authUser = useAuthStore().getUser;
+const arrayHandlers = useArrayHandlers();
 
 useDatepicker('#start_date', {
     locale: localeRu,
@@ -259,7 +261,7 @@ const initialFormData = () => ({
 });
 
 const state = reactive({
-    categories: [],
+
     customers: [],
     retailers: [],
     cities: [],
@@ -270,7 +272,7 @@ const state = reactive({
 let currentPromoType = ref('');
 
 onMounted(async () => {
-    await getCategories();
+    //await getCategories();
     await getCustomers();
     await getChannels();
 });
@@ -355,26 +357,19 @@ const savePromo = async () => {
 };
 
 const sortedCustomers = computed(() => {
-    return state.customers.sort((a, b) => {
-        const fa = a.name.toLocaleLowerCase();
-        const fb = b.name.toLocaleLowerCase();
-        return (fa < fb) ? -1 : (fa > fb) ? 1 : 0;
-    });
+    return arrayHandlers.sortArrayByStringColumn(state.customers, 'name');
 });
 
 const getRegions = computed(() => {
-    return state.customers
+    let arr = state.customers
         .map(customer => customer.region)
         .reduce((accumulator, current) => {
             if ( accumulator.findIndex(object => object.id === current.id) === -1 ) {
                 accumulator.push(current);
             }
             return accumulator;
-        }, [])
-        .sort((a, b) => {
-            const fa = a.name.toLocaleLowerCase();
-            const fb = b.name.toLocaleLowerCase();
-            return (fa < fb) ? -1 : (fa > fb) ? 1 : 0;
-        });
+        }, []);
+
+    return arrayHandlers.sortArrayByStringColumn(arr, 'name');
 });
 </script>

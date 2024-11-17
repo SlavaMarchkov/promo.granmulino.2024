@@ -69,7 +69,7 @@
                         >
                             <option disabled selected value="">-- Выберите группу товара --</option>
                             <option
-                                v-for="category in props.categories"
+                                v-for="category in state.categories"
                                 :key="category.id"
                                 :value="category.id"
                             >{{ category.name }}
@@ -160,7 +160,6 @@
                             />
                             <span class="input-group-text">руб.</span>
                         </div>
-<!--                        <div id="compensation_help" class="form-text">компенсация ТД АЛТАН на 1 шт. продукции</div>-->
                     </div>
                     <div class="col-md-4">
                         <TheLabel for="budget_plan" required>Бюджет</TheLabel>
@@ -174,7 +173,6 @@
                             />
                             <span class="input-group-text">руб.</span>
                         </div>
-<!--                        <div id="budget_plan_help" class="form-text">Компенсация на 1 шт. * План продаж "Во время"</div>-->
                     </div>
                 </div>
             </template>
@@ -194,18 +192,15 @@
 
 <script setup>
 import { computed, onMounted, reactive, ref, watch } from 'vue';
+import { useHttpService } from '@/use/useHttpService.js';
+import { formatNumber } from '../helpers/formatters.js';
 import Modal from '@/components/Modal.vue';
 import Button from '@/components/core/Button.vue';
 import TheLabel from '@/components/form/TheLabel.vue';
 import TheInput from '@/components/form/TheInput.vue';
-import { formatNumber } from '../helpers/formatters.js';
+import { MANAGER_URLS } from '@/helpers/constants.js';
 
-const props = defineProps({
-    categories: {
-        type: Array,
-        default: [],
-    },
-});
+const { get } = useHttpService();
 
 const emit = defineEmits([
     'addProductToPromo',
@@ -224,6 +219,7 @@ const initialFormData = () => ({
 });
 
 const state = reactive({
+    categories: [],
     products: [],
     form: initialFormData(),
 });
@@ -238,10 +234,22 @@ function resetState() {
     state.form = initialFormData();
 }
 
-onMounted(() => {
+onMounted(async () => {
+    await getCategories();
     modalPopUp = new bootstrap.Modal(document.getElementById('modalPopUp'));
     modalPopUp._element.addEventListener('hide.bs.modal', resetState);
 });
+
+const getCategories = async () => {
+    const { data } = await get(MANAGER_URLS.CATEGORY, {
+        params: {
+            'category_is_active': true,
+            'product_is_active': true,
+            'products': true,
+        },
+    });
+    state.categories = data.categories;
+};
 
 const addProductModalInit = () => {
     resetState();
@@ -255,7 +263,7 @@ const closeModal = () => {
 };
 
 const displayProducts = () => {
-    props.categories.map(category => {
+    state.categories.map(category => {
         if ( +category.id === +state.form.categoryId ) {
             state.products = category.products;
         }
@@ -286,14 +294,14 @@ const removeProduct = (index) => {
 };
 
 const getCategoryName = () => {
-  const catIdx = props.categories.findIndex(c => c.id === +state.form.categoryId);
-  return props.categories[catIdx].name;
+  const catIdx = state.categories.findIndex(c => c.id === +state.form.categoryId);
+  return state.categories[catIdx].name;
 };
 
 const getProductName = () => {
-  const catIdx = props.categories.findIndex(c => c.id === +state.form.categoryId);
-  const prodIdx = props.categories[catIdx].products.findIndex(p => p.id === +state.form.productId);
-  return props.categories[catIdx].products[prodIdx].name;
+  const catIdx = state.categories.findIndex(c => c.id === +state.form.categoryId);
+  const prodIdx = state.categories[catIdx].products.findIndex(p => p.id === +state.form.productId);
+  return state.categories[catIdx].products[prodIdx].name;
 };
 
 const isFormValid = computed(() => {
@@ -344,6 +352,6 @@ function calcSurplusPlan() {
 function calcBudgetPlan() {
     const salesPlan = +state.form.salesPlan;
     const compensation = +state.form.compensation;
-    state.form.budgetPlan = (compensation * salesPlan).toFixed(0);
+    state.form.budgetPlan = parseInt((compensation * salesPlan).toFixed(0));
 }
 </script>

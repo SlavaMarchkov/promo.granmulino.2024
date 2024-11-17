@@ -384,7 +384,11 @@ onMounted(async () => {
 });
 
 const getProducts = async () => {
-    const { data } = await get(ADMIN_URLS.PRODUCT);
+    const { data } = await get(ADMIN_URLS.PRODUCT, {
+        params: {
+            'is_active': false,
+        },
+    });
     state.products = data.products;
 };
 
@@ -458,8 +462,8 @@ const saveProduct = async () => {
 
 const deleteProduct = async (id) => {
     if ( confirm('Точно удалить продукт? Уверены?') ) {
-        const response = await destroy(`${ ADMIN_URLS.PRODUCT }/${ id }`);
-        if ( response && response.status === 'success' ) {
+        const { status } = await destroy(`${ ADMIN_URLS.PRODUCT }/${ id }`);
+        if ( status === 'success' ) {
             await getProducts();
         }
     }

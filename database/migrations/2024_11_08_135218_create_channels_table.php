@@ -24,6 +24,8 @@ return new class extends Migration {
     public function down()
     : void
     {
-        Schema::dropIfExists('channels');
+        if (!app()->isProduction()) {
+            Schema::dropIfExists('channels');
+        }
     }
 };

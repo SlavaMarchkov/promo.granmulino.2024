@@ -26,7 +26,7 @@ final readonly class CategoryService
         return $this->categoryRepository->find($category);
     }
 
-    public function getCategories(array $params)
+    public function getCategories(array $params = [])
     : Collection
     {
         return $this->categoryRepository->get($params);

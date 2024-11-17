@@ -20,13 +20,13 @@ final readonly class CustomerService
     {
     }
 
-    public function findCustomer(Customer $customer)
+    public function findCustomer(Customer $customer, array $params = [])
     : ?Customer
     {
-        return $this->customerRepository->find($customer);
+        return $this->customerRepository->find($customer, $params);
     }
 
-    public function getCustomers(array $params)
+    public function getCustomers(array $params = [])
     : Collection
     {
         return $this->customerRepository->get($params);

@@ -12,10 +12,12 @@ use Illuminate\Database\Eloquent\Collection;
 final class EloquentCustomerRepository implements CustomerRepositoryInterface
 {
 
-    public function find(Customer $customer)
+    public function find(Customer $customer, array $params = [])
     : ?Customer
     {
-        return Customer::query()->where('id', $customer->id)->first();
+        $customersSql = Customer::query()->where('id', $customer->id);
+        $this->applyFilters($customersSql, $params);
+        return $customersSql->first();
     }
 
     public function get(array $params = [])
@@ -60,6 +62,11 @@ final class EloquentCustomerRepository implements CustomerRepositoryInterface
             ->when(isset($params['region']) && to_boolean($params['region']), fn(Builder $query) => $query->with('region'))
             ->when(isset($params['city']) && to_boolean($params['city']), fn(Builder $query) => $query->with('city'))
             ->when(isset($params['user']) && to_boolean($params['user']), fn(Builder $query) => $query->with('user'))
-            ->when(isset($params['retailers']) && to_boolean($params['retailers']), fn(Builder $query) => $query->with('retailers'));
+            ->when(isset($params['retailers']) && to_boolean($params['retailers']), fn(Builder $query) => $query->with('retailers'))
+            ->when(
+                isset($params['customer_sellers']) && to_boolean($params['customer_sellers']),
+                fn(Builder $query) => $query->with('customer_sellers')->orderBy('name')->orderByDesc('is_active')
+            )
+        ;
     }
 }

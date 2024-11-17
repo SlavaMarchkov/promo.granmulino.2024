@@ -37,8 +37,8 @@
                 <h5 class="card-header">{{ item.name }}</h5>
                 <div class="card-body mt-3">
                     <ul class="mb-0 list-unstyled">
-                        <li><strong>Регион</strong>: {{ item.region }}</li>
-                        <li><strong>Город</strong>: {{ item.city }}</li>
+                        <li><strong>Регион</strong>: {{ item.city.regionName }}</li>
+                        <li><strong>Город</strong>: {{ item.city.name }}</li>
                     </ul>
                 </div>
                 <div class="card-footer">
@@ -95,7 +95,11 @@ onMounted(async () => {
 });
 
 const getCustomers = async () => {
-    const { data } = await get(MANAGER_URLS.CUSTOMER);
+    const { data } = await get(MANAGER_URLS.CUSTOMER, {
+        params: {
+            'city': true,
+        },
+    });
     state.customers = data.customers;
 };
 
@@ -105,7 +109,7 @@ const clearSearch = () => {
 };
 
 const sortedItems = computed(() => {
-    return arrayHandlers.sortArray(state.customers);
+    return arrayHandlers.sortArrayByStringColumn(state.customers, 'name');
 });
 
 const filteredItems = computed(() => {

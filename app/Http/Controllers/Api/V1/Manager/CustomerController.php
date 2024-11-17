@@ -7,8 +7,8 @@ namespace App\Http\Controllers\Api\V1\Manager;
 use App\Http\Controllers\ApiController;
 use App\Http\Requests\Customer\StoreUpdateRequest;
 use App\Http\Requests\Customer\UpdateRequest;
-use App\Http\Resources\V1\CustomerCollection;
-use App\Http\Resources\V1\CustomerResource;
+use App\Http\Resources\V1\Customer\CustomerCollection;
+use App\Http\Resources\V1\Customer\CustomerResource;
 use App\Models\Customer;
 use App\Services\Customers\CustomerService;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -54,7 +54,9 @@ final class CustomerController extends ApiController
     : JsonResponse
     {
         $this->authorize('view', $customer);
-        $customer = $this->customerService->findCustomer($customer);
+        $customer = $this->customerService->findCustomer($customer, [
+            ...request()->all()
+        ]);
 
         return $this->successResponse(
             new CustomerResource($customer),

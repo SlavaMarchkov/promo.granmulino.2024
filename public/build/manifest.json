@@ -1,4 +1,8 @@
 {
+  "node_modules/air-datepicker/air-datepicker.css": {
+    "file": "assets/air-datepicker-Cz6DEdb5.css",
+    "src": "node_modules/air-datepicker/air-datepicker.css"
+  },
   "node_modules/bootstrap-icons/font/fonts/bootstrap-icons.woff": {
     "file": "assets/bootstrap-icons-BOrJxbIo.woff",
     "src": "node_modules/bootstrap-icons/font/fonts/bootstrap-icons.woff"
@@ -8,16 +12,17 @@
     "src": "node_modules/bootstrap-icons/font/fonts/bootstrap-icons.woff2"
   },
   "resources/css/app.css": {
-      "file": "assets/app-CHB0Qi0l.css",
-    "isEntry": true,
-    "src": "resources/css/app.css"
+    "file": "assets/app-C3-8HPmV.css",
+    "src": "resources/css/app.css",
+    "isEntry": true
   },
   "resources/js/app.js": {
+    "file": "assets/app-D8OPA9-e.js",
+    "name": "app",
+    "src": "resources/js/app.js",
+    "isEntry": true,
     "css": [
       "assets/app-yzCJC8wS.css"
-    ],
-      "file": "assets/app-eH868Hdi.js",
-    "isEntry": true,
-    "src": "resources/js/app.js"
+    ]
   }
 }

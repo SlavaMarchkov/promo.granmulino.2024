@@ -24,6 +24,16 @@ return new class extends Migration {
 
             $table->timestamps();
         });
+
+        Schema::create('customer_sellers', function (Blueprint $table) {
+            $table->id();
+
+            $table->foreignId('customer_id');
+            $table->string('name');
+            $table->boolean('is_active')->default(true);
+
+            $table->timestamps();
+        });
     }
 
     public function down()
@@ -31,6 +41,7 @@ return new class extends Migration {
     {
         if (!app()->isProduction()) {
             Schema::dropIfExists('customers');
+            Schema::dropIfExists('customer_sellers');
         }
     }
 };

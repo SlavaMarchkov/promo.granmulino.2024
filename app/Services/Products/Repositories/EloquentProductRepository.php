@@ -57,7 +57,7 @@ final class EloquentProductRepository implements ProductRepositoryInterface
     : void
     {
         $qb->when(
-            $params['is_active'] == true,
+            isset($params['is_active']) && to_boolean($params['is_active']),
             fn($qb) => $qb->where('is_active', true),
         );
     }

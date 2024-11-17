@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\V1\Manager\CategoryController;
 use App\Http\Controllers\Api\V1\Manager\ChannelController;
 use App\Http\Controllers\Api\V1\Manager\CityController;
 use App\Http\Controllers\Api\V1\Manager\CustomerController;
+use App\Http\Controllers\Api\V1\Manager\CustomerSellerController;
 use App\Http\Controllers\Api\V1\Manager\ProductController;
 use App\Http\Controllers\Api\V1\Manager\PromoController;
 use App\Http\Controllers\Api\V1\Manager\RegionController;
@@ -59,8 +60,9 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::get('cities', [CityController::class, 'index'])->name('cities');
         Route::get('channels', [ChannelController::class, 'index'])->name('channels');
         Route::apiResources([
-            'promos'    => PromoController::class,
-            'customers' => CustomerController::class,
+            'promos'           => PromoController::class,
+            'customers'        => CustomerController::class,
+            'customer_sellers' => CustomerSellerController::class,
         ]);
     });
 });

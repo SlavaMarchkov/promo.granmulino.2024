@@ -25,7 +25,7 @@ final class ProductController extends ApiController
     : JsonResponse
     {
         $products = $this->productService->getProducts([
-            'is_active' => request()->boolean('is_active'),
+            ...request()->all()
         ]);
 
         return $this->successResponse(
