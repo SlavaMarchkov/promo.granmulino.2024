@@ -15,38 +15,37 @@ final readonly class RetailerService
 {
     public function __construct(
         private RetailerRepositoryInterface $retailerRepository,
-        private CreateRetailerHandler       $createRetailerHandler,
-    )
-    {
+        private CreateRetailerHandler $createRetailerHandler,
+    ) {
     }
 
-    public function findRetailer(Retailer $retailer)
-    : ?Retailer
-    {
-        return $this->retailerRepository->find($retailer);
+    public function findRetailer(Retailer $retailer, array $params = [])
+    : ?Retailer {
+        return $this->retailerRepository->find($retailer, $params);
     }
 
-    public function getRetailers(array $params)
-    : Collection
-    {
+    public function getRetailers(array $params = [])
+    : Collection {
         return $this->retailerRepository->get($params);
     }
 
+    public function getRetailersForUser(int $user_id)
+    : Collection {
+        return $this->retailerRepository->getByUserId($user_id);
+    }
+
     public function storeRetailer(array $data)
-    : Retailer
-    {
+    : Retailer {
         return $this->createRetailerHandler->handle($data);
     }
 
     public function updateRetailer(Retailer $retailer, array $data)
-    : Retailer
-    {
+    : Retailer {
         return $this->retailerRepository->updateFromArray($retailer, $data);
     }
 
     public function deleteRetailer(Retailer $retailer)
-    : int
-    {
+    : int {
         return $this->retailerRepository->delete($retailer);
     }
 }

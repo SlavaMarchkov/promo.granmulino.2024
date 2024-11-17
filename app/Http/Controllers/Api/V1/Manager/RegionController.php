@@ -6,7 +6,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api\V1\Manager;
 
 use App\Http\Controllers\ApiController;
-use App\Http\Resources\V1\RegionCollection;
+use App\Http\Resources\V1\Region\RegionCollection;
 use App\Services\Regions\RegionService;
 use Illuminate\Http\JsonResponse;
 

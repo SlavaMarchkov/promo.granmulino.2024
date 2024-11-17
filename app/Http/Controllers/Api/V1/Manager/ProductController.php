@@ -6,7 +6,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api\V1\Manager;
 
 use App\Http\Controllers\ApiController;
-use App\Http\Resources\V1\ProductCollection;
+use App\Http\Resources\V1\Product\ProductCollection;
 use App\Services\Products\ProductService;
 use Illuminate\Http\JsonResponse;
 

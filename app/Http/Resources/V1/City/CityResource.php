@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Resources\V1;
+namespace App\Http\Resources\V1\City;
 
 use App\Models\City;
 use Illuminate\Http\Request;

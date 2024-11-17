@@ -1,13 +1,4 @@
-import {
-    Customer,
-    CustomerView,
-    Index,
-    Layout,
-    Profile,
-    Promo,
-    PromoCreate,
-    Retailer,
-} from '../../views/Manager/index.js';
+import Layout from '../../views/Manager/Layout.vue';
 
 export default {
     path: '/',
@@ -16,7 +7,7 @@ export default {
         {
             path: '',
             name: 'Manager.Index',
-            component: Index,
+            component: () => import('../../views/Manager/Index.vue'),
             meta: {
                 title: 'Главная страница',
             },
@@ -24,7 +15,7 @@ export default {
         {
             path: 'customers',
             name: 'Manager.Customer.Index',
-            component: Customer,
+            component: () => import('../../views/Manager/Customer/Index.vue'),
             meta: {
                 title: 'Мои контрагенты',
             },
@@ -32,7 +23,7 @@ export default {
         {
             path: 'customers/:id',
             name: 'Manager.Customer.View',
-            component: CustomerView,
+            component: () => import('../../views/Manager/Customer/View.vue'),
             meta: {
                 title: 'Просмотр контрагента',
             },
@@ -40,15 +31,23 @@ export default {
         {
             path: 'retailers',
             name: 'Manager.Retailer.Index',
-            component: Retailer,
+            component: () => import('../../views/Manager/Retailer/Index.vue'),
             meta: {
                 title: 'Мои торговые сети',
             },
         },
         {
+            path: 'retailers/:id',
+            name: 'Manager.Retailer.View',
+            component: () => import('../../views/Manager/Retailer/View.vue'),
+            meta: {
+                title: 'Просмотр торговой сети',
+            },
+        },
+        {
             path: 'profile',
             name: 'Manager.Profile.Index',
-            component: Profile,
+            component: () => import('../../views/Manager/Profile/Index.vue'),
             meta: {
                 title: 'Мой профиль',
             },
@@ -56,7 +55,7 @@ export default {
         {
             path: 'promo',
             name: 'Manager.Promo.Index',
-            component: Promo,
+            component: () => import('../../views/Manager/Promo/Index.vue'),
             meta: {
                 title: 'Мои промо-акции',
             },
@@ -64,7 +63,7 @@ export default {
         {
             path: 'promo/create',
             name: 'Manager.Promo.Create',
-            component: PromoCreate,
+            component: () => import('../../views/Manager/Promo/Create.vue'),
             meta: {
                 title: 'Новая промо-акция',
             },

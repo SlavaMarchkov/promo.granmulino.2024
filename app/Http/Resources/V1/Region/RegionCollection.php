@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Resources\V1;
+namespace App\Http\Resources\V1\Region;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
-/** @see \App\Models\Product */
-class ProductCollection extends ResourceCollection
+/** @see \App\Models\Region */
+class RegionCollection extends ResourceCollection
 {
     public static $wrap = '';
 
@@ -16,8 +16,8 @@ class ProductCollection extends ResourceCollection
     : array
     {
         return [
-            'products'      => $this->collection,
-            'productsCount' => $this->count(),
+            'regions'      => $this->collection,
+            'regionsCount' => $this->count(),
         ];
     }
 }

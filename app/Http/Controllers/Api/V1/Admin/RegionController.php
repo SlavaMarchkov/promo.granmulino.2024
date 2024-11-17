@@ -6,8 +6,8 @@ namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\ApiController;
 use App\Http\Requests\Region\StoreUpdateRequest;
-use App\Http\Resources\V1\RegionCollection;
-use App\Http\Resources\V1\RegionResource;
+use App\Http\Resources\V1\Region\RegionCollection;
+use App\Http\Resources\V1\Region\RegionResource;
 use App\Models\Region;
 use App\Services\Regions\RegionService;
 use Illuminate\Http\JsonResponse;

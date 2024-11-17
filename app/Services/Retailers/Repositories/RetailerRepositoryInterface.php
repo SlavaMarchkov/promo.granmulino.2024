@@ -16,6 +16,9 @@ interface RetailerRepositoryInterface
     public function get(array $params = [])
     : Collection;
 
+    public function getByUserId(int $user_id)
+    : Collection;
+
     public function createFromArray(array $data)
     : Retailer;
 

@@ -7,6 +7,7 @@ namespace App\Services\Retailers\Repositories;
 
 
 use App\Models\Retailer;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -24,6 +25,12 @@ final class EloquentRetailerRepository implements RetailerRepositoryInterface
         $retailersSql = Retailer::query();
         $this->applyFilters($retailersSql, $params);
         return $retailersSql->get();
+    }
+
+    public function getByUserId(int $user_id)
+    : Collection {
+        $user = User::query()->where('id', $user_id)->first();
+        return $user->retailers;
     }
 
     public function createFromArray(array $data)
@@ -56,10 +63,11 @@ final class EloquentRetailerRepository implements RetailerRepositoryInterface
     private function applyFilters(Builder $qb, array $params)
     : void
     {
-        $qb->when($params['with_city'] == true, function (Builder $query) {
+        // TODO: заменить названия параметров
+        /*$qb->when($params['with_city'] == true, function (Builder $query) {
             return $query->with('city');
         })->when($params['with_customer'] == true, function (Builder $query) {
             return $query->with('customer');
-        });
+        });*/
     }
 }

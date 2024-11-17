@@ -16,9 +16,10 @@ class DatabaseSeeder extends Seeder
             CitiesDumpSeeder::class,
             CategoriesDumpSeeder::class,
             ProductsDumpSeeder::class,
-            CustomersDumpSeeder::class,
             RetailersDumpSeeder::class,
             ChannelsDumpSeeder::class,
+            CustomersDumpSeeder::class,
+            CustomerSellersDumpSeeder::class,
         ]);
     }
 }

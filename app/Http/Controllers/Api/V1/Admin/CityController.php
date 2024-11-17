@@ -6,8 +6,8 @@ namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\ApiController;
 use App\Http\Requests\City\StoreUpdateRequest;
-use App\Http\Resources\V1\CityCollection;
-use App\Http\Resources\V1\CityResource;
+use App\Http\Resources\V1\City\CityCollection;
+use App\Http\Resources\V1\City\CityResource;
 use App\Models\City;
 use App\Services\Cities\CityService;
 use Illuminate\Http\JsonResponse;

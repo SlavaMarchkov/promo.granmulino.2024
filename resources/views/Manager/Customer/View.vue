@@ -13,11 +13,31 @@
             <div class="col-xl-4">
                 <div class="card">
                     <div class="card-body profile-card pt-4 d-flex flex-column">
-                        <h1>{{ item.name }}</h1>
-                        <h3>{{ item.city }}</h3>
-                        <div class="social-links mt-2">
-                            {{ item.description }}
+                        <h1 class="mb-3">{{ item.name }}</h1>
+                        <h3>Регион: {{ item.region.name }}</h3>
+                        <h3>Город: {{ item.city.name }}</h3>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header h4">Торговые сети</div>
+                    <div class="card-body mt-3">
+                        <div v-if="item.retailers.length > 0" class="list-group">
+                            <button
+                                v-for="(retailer, index) in item.retailers"
+                                :key="retailer.id"
+                                class="list-group-item list-group-item-action"
+                                type="button"
+                            >
+                                <RouterLink
+                                    :to="{ name: 'Manager.Retailer.View', params: { id: retailer.id }}"
+                                    class="d-flex justify-content-between text-black"
+                                >
+                                    <span>{{ index + 1 }}. <span class="fw-bold">{{  retailer.name }}</span></span>
+                                    <span class="text-primary">Подробнее</span>
+                                </RouterLink>
+                            </button>
                         </div>
+                        <p v-else class="mb-0">Дистрибутор не имеет торговых сетей.</p>
                     </div>
                 </div>
             </div>

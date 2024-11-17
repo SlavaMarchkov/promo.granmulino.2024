@@ -7,7 +7,7 @@ namespace App\Http\Controllers\Api\V1\Admin;
 use App\Enums\User\RoleEnum;
 use App\Http\Controllers\ApiController;
 use App\Http\Requests\User\LoginRequest;
-use App\Http\Resources\V1\UserResource;
+use App\Http\Resources\V1\User\UserResource;
 use App\Mail\Admin\LoginMail;
 use App\Mail\Admin\LogoutMail;
 use App\Models\User;

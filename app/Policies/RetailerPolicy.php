@@ -23,7 +23,9 @@ class RetailerPolicy
     public function view(User $user, Retailer $retailer)
     : bool
     {
-        return true;
+        return auth()->check()
+            && auth()->user()->isManager()
+            && $retailer->customer->user_id == $user->id;
     }
 
     public function create(User $user)

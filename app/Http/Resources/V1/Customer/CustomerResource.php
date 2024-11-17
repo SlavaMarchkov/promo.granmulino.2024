@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Http\Resources\V1\Customer;
 
-use App\Http\Resources\V1\CityResource;
+use App\Http\Resources\V1\City\CityResource;
 use App\Http\Resources\V1\CustomerSeller\CustomerSellerResource;
-use App\Http\Resources\V1\RegionResource;
-use App\Http\Resources\V1\RetailerResource;
-use App\Http\Resources\V1\UserResource;
+use App\Http\Resources\V1\Region\RegionResource;
+use App\Http\Resources\V1\Retailer\RetailerResource;
+use App\Http\Resources\V1\User\UserResource;
 use App\Models\Customer;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
