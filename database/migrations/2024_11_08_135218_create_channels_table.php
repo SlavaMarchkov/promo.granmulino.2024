@@ -16,6 +16,7 @@ return new class extends Migration {
 
             $table->string('slug', 255);
             $table->string('name', 64);
+            $table->boolean('is_for_retail')->default(true);
 
             $table->timestamps();
         });

@@ -39,6 +39,7 @@
                     <ul class="mb-0 list-unstyled">
                         <li><strong>Регион</strong>: {{ item.city.regionName }}</li>
                         <li><strong>Город</strong>: {{ item.city.name }}</li>
+                        <li><strong>Работает</strong>: <TheBadge :is-active="item.isActive" /></li>
                     </ul>
                 </div>
                 <div class="card-footer">
@@ -74,6 +75,7 @@ import InputGroup from '@/components/form/InputGroup.vue';
 import TheCheckbox from '@/components/form/TheCheckbox.vue';
 import TheFilter from '@/components/core/TheFilter.vue';
 import { MANAGER_URLS } from '@/helpers/constants.js';
+import TheBadge from '@/components/core/TheBadge.vue';
 
 const alertStore = useAlertStore();
 const spinnerStore = useSpinnerStore();

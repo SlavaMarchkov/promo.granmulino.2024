@@ -17,7 +17,12 @@
                             <h1>{{ item.name }}</h1>
                             <h4><span :class="['badge', 'rounded', item.typeBgColor]">{{ item.label }}</span></h4>
                         </div>
-                        <h3>Дистрибутор: {{ item.customer }}</h3>
+                        <h3>Дистрибутор:
+                            <RouterLink
+                                :to="{ name: 'Manager.Customer.View', params: { id: item.customerId } }"
+                            >{{ item.customer }}
+                            </RouterLink>
+                        </h3>
                         <h3>Город: {{ item.city }}</h3>
                         <h3>Работает: <TheBadge :is-active="item.isActive" /></h3>
                     </div>

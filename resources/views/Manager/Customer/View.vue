@@ -16,6 +16,7 @@
                         <h1 class="mb-3">{{ item.name }}</h1>
                         <h3>Регион: {{ item.region.name }}</h3>
                         <h3>Город: {{ item.city.name }}</h3>
+                        <h3>Работает: <TheBadge :is-active="item.isActive" /></h3>
                     </div>
                 </div>
                 <div class="card">
@@ -286,6 +287,7 @@ import { useSpinnerStore } from '@/stores/spinners.js';
 import { MANAGER_URLS } from '@/helpers/constants.js';
 import Alert from '@/components/Alert.vue';
 import TheSellers from '@/pages/Customer/TheSellers.vue';
+import TheBadge from '@/components/core/TheBadge.vue';
 
 const route = useRoute();
 const router = useRouter();

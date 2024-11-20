@@ -23,37 +23,37 @@ export const RETAILER_TYPES = [
 
 export const PROMO_TYPES = [
     {
-        // id: 'discount',
+        isForRetail: true,
         type: 'DISCOUNT',
         title: 'Скидка в цене',
         code: 'ЖЦ',
     },
     {
-        // id: 'sales_people_boost',
+        isForRetail: false,
         type: 'SALES_PEOPLE_BOOST',
         title: 'Мотивация торгового персонала',
         code: 'МТП',
     },
     {
-        // id: 'gift_for_purchase',
+        isForRetail: true,
         type: 'GIFT_FOR_PURCHASE',
         title: 'Подарок за покупку',
         code: 'ПП',
     },
     {
-        // id: 'retailers_boost',
+        isForRetail: false,
         type: 'RETAILERS_BOOST',
         title: 'Мотивация розничных точек',
         code: 'МРТ',
     },
     {
-        // id: 'coverage_increase',
+        isForRetail: false,
         type: 'COVERAGE_INCREASE',
         title: 'Увеличение покрытия',
         code: 'УП',
     },
     {
-        // id: 'in_out',
+        isForRetail: true,
         type: 'IN_OUT',
         title: 'In-Out',
         code: 'IN-OUT',
@@ -290,3 +290,6 @@ export const ADMIN_MENU_ITEMS = [
 export const OPEN_WEATHER_BASE_URL = 'https://api.openweathermap.org/geo/1.0/direct';
 
 export const OPEN_WEATHER_API_KEY = import.meta.env.VITE_OPEN_WEATHER_API_KEY;
+
+export const BOOST_QUOTIENT = 10;
+export const DEFAULT_SURPLUS_PERCENT = 30;

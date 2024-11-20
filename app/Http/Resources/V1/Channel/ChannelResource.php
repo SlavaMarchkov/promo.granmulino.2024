@@ -19,6 +19,7 @@ class ChannelResource extends JsonResource
             'id'         => $this->id,
             'slug'       => $this->slug,
             'name'       => $this->name,
+            'isForRetail' => $this->is_for_retail,
         ];
     }
 }

@@ -16,9 +16,10 @@ class CustomerSellerResource extends JsonResource
     public function toArray(Request $request)
     : array {
         return [
-            'id'       => $this->id,
-            'name'     => $this->name,
-            'isActive' => $this->is_active,
+            'id'        => $this->id,
+            'name'      => $this->name,
+            'shortName' => $this->short_name,
+            'isActive'  => $this->is_active,
 
             'customerId' => $this->customer_id,
             'customer'   => new CustomerResource($this->whenLoaded('customer')),

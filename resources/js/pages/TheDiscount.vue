@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="card">
-            <div class="card-header bg-success text-white">Скидка в цене</div>
+            <div class="card-header bg-success text-white">{{ props.title }}</div>
             <div class="card-body mt-3">
                 <div class="d-flex justify-content-between align-items-center">
                     <span>Ассортимент для промо-акции</span>
@@ -201,6 +201,14 @@ import TheInput from '@/components/form/TheInput.vue';
 import { MANAGER_URLS } from '@/helpers/constants.js';
 
 const { get } = useHttpService();
+
+const props = defineProps({
+    title: {
+        type: String,
+        required: true,
+        default: 'Title is required',
+    },
+});
 
 const emit = defineEmits([
     'addProductToPromo',

@@ -11,10 +11,8 @@
                     <div class="row g-3">
                         <div class="col-md-6">
                             <TheLabel for="promo_type" required>Вид промо-акции</TheLabel>
-                            <!--                            @change="displayPromoType"-->
                             <select
                                 v-model="state.promo.promoType"
-
                                 id="promo_type"
                                 class="form-select"
                             >
@@ -61,43 +59,10 @@
                             >
                                 <option disabled selected value="">- Выберите канал продаж -</option>
                                 <option
-                                    v-for="channel in state.channels"
+                                    v-for="channel in filteredChannels"
                                     :key="channel.id"
                                     :value="channel.id"
                                 >{{ channel.name }}
-                                </option>
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <TheLabel for="region_id" required>Регион</TheLabel>
-                            <select
-                                v-model="state.promo.regionId"
-                                @change="getCitiesForRegion"
-                                id="region_id"
-                                class="form-select"
-                            >
-                                <option disabled selected value="">- Выберите регион -</option>
-                                <option
-                                    v-for="region in getRegions"
-                                    :key="region.id"
-                                    :value="region.id"
-                                >{{ region.name }}
-                                </option>
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <TheLabel for="city_id" required>Город</TheLabel>
-                            <select
-                                v-model="state.promo.cityId"
-                                id="city_id"
-                                class="form-select"
-                            >
-                                <option disabled selected value="">- Выберите город -</option>
-                                <option
-                                    v-for="city in state.cities"
-                                    :key="city.id"
-                                    :value="city.id"
-                                >{{ city.name }}
                                 </option>
                             </select>
                         </div>
@@ -136,6 +101,39 @@
                             </select>
                         </div>
                         <div class="col-md-6">
+                            <TheLabel for="region_id" required>Регион</TheLabel>
+                            <select
+                                v-model="state.promo.regionId"
+                                @change="getCitiesForRegion"
+                                id="region_id"
+                                class="form-select"
+                            >
+                                <option disabled selected value="">- Выберите регион -</option>
+                                <option
+                                    v-for="region in getRegions"
+                                    :key="region.id"
+                                    :value="region.id"
+                                >{{ region.name }}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <TheLabel for="city_id" required>Город</TheLabel>
+                            <select
+                                v-model="state.promo.cityId"
+                                id="city_id"
+                                class="form-select"
+                            >
+                                <option disabled selected value="">- Выберите город -</option>
+                                <option
+                                    v-for="city in state.cities"
+                                    :key="city.id"
+                                    :value="city.id"
+                                >{{ city.name }}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
                             <TheLabel for="start_date" required>Начало промо-акции</TheLabel>
                             <TheInput
                                 id="start_date"
@@ -154,6 +152,48 @@
                                 aria-describedby="end_date_help"
                             />
                             <div id="end_date_help" class="form-text">укажите дату окончания акции</div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <input
+                                    id="products"
+                                    type="text"
+                                    class="form-control"
+                                    value="Ассортимент добавлен:"
+                                    aria-describedby="products_help"
+                                    readonly
+                                >
+                                <span
+                                    v-if="state.promo.products.length > 0"
+                                    class="input-group-text border-success bg-success text-white"
+                                >Да</span>
+                                <span
+                                    v-else
+                                    class="input-group-text border-danger bg-danger text-white px-4"
+                                >Нет</span>
+                            </div>
+                            <div id="products_help" class="form-text">только для скидочных акций</div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <input
+                                    id="sellers"
+                                    type="text"
+                                    class="form-control"
+                                    value="Команда добавлена:"
+                                    aria-describedby="sellers_help"
+                                    readonly
+                                >
+                                <span
+                                    v-if="state.promo.sellers.length > 0"
+                                    class="input-group-text border-success bg-success text-white"
+                                >Да</span>
+                                <span
+                                    v-else
+                                    class="input-group-text border-danger bg-danger text-white px-4"
+                                >Нет</span>
+                            </div>
+                            <div id="sellers_help" class="form-text">только для мотивации ТП</div>
                         </div>
                         <div class="col-12">
                             <TheLabel for="comments">Механика промо-акции</TheLabel>
@@ -179,13 +219,16 @@
         </div>
         <div class="col-lg-7">
             <TheDiscount
-                v-if="currentPromoType === 'DISCOUNT'"
+                v-if="currentPromoType.type === 'DISCOUNT'"
+                :title="currentPromoType.title"
                 @add-product-to-promo="addProductHandler"
                 @remove-product-from-promo="removeProductHandler"
             />
             <SalesPeopleBoost
-                v-if="currentPromoType === 'SALES_PEOPLE_BOOST'"
-                :customer-id="state.promo.customerId"
+                v-if="currentPromoType === 'SALES_PEOPLE_BOOST' && state.promo.customerId"
+                :sellers="state.customerSellers"
+                :customer-id="+state.promo.customerId"
+                @add-sellers-to-promo="addSellersHandler"
             />
             <GiftForPurchase
                 v-if="currentPromoType === 'GIFT_FOR_PURCHASE'"
@@ -204,7 +247,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, reactive, ref, watch } from 'vue';
+import { computed, onMounted, reactive, watch } from 'vue';
 import { useAuthStore } from '@/stores/auth.js';
 import { useAlertStore } from '@/stores/alerts.js';
 import { useHttpService } from '@/use/useHttpService.js';
@@ -258,10 +301,11 @@ const initialFormData = () => ({
     endDate: '',
     comments: '',
     products: [],
+    sellers: [],
 });
 
 const state = reactive({
-
+    customerSellers: [],
     customers: [],
     retailers: [],
     cities: [],
@@ -269,22 +313,17 @@ const state = reactive({
     promo: initialFormData(),
 });
 
-let currentPromoType = ref('');
+let currentPromoType = reactive({
+    isForRetail: false,
+    type: '',
+    title: '',
+    code: '',
+});
 
 onMounted(async () => {
-    //await getCategories();
     await getCustomers();
     await getChannels();
 });
-
-const getCategories = async () => {
-    const { data } = await get(MANAGER_URLS.CATEGORY, {
-        params: {
-            'is_active': true,
-        },
-    });
-    state.categories = data.categories;
-};
 
 const getChannels = async () => {
     const { data } = await get(MANAGER_URLS.CHANNEL);
@@ -302,22 +341,47 @@ const getCustomers = async () => {
     });
     state.customers = data.customers;
 };
+
+const getCustomerSellers = async (customerId) => {
+    const { status, data } = await get(`${MANAGER_URLS.CUSTOMER}/${customerId}`, {
+        params: {
+            'customer_sellers': true,
+        },
+    });
+    if (status === 'success') state.customerSellers = data.customerSellers;
+};
+
+
 // TODO - check after saving
 watch(
     () => state.promo.promoType,
-    (newValue, oldValue) => {
-        console.log(typeof newValue);
+    async (newValue) => {
         state.promo.products = [];
+        state.promo.sellers = [];
         state.promo.discount = null;
         const promoType = newValue;
-        currentPromoType.value = PROMO_TYPES.find(pt => pt.type === promoType).type;
+        currentPromoType = PROMO_TYPES.find(pt => pt.type === promoType);
+
+        if ( promoType === 'SALES_PEOPLE_BOOST' && state.promo.customerId ) {
+            await getCustomerSellers(state.promo.customerId);
+        }
     },
 );
 
-/*const displayPromoType = () => {
-    const promoType = state.promo.promoType;
-    currentPromoType.value = PROMO_TYPES.find(pt => pt.type === promoType).type;
-};*/
+watch(
+    () => state.promo.customerId,
+    async (newValue, oldValue) => {
+        if ( state.promo.promoType === 'SALES_PEOPLE_BOOST' ) {
+            await getCustomerSellers(state.promo.customerId);
+        }
+        state.promo.retailerId = '';
+        state.customers.map((customer) => {
+            if ( +customer.id === +newValue ) {
+                state.retailers = customer.retailers;
+            }
+        });
+    },
+);
 
 const addProductHandler = (product) => {
     state.promo.products.push(product);
@@ -327,13 +391,8 @@ const removeProductHandler = (index) => {
     state.promo.products.splice(index, 1);
 };
 
-const getRetailersForCustomer = () => {
-    state.promo.retailerId = '';
-    state.customers.map((customer) => {
-        if ( +customer.id === +state.promo.customerId ) {
-            state.retailers = customer.retailers;
-        }
-    });
+const addSellersHandler = (sellers) => {
+    state.promo.sellers = sellers;
 };
 
 const getCitiesForRegion = () => {
@@ -358,6 +417,10 @@ const savePromo = async () => {
 
 const sortedCustomers = computed(() => {
     return arrayHandlers.sortArrayByStringColumn(state.customers, 'name');
+});
+
+const filteredChannels = computed(() => {
+
 });
 
 const getRegions = computed(() => {

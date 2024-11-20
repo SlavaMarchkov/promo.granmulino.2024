@@ -47,7 +47,7 @@
                 </div>
                 <div class="card-footer">
                     <RouterLink
-                        :to="{ name: 'Manager.Retailer.View', params: { id: item.id }}"
+                        :to="{ name: 'Manager.Retailer.View', params: { id: item.id } }"
                         class="btn btn-outline-primary"
                     >Подробнее</RouterLink>
                 </div>

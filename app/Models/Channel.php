@@ -12,5 +12,10 @@ class Channel extends Model
     protected $fillable = [
         'slug',
         'name',
+        'is_for_retail',
+    ];
+
+    protected $casts = [
+        'is_for_retail' => 'boolean',
     ];
 }
