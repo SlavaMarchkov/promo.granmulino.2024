@@ -39,4 +39,10 @@ class Promo extends Model
     {
         return $this->hasMany(PromoProduct::class);
     }
+
+    public function promo_sellers()
+    : HasMany
+    {
+        return $this->hasMany(PromoSeller::class);
+    }
 }

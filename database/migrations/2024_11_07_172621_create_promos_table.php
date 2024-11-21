@@ -68,6 +68,25 @@ return new class extends Migration {
             $table->timestamps();
         });
 
+        Schema::create('promo_sellers', function (Blueprint $table) {
+            $table->id();
+
+            $table->foreignId('promo_id');
+            $table->foreignId('customer_id');
+            $table->foreignId('seller_id');
+
+            $table->decimal('sales_before', 10, 0)->default(0);
+            $table->decimal('sales_plan', 10, 0)->default(0);
+            $table->decimal('surplus_plan', 4, 0)->default(0);
+            $table->decimal('sales_after', 10, 0)->default(0);
+            $table->unsignedSmallInteger('compensation')->default(0);
+
+            $table->decimal('budget_plan', 10, 0)->default(0);
+            $table->decimal('budget_actual', 10, 0)->default(0);
+
+            $table->timestamps();
+        });
+
         Schema::create('promo_marks', function (Blueprint $table) {
             $table->id();
 
@@ -87,6 +106,7 @@ return new class extends Migration {
         if (!app()->isProduction()) {
             Schema::dropIfExists('promos');
             Schema::dropIfExists('promo_products');
+            Schema::dropIfExists('promo_sellers');
             Schema::dropIfExists('promo_marks');
         }
     }

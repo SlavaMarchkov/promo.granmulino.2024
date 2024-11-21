@@ -26,16 +26,16 @@
                                     <div class="col-5 fw-bold text-end">{{ formatNumber(pr.salesBefore) }} шт.</div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-7">План</div>
-                                    <div class="col-5 fw-bold text-end">{{ formatNumber(pr.salesPlan) }} шт.</div>
+                                    <div class="col-6">План</div>
+                                    <div class="col-6 fw-bold text-end">{{ formatNumber(pr.salesPlan) }} шт.</div>
                                 </div>
                                 <div class="row">
                                     <div class="col-7">Прирост</div>
                                     <div class="col-5 fw-bold text-end">{{ formatNumber(pr.surplusPlan) }}&#8239;%</div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-7">Бюджет</div>
-                                    <div class="col-5 fw-bold text-end">{{ formatNumber(pr.budgetPlan) }} руб.</div>
+                                    <div class="col-6">Бюджет</div>
+                                    <div class="col-6 fw-bold text-end">{{ formatNumber(pr.budgetPlan) }} руб.</div>
                                 </div>
                             </div>
                             <div class="card-footer py-2">

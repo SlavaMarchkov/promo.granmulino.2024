@@ -100,6 +100,17 @@ export function useArrayHandlers() {
         });
     };
 
+    const getUniqueObjectsFromArray = (arr) => {
+        let tempArr = arr.slice();
+
+        return tempArr.reduce((accumulator, current) => {
+            if ( accumulator.findIndex(object => object.id === current.id) === -1 ) {
+                accumulator.push(current);
+            }
+            return accumulator;
+        }, []);
+    };
+
     return {
         sortBy,
         setSort,
@@ -109,5 +120,6 @@ export function useArrayHandlers() {
         sortArray,
         sortArrayByStringColumn,
         sortArrayByBoolean,
+        getUniqueObjectsFromArray,
     };
 }

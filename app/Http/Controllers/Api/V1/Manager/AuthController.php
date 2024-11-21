@@ -15,6 +15,7 @@ use App\Models\User;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -50,6 +51,8 @@ final class AuthController extends ApiController
                 'logged_in_at' => now(),
             ]);
 
+            Log::info('User ID={id} just logged in.', ['id' => $user->id]);
+
             // TODO: email or TG notification when user signs in
             // Notification::send($administrators, new AdminNewUserNotification($user));
             try {
@@ -84,6 +87,8 @@ final class AuthController extends ApiController
     {
         $user = auth()->user();
         $user->tokens()->delete();
+
+        Log::info('User ID={id} just logged out.', ['id' => $user->id]);
 
         try {
             Mail::to(config('mail.to.admin'))->send(new LogoutMail($user));

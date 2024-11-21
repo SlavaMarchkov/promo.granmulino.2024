@@ -42,7 +42,8 @@ final class StoreRequest extends FormRequest
                     return Customer::query()
                             ->where('id', $this->request->get('customer_id'))
                             ->withCount('retailers')
-                            ->value('retailers_count') > 0;
+                            ->value('retailers_count') > 0
+                        && to_boolean($this->request->get('promo_for_retail')) == true;
                 }),
                 'exists:retailers,id',
             ],
@@ -54,7 +55,14 @@ final class StoreRequest extends FormRequest
                 'nullable',
                 'array',
                 Rule::requiredIf(function () {
-                    return $this->request->get('promo_type') == TypeEnum::DISCOUNT->value;
+                    return to_boolean($this->request->get('promo_for_retail')) == true;
+                }),
+            ],
+            'sellers' => [
+                'nullable',
+                'array',
+                Rule::requiredIf(function () {
+                    return to_boolean($this->request->get('promo_for_retail')) == false;
                 }),
             ],
         ];

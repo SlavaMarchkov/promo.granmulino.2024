@@ -14,7 +14,7 @@ final class PromoService
 {
     public function __construct(
         private PromoRepositoryInterface $promoRepository,
-        private CreatePromoHandler $createPromoHandler,
+        private readonly CreatePromoHandler $createPromoHandler,
     )
     {
     }

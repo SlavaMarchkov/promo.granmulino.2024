@@ -13,8 +13,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 class PromoResource extends JsonResource
 {
     public function toArray(Request $request)
-    : array
-    {
+    : array {
         return [
             'id'          => $this->id,
             'status'      => $this->status,
@@ -31,6 +30,12 @@ class PromoResource extends JsonResource
             'comments'    => $this->comments,
             'created_at'  => $this->created_at,
             'updated_at'  => $this->updated_at,
+
+            'promo_products_count' => $this->promo_products_count,
+            'promo_sellers_count'  => $this->promo_sellers_count,
+
+            'products' => PromoProductResource::collection($this->whenLoaded('promo_products')),
+            'sellers'  => PromoSellerResource::collection($this->whenLoaded('promo_sellers')),
         ];
     }
 }

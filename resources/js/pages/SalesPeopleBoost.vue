@@ -1,12 +1,15 @@
 <template>
     <div>
         <div class="card">
-            <div class="card-header bg-secondary text-white">Мотивация торгового персонала</div>
+            <div class="card-header bg-secondary text-white">{{ props.title }}</div>
             <div class="card-body mt-3">
                 <div class="d-flex justify-content-between align-items-center">
                     <span>Участники из команды ТП</span>
                 </div>
                 <hr>
+                <pre>
+                    {{ state.checkedSellers }}
+                </pre>
                 <h5>Мотивация для расчёта бюджета: <span class="fw-bold text-primary">{{ state.form.compensation }}&#8239;%</span></h5>
                 <h5 class="mb-3">Планируемый бюджет на промо-акцию: <span class="fw-bold text-primary">{{ formatNumber(totalBudget) }} руб.</span></h5>
                 <p>Выберите торговых представителей, участвующих в акции:</p>
@@ -100,10 +103,15 @@ const initialFormData = () => ({
     salesAfter: 0,
     compensation: BOOST_QUOTIENT,
     budgetPlan: 0,
-    budgetAfter: 0,
+    budgetActual: 0,
 });
 
 const props = defineProps({
+    title: {
+        type: String,
+        required: true,
+        default: 'Title is required',
+    },
     customerId: {
         type: Number,
         required: true,
