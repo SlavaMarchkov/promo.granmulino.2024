@@ -193,7 +193,7 @@
 <script setup>
 import { computed, onMounted, reactive, ref, watch } from 'vue';
 import { useHttpService } from '@/use/useHttpService.js';
-import { formatNumber } from '../helpers/formatters.js';
+import { formatNumber } from '@/helpers/formatters.js';
 import Modal from '@/components/Modal.vue';
 import TheButton from '@/components/core/TheButton.vue';
 import TheLabel from '@/components/form/TheLabel.vue';

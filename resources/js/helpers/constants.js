@@ -55,7 +55,7 @@ export const PROMO_TYPES = [
     {
         isForRetail: true,
         type: 'IN_OUT',
-        title: 'In-Out',
+        title: 'Временный ввод в матрицу сети In-Out',
         code: 'IN-OUT',
     },
 ];

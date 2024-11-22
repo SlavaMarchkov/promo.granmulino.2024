@@ -85,7 +85,6 @@
 </template>
 
 <script setup>
-import Button from '@/components/core/Button.vue';
 import { computed, reactive } from 'vue';
 import { useHttpService } from '@/use/useHttpService.js';
 import { useArrayHandlers } from '@/use/useArrayHandlers.js';

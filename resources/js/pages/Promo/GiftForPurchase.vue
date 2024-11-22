@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="card">
-            <div class="card-header bg-warning text-white">Подарок за покупку</div>
+            <div class="card-header bg-warning text-white">{{ props.title }}</div>
             <div class="card-body mt-3">
                 <div class="d-flex justify-content-between align-items-center">
                     <span>Ассортимент для подарков за покупку</span>
@@ -46,4 +46,12 @@
 <script setup>
 import TheButton from '@/components/core/TheButton.vue';
 import Modal from '@/components/Modal.vue';
+
+const props = defineProps({
+    title: {
+        type: String,
+        required: true,
+        default: 'Title is required',
+    },
+});
 </script>

@@ -259,15 +259,19 @@
             />
             <GiftForPurchase
                 v-if="currentPromoType.type === 'GIFT_FOR_PURCHASE'"
+                :title="currentPromoType.title"
             />
             <RetailersBoost
                 v-if="currentPromoType.type === 'RETAILERS_BOOST'"
+                :title="currentPromoType.title"
             />
             <CoverageIncrease
                 v-if="currentPromoType.type === 'COVERAGE_INCREASE'"
+                :title="currentPromoType.title"
             />
             <TheInOut
                 v-if="currentPromoType.type === 'IN_OUT'"
+                :title="currentPromoType.title"
             />
         </div>
     </div>
@@ -288,12 +292,12 @@ import TheLabel from '@/components/form/TheLabel.vue';
 import TheButton from '@/components/core/TheButton.vue';
 import TheInput from '@/components/form/TheInput.vue';
 import localeRu from 'air-datepicker/locale/ru';
-import TheDiscount from '@/pages/TheDiscount.vue';
-import SalesPeopleBoost from '@/pages/SalesPeopleBoost.vue';
-import GiftForPurchase from '@/pages/GiftForPurchase.vue';
-import RetailersBoost from '@/pages/RetailersBoost.vue';
-import CoverageIncrease from '@/pages/CoverageIncrease.vue';
-import TheInOut from '@/pages/TheInOut.vue';
+import TheDiscount from '@/pages/Promo/TheDiscount.vue';
+import SalesPeopleBoost from '@/pages/Promo/SalesPeopleBoost.vue';
+import GiftForPurchase from '@/pages/Promo/GiftForPurchase.vue';
+import RetailersBoost from '@/pages/Promo/RetailersBoost.vue';
+import CoverageIncrease from '@/pages/Promo/CoverageIncrease.vue';
+import TheInOut from '@/pages/Promo/TheInOut.vue';
 
 const { get, post } = useHttpService();
 const alertStore = useAlertStore();
@@ -380,8 +384,6 @@ const getCustomerSellers = async (customerId) => {
     if (status === 'success') state.customerSellers = data.customerSellers;
 };
 
-
-// TODO - check after saving
 watch(
     () => state.promo.promoType,
     async (newValue) => {

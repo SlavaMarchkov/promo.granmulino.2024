@@ -17,7 +17,7 @@
     "isEntry": true
   },
   "resources/js/app.js": {
-    "file": "assets/app-BnJxUDi9.js",
+    "file": "assets/app-BiIGfiXh.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
@@ -32,11 +32,11 @@
       "resources/views/Manager/Promo/Create.vue"
     ],
     "css": [
-      "assets/app-yzCJC8wS.css"
+      "assets/app-ClSdrvIZ.css"
     ]
   },
   "resources/views/Manager/Customer/Index.vue": {
-    "file": "assets/Index-B1BE-8xS.js",
+    "file": "assets/Index-CM96CEe4.js",
     "name": "Index",
     "src": "resources/views/Manager/Customer/Index.vue",
     "isDynamicEntry": true,
@@ -45,7 +45,7 @@
     ]
   },
   "resources/views/Manager/Customer/View.vue": {
-    "file": "assets/View-CfXFrYvv.js",
+    "file": "assets/View-DHic1yHK.js",
     "name": "View",
     "src": "resources/views/Manager/Customer/View.vue",
     "isDynamicEntry": true,
@@ -54,7 +54,7 @@
     ]
   },
   "resources/views/Manager/Index.vue": {
-    "file": "assets/Index-MwYDM_RT.js",
+    "file": "assets/Index-DWD2KFIJ.js",
     "name": "Index",
     "src": "resources/views/Manager/Index.vue",
     "isDynamicEntry": true,
@@ -63,7 +63,7 @@
     ]
   },
   "resources/views/Manager/Profile/Index.vue": {
-    "file": "assets/Index-R5GDvwFx.js",
+    "file": "assets/Index-BZAz4jb_.js",
     "name": "Index",
     "src": "resources/views/Manager/Profile/Index.vue",
     "isDynamicEntry": true,
@@ -72,7 +72,7 @@
     ]
   },
   "resources/views/Manager/Promo/Create.vue": {
-    "file": "assets/Create-CUq5q8nN.js",
+    "file": "assets/Create-AJ5uEYew.js",
     "name": "Create",
     "src": "resources/views/Manager/Promo/Create.vue",
     "isDynamicEntry": true,
@@ -81,7 +81,7 @@
     ]
   },
   "resources/views/Manager/Promo/Index.vue": {
-    "file": "assets/Index-B0Xt8EO0.js",
+    "file": "assets/Index-CiCkHoe7.js",
     "name": "Index",
     "src": "resources/views/Manager/Promo/Index.vue",
     "isDynamicEntry": true,
@@ -90,7 +90,7 @@
     ]
   },
   "resources/views/Manager/Retailer/Index.vue": {
-    "file": "assets/Index-tzvs9jRn.js",
+    "file": "assets/Index-BBK_ib3t.js",
     "name": "Index",
     "src": "resources/views/Manager/Retailer/Index.vue",
     "isDynamicEntry": true,
@@ -99,7 +99,7 @@
     ]
   },
   "resources/views/Manager/Retailer/View.vue": {
-    "file": "assets/View-BCJHPLvJ.js",
+    "file": "assets/View-ysZVEJOx.js",
     "name": "View",
     "src": "resources/views/Manager/Retailer/View.vue",
     "isDynamicEntry": true,

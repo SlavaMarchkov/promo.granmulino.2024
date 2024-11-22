@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="card">
-            <div class="card-header bg-dark text-white">Увеличение покрытия</div>
+            <div class="card-header bg-dark text-white">{{ props.title }}</div>
             <div class="card-body mt-3">
                 <div class="d-flex justify-content-between align-items-center">
                     <span>Инфо по покрытию</span>
@@ -46,4 +46,12 @@
 <script setup>
 import TheButton from '@/components/core/TheButton.vue';
 import Modal from '@/components/Modal.vue';
+
+const props = defineProps({
+    title: {
+        type: String,
+        required: true,
+        default: 'Title is required',
+    },
+});
 </script>
