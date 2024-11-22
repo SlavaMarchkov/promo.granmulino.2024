@@ -14,24 +14,24 @@
                     <h5 class="modal-title">
                         <slot name="title"></slot>
                     </h5>
-                    <Button
+                    <TheButton
                         @click="props.closeFunc"
                         type="button"
                         class="btn-close"
                         aria-label="Close"
-                    ></Button>
+                    ></TheButton>
                 </div>
                 <div class="modal-body">
                     <slot name="body"></slot>
                 </div>
                 <div class="modal-footer">
                     <slot name="footer"></slot>
-                    <Button
+                    <TheButton
                         @click="props.closeFunc"
                         type="button"
                         class="btn-secondary"
                     >Закрыть
-                    </Button>
+                    </TheButton>
                 </div>
             </div>
         </div>
@@ -39,7 +39,7 @@
 </template>
 
 <script setup>
-import Button from '@/components/core/Button.vue';
+import TheButton from '@/components/core/TheButton.vue';
 import { computed } from 'vue';
 
 const props = defineProps({

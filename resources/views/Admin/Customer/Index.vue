@@ -214,7 +214,7 @@
                 </div>
                 <div class="col-6">
                     <TheLabel>Сброс привязки менеджера</TheLabel>
-                    <Button
+                    <TheButton
                         @click="state.customer.userId = null"
                         type="button"
                         :class="[
@@ -226,7 +226,7 @@
                         :disabled="state.customer.userId === null"
                     >
                         Сбросить
-                    </Button>
+                    </TheButton>
                 </div>
                 <div class="col-12">
                     <TheLabel for="description">Описание для контрагента</TheLabel>
@@ -254,7 +254,7 @@
             </div>
         </template>
         <template #footer>
-            <Button
+            <TheButton
                 @click="saveCustomer"
                 type="button"
                 :loading="spinnerStore.isButtonDisabled"
@@ -264,7 +264,7 @@
             >
                 <span v-if="state.isEditing">Сохранить</span>
                 <span v-else>Создать</span>
-            </Button>
+            </TheButton>
         </template>
     </Modal>
 
@@ -325,7 +325,7 @@ import { useAuthStore } from '@/stores/auth.js';
 import { useHttpService } from '@/use/useHttpService.js';
 import { useArrayHandlers } from '@/use/useArrayHandlers.js';
 import ThSort from '@/components/table/ThSort.vue';
-import Button from '@/components/core/Button.vue';
+import TheButton from '@/components/core/TheButton.vue';
 import TheBadge from '@/components/core/TheBadge.vue';
 import InputGroup from '@/components/form/InputGroup.vue';
 import SelectGroup from '@/components/form/SelectGroup.vue';

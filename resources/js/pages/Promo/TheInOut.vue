@@ -30,20 +30,20 @@
                 </div>
             </template>
             <template #footer>
-                <Button
+                <TheButton
                     @click="addProduct"
                     type="button"
                     class="btn-success w-25"
                     :disabled="!isFormValid"
                 >
                     Добавить
-                </Button>
+                </TheButton>
             </template>
         </Modal>
     </div>
 </template>
 
 <script setup>
-import Button from '@/components/core/Button.vue';
+import TheButton from '@/components/core/TheButton.vue';
 import Modal from '@/components/Modal.vue';
 </script>

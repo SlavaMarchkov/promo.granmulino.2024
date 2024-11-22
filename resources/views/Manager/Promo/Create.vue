@@ -233,13 +233,13 @@
                     </div>
                 </div>
                 <div class="card-footer">
-                    <Button
+                    <TheButton
                         @click="savePromo"
                         type="button"
                         class="btn-primary w-25"
                     >
                         Сохранить
-                    </Button>
+                    </TheButton>
                 </div>
             </div>
         </div>
@@ -285,7 +285,7 @@ import { useArrayHandlers } from '@/use/useArrayHandlers.js';
 import { MANAGER_URLS, PROMO_TYPES } from '@/helpers/constants.js';
 import Alert from '@/components/Alert.vue';
 import TheLabel from '@/components/form/TheLabel.vue';
-import Button from '@/components/core/Button.vue';
+import TheButton from '@/components/core/TheButton.vue';
 import TheInput from '@/components/form/TheInput.vue';
 import localeRu from 'air-datepicker/locale/ru';
 import TheDiscount from '@/pages/TheDiscount.vue';

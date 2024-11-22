@@ -177,14 +177,14 @@
                 </div>
             </template>
             <template #footer>
-                <Button
+                <TheButton
                     @click="addProduct"
                     type="button"
                     class="btn-success w-25"
                     :disabled="!isFormValid"
                 >
                     Добавить
-                </Button>
+                </TheButton>
             </template>
         </Modal>
     </div>
@@ -195,7 +195,7 @@ import { computed, onMounted, reactive, ref, watch } from 'vue';
 import { useHttpService } from '@/use/useHttpService.js';
 import { formatNumber } from '../helpers/formatters.js';
 import Modal from '@/components/Modal.vue';
-import Button from '@/components/core/Button.vue';
+import TheButton from '@/components/core/TheButton.vue';
 import TheLabel from '@/components/form/TheLabel.vue';
 import TheInput from '@/components/form/TheInput.vue';
 import { MANAGER_URLS } from '@/helpers/constants.js';

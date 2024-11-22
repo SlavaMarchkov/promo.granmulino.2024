@@ -1,10 +1,10 @@
 <template>
     <div>
         <div class="card">
-            <div class="card-header bg-dark text-white">Увеличение покрытия</div>
+            <div class="card-header bg-info text-white">Мотивация розничных точек</div>
             <div class="card-body mt-3">
                 <div class="d-flex justify-content-between align-items-center">
-                    <span>Инфо по покрытию</span>
+                    <span>Список торговых точек</span>
                     <button
                         @click="addProductModalInit"
                         class="btn btn-success"
@@ -30,20 +30,20 @@
                 </div>
             </template>
             <template #footer>
-                <Button
+                <TheButton
                     @click="addProduct"
                     type="button"
                     class="btn-success w-25"
                     :disabled="!isFormValid"
                 >
                     Добавить
-                </Button>
+                </TheButton>
             </template>
         </Modal>
     </div>
 </template>
 
 <script setup>
-import Button from '@/components/core/Button.vue';
+import TheButton from '@/components/core/TheButton.vue';
 import Modal from '@/components/Modal.vue';
 </script>

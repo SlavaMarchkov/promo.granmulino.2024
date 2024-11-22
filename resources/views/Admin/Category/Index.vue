@@ -150,7 +150,7 @@
             </div>
         </template>
         <template #footer>
-            <Button
+            <TheButton
                 :class="state.isEditing
                     ? 'btn-warning'
                     : 'btn-primary'"
@@ -162,7 +162,7 @@
             >
                 <span v-if="state.isEditing">Сохранить</span>
                 <span v-else>Создать</span>
-            </Button>
+            </TheButton>
         </template>
     </Modal>
 
@@ -210,7 +210,7 @@
             </div>
         </template>
         <template #footer>
-            <Button class="btn btn-light"></Button>
+            <TheButton class="btn-light"></TheButton>
         </template>
     </Modal>
 </template>
@@ -225,7 +225,7 @@ import { useArrayHandlers } from '@/use/useArrayHandlers.js';
 import TheInput from '@/components/form/TheInput.vue';
 import TheLabel from '@/components/form/TheLabel.vue';
 import TheCheckbox from '@/components/form/TheCheckbox.vue';
-import Button from '@/components/core/Button.vue';
+import TheButton from '@/components/core/TheButton.vue';
 import Alert from '@/components/Alert.vue';
 import InputGroup from '@/components/form/InputGroup.vue';
 import TheFilter from '@/components/core/TheFilter.vue';

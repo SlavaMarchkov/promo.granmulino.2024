@@ -219,7 +219,7 @@
             </div>
         </template>
         <template #footer>
-            <Button
+            <TheButton
                 :class="state.isEditing
                     ? 'btn-warning'
                     : 'btn-primary'"
@@ -231,7 +231,7 @@
             >
                 <span v-if="state.isEditing">Сохранить</span>
                 <span v-else>Создать</span>
-            </Button>
+            </TheButton>
         </template>
     </Modal>
 
@@ -297,7 +297,7 @@ import TheLabel from '@/components/form/TheLabel.vue';
 import InputGroup from '@/components/form/InputGroup.vue';
 import RadioButton from '@/components/form/RadioButton.vue';
 import ThSort from '@/components/table/ThSort.vue';
-import Button from '@/components/core/Button.vue';
+import TheButton from '@/components/core/TheButton.vue';
 import TheBadge from '@/components/core/TheBadge.vue';
 import TheFilter from '@/components/core/TheFilter.vue';
 import Modal from '@/components/Modal.vue';

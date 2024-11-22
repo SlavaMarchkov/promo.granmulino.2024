@@ -27,13 +27,13 @@
                     />
                 </div>
                 <div class="col-12">
-                    <Button
+                    <TheButton
                         type="submit"
                         :loading="spinnerStore.isLoading"
                         :disabled="spinnerStore.isLoading"
                         class="btn-primary w-100"
                     >Войти в админку
-                    </Button>
+                    </TheButton>
                 </div>
                 <div class="col-12">
                     <p class="small mb-0">
@@ -51,7 +51,7 @@ import { useAuthStore } from '@/stores/auth.js';
 import { useSpinnerStore } from '@/stores/spinners.js';
 import { useRouter } from 'vue-router';
 import Alert from '@/components/Alert.vue';
-import Button from '@/components/core/Button.vue';
+import TheButton from '@/components/core/TheButton.vue';
 import TheLabel from '@/components/form/TheLabel.vue';
 import TheInput from '@/components/form/TheInput.vue';
 

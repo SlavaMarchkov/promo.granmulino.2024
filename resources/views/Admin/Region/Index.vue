@@ -140,7 +140,7 @@
             </div>
         </template>
         <template #footer>
-            <Button
+            <TheButton
                 :class="state.isEditing
                     ? 'btn-warning'
                     : 'btn-primary'"
@@ -152,7 +152,7 @@
             >
                 <span v-if="state.isEditing">Сохранить</span>
                 <span v-else>Создать</span>
-            </Button>
+            </TheButton>
         </template>
     </Modal>
 
@@ -200,7 +200,7 @@
 <script setup>
 import TheInput from '@/components/form/TheInput.vue';
 import TheLabel from '@/components/form/TheLabel.vue';
-import Button from '@/components/core/Button.vue';
+import TheButton from '@/components/core/TheButton.vue';
 import Alert from '@/components/Alert.vue';
 import { computed, onMounted, reactive } from 'vue';
 import { useAlertStore } from '@/stores/alerts.js';

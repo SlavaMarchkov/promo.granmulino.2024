@@ -12,7 +12,10 @@
 
 <script setup>
 const props = defineProps({
-    loading: Boolean,
+    loading: {
+        type: Boolean,
+        required: false,
+    },
     disabled: Boolean,
     buttonClass: {
         type: String,
