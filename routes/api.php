@@ -14,6 +14,7 @@ use App\Http\Controllers\Api\V1\Manager\ChannelController;
 use App\Http\Controllers\Api\V1\Manager\CityController;
 use App\Http\Controllers\Api\V1\Manager\CustomerController;
 use App\Http\Controllers\Api\V1\Manager\CustomerSellerController;
+use App\Http\Controllers\Api\V1\Manager\CustomerSupervisorController;
 use App\Http\Controllers\Api\V1\Manager\ProductController;
 use App\Http\Controllers\Api\V1\Manager\PromoController;
 use App\Http\Controllers\Api\V1\Manager\RegionController;
@@ -60,11 +61,21 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::get('regions', [RegionController::class, 'index'])->name('regions');
         Route::get('cities', [CityController::class, 'index'])->name('cities');
         Route::get('channels', [ChannelController::class, 'index'])->name('channels');
+
+        Route::get('customers/{customer}/supervisors', [CustomerSupervisorController::class, 'index'])
+            ->name('supervisors');
+        Route::post('customers/{customer}/supervisors', [CustomerSupervisorController::class, 'store'])
+            ->name('supervisors.store');
+
+        Route::get('customers/{customer}/sellers', [CustomerSellerController::class, 'index'])
+            ->name('sellers');
+        Route::post('customers/{customer}/sellers', [CustomerSellerController::class, 'store'])
+            ->name('sellers.store');
+
         Route::apiResources([
-            'promos'           => PromoController::class,
-            'customers'        => CustomerController::class,
-            'retailers'        => RetailerController::class,
-            'customer_sellers' => CustomerSellerController::class,
+            'promos'    => PromoController::class,
+            'retailers' => RetailerController::class,
+            'customers' => CustomerController::class,
         ]);
     });
 });

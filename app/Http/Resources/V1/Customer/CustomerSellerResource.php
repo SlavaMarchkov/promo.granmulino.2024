@@ -3,9 +3,8 @@
 declare(strict_types=1);
 
 // 15.11.2024 at 16:41:25
-namespace App\Http\Resources\V1\CustomerSeller;
+namespace App\Http\Resources\V1\Customer;
 
-use App\Http\Resources\V1\Customer\CustomerResource;
 use App\Models\CustomerSeller;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -21,8 +20,8 @@ class CustomerSellerResource extends JsonResource
             'shortName' => $this->short_name,
             'isActive'  => $this->is_active,
 
-            'customerId' => $this->customer_id,
-            'customer'   => new CustomerResource($this->whenLoaded('customer')),
+            'supervisorId' => $this->supervisor_id,
+            'supervisor'   => new CustomerSupervisorResource($this->whenLoaded('supervisor')),
         ];
     }
 }

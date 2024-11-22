@@ -6,22 +6,22 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api\V1\Manager;
 
 use App\Http\Controllers\ApiController;
-use App\Http\Requests\CustomerSeller\StoreUpdateRequest;
-use App\Http\Resources\V1\CustomerSeller\CustomerSellerCollection;
-use App\Http\Resources\V1\CustomerSeller\CustomerSellerResource;
+use App\Http\Requests\Customer\SellerStoreRequest;
+use App\Http\Resources\V1\Customer\CustomerSellerResource;
 use App\Models\CustomerSeller;
-use App\Services\CustomerSellers\CustomerSellerService;
+use App\Services\Customers\CustomerService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
 
 final class CustomerSellerController extends ApiController
 {
     public function __construct(
-        private readonly CustomerSellerService $customerSellerService,
+        private readonly CustomerService $customerService,
     ) {
     }
 
-    public function index()
+    /*public function index()
     : JsonResponse
     {
         $sellers = $this->customerSellerService->getCustomerSellers([
@@ -33,22 +33,23 @@ final class CustomerSellerController extends ApiController
             'success',
             __('crud.sales_reps.all'),
         );
-    }
+    }*/
 
-    public function store(StoreUpdateRequest $request)
+    public function store(SellerStoreRequest $request)
     : JsonResponse {
         $data = $request->validated();
-        $customerSeller = $this->customerSellerService->storeCustomerSeller($data);
+        $seller = $this->customerService->storeSeller($data);
+        Log::info('Customer Seller created');
 
         return $this->successResponse(
-            new CustomerSellerResource($customerSeller),
+            new CustomerSellerResource($seller),
             'success',
-            __('crud.sales_reps.created'),
+            __('crud.sellers.created'),
             Response::HTTP_CREATED,
         );
     }
 
-    public function show(CustomerSeller $customerSeller)
+    /*public function show(CustomerSeller $customerSeller)
     : JsonResponse {
         $customerSeller = $this->customerSellerService->findCustomerSeller($customerSeller);
         return $this->successResponse(
@@ -56,9 +57,9 @@ final class CustomerSellerController extends ApiController
             'success',
             __('crud.sales_reps.one'),
         );
-    }
+    }*/
 
-    public function update(StoreUpdateRequest $request, CustomerSeller $customerSeller)
+    /*public function update(StoreUpdateRequest $request, CustomerSeller $customerSeller)
     : JsonResponse {
         $data = $request->validated();
         $customerSeller = $this->customerSellerService->updateCustomerSeller($customerSeller, $data);
@@ -68,7 +69,7 @@ final class CustomerSellerController extends ApiController
             'success',
             __('crud.sales_reps.updated'),
         );
-    }
+    }*/
 
     public function destroy(CustomerSeller $customerSeller)
     {

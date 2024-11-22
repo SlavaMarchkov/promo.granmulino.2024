@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 // 15.11.2024 at 01:04:42
-namespace App\Http\Resources\V1\CustomerSeller;
+namespace App\Http\Resources\V1\Customer;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;

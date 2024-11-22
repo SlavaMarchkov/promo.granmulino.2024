@@ -5,7 +5,7 @@
                 {{ error }}
             </li>
         </ul>
-        <div v-if="alert.message.message" class="mb-0 text-start">
+        <div v-if="alert.message.message" class="my-1 text-start">
             {{ alert.message.message }}
         </div>
         <button

@@ -25,13 +25,27 @@ return new class extends Migration {
             $table->timestamps();
         });
 
-        Schema::create('customer_sellers', function (Blueprint $table) {
+        Schema::create('customer_supervisors', function (Blueprint $table) {
             $table->id();
 
             $table->foreignId('customer_id');
             $table->string('name');
             $table->boolean('is_active')->default(true);
 
+            $table->softDeletes();
+            $table->timestamps();
+        });
+
+        Schema::create('customer_sellers', function (Blueprint $table) {
+            $table->id();
+
+            $table->foreignId('customer_id');
+            $table->foreignId('supervisor_id')->nullable();
+
+            $table->string('name');
+            $table->boolean('is_active')->default(true);
+
+            $table->softDeletes();
             $table->timestamps();
         });
     }
@@ -41,6 +55,7 @@ return new class extends Migration {
     {
         if (!app()->isProduction()) {
             Schema::dropIfExists('customers');
+            Schema::dropIfExists('customer_supervisors');
             Schema::dropIfExists('customer_sellers');
         }
     }

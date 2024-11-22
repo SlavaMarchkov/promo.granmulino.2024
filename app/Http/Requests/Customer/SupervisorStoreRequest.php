@@ -3,12 +3,12 @@
 declare(strict_types=1);
 
 // 15.11.2024 at 16:41:25
-namespace App\Http\Requests\CustomerSeller;
+namespace App\Http\Requests\Customer;
 
 use App\Rules\BooleanRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-final class StoreUpdateRequest extends FormRequest
+final class SupervisorStoreRequest extends FormRequest
 {
     public function authorize()
     : bool
@@ -30,7 +30,7 @@ final class StoreUpdateRequest extends FormRequest
     : array
     {
         return [
-            'name' => 'ФИО торгового представителя'
+            'name' => 'ФИО супервайзера'
         ];
     }
 

@@ -310,14 +310,14 @@ const fetchDetails = async (customerId) => {
             city: true,
             region: true,
             retailers: true,
+            customer_supervisors: false,
             customer_sellers: false,
         }
     }).then(({ status, data }) => {
         if ( status === 'success' ) item.value = data;
-    }).then(async () => await get(MANAGER_URLS.CUSTOMER_SELLER, {
+    }).then(async () => await get(`${ MANAGER_URLS.CUSTOMER }/${ customerId }/${ MANAGER_URLS.CUSTOMER_SUPERVISOR }`, {
         params: {
-            'customer_id': customerId,
-            'customer': false,
+            'sellers': true,
         },
     })).then(({ status, data }) => {
         if (status === 'success') sellers.value = data.sellers;

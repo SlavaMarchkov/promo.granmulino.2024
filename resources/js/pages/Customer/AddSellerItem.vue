@@ -1,6 +1,6 @@
 <template>
-    <TheLabel for="sellerName" required>Новый торговый представитель</TheLabel>
-    <div class="input-group mb-3">
+    <TheLabel for="sellerName" required>Новый торговый представитель или супервайзер</TheLabel>
+    <div class="input-group mb-2">
         <TheInput
             id="sellerName"
             v-model="state.seller.name"
@@ -11,6 +11,10 @@
             class="btn-success"
         >Добавить</TheButton>
     </div>
+    <TheCheckbox
+        id="isSupervisor"
+        v-model="state.seller.isSupervisor"
+    >Отметить, если ТП - это супервайзер</TheCheckbox>
 </template>
 
 <script setup>
@@ -18,6 +22,7 @@ import TheLabel from '@/components/form/TheLabel.vue';
 import TheInput from '@/components/form/TheInput.vue';
 import TheButton from '@/components/core/TheButton.vue';
 import { reactive } from 'vue';
+import TheCheckbox from '@/components/form/TheCheckbox.vue';
 
 const props = defineProps({
     customerId: {
@@ -28,8 +33,10 @@ const props = defineProps({
 
 const initialFormData = () => ({
     customerId: props.customerId,
+    supervisorId: '',
     name: '',
     isActive: true,
+    isSupervisor: false,
 });
 
 const state = reactive({

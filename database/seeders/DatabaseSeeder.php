@@ -19,7 +19,6 @@ class DatabaseSeeder extends Seeder
             RetailersDumpSeeder::class,
             ChannelsDumpSeeder::class,
             CustomersDumpSeeder::class,
-            CustomerSellersDumpSeeder::class,
         ]);
     }
 }

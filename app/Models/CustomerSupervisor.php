@@ -8,19 +8,19 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class CustomerSeller extends Model
+class CustomerSupervisor extends Model
 {
     use SoftDeletes;
 
-    protected $table = 'customer_sellers';
+    protected $table = 'customer_supervisors';
 
     protected $fillable = [
         'name',
         'is_active',
         'customer_id',
-        'supervisor_id',
     ];
 
     protected function casts()
@@ -42,9 +42,15 @@ class CustomerSeller extends Model
         );
     }
 
-    public function supervisor()
+    public function customer()
     : BelongsTo
     {
-        return $this->belongsTo(CustomerSupervisor::class);
+        return $this->belongsTo(Customer::class);
+    }
+
+    public function sellers()
+    : HasMany
+    {
+        return $this->hasMany(CustomerSeller::class);
     }
 }

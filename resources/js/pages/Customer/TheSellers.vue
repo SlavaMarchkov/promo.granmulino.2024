@@ -48,7 +48,9 @@ const emit = defineEmits([
 ]);
 
 const saveSeller = async (item) => {
-    const { status, data } = await post(MANAGER_URLS.CUSTOMER_SELLER, item);
+    let url = `${ MANAGER_URLS.CUSTOMER }/${ props.customerId }/`;
+    url += item.isSupervisor ? [MANAGER_URLS.CUSTOMER_SUPERVISOR] : [MANAGER_URLS.CUSTOMER_SELLER];
+    const { status, data } = await post(url, item);
     if ( status === 'success' ) {
         alertStore.clear();
         emit('updateSellers', data);

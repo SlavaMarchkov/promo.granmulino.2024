@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api\V1\Manager;
 
 use App\Http\Controllers\ApiController;
-use App\Http\Requests\Customer\StoreUpdateRequest;
 use App\Http\Requests\Customer\UpdateRequest;
 use App\Http\Resources\V1\Customer\CustomerCollection;
 use App\Http\Resources\V1\Customer\CustomerResource;
@@ -13,7 +12,6 @@ use App\Models\Customer;
 use App\Services\Customers\CustomerService;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
-use Symfony\Component\HttpFoundation\Response;
 
 final class CustomerController extends ApiController
 {
@@ -39,7 +37,9 @@ final class CustomerController extends ApiController
         );
     }
 
-    public function store(StoreUpdateRequest $request)
+    /*
+     * TODO - удалить у менеджера
+     * public function store(StoreUpdateRequest $request)
     : JsonResponse
     {
         return $this->successResponse(
@@ -48,7 +48,7 @@ final class CustomerController extends ApiController
             __('crud.customers.created'),
             Response::HTTP_CREATED,
         );
-    }
+    }*/
 
     public function show(Customer $customer)
     : JsonResponse
@@ -65,7 +65,7 @@ final class CustomerController extends ApiController
         );
     }
 
-    public function update(UpdateRequest $request, Customer $customer)
+    /*public function update(UpdateRequest $request, Customer $customer)
     : JsonResponse
     {
         $this->authorize('update', $customer);
@@ -77,5 +77,5 @@ final class CustomerController extends ApiController
             'success',
             __('crud.customers.updated'),
         );
-    }
+    }*/
 }
