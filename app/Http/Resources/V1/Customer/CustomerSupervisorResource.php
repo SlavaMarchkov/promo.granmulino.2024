@@ -19,12 +19,11 @@ class CustomerSupervisorResource extends JsonResource
             'name'         => $this->name,
             'shortName'    => $this->short_name,
             'isActive'     => $this->is_active,
-            'sellersCount' => $this->sellers_count,
 
             'customerId' => $this->customer_id,
 
             'customer' => new CustomerResource($this->whenLoaded('customer')),
-            'sellers'  => CustomerSellerCollection::collection($this->whenLoaded('sellers')),
+            'sellers' => CustomerSellerResource::collection($this->whenLoaded('sellers')),
         ];
     }
 }

@@ -1,10 +1,9 @@
 <template>
-    <Alert />
-    <div v-if="sellers.length > 0" class="row">
+    <div v-if="props.supervisors.length > 0" class="row">
         <SellerItem
-            v-for="(seller, index) in sellers"
-            :key="seller.id"
-            :seller="seller"
+            v-for="(item, index) in props.supervisors"
+            :key="item.id"
+            :item="item"
             :index="index"
             @activate-seller="activateSeller"
             @update-seller="updateSeller"
@@ -14,6 +13,7 @@
         <p>Команда торговых представителей ещё не наполнена!<br>Наполните команду, вводя поочерёдно ФИО торговых представителей в поле ниже.</p>
     </div>
     <hr>
+    <Alert/>
     <AddSellerItem
         :customer-id="props.customerId"
         @save-seller="saveSeller"
@@ -36,7 +36,7 @@ const props = defineProps({
         type: Number,
         required: true,
     },
-    sellers: {
+    supervisors: {
         type: Array,
         required: true,
         default: [],

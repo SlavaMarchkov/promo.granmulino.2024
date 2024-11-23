@@ -83,7 +83,9 @@ final class EloquentCustomerRepository implements CustomerRepositoryInterface
 
     public function getSupervisors(int $customer_id, array $params = [])
     : Collection {
-        $supervisorsSql = CustomerSupervisor::query()->where('customer_id', $customer_id);
+        $supervisorsSql = CustomerSupervisor::query()
+            ->where('customer_id', $customer_id)
+            ->orderBy('name')->orderByDesc('is_active');
         $this->applySupervisorsFilters($supervisorsSql, $params);
         return $supervisorsSql->get();
     }
@@ -92,7 +94,11 @@ final class EloquentCustomerRepository implements CustomerRepositoryInterface
     : void {
         $qb->when(
             isset($params['sellers']) && to_boolean($params['sellers']),
-            fn(Builder $query) => $query->with('sellers')->orderBy('name')->orderByDesc('is_active'),
-        );
+            fn(Builder $query) => $query->with('sellers')->orderBy('name')->orderByDesc('is_active')
+        )
+            ->when(
+                isset($params['customer']) && to_boolean($params['customer']),
+                fn(Builder $query) => $query->with('customer')
+            );
     }
 }

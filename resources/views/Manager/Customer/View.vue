@@ -258,7 +258,7 @@
                             <div class="tab-pane fade pt-3" id="the-sellers" role="tabpanel">
                                 <TheSellers
                                     :customer-id="customerId"
-                                    :sellers="sellers"
+                                    :supervisors="supervisors"
                                     @update-sellers="updateSellers"
                                 />
                             </div>
@@ -298,7 +298,7 @@ const { get } = useHttpService();
 const customerId = +route.params.id;
 
 const item = ref({});
-const sellers = ref([]);
+const supervisors = ref([]);
 
 onMounted(async () => {
     await fetchDetails(customerId);
@@ -317,10 +317,11 @@ const fetchDetails = async (customerId) => {
         if ( status === 'success' ) item.value = data;
     }).then(async () => await get(`${ MANAGER_URLS.CUSTOMER }/${ customerId }/${ MANAGER_URLS.CUSTOMER_SUPERVISOR }`, {
         params: {
+            'customer': false,
             'sellers': true,
         },
     })).then(({ status, data }) => {
-        if (status === 'success') sellers.value = data.sellers;
+        if ( status === 'success' ) supervisors.value = data.supervisors;
     });
 };
 

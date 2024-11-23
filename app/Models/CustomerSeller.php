@@ -42,9 +42,25 @@ class CustomerSeller extends Model
         );
     }
 
+    public function customer()
+    : BelongsTo
+    {
+        return $this->belongsTo(
+            Customer::class,
+            'customer_id',
+            'id',
+            $this,
+        );
+    }
+
     public function supervisor()
     : BelongsTo
     {
-        return $this->belongsTo(CustomerSupervisor::class);
+        return $this->belongsTo(
+            CustomerSupervisor::class,
+            'supervisor_id',
+            'id',
+            $this,
+        );
     }
 }

@@ -51,6 +51,10 @@ class CustomerSupervisor extends Model
     public function sellers()
     : HasMany
     {
-        return $this->hasMany(CustomerSeller::class);
+        return $this->hasMany(
+            CustomerSeller::class,
+            'supervisor_id',
+            'id',
+        );
     }
 }

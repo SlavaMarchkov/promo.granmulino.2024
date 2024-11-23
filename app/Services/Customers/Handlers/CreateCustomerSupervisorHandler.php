@@ -18,8 +18,17 @@ final readonly class CreateCustomerSupervisorHandler
     }
 
     public function handle(array $data)
-    : CustomerSupervisor
-    {
+    : CustomerSupervisor {
+        $arr = explode(' ', $data['name']);
+
+        $data['name'] = collect($arr)
+            ->map(function ($name) {
+                return process_name($name);
+            })
+            ->reduce(function ($carry, $item) {
+                return trim($carry . ' ' . $item);
+            });
+
         return $this->customerRepository->createSupervisorFromArray($data);
     }
 }

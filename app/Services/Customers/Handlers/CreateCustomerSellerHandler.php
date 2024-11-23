@@ -20,6 +20,16 @@ final readonly class CreateCustomerSellerHandler
     public function handle(array $data)
     : CustomerSeller
     {
+        $arr = explode(' ', $data['name']);
+
+        $data['name'] = collect($arr)
+            ->map(function ($name) {
+                return process_name($name);
+            })
+            ->reduce(function ($carry, $item) {
+                return trim($carry . ' ' . $item);
+            });
+
         return $this->customerRepository->createSellerFromArray($data);
     }
 }

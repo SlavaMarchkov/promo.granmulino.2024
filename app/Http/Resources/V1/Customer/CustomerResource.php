@@ -23,11 +23,10 @@ class CustomerResource extends JsonResource
             'description' => $this->description ?? '',
             'isActive'    => $this->is_active,
 
-            'user'            => new UserResource($this->whenLoaded('user')),
-            'region'          => new RegionResource($this->whenLoaded('region')),
-            'city'            => new CityResource($this->whenLoaded('city')),
-            'retailers'       => RetailerResource::collection($this->whenLoaded('retailers')),
-            'customerSellers' => CustomerSellerResource::collection($this->whenLoaded('customer_sellers')),
+            'user'      => new UserResource($this->whenLoaded('user')),
+            'region'    => new RegionResource($this->whenLoaded('region')),
+            'city'      => new CityResource($this->whenLoaded('city')),
+            'retailers' => RetailerResource::collection($this->whenLoaded('retailers')),
 
             'next' => $this->findNext($this->id),
             'prev' => $this->findPrevious($this->id),
