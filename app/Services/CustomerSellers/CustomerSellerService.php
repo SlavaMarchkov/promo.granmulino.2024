@@ -9,7 +9,6 @@ namespace App\Services\CustomerSellers;
 use App\Models\CustomerSeller;
 use App\Services\CustomerSellers\Handlers\CreateCustomerSellerHandler;
 use App\Services\CustomerSellers\Repositories\CustomerSellerRepositoryInterface;
-use Illuminate\Database\Eloquent\Collection;
 
 final readonly class CustomerSellerService
 {
@@ -25,18 +24,4 @@ final readonly class CustomerSellerService
         return $this->customerSellerRepository->find($customerSeller);
     }
 
-    public function getCustomerSellers(array $params = [])
-    : Collection {
-        return $this->customerSellerRepository->get($params);
-    }
-
-    public function storeCustomerSeller(array $data)
-    : CustomerSeller {
-        return $this->createCustomerSellerHandler->handle($data);
-    }
-
-    public function updateCustomerSeller(CustomerSeller $customerSeller, array $data)
-    : CustomerSeller {
-        return $this->customerSellerRepository->updateFromArray($customerSeller, $data);
-    }
 }

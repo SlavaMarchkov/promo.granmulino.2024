@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use App\Models\Customer;
+use App\Models\CustomerSupervisor;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -28,7 +30,10 @@ return new class extends Migration {
         Schema::create('customer_supervisors', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('customer_id');
+            $table->foreignIdFor(Customer::class)
+                ->constrained()
+                ->cascadeOnUpdate();
+
             $table->string('name');
             $table->boolean('is_active')->default(true);
 
@@ -39,8 +44,11 @@ return new class extends Migration {
         Schema::create('customer_sellers', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('customer_id');
-            $table->foreignId('supervisor_id')->nullable();
+            $table->foreignIdFor(Customer::class)
+                ->constrained()
+                ->cascadeOnUpdate();
+
+            $table->foreignIdFor(CustomerSupervisor::class)->nullable();
 
             $table->string('name');
             $table->boolean('is_active')->default(true);

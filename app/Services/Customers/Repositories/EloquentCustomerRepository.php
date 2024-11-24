@@ -21,6 +21,12 @@ final class EloquentCustomerRepository implements CustomerRepositoryInterface
         return $customersSql->first();
     }
 
+    public function findSeller(int $id)
+    : ?CustomerSeller {
+        $customerSeller = CustomerSeller::query()->whereId($id);
+        return $customerSeller->first();
+    }
+
     public function get(array $params = [])
     : Collection {
         $customersSql = Customer::query();
@@ -47,6 +53,12 @@ final class EloquentCustomerRepository implements CustomerRepositoryInterface
     : Customer {
         $customer->update($data);
         return $customer;
+    }
+
+    public function updateSellerFromArray(CustomerSeller $customerSeller, array $data)
+    : CustomerSeller {
+        $customerSeller->update($data);
+        return $customerSeller;
     }
 
     public function delete(Customer $customer)
@@ -90,11 +102,23 @@ final class EloquentCustomerRepository implements CustomerRepositoryInterface
         return $supervisorsSql->get();
     }
 
+    public function getSellers(int $customer_id)
+    : Collection {
+        $sellersSql = CustomerSeller::query()
+            ->where('customer_id', $customer_id)
+            ->whereNull('customer_supervisor_id')
+            ->orderBy('name')->orderByDesc('is_active');
+        return $sellersSql->get();
+    }
+
     private function applySupervisorsFilters(Builder $qb, array $params)
     : void {
         $qb->when(
             isset($params['sellers']) && to_boolean($params['sellers']),
-            fn(Builder $query) => $query->with('sellers')->orderBy('name')->orderByDesc('is_active')
+            fn(Builder $query) => $query->with('sellers')
+                ->orderBy('name')
+                ->orderByDesc('is_active')
+                ->withCount('sellers'),
         )
             ->when(
                 isset($params['customer']) && to_boolean($params['customer']),

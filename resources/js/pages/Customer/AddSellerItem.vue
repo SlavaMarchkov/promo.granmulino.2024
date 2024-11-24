@@ -1,20 +1,28 @@
 <template>
     <TheLabel for="sellerName" required>Новый торговый представитель или супервайзер</TheLabel>
-    <div class="input-group mb-2">
-        <TheInput
-            id="sellerName"
-            v-model="state.seller.name"
-            placeholder="ФИО торгового представителя"
-        />
-        <TheButton
-            @click="saveSeller"
-            class="btn-success"
-        >Добавить</TheButton>
+    <div class="row g-2">
+        <div class="col-md-5">
+            <TheInput
+                id="sellerName"
+                v-model="state.seller.name"
+                placeholder="ФИО торгового представителя"
+            />
+        </div>
+        <div class="col-md-5">
+            <TheCheckbox
+                id="isSupervisor"
+                v-model="state.seller.isSupervisor"
+            >Отметить, если ТП - это супервайзер</TheCheckbox>
+        </div>
+        <div class="col-md-2">
+            <TheButton
+                @click="saveSeller"
+                class="btn-success w-100"
+                :loading="spinnerStore.isLoading"
+                :disabled="spinnerStore.isLoading"
+            >Добавить</TheButton>
+        </div>
     </div>
-    <TheCheckbox
-        id="isSupervisor"
-        v-model="state.seller.isSupervisor"
-    >Отметить, если ТП - это супервайзер</TheCheckbox>
 </template>
 
 <script setup>
@@ -23,6 +31,9 @@ import TheInput from '@/components/form/TheInput.vue';
 import TheButton from '@/components/core/TheButton.vue';
 import { reactive } from 'vue';
 import TheCheckbox from '@/components/form/TheCheckbox.vue';
+import { useSpinnerStore } from '@/stores/spinners.js';
+
+const spinnerStore = useSpinnerStore();
 
 const props = defineProps({
     customerId: {
@@ -33,7 +44,7 @@ const props = defineProps({
 
 const initialFormData = () => ({
     customerId: props.customerId,
-    supervisorId: '',
+    customerSupervisorId: '',
     name: '',
     isActive: true,
     isSupervisor: false,

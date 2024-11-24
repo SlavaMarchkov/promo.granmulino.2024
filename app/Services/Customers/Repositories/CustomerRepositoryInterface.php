@@ -15,6 +15,9 @@ interface CustomerRepositoryInterface
     public function find(Customer $customer, array $params = [])
     : ?Customer;
 
+    public function findSeller(int $id)
+    : ?CustomerSeller;
+
     public function get(array $params = [])
     : Collection;
 
@@ -30,9 +33,15 @@ interface CustomerRepositoryInterface
     public function getSupervisors(int $customer_id, array $params = [])
     : Collection;
 
+    public function getSellers(int $customer_id)
+    : Collection;
+
     public function createSupervisorFromArray(array $data)
     : CustomerSupervisor;
 
     public function createSellerFromArray(array $data)
+    : CustomerSeller;
+
+    public function updateSellerFromArray(CustomerSeller $customerSeller, array $data)
     : CustomerSeller;
 }

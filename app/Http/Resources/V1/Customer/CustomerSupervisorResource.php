@@ -19,6 +19,7 @@ class CustomerSupervisorResource extends JsonResource
             'name'         => $this->name,
             'shortName'    => $this->short_name,
             'isActive'     => $this->is_active,
+            'sellersCount' => $this->sellers_count,
 
             'customerId' => $this->customer_id,
 

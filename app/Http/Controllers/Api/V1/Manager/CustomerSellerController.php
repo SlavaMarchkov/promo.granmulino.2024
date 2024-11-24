@@ -7,7 +7,10 @@ namespace App\Http\Controllers\Api\V1\Manager;
 
 use App\Http\Controllers\ApiController;
 use App\Http\Requests\Customer\SellerStoreRequest;
+use App\Http\Requests\Customer\SellerUpdateRequest;
+use App\Http\Resources\V1\Customer\CustomerSellerCollection;
 use App\Http\Resources\V1\Customer\CustomerSellerResource;
+use App\Models\Customer;
 use App\Models\CustomerSeller;
 use App\Services\Customers\CustomerService;
 use Illuminate\Http\JsonResponse;
@@ -21,19 +24,16 @@ final class CustomerSellerController extends ApiController
     ) {
     }
 
-    /*public function index()
-    : JsonResponse
-    {
-        $sellers = $this->customerSellerService->getCustomerSellers([
-            ...request()->all(),
-        ]);
+    public function index(Customer $customer)
+    : JsonResponse {
+        $sellers = $this->customerService->getCustomerSellers($customer->id);
 
         return $this->successResponse(
             new CustomerSellerCollection($sellers),
             'success',
-            __('crud.sales_reps.all'),
+            __('crud.sellers.all'),
         );
-    }*/
+    }
 
     public function store(SellerStoreRequest $request)
     : JsonResponse {
@@ -49,27 +49,19 @@ final class CustomerSellerController extends ApiController
         );
     }
 
-    /*public function show(CustomerSeller $customerSeller)
+    public function update(SellerUpdateRequest $request)
     : JsonResponse {
-        $customerSeller = $this->customerSellerService->findCustomerSeller($customerSeller);
-        return $this->successResponse(
-            new CustomerSellerResource($customerSeller),
-            'success',
-            __('crud.sales_reps.one'),
-        );
-    }*/
-
-    /*public function update(StoreUpdateRequest $request, CustomerSeller $customerSeller)
-    : JsonResponse {
+        $customerSeller = $this->customerService->findCustomerSeller($request->id);
         $data = $request->validated();
-        $customerSeller = $this->customerSellerService->updateCustomerSeller($customerSeller, $data);
+        $customerSeller = $this->customerService->updateCustomerSeller($customerSeller, $data);
+        Log::info('Customer Seller ID={id} updated', ['id' => $request->id]);
 
         return $this->successResponse(
             new CustomerSellerResource($customerSeller),
             'success',
-            __('crud.sales_reps.updated'),
+            __('crud.sellers.updated'),
         );
-    }*/
+    }
 
     public function destroy(CustomerSeller $customerSeller)
     {

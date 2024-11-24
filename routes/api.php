@@ -62,20 +62,12 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::get('cities', [CityController::class, 'index'])->name('cities');
         Route::get('channels', [ChannelController::class, 'index'])->name('channels');
 
-        Route::get('customers/{customer}/supervisors', [CustomerSupervisorController::class, 'index'])
-            ->name('supervisors');
-        Route::post('customers/{customer}/supervisors', [CustomerSupervisorController::class, 'store'])
-            ->name('supervisors.store');
-
-        Route::get('customers/{customer}/sellers', [CustomerSellerController::class, 'index'])
-            ->name('sellers');
-        Route::post('customers/{customer}/sellers', [CustomerSellerController::class, 'store'])
-            ->name('sellers.store');
-
         Route::apiResources([
-            'promos'    => PromoController::class,
-            'retailers' => RetailerController::class,
-            'customers' => CustomerController::class,
+            'promos'                => PromoController::class,
+            'retailers'             => RetailerController::class,
+            'customers'             => CustomerController::class,
+            'customers.supervisors' => CustomerSupervisorController::class,
+            'customers.sellers'     => CustomerSellerController::class,
         ]);
     });
 });

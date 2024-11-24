@@ -20,7 +20,7 @@ class CustomerSeller extends Model
         'name',
         'is_active',
         'customer_id',
-        'supervisor_id',
+        'customer_supervisor_id',
     ];
 
     protected function casts()
@@ -45,22 +45,12 @@ class CustomerSeller extends Model
     public function customer()
     : BelongsTo
     {
-        return $this->belongsTo(
-            Customer::class,
-            'customer_id',
-            'id',
-            $this,
-        );
+        return $this->belongsTo(Customer::class);
     }
 
     public function supervisor()
     : BelongsTo
     {
-        return $this->belongsTo(
-            CustomerSupervisor::class,
-            'supervisor_id',
-            'id',
-            $this,
-        );
+        return $this->belongsTo(CustomerSupervisor::class);
     }
 }

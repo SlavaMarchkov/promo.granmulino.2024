@@ -64,4 +64,19 @@ final readonly class CustomerService
     : Collection {
         return $this->customerRepository->getSupervisors($customer_id, $params);
     }
+
+    public function getCustomerSellers(int $customer_id)
+    : Collection {
+        return $this->customerRepository->getSellers($customer_id);
+    }
+
+    public function updateCustomerSeller(CustomerSeller $customerSeller, array $data)
+    : CustomerSeller {
+        return $this->customerRepository->updateSellerFromArray($customerSeller, $data);
+    }
+
+    public function findCustomerSeller(int $id)
+    : ?CustomerSeller {
+        return $this->customerRepository->findSeller($id);
+    }
 }

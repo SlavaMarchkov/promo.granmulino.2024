@@ -255,11 +255,13 @@
                                 </form><!-- End settings Form -->
 
                             </div>
-                            <div class="tab-pane fade pt-3" id="the-sellers" role="tabpanel">
+                            <div class="tab-pane fade pt-1" id="the-sellers" role="tabpanel">
                                 <TheSellers
                                     :customer-id="customerId"
                                     :supervisors="supervisors"
+                                    :sellers="sellers"
                                     @update-sellers="updateSellers"
+                                    @update-supervisors="updateSupervisors"
                                 />
                             </div>
                         </div>
@@ -299,6 +301,7 @@ const customerId = +route.params.id;
 
 const item = ref({});
 const supervisors = ref([]);
+const sellers = ref([]);
 
 onMounted(async () => {
     await fetchDetails(customerId);
@@ -315,14 +318,23 @@ const fetchDetails = async (customerId) => {
         }
     }).then(({ status, data }) => {
         if ( status === 'success' ) item.value = data;
-    }).then(async () => await get(`${ MANAGER_URLS.CUSTOMER }/${ customerId }/${ MANAGER_URLS.CUSTOMER_SUPERVISOR }`, {
+    }).then(() => fetchSupervisors(customerId))
+        .then(() => fetchSellers(customerId));
+};
+
+const fetchSupervisors = async (customerId) => {
+    const { status, data } = await get(`${ MANAGER_URLS.CUSTOMER }/${ customerId }${ MANAGER_URLS.CUSTOMER_SUPERVISOR }`, {
         params: {
             'customer': false,
             'sellers': true,
         },
-    })).then(({ status, data }) => {
-        if ( status === 'success' ) supervisors.value = data.supervisors;
     });
+    if ( status === 'success' ) supervisors.value = data.supervisors;
+};
+
+const fetchSellers = async (customerId) => {
+    const { status, data } = await get(`${ MANAGER_URLS.CUSTOMER }/${ customerId }${ MANAGER_URLS.CUSTOMER_SELLER }`);
+    if ( status === 'success' ) sellers.value = data.sellers;
 };
 
 watch(
@@ -338,12 +350,15 @@ const isItemFound = computed(() => {
 
 const updateSellers = (seller) => {
     const idx = sellers.value.findIndex(s => s.id === seller.id);
-    if (idx === -1) {
-        sellers.value.push(seller);
-    } else {
-        sellers.value[idx] = seller;
-    }
+    idx === -1 ? sellers.value.push(seller) : sellers.value[idx] = seller;
     const tempArr = arrayHandlers.sortArrayByStringColumn(sellers.value, 'name');
     sellers.value = arrayHandlers.sortArrayByBoolean(tempArr, 'isActive');
+};
+
+const updateSupervisors = (supervisor) => {
+    const idx = supervisors.value.findIndex(s => s.id === supervisor.id);
+    idx === -1 ? supervisors.value.push(supervisor) : supervisors.value[idx] = supervisor;
+    const tempArr = arrayHandlers.sortArrayByStringColumn(supervisors.value, 'name');
+    supervisors.value = arrayHandlers.sortArrayByBoolean(tempArr, 'isActive');
 };
 </script>
