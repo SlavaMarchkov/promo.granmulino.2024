@@ -6,15 +6,13 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api\V1\Manager;
 
 use App\Http\Controllers\ApiController;
-use App\Http\Requests\Customer\SellerStoreRequest;
-use App\Http\Requests\Customer\SellerUpdateRequest;
+use App\Http\Requests\Customer\SellerStoreUpdateRequest;
 use App\Http\Resources\V1\Customer\CustomerSellerCollection;
 use App\Http\Resources\V1\Customer\CustomerSellerResource;
 use App\Models\Customer;
 use App\Models\CustomerSeller;
 use App\Services\Customers\CustomerService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
 
 final class CustomerSellerController extends ApiController
@@ -35,38 +33,46 @@ final class CustomerSellerController extends ApiController
         );
     }
 
-    public function store(SellerStoreRequest $request)
+    public function store(SellerStoreUpdateRequest $request)
     : JsonResponse {
         $data = $request->validated();
         $seller = $this->customerService->storeSeller($data);
-        Log::info('Customer Seller created');
 
         return $this->successResponse(
             new CustomerSellerResource($seller),
             'success',
-            __('crud.sellers.created'),
+            $data['is_supervisor'] ? __('crud.supervisors.created') : __('crud.sellers.created'),
             Response::HTTP_CREATED,
         );
     }
 
-    public function update(SellerUpdateRequest $request)
+    public function update(int $customer_id, CustomerSeller $seller, SellerStoreUpdateRequest $request)
     : JsonResponse {
-        $customerSeller = $this->customerService->findCustomerSeller($request->id);
         $data = $request->validated();
-        $customerSeller = $this->customerService->updateCustomerSeller($customerSeller, $data);
-        Log::info('Customer Seller ID={id} updated', ['id' => $request->id]);
+        $seller = $this->customerService->updateCustomerSeller($seller, $data);
 
         return $this->successResponse(
-            new CustomerSellerResource($customerSeller),
+            new CustomerSellerResource($seller),
             'success',
-            __('crud.sellers.updated'),
+            $seller->is_supervisor ? __('crud.supervisors.updated') : __('crud.sellers.updated'),
         );
     }
 
-    public function destroy(CustomerSeller $customerSeller)
+    public function destroy(int $customer_id, CustomerSeller $seller)
+    : JsonResponse
     {
-        $customerSeller->delete();
+        $result = $this->customerService->deleteSeller($seller);
 
-        return response()->json();
+        return ($result == 0)
+            ? $this->successResponse(
+                new CustomerSellerResource($seller),
+                'success',
+                $seller->is_supervisor ? __('crud.supervisors.deleted') : __('crud.sellers.deleted'),
+            )
+            : $this->errorResponse(
+                Response::HTTP_OK,
+                'error',
+                $seller->is_supervisor ? __('crud.supervisors.not_deleted') : __('crud.sellers.not_deleted'),
+            );
     }
 }

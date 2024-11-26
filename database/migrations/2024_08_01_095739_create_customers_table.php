@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 use App\Models\Customer;
-use App\Models\CustomerSupervisor;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -27,20 +26,6 @@ return new class extends Migration {
             $table->timestamps();
         });
 
-        Schema::create('customer_supervisors', function (Blueprint $table) {
-            $table->id();
-
-            $table->foreignIdFor(Customer::class)
-                ->constrained()
-                ->cascadeOnUpdate();
-
-            $table->string('name');
-            $table->boolean('is_active')->default(true);
-
-            $table->softDeletes();
-            $table->timestamps();
-        });
-
         Schema::create('customer_sellers', function (Blueprint $table) {
             $table->id();
 
@@ -48,10 +33,10 @@ return new class extends Migration {
                 ->constrained()
                 ->cascadeOnUpdate();
 
-            $table->foreignIdFor(CustomerSupervisor::class)->nullable();
-
             $table->string('name');
+            $table->unsignedInteger('supervisor_id')->nullable()->default(null);
             $table->boolean('is_active')->default(true);
+            $table->boolean('is_supervisor')->default(false);
 
             $table->softDeletes();
             $table->timestamps();
@@ -63,7 +48,6 @@ return new class extends Migration {
     {
         if (!app()->isProduction()) {
             Schema::dropIfExists('customers');
-            Schema::dropIfExists('customer_supervisors');
             Schema::dropIfExists('customer_sellers');
         }
     }

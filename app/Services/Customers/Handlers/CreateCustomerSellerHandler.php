@@ -13,13 +13,11 @@ final readonly class CreateCustomerSellerHandler
 {
     public function __construct(
         private CustomerRepositoryInterface $customerRepository,
-    )
-    {
+    ) {
     }
 
     public function handle(array $data)
-    : CustomerSeller
-    {
+    : CustomerSeller {
         $arr = explode(' ', $data['name']);
 
         $data['name'] = collect($arr)

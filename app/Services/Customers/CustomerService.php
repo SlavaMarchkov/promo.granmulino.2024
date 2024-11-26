@@ -8,10 +8,9 @@ namespace App\Services\Customers;
 
 use App\Models\Customer;
 use App\Models\CustomerSeller;
-use App\Models\CustomerSupervisor;
 use App\Services\Customers\Handlers\CreateCustomerHandler;
 use App\Services\Customers\Handlers\CreateCustomerSellerHandler;
-use App\Services\Customers\Handlers\CreateCustomerSupervisorHandler;
+use App\Services\Customers\Handlers\UpdateCustomerSellerHandler;
 use App\Services\Customers\Repositories\CustomerRepositoryInterface;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -20,8 +19,8 @@ final readonly class CustomerService
     public function __construct(
         private CustomerRepositoryInterface $customerRepository,
         private CreateCustomerHandler $createCustomerHandler,
-        private CreateCustomerSupervisorHandler $createSupervisorHandler,
         private CreateCustomerSellerHandler $createSellerHandler,
+        private UpdateCustomerSellerHandler $updateSellerHandler,
     ) {
     }
 
@@ -40,11 +39,6 @@ final readonly class CustomerService
         return $this->createCustomerHandler->handle($data);
     }
 
-    public function storeSupervisor(array $data)
-    : CustomerSupervisor {
-        return $this->createSupervisorHandler->handle($data);
-    }
-
     public function storeSeller(array $data)
     : CustomerSeller {
         return $this->createSellerHandler->handle($data);
@@ -60,11 +54,6 @@ final readonly class CustomerService
         return $this->customerRepository->delete($customer);
     }
 
-    public function getCustomerSupervisors(int $customer_id, array $params = [])
-    : Collection {
-        return $this->customerRepository->getSupervisors($customer_id, $params);
-    }
-
     public function getCustomerSellers(int $customer_id)
     : Collection {
         return $this->customerRepository->getSellers($customer_id);
@@ -72,11 +61,16 @@ final readonly class CustomerService
 
     public function updateCustomerSeller(CustomerSeller $customerSeller, array $data)
     : CustomerSeller {
-        return $this->customerRepository->updateSellerFromArray($customerSeller, $data);
+        return $this->updateSellerHandler->handle($customerSeller, $data);
     }
 
     public function findCustomerSeller(int $id)
     : ?CustomerSeller {
         return $this->customerRepository->findSeller($id);
+    }
+
+    public function deleteSeller(CustomerSeller $seller)
+    : int {
+        return $this->customerRepository->deleteSeller($seller);
     }
 }

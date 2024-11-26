@@ -261,7 +261,6 @@
                                     :supervisors="supervisors"
                                     :sellers="sellers"
                                     @update-sellers="updateSellers"
-                                    @update-supervisors="updateSupervisors"
                                 />
                             </div>
                         </div>
@@ -307,6 +306,10 @@ onMounted(async () => {
     await fetchDetails(customerId);
 });
 
+const isItemFound = computed(() => {
+    return Object.keys(item.value).length !== 0;
+});
+
 const fetchDetails = async (customerId) => {
     await get(`${ MANAGER_URLS.CUSTOMER }/${ customerId }`, {
         params: {
@@ -318,23 +321,33 @@ const fetchDetails = async (customerId) => {
         }
     }).then(({ status, data }) => {
         if ( status === 'success' ) item.value = data;
-    }).then(() => fetchSupervisors(customerId))
-        .then(() => fetchSellers(customerId));
-};
-
-const fetchSupervisors = async (customerId) => {
-    const { status, data } = await get(`${ MANAGER_URLS.CUSTOMER }/${ customerId }${ MANAGER_URLS.CUSTOMER_SUPERVISOR }`, {
-        params: {
-            'customer': false,
-            'sellers': true,
-        },
-    });
-    if ( status === 'success' ) supervisors.value = data.supervisors;
+    }).then(() => fetchSellers(customerId));
 };
 
 const fetchSellers = async (customerId) => {
     const { status, data } = await get(`${ MANAGER_URLS.CUSTOMER }/${ customerId }${ MANAGER_URLS.CUSTOMER_SELLER }`);
-    if ( status === 'success' ) sellers.value = data.sellers;
+    if ( status === 'success' ) {
+        supervisors.value = data.sellers.filter(s => s.isSupervisor === true);
+
+        const tempArr1 = data.sellers.filter(s => !supervisors.value.includes(s));
+
+        tempArr1.forEach(seller => {
+            if (seller.isSupervisor !== true && seller.supervisorId === null) {
+                sellers.value.push(seller);
+            } else {
+                const idx = supervisors.value.findIndex(s => s.id === seller.supervisorId);
+                supervisors.value[idx].sellers.push(seller);
+                const tempArr = arrayHandlers.sortArrayByStringColumn(supervisors.value[idx].sellers, 'name');
+                supervisors.value[idx].sellers = arrayHandlers.sortArrayByBoolean(tempArr, 'isActive');
+            }
+        });
+
+        const tempArr2 = arrayHandlers.sortArrayByStringColumn(sellers.value, 'name');
+        sellers.value = arrayHandlers.sortArrayByBoolean(tempArr2, 'isActive');
+
+        const tempArr3 = arrayHandlers.sortArrayByStringColumn(supervisors.value, 'name');
+        supervisors.value = arrayHandlers.sortArrayByBoolean(tempArr3, 'isActive');
+    }
 };
 
 watch(
@@ -344,21 +357,104 @@ watch(
     },
 );
 
-const isItemFound = computed(() => {
-    return Object.keys(item.value).length !== 0;
-});
+const updateSellers = (updatedItem) => {
+    const sellerIdx = sellers.value.findIndex(s => s.id === updatedItem.id);
+    const supervisorIdx = supervisors.value.findIndex(s => s.id === updatedItem.id);
 
-const updateSellers = (seller) => {
-    const idx = sellers.value.findIndex(s => s.id === seller.id);
-    idx === -1 ? sellers.value.push(seller) : sellers.value[idx] = seller;
-    const tempArr = arrayHandlers.sortArrayByStringColumn(sellers.value, 'name');
-    sellers.value = arrayHandlers.sortArrayByBoolean(tempArr, 'isActive');
-};
+    // TODO: убрать выводы в консоль
+    console.log('sellerIdx', sellerIdx);
+    console.log('supervisorIdx', supervisorIdx);
 
-const updateSupervisors = (supervisor) => {
-    const idx = supervisors.value.findIndex(s => s.id === supervisor.id);
-    idx === -1 ? supervisors.value.push(supervisor) : supervisors.value[idx] = supervisor;
-    const tempArr = arrayHandlers.sortArrayByStringColumn(supervisors.value, 'name');
-    supervisors.value = arrayHandlers.sortArrayByBoolean(tempArr, 'isActive');
+    // обновляем имя или статус ТП, привязанных к супервайзеру (вложенные ТП)
+    if (sellerIdx === -1 && supervisorIdx === -1 && updatedItem.isSupervisor === false && updatedItem.supervisorId !== null) {
+        console.log('обновляем имя или статус ТП, привязанных к супервайзеру');
+        const supervisorIdx = supervisors.value.findIndex(s => s.id === updatedItem.supervisorId);
+        const idx = supervisors.value[supervisorIdx].sellers.findIndex(s => s.id === updatedItem.id);
+        supervisors.value[supervisorIdx].sellers[idx] = updatedItem;
+        const tempArr = arrayHandlers.sortArrayByStringColumn(supervisors.value[supervisorIdx].sellers, 'name');
+        supervisors.value[supervisorIdx].sellers = arrayHandlers.sortArrayByBoolean(tempArr, 'isActive');
+    }
+
+    // добавляем нового супервайзера либо переносим ТП из списка супервайзеров по кнопке вниз
+    if (sellerIdx === -1 && supervisorIdx === -1 && updatedItem.isSupervisor === true && updatedItem.supervisorId === null) {
+        if (updatedItem.sellers.length === 0) {
+            console.log('добавляем нового супервайзера');
+            supervisors.value.push(updatedItem);
+        } else {
+            console.log('!!! либо переносим ТП из списка супервайзеров по кнопке вниз');
+            supervisors.value.forEach(({ sellers }) => {
+                const idx = sellers.findIndex(s => s.id === updatedItem.id);
+                sellers.splice(idx, 1);
+            });
+        }
+    }
+
+    // добавляем нового ТП или переносим из прикрепленных к супервайзеру ТП по кнопке вниз
+    if (sellerIdx === -1 && supervisorIdx === -1 && updatedItem.isSupervisor === false && updatedItem.supervisorId === null) {
+        console.log('a) добавляем нового торгового представителя');
+        sellers.value.push(updatedItem);
+        console.log('b) переносим ТП по кнопке вниз и отцепляем его от супервайзера');
+        supervisors.value.forEach(({ sellers }) => {
+            const idx = sellers.findIndex(s => s.id === updatedItem.id);
+            if (idx !== -1) {
+                sellers.splice(idx, 1);
+                arrayHandlers.sortArrayByStringColumn(sellers, 'name');
+            }
+        });
+    }
+
+    // переносим из супервайзеров в ТП по кнопке вниз
+    if (sellerIdx === -1 && supervisorIdx !== -1 && updatedItem.isSupervisor === false && updatedItem.supervisorId === null) {
+        console.log('a) переносим из супервайзеров в ТП по кнопке вниз');
+        sellers.value.push(updatedItem);
+        console.log('b) переносим супервайзера в ТП');
+        supervisors.value.splice(supervisorIdx, 1);
+    }
+
+    // переносим из ТП в супервайзеров по кнопке вверх
+    if (sellerIdx !== -1 && supervisorIdx === -1 && updatedItem.isSupervisor === true) {
+        console.log('переносим из ТП в супервайзеров по кнопке вверх');
+        supervisors.value.push(updatedItem);
+        sellers.value.splice(sellerIdx, 1);
+    }
+
+    // перетаскиваем одного ТП в список супервайзеров
+    if (sellerIdx !== -1 && supervisorIdx === -1 && updatedItem.isSupervisor === false && updatedItem.supervisorId !== null) {
+        console.log('перетаскиваем одного ТП в список супервайзеров');
+        sellers.value.splice(sellerIdx, 1);
+        const supervisorIdx = supervisors.value.findIndex(s => s.id === updatedItem.supervisorId);
+        supervisors.value[supervisorIdx].sellers.push(updatedItem);
+        arrayHandlers.sortArrayByStringColumn(supervisors.value[supervisorIdx].sellers, 'name');
+    }
+
+    // меняем имя ТП в списке ТП либо обновляем статус ТП либо удаляем
+    if (sellerIdx !== -1 && supervisorIdx === -1 && updatedItem.isSupervisor === false && updatedItem.supervisorId === null) {
+        if (updatedItem.deletedAt !== null) {
+            console.log('удаляем ТП полностью');
+            sellers.value.splice(sellerIdx, 1);
+        } else {
+            console.log('меняем имя ТП в списке ТП либо обновляем статус ТП');
+            sellers.value[sellerIdx] = updatedItem;
+        }
+    }
+
+    // меняем имя супервайзера в списке супервайзеров либо обновляем его статус либо удаляем
+    if (supervisorIdx !== -1 && updatedItem.isSupervisor === true) {
+        if (updatedItem.deletedAt !== null) {
+            console.log('удаляем супервайзера полностью');
+            supervisors.value.splice(supervisorIdx, 1);
+        } else {
+            console.log('меняем имя супервайзера в списке супервайзеров либо обновляем его статус');
+            const sellers = supervisors.value[supervisorIdx].sellers;
+            supervisors.value[supervisorIdx] = updatedItem;
+            supervisors.value[supervisorIdx].sellers = sellers;
+        }
+    }
+
+    const tempArr1 = arrayHandlers.sortArrayByStringColumn(sellers.value, 'name');
+    sellers.value = arrayHandlers.sortArrayByBoolean(tempArr1, 'isActive');
+
+    const tempArr2 = arrayHandlers.sortArrayByStringColumn(supervisors.value, 'name');
+    supervisors.value = arrayHandlers.sortArrayByBoolean(tempArr2, 'isActive');
 };
 </script>

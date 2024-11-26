@@ -18,16 +18,18 @@ class CustomerSeller extends Model
 
     protected $fillable = [
         'name',
-        'is_active',
         'customer_id',
-        'customer_supervisor_id',
+        'supervisor_id',
+        'is_active',
+        'is_supervisor',
     ];
 
     protected function casts()
     : array
     {
         return [
-            'is_active' => 'boolean',
+            'is_active'     => 'boolean',
+            'is_supervisor' => 'boolean',
         ];
     }
 
@@ -37,7 +39,7 @@ class CustomerSeller extends Model
         return new Attribute(
             get: function () {
                 $temp = explode(' ', $this->name);
-                return $temp[0] . ' ' . $temp[1];
+                return count($temp) > 1 ? ($temp[0] . ' ' . $temp[1]) : $temp[0];
             },
         );
     }
@@ -46,11 +48,5 @@ class CustomerSeller extends Model
     : BelongsTo
     {
         return $this->belongsTo(Customer::class);
-    }
-
-    public function supervisor()
-    : BelongsTo
-    {
-        return $this->belongsTo(CustomerSupervisor::class);
     }
 }

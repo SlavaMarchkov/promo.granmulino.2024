@@ -15,15 +15,18 @@ class CustomerSellerResource extends JsonResource
     public function toArray(Request $request)
     : array {
         return [
-            'id'        => $this->id,
-            'name'      => $this->name,
-            'shortName' => $this->short_name,
-            'isActive'  => $this->is_active,
+            'id'           => $this->id,
+            'name'         => $this->name,
+            'shortName'    => $this->short_name,
+            'isActive'     => $this->is_active,
+            'isSupervisor' => $this->is_supervisor,
 
-            'customerId' => $this->customer_id,
+            'customerId'   => $this->customer_id,
+            'supervisorId' => $this->supervisor_id,
 
-            'customerSupervisorId' => $this->customer_supervisor_id,
-            'supervisor'   => new CustomerSupervisorResource($this->whenLoaded('supervisor')),
+            'sellers' => [],
+
+            'deletedAt' => $this->deleted_at,
         ];
     }
 }

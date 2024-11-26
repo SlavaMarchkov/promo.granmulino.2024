@@ -13,13 +13,11 @@ final readonly class CreateCustomerHandler
 {
     public function __construct(
         private CustomerRepositoryInterface $customerRepository,
-    )
-    {
+    ) {
     }
 
     public function handle(array $data)
-    : Customer
-    {
+    : Customer {
         return $this->customerRepository->createFromArray($data);
     }
 }
