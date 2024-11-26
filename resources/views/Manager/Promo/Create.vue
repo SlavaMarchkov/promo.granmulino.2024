@@ -244,35 +244,41 @@
             </div>
         </div>
         <div class="col-lg-7">
-            <TheDiscount
+            <component
+                :is="TheDiscount"
                 v-if="currentPromoType.type === 'DISCOUNT'"
                 :title="currentPromoType.title"
                 @add-product-to-promo="addProductHandler"
                 @remove-product-from-promo="removeProductHandler"
-            />
-            <SalesPeopleBoost
+            ></component>
+            <component
+                :is="SalesPeopleBoost"
                 v-if="currentPromoType.type === 'SALES_PEOPLE_BOOST' && state.promo.customerId"
                 :title="currentPromoType.title"
                 :sellers="state.customerSellers"
                 :customer-id="+state.promo.customerId"
                 @add-sellers-to-promo="addSellersHandler"
-            />
-            <GiftForPurchase
+            ></component>
+            <component
+                :is="GiftForPurchase"
                 v-if="currentPromoType.type === 'GIFT_FOR_PURCHASE'"
                 :title="currentPromoType.title"
-            />
-            <RetailersBoost
+            ></component>
+            <component
+                :is="RetailersBoost"
                 v-if="currentPromoType.type === 'RETAILERS_BOOST'"
                 :title="currentPromoType.title"
-            />
-            <CoverageIncrease
+            ></component>
+            <component
+                :is="CoverageIncrease"
                 v-if="currentPromoType.type === 'COVERAGE_INCREASE'"
                 :title="currentPromoType.title"
-            />
-            <TheInOut
+            ></component>
+            <component
+                :is="TheInOut"
                 v-if="currentPromoType.type === 'IN_OUT'"
                 :title="currentPromoType.title"
-            />
+            ></component>
         </div>
     </div>
 </template>
