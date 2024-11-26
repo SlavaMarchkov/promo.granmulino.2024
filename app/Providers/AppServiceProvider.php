@@ -8,8 +8,6 @@ use App\Services\Cities\Repositories\CityRepositoryInterface;
 use App\Services\Cities\Repositories\EloquentCityRepository;
 use App\Services\Customers\Repositories\CustomerRepositoryInterface;
 use App\Services\Customers\Repositories\EloquentCustomerRepository;
-use App\Services\CustomerSellers\Repositories\CustomerSellerRepositoryInterface;
-use App\Services\CustomerSellers\Repositories\EloquentCustomerSellerRepository;
 use App\Services\Products\Repositories\EloquentProductRepository;
 use App\Services\Products\Repositories\ProductRepositoryInterface;
 use App\Services\Promos\Repositories\EloquentPromoRepository;
@@ -76,10 +74,6 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             PromoRepositoryInterface::class,
             EloquentPromoRepository::class,
-        );
-        $this->app->bind(
-            CustomerSellerRepositoryInterface::class,
-            EloquentCustomerSellerRepository::class,
         );
     }
 

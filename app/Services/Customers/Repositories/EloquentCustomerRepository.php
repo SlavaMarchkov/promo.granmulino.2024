@@ -7,7 +7,6 @@ namespace App\Services\Customers\Repositories;
 
 use App\Models\Customer;
 use App\Models\CustomerSeller;
-use App\Models\CustomerSupervisor;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -37,11 +36,6 @@ final class EloquentCustomerRepository implements CustomerRepositoryInterface
     public function createFromArray(array $data)
     : Customer {
         return Customer::query()->create($data);
-    }
-
-    public function createSupervisorFromArray(array $data)
-    : CustomerSupervisor {
-        return CustomerSupervisor::query()->create($data);
     }
 
     public function createSellerFromArray(array $data)
@@ -74,6 +68,17 @@ final class EloquentCustomerRepository implements CustomerRepositoryInterface
         return $users_count;*/
     }
 
+    public function deleteSeller(CustomerSeller $seller)
+    : int {
+        $sellers_count = CustomerSeller::query()->whereId($seller->id)->count('supervisor_id');
+
+        if ($sellers_count == 0) {
+            $seller->delete();
+        }
+
+        return $sellers_count;
+    }
+
     private function applyFilters(Builder $qb, array $params)
     : void {
         $qb->when(isset($params['user_id']), fn(Builder $query) => $query->where('user_id', (int)$params['user_id']))
@@ -93,36 +98,11 @@ final class EloquentCustomerRepository implements CustomerRepositoryInterface
             );
     }
 
-    public function getSupervisors(int $customer_id, array $params = [])
-    : Collection {
-        $supervisorsSql = CustomerSupervisor::query()
-            ->where('customer_id', $customer_id)
-            ->orderBy('name')->orderByDesc('is_active');
-        $this->applySupervisorsFilters($supervisorsSql, $params);
-        return $supervisorsSql->get();
-    }
-
     public function getSellers(int $customer_id)
     : Collection {
         $sellersSql = CustomerSeller::query()
             ->where('customer_id', $customer_id)
-            ->whereNull('customer_supervisor_id')
             ->orderBy('name')->orderByDesc('is_active');
         return $sellersSql->get();
-    }
-
-    private function applySupervisorsFilters(Builder $qb, array $params)
-    : void {
-        $qb->when(
-            isset($params['sellers']) && to_boolean($params['sellers']),
-            fn(Builder $query) => $query->with('sellers')
-                ->orderBy('name')
-                ->orderByDesc('is_active')
-                ->withCount('sellers'),
-        )
-            ->when(
-                isset($params['customer']) && to_boolean($params['customer']),
-                fn(Builder $query) => $query->with('customer')
-            );
     }
 }

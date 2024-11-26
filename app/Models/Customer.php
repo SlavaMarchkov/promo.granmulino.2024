@@ -51,12 +51,6 @@ class Customer extends Model
         return $this->hasMany(Retailer::class);
     }
 
-    public function customer_supervisors()
-    : HasMany
-    {
-        return $this->hasMany(CustomerSupervisor::class);
-    }
-
     public function customer_sellers()
     : HasMany
     {

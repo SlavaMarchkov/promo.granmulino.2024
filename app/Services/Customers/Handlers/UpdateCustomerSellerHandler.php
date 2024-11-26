@@ -6,19 +6,18 @@ declare(strict_types=1);
 namespace App\Services\Customers\Handlers;
 
 
-use App\Models\CustomerSupervisor;
+use App\Models\CustomerSeller;
 use App\Services\Customers\Repositories\CustomerRepositoryInterface;
 
-final readonly class CreateCustomerSupervisorHandler
+final readonly class UpdateCustomerSellerHandler
 {
     public function __construct(
         private CustomerRepositoryInterface $customerRepository,
-    )
-    {
+    ) {
     }
 
-    public function handle(array $data)
-    : CustomerSupervisor {
+    public function handle(CustomerSeller $customerSeller, array $data)
+    : CustomerSeller {
         $arr = explode(' ', $data['name']);
 
         $data['name'] = collect($arr)
@@ -29,6 +28,6 @@ final readonly class CreateCustomerSupervisorHandler
                 return trim($carry . ' ' . $item);
             });
 
-        return $this->customerRepository->createSupervisorFromArray($data);
+        return $this->customerRepository->updateSellerFromArray($customerSeller, $data);
     }
 }

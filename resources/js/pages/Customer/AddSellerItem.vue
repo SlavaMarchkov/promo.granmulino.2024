@@ -44,7 +44,7 @@ const props = defineProps({
 
 const initialFormData = () => ({
     customerId: props.customerId,
-    customerSupervisorId: '',
+    supervisorId: '',
     name: '',
     isActive: true,
     isSupervisor: false,
