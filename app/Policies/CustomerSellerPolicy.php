@@ -2,15 +2,14 @@
 
 declare(strict_types=1);
 
-// 22.11.2024 at 17:41:28
 namespace App\Policies;
 
 use App\Models\Customer;
-use App\Models\CustomerSupervisor;
+use App\Models\CustomerSeller;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class CustomerSupervisorPolicy
+class CustomerSellerPolicy
 {
     use HandlesAuthorization;
 
@@ -30,7 +29,7 @@ class CustomerSupervisorPolicy
             && $customer->user_id == $user->id;
     }
 
-    public function view(User $user, CustomerSupervisor $customerSupervisor)
+    public function view(User $user, CustomerSeller $customerSeller)
     : bool {
     }
 
@@ -41,19 +40,19 @@ class CustomerSupervisorPolicy
             && $request_customer_id === $customer_id;
     }
 
-    public function update(User $user, CustomerSupervisor $customerSupervisor)
+    public function update(User $user, CustomerSeller $customerSeller)
     : bool {
     }
 
-    public function delete(User $user, CustomerSupervisor $customerSupervisor)
+    public function delete(User $user, CustomerSeller $customerSeller)
     : bool {
     }
 
-    public function restore(User $user, CustomerSupervisor $customerSupervisor)
+    public function restore(User $user, CustomerSeller $customerSeller)
     : bool {
     }
 
-    public function forceDelete(User $user, CustomerSupervisor $customerSupervisor)
+    public function forceDelete(User $user, CustomerSeller $customerSeller)
     : bool {
     }
 }

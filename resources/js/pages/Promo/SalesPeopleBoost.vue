@@ -7,76 +7,34 @@
                     <span>Участники из команды ТП</span>
                 </div>
                 <hr>
-                <pre>
-                    {{ state.checkedSellers }}
-                </pre>
-                <h5>Мотивация для расчёта бюджета: <span class="fw-bold text-primary">{{ state.form.compensation }}&#8239;%</span></h5>
-                <h5 class="mb-3">Планируемый бюджет на промо-акцию: <span class="fw-bold text-primary">{{ formatNumber(totalBudget) }} руб.</span></h5>
+                <h5>Мотивация для расчёта бюджета для СВ: <span
+                    class="fw-bold text-primary">{{ BOOST_SUPERVISOR_QUOTIENT }}&#8239;%</span></h5>
+                <h5>Мотивация для расчёта бюджета для ТП: <span class="fw-bold text-primary">{{ BOOST_SELLER_QUOTIENT }}&#8239;%</span>
+                </h5>
+                <h5 class="mb-3">Планируемый бюджет на промо-акцию: <span class="fw-bold text-primary"><!--{{ formatNumber(totalBudget) }}--> руб.</span>
+                </h5>
                 <p>Выберите торговых представителей, участвующих в акции:</p>
-                <div v-if="filteredSellers.length === 0">
+                <div v-if="props.sellers.length === 0">
                     <p>В команду дистрибьютора не добавлено ни одного торгового представителя. <RouterLink :to="{ name: 'Manager.Customer.View', params: { id: props.customerId }}" class="fw-bold">Перейдите в карточку контрагента</RouterLink> на вкладку "Команда ТП" и добавьте торговых представителей.</p>
                 </div>
                 <div v-else>
                     <ul class="list-group">
                         <li class="list-group-item m-0">
-                            <div class="row text-center">
+                            <div class="row text-center align-items-center p-0">
                                 <div class="col-5">ФИО</div>
                                 <div class="col-2">Продажи, факт</div>
                                 <div class="col-2">План, %</div>
                                 <div class="col-2">Продажи, план</div>
-                                <div class="col-1">Del</div>
+                                <div class="col-1 text-start">Del</div>
                             </div>
                         </li>
-                        <li
-                            v-for="(seller, index) in filteredSellers"
-                            class="list-group-item m-0"
-                        >
-                            <div class="row g-2">
-                                <div class="col-5">
-                                    <div class="input-group">
-                                        <span class="input-group-text">{{ index + 1 }}</span>
-                                        <input
-                                            type="text"
-                                            class="form-control"
-                                            :value="seller.shortName"
-                                            readonly
-                                        >
-                                    </div>
-                                </div>
-                                <div class="col-2">
-                                    <input
-                                        :id="`${index}_salesBefore`"
-                                        @input="onSalesBeforeChange($event, index)"
-                                        class="form-control text-end"
-                                        type="text"
-                                    >
-                                </div>
-                                <div class="col-2">
-                                    <input
-                                        :id="`${index}_surplusPlan`"
-                                        @input="onSurplusPlanChange($event, index)"
-                                        class="form-control text-end"
-                                        type="text"
-                                        readonly
-                                    >
-                                </div>
-                                <div class="col-2">
-                                    <input
-                                        :id="`${index}_salesPlan`"
-                                        @input="onSalesPlanChange($event, index)"
-                                        class="form-control text-end"
-                                        type="text"
-                                        readonly
-                                    >
-                                </div>
-                                <div class="col-1 text-center">
-                                    <button
-                                        @click="removeSeller(seller.id, index)"
-                                        class="btn btn-outline-danger"
-                                    ><i class="bi-x-lg"></i></button>
-                                </div>
-                            </div>
-                        </li>
+                        <SalesPeopleSupervisorItem
+                            v-for="(supervisor, index) in supervisors"
+                            :key="supervisor.id"
+                            :index="index"
+                            :sellers="sellers"
+                            :supervisor="supervisor"
+                        />
                     </ul>
                 </div>
             </div>
@@ -88,8 +46,8 @@
 import { computed, reactive } from 'vue';
 import { useHttpService } from '@/use/useHttpService.js';
 import { useArrayHandlers } from '@/use/useArrayHandlers.js';
-import { convertInputStringToNumber, formatNumber } from '@/helpers/formatters.js';
-import { BOOST_QUOTIENT, DEFAULT_SURPLUS_PERCENT } from '@/helpers/constants.js';
+import { BOOST_SELLER_QUOTIENT, BOOST_SUPERVISOR_QUOTIENT } from '@/helpers/constants.js';
+import SalesPeopleSupervisorItem from '@/pages/Promo/SalesPeopleSupervisorItem.vue';
 
 const { get } = useHttpService();
 const arrayHandlers = useArrayHandlers();
@@ -100,7 +58,6 @@ const initialFormData = () => ({
     salesPlan: 0,
     surplusPlan: 0,
     salesAfter: 0,
-    compensation: BOOST_QUOTIENT,
     budgetPlan: 0,
     budgetActual: 0,
 });
@@ -127,19 +84,34 @@ const emit = defineEmits([
 ]);
 
 const state = reactive({
-    checkedSellers: [],
     form: initialFormData(),
 });
 
-const filteredSellers = computed(() => {
-    const tempArr = props.sellers
+const supervisors = computed(() => {
+    return props.sellers
         .filter(seller => seller.isActive)
-        .map(item => ({ ...item, ...state.form })
-    );
-    return arrayHandlers.sortArrayByStringColumn(tempArr, 'name');
+        .filter(seller => seller.isSupervisor)
+        .map(item => ({
+            ...item,
+            ...state.form,
+            compensation: BOOST_SUPERVISOR_QUOTIENT,
+        }));
+    //return arrayHandlers.sortArrayByStringColumn(tempArr, 'name');
 });
 
-const onSalesBeforeChange = (evt, index) => {
+const sellers = computed(() => {
+    return props.sellers
+        .filter(seller => seller.isActive)
+        .filter(seller => !seller.isSupervisor)
+        .map(item => ({
+            ...item,
+            ...state.form,
+            compensation: BOOST_SELLER_QUOTIENT,
+        }));
+    //return arrayHandlers.sortArrayByStringColumn(tempArr, 'name');
+});
+
+/*const onSalesBeforeChange = (evt, index) => {
     let sellerObj = filteredSellers.value[index];
     const itemIdx = state.checkedSellers.findIndex(ch => ch.id === sellerObj.id);
 
@@ -272,9 +244,10 @@ const onSalesPlanChange = (evt, index) => {
 };
 
 const totalBudget = computed(() => {
-    return state.checkedSellers.reduce((acc, seller) => {
+    return 0;
+    /!*return state.checkedSellers.reduce((acc, seller) => {
         return acc + parseInt(seller.budgetPlan);
-    }, 0);
+    }, 0);*!/
 });
 
 const removeSeller = (id, index) => {
@@ -291,5 +264,5 @@ const removeSeller = (id, index) => {
 
         state.checkedSellers.splice(itemIdx, 1);
     }
-};
+};*/
 </script>

@@ -27,6 +27,7 @@ class CustomerResource extends JsonResource
             'region'    => new RegionResource($this->whenLoaded('region')),
             'city'      => new CityResource($this->whenLoaded('city')),
             'retailers' => RetailerResource::collection($this->whenLoaded('retailers')),
+            'sellers' => CustomerSellerResource::collection($this->whenLoaded('customer_sellers')),
 
             'next' => $this->findNext($this->id),
             'prev' => $this->findPrevious($this->id),

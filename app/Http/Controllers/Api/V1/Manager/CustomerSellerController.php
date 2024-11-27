@@ -12,11 +12,14 @@ use App\Http\Resources\V1\Customer\CustomerSellerResource;
 use App\Models\Customer;
 use App\Models\CustomerSeller;
 use App\Services\Customers\CustomerService;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 final class CustomerSellerController extends ApiController
 {
+    use AuthorizesRequests;
+
     public function __construct(
         private readonly CustomerService $customerService,
     ) {
@@ -24,6 +27,8 @@ final class CustomerSellerController extends ApiController
 
     public function index(Customer $customer)
     : JsonResponse {
+        $this->authorize('viewAny', [CustomerSeller::class, $customer]);
+
         $sellers = $this->customerService->getCustomerSellers($customer->id);
 
         return $this->successResponse(
@@ -33,8 +38,10 @@ final class CustomerSellerController extends ApiController
         );
     }
 
-    public function store(SellerStoreUpdateRequest $request)
+    public function store(SellerStoreUpdateRequest $request, Customer $customer)
     : JsonResponse {
+        $this->authorize('create', [CustomerSeller::class, $request->customer_id, $customer->id]);
+
         $data = $request->validated();
         $seller = $this->customerService->storeSeller($data);
 

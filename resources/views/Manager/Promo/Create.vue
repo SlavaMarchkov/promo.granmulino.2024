@@ -235,10 +235,8 @@
                 <div class="card-footer">
                     <TheButton
                         @click="savePromo"
-                        type="button"
-                        class="btn-primary w-25"
-                    >
-                        Сохранить
+                        class="btn-primary"
+                    >Сохранить
                     </TheButton>
                 </div>
             </div>
@@ -387,7 +385,7 @@ const getCustomerSellers = async (customerId) => {
             'customer_sellers': true,
         },
     });
-    if (status === 'success') state.customerSellers = data.customerSellers;
+    if ( status === 'success' ) state.customerSellers = data.sellers;
 };
 
 watch(

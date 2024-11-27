@@ -82,7 +82,6 @@ export const MANAGER_URLS = {
     CHANNEL: '/channels',
     CUSTOMER: '/customers',
     CUSTOMER_SELLER: '/sellers',
-    CUSTOMER_SUPERVISOR: '/supervisors',
     PRODUCT: '/products',
     PROMO: '/promos',
     RETAILER: '/retailers',
@@ -292,5 +291,6 @@ export const OPEN_WEATHER_BASE_URL = 'https://api.openweathermap.org/geo/1.0/dir
 
 export const OPEN_WEATHER_API_KEY = import.meta.env.VITE_OPEN_WEATHER_API_KEY;
 
-export const BOOST_QUOTIENT = 10;
+export const BOOST_SELLER_QUOTIENT = 10;
+export const BOOST_SUPERVISOR_QUOTIENT = 5;
 export const DEFAULT_SURPLUS_PERCENT = 30;
