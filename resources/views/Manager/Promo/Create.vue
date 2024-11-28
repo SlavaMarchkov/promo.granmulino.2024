@@ -230,6 +230,7 @@
                                 style="height: 100px;"
                             ></textarea>
                         </div>
+                        <pre>{{ state.promo }}</pre>
                     </div>
                 </div>
                 <div class="card-footer">
@@ -242,31 +243,51 @@
             </div>
         </div>
         <div class="col-lg-7">
-            <component
-                :is="TheDiscount"
-                v-if="currentPromoType.type === 'DISCOUNT'"
-                :title="currentPromoType.title"
-                @add-product-to-promo="addProductHandler"
-                @remove-product-from-promo="removeProductHandler"
-            ></component>
-            <component
-                :is="SalesPeopleBoost"
-                v-if="currentPromoType.type === 'SALES_PEOPLE_BOOST' && state.promo.customerId"
-                :title="currentPromoType.title"
-                :sellers="state.customerSellers"
-                :customer-id="+state.promo.customerId"
-                @add-sellers-to-promo="addSellersHandler"
-            ></component>
-            <component
-                :is="GiftForPurchase"
-                v-if="currentPromoType.type === 'GIFT_FOR_PURCHASE'"
-                :title="currentPromoType.title"
-            ></component>
-            <component
-                :is="RetailersBoost"
-                v-if="currentPromoType.type === 'RETAILERS_BOOST'"
-                :title="currentPromoType.title"
-            ></component>
+            <Suspense v-if="currentPromoType.type === 'DISCOUNT'">
+                <template #default>
+                    <TheDiscount
+                        :title="currentPromoType.title"
+                        @add-product-to-promo="addProductHandler"
+                        @remove-product-from-promo="removeProductHandler"
+                    />
+                </template>
+                <template #fallback>
+                    <p>Loading...</p>
+                </template>
+            </Suspense>
+            <Suspense v-if="currentPromoType.type === 'SALES_PEOPLE_BOOST' && state.promo.customerId">
+                <template #default>
+                    <SalesPeopleBoost
+                        :title="currentPromoType.title"
+                        :sellers="state.customerSellers"
+                        :customer-id="+state.promo.customerId"
+                        @add-sellers-to-promo="addSellersHandler"
+                    />
+                </template>
+                <template #fallback>
+                    <p>Loading...</p>
+                </template>
+            </Suspense>
+            <Suspense v-if="currentPromoType.type === 'GIFT_FOR_PURCHASE'">
+                <template #default>
+                    <GiftForPurchase
+                        :title="currentPromoType.title"
+                    />
+                </template>
+                <template #fallback>
+                    <p>Loading...</p>
+                </template>
+            </Suspense>
+            <Suspense v-if="currentPromoType.type === 'RETAILERS_BOOST'">
+                <template #default>
+                    <RetailersBoost
+                        :title="currentPromoType.title"
+                    />
+                </template>
+                <template #fallback>
+                    <p>Loading...</p>
+                </template>
+            </Suspense>
             <component
                 :is="CoverageIncrease"
                 v-if="currentPromoType.type === 'COVERAGE_INCREASE'"
@@ -282,7 +303,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, reactive, watch } from 'vue';
+import { computed, defineAsyncComponent, onMounted, reactive, watch } from 'vue';
 import { useAuthStore } from '@/stores/auth.js';
 import { useAlertStore } from '@/stores/alerts.js';
 import { useRouter } from 'vue-router';
@@ -290,16 +311,12 @@ import { useHttpService } from '@/use/useHttpService.js';
 import { formatDateToISO } from '@/helpers/formatters.js';
 import { useDatepicker } from 'vue-air-datepicker';
 import { useArrayHandlers } from '@/use/useArrayHandlers.js';
-import { MANAGER_URLS, PROMO_TYPES } from '@/helpers/constants.js';
+import { FOUR_WEEKS_AHEAD, MANAGER_URLS, PROMO_TYPES, TWO_WEEKS_AHEAD } from '@/helpers/constants.js';
 import Alert from '@/components/Alert.vue';
 import TheLabel from '@/components/form/TheLabel.vue';
 import TheButton from '@/components/core/TheButton.vue';
 import TheInput from '@/components/form/TheInput.vue';
 import localeRu from 'air-datepicker/locale/ru';
-import TheDiscount from '@/pages/Promo/TheDiscount.vue';
-import SalesPeopleBoost from '@/pages/Promo/SalesPeopleBoost.vue';
-import GiftForPurchase from '@/pages/Promo/GiftForPurchase.vue';
-import RetailersBoost from '@/pages/Promo/RetailersBoost.vue';
 import CoverageIncrease from '@/pages/Promo/CoverageIncrease.vue';
 import TheInOut from '@/pages/Promo/TheInOut.vue';
 
@@ -311,6 +328,7 @@ const arrayHandlers = useArrayHandlers();
 
 useDatepicker('#start_date', {
     locale: localeRu,
+    startDate: TWO_WEEKS_AHEAD,
     onSelect: ({ date, datepicker }) => {
         state.promo.startDate = formatDateToISO(date);
         datepicker.hide();
@@ -319,10 +337,31 @@ useDatepicker('#start_date', {
 
 useDatepicker('#end_date', {
     locale: localeRu,
+    startDate: FOUR_WEEKS_AHEAD,
     onSelect: ({ date, datepicker }) => {
         state.promo.endDate = formatDateToISO(date);
         datepicker.hide();
     },
+});
+
+const TheDiscount = defineAsyncComponent({
+    loader: () => import('@/pages/Promo/TheDiscount.vue'),
+});
+
+const SalesPeopleBoost = defineAsyncComponent({
+    loader: () => import('@/pages/Promo/SalesPeopleBoost.vue'),
+});
+
+const GiftForPurchase = defineAsyncComponent(() =>
+    import('@/pages/Promo/GiftForPurchase.vue'),
+);
+
+const RetailersBoost = defineAsyncComponent({
+    loader: () => import('@/pages/Promo/RetailersBoost.vue'),
+    /* loadingComponent: LoadingComponent shows while loading */
+    /* errorComponent: ErrorComponent shows if there's an error */
+    delay: 1000 /* delay in ms before showing loading component */,
+    timeout: 3000 /* timeout after this many ms */,
 });
 
 const initialFormData = () => ({
@@ -422,6 +461,8 @@ const onCustomerChange = (customerId) => {
 
     state.promo.regionId = customer.region.id;
     state.promo.cityId = customer.city.id;
+    state.promo.products = [];
+    state.promo.sellers = [];
 
     state.promo.retailerId = '';
     state.customers.map(customer => {

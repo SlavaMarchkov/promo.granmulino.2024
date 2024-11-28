@@ -58,13 +58,40 @@ final class StoreRequest extends FormRequest
                     return to_boolean($this->request->get('promo_for_retail')) == true;
                 }),
             ],
-            'sellers' => [
+            'sellers'  => [
                 'nullable',
                 'array',
                 Rule::requiredIf(function () {
                     return to_boolean($this->request->get('promo_for_retail')) == false;
                 }),
             ],
+        ];
+    }
+
+    public function attributes()
+    : array
+    {
+        return [
+            'promo_type'  => 'Вид промо-акции',
+            'discount'    => 'Величина скидки',
+            'user_id'     => 'Менеджер',
+            'channel_id'  => 'Канал продаж',
+            'region_id'   => 'Регион',
+            'city_id'     => 'Город',
+            'customer_id' => 'Дистрибутор',
+            'retailer_id' => 'Торговая сеть',
+            'start_date'  => 'Дата начала',
+            'end_date'    => 'Дата окончания',
+            'products'    => 'Ассортимент',
+            'sellers'     => 'Команда ТП',
+        ];
+    }
+
+    public function messages()
+    : array
+    {
+        return [
+            'end_date.after' => 'Дата окончания должна быть после даты начала.'
         ];
     }
 }

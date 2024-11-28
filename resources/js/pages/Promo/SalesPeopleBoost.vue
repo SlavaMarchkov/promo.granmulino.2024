@@ -4,16 +4,14 @@
             <div class="card-header bg-secondary text-white">{{ props.title }}</div>
             <div class="card-body mt-3">
                 <div class="d-flex justify-content-between align-items-center">
-                    <span>Участники из команды ТП</span>
+                    <h4 class="mb-0">Планируемый бюджет на промо-акцию:</h4>
+                    <h4 class="text-primary fw-bold mb-0">{{ isNaN(totalBudget) ? '0' : formatNumber(totalBudget) }} руб.</h4>
                 </div>
                 <hr>
-                <h5>Мотивация для расчёта бюджета для СВ: <span
-                    class="fw-bold text-primary">{{ BOOST_SUPERVISOR_QUOTIENT }}&#8239;%</span></h5>
-                <h5>Мотивация для расчёта бюджета для ТП: <span class="fw-bold text-primary">{{ BOOST_SELLER_QUOTIENT }}&#8239;%</span>
+                <h5>Мотивация для расчёта бюджета: <span class="fw-bold text-primary">
+                    СВ: {{ BOOST_SUPERVISOR_QUOTIENT }}&#8239;% ТП: {{ BOOST_SELLER_QUOTIENT }}&#8239;%</span>
                 </h5>
-                <h5 class="mb-3">Планируемый бюджет на промо-акцию: <span class="fw-bold text-primary"><!--{{ formatNumber(totalBudget) }}--> руб.</span>
-                </h5>
-                <p>Выберите торговых представителей, участвующих в акции:</p>
+                <p>Введите план для торговых представителей, участвующих в акции:</p>
                 <div v-if="props.sellers.length === 0">
                     <p>В команду дистрибьютора не добавлено ни одного торгового представителя. <RouterLink :to="{ name: 'Manager.Customer.View', params: { id: props.customerId }}" class="fw-bold">Перейдите в карточку контрагента</RouterLink> на вкладку "Команда ТП" и добавьте торговых представителей.</p>
                 </div>
@@ -34,7 +32,19 @@
                             :index="index"
                             :sellers="sellers"
                             :supervisor="supervisor"
+                            @add-to-checked-sellers="addToCheckedSellers"
                         />
+                        <template
+                            v-for="(seller, index) in sellers"
+                            :key="seller.id"
+                        >
+                            <SalesPeopleSellerItem
+                                v-if="seller.supervisorId === null"
+                                :seller="seller"
+                                :index="index"
+                                @add-seller="addToCheckedSellers"
+                            />
+                        </template>
                     </ul>
                 </div>
             </div>
@@ -43,11 +53,13 @@
 </template>
 
 <script setup>
-import { computed, reactive } from 'vue';
+import { computed, reactive, watch } from 'vue';
 import { useHttpService } from '@/use/useHttpService.js';
 import { useArrayHandlers } from '@/use/useArrayHandlers.js';
 import { BOOST_SELLER_QUOTIENT, BOOST_SUPERVISOR_QUOTIENT } from '@/helpers/constants.js';
 import SalesPeopleSupervisorItem from '@/pages/Promo/SalesPeopleSupervisorItem.vue';
+import { formatNumber } from '@/helpers/formatters.js';
+import SalesPeopleSellerItem from '@/pages/Promo/SalesPeopleSellerItem.vue';
 
 const { get } = useHttpService();
 const arrayHandlers = useArrayHandlers();
@@ -84,6 +96,7 @@ const emit = defineEmits([
 ]);
 
 const state = reactive({
+    checkedSellers: [],
     form: initialFormData(),
 });
 
@@ -96,7 +109,6 @@ const supervisors = computed(() => {
             ...state.form,
             compensation: BOOST_SUPERVISOR_QUOTIENT,
         }));
-    //return arrayHandlers.sortArrayByStringColumn(tempArr, 'name');
 });
 
 const sellers = computed(() => {
@@ -108,148 +120,32 @@ const sellers = computed(() => {
             ...state.form,
             compensation: BOOST_SELLER_QUOTIENT,
         }));
-    //return arrayHandlers.sortArrayByStringColumn(tempArr, 'name');
 });
 
-/*const onSalesBeforeChange = (evt, index) => {
-    let sellerObj = filteredSellers.value[index];
-    const itemIdx = state.checkedSellers.findIndex(ch => ch.id === sellerObj.id);
-
+const addToCheckedSellers = (seller) => {
+    const itemIdx = state.checkedSellers.findIndex(ch => ch.id === seller.id);
     if (itemIdx === -1) {
-        state.checkedSellers.push(sellerObj);
-        emit('addSellersToPromo', state.checkedSellers);
+        state.checkedSellers.push(seller);
     } else {
-        sellerObj = state.checkedSellers[itemIdx];
+        state.checkedSellers[itemIdx] = { ...seller };
     }
-
-    const salesBeforeValue = evt.target.value;
-
-    const salesBeforeEl = document.getElementById(`${index}_salesBefore`);
-    const surplusPlanEl = document.getElementById(`${index}_surplusPlan`);
-    const salesPlanEl = document.getElementById(`${index}_salesPlan`);
-
-    let salesBefore = convertInputStringToNumber(salesBeforeValue);
-
-    let surplusPlan;
-    let salesPlan;
-    let budgetPlan;
-
-    if (salesBeforeValue === '') {
-        surplusPlan = 0;
-        salesPlan = 0;
-        budgetPlan = 0;
-
-        surplusPlanEl.value = '';
-        salesPlanEl.value = '';
-        surplusPlanEl.setAttribute('readonly', 'readonly');
-        salesPlanEl.setAttribute('readonly', 'readonly');
-
-        state.checkedSellers.splice(itemIdx, 1);
-    } else if (salesBefore === 0) {
-        salesBefore = 0;
-        surplusPlan = 0;
-        salesPlan = 0;
-        budgetPlan = 0;
-
-        surplusPlanEl.value = surplusPlan;
-        surplusPlanEl.setAttribute('readonly', 'readonly');
-        salesPlanEl.removeAttribute('readonly');
-    } else {
-        surplusPlan = surplusPlanEl.value === ''
-            ? DEFAULT_SURPLUS_PERCENT
-            : convertInputStringToNumber(surplusPlanEl.value);
-        salesPlan = +(salesBefore + (salesBefore * surplusPlan) / 100).toFixed(2);
-        budgetPlan = +(salesPlan / sellerObj.compensation).toFixed(2);
-
-        salesBeforeEl.value = formatNumber(salesBefore);
-        salesPlanEl.value = formatNumber(salesPlan);
-        salesPlanEl.setAttribute('readonly', 'readonly');
-        surplusPlanEl.removeAttribute('readonly');
-        surplusPlanEl.value = surplusPlan;
-    }
-
-    sellerObj.sellerId = sellerObj.id;
-    sellerObj.salesBefore = salesBefore;
-    sellerObj.surplusPlan = surplusPlan;
-    sellerObj.salesPlan = salesPlan;
-    sellerObj.budgetPlan = budgetPlan;
-};
-
-const onSurplusPlanChange = (evt, index) => {
-    let sellerObj = filteredSellers.value[index];
-    const itemIdx = state.checkedSellers.findIndex(ch => ch.id === sellerObj.id);
-
-    if (itemIdx === -1) {
-        state.checkedSellers.push(sellerObj);
-        emit('addSellersToPromo', state.checkedSellers);
-    } else {
-        sellerObj = state.checkedSellers[itemIdx];
-    }
-
-    const surplusPlanValue = evt.target.value;
-
-    const salesBeforeEl = document.getElementById(`${index}_salesBefore`);
-    const surplusPlanEl = document.getElementById(`${index}_surplusPlan`);
-    const salesPlanEl = document.getElementById(`${index}_salesPlan`);
-
-    let salesBefore = convertInputStringToNumber(salesBeforeEl.value);
-    let surplusPlan = convertInputStringToNumber(surplusPlanValue);
-    let salesPlan;
-    let budgetPlan;
-
-    if (surplusPlanValue === '' || isNaN(surplusPlan)) {
-        surplusPlan = 0;
-        surplusPlanEl.value = surplusPlan;
-    }
-
-    salesPlan = +(salesBefore + (salesBefore * surplusPlan) / 100).toFixed(2);
-    budgetPlan = +(salesPlan / sellerObj.compensation).toFixed(2);
-
-    surplusPlanEl.value = formatNumber(surplusPlan);
-    salesPlanEl.value = formatNumber(salesPlan);
-
-    sellerObj.sellerId = sellerObj.id;
-    sellerObj.salesBefore = salesBefore;
-    sellerObj.surplusPlan = surplusPlan;
-    sellerObj.salesPlan = salesPlan;
-    sellerObj.budgetPlan = budgetPlan;
-};
-
-const onSalesPlanChange = (evt, index) => {
-    let sellerObj = filteredSellers.value[index];
-    const itemIdx = state.checkedSellers.findIndex(ch => ch.id === sellerObj.id);
-    sellerObj = state.checkedSellers[itemIdx];
-
-    const salesPlanValue = evt.target.value;
-    let salesPlan = convertInputStringToNumber(salesPlanValue);
-    const salesPlanEl = document.getElementById(`${index}_salesPlan`);
-
-    let salesBefore = 0;
-    let surplusPlan = 0;
-    let budgetPlan;
-
-    if ( salesPlanValue === '' || isNaN(salesPlan) ) {
-        salesPlan = 0;
-        salesPlanEl.value = salesPlan;
-    } else {
-        budgetPlan = +(salesPlan / sellerObj.compensation).toFixed(2);
-        salesPlan = +(salesPlan).toFixed(2);
-        salesPlanEl.value = formatNumber(salesPlan);
-    }
-
-    sellerObj.salesBefore = salesBefore;
-    sellerObj.surplusPlan = surplusPlan;
-    sellerObj.salesPlan = salesPlan;
-    sellerObj.budgetPlan = budgetPlan;
+    emit('addSellersToPromo', state.checkedSellers);
 };
 
 const totalBudget = computed(() => {
-    return 0;
-    /!*return state.checkedSellers.reduce((acc, seller) => {
-        return acc + parseInt(seller.budgetPlan);
-    }, 0);*!/
+    return state.checkedSellers.reduce((acc, seller) => {
+            return acc + parseInt(seller.budgetPlan);
+        }, 0);
 });
 
+watch(
+    () => props.customerId,
+    () => {
+        state.checkedSellers = [];
+    },
+);
+
+/*
 const removeSeller = (id, index) => {
     const itemIdx = state.checkedSellers.findIndex(ch => ch.id === id);
 

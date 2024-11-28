@@ -1,23 +1,4 @@
-import {
-    Administrator,
-    Category,
-    CategoryView,
-    City,
-    CityView,
-    Customer,
-    CustomerView,
-    Index,
-    Layout,
-    Product,
-    ProductView,
-    Region,
-    RegionView,
-    Report,
-    Retailer,
-    RetailerView,
-    User,
-    UserView,
-} from '../../views/Admin/index.js';
+import Layout from '../../views/Admin/Layout.vue';
 
 export default {
     path: '/admin',
@@ -26,7 +7,7 @@ export default {
         {
             path: '',
             name: 'Admin.Index',
-            component: Index,
+            component: () => import('../../views/Admin/Index.vue'),
             meta: {
                 title: 'Главная страница',
             },
@@ -34,7 +15,7 @@ export default {
         {
             path: 'administrators',
             name: 'Administrator.Index',
-            component: Administrator,
+            component: () => import('../../views/Admin/Administrator/Index.vue'),
             meta: {
                 title: 'Администраторы',
             },
@@ -42,7 +23,7 @@ export default {
         {
             path: 'users',
             name: 'User.Index',
-            component: User,
+            component: () => import('../../views/Admin/User/Index.vue'),
             meta: {
                 title: 'Пользователи',
             },
@@ -50,7 +31,7 @@ export default {
         {
             path: 'users/:id',
             name: 'User.View',
-            component: UserView,
+            component: () => import('../../views/Admin/User/View.vue'),
             meta: {
                 title: 'Просмотр пользователя',
             },
@@ -58,7 +39,7 @@ export default {
         {
             path: 'regions',
             name: 'Region.Index',
-            component: Region,
+            component: () => import('../../views/Admin/Region/Index.vue'),
             meta: {
                 title: 'Регионы',
             },
@@ -66,7 +47,7 @@ export default {
         {
             path: 'regions/:id',
             name: 'Region.View',
-            component: RegionView,
+            component: () => import('../../views/Admin/Region/View.vue'),
             meta: {
                 title: 'Просмотр региона',
             },
@@ -74,7 +55,7 @@ export default {
         {
             path: 'cities',
             name: 'City.Index',
-            component: City,
+            component: () => import('../../views/Admin/City/Index.vue'),
             meta: {
                 title: 'Города',
             },
@@ -82,7 +63,7 @@ export default {
         {
             path: 'cities/:id',
             name: 'City.View',
-            component: CityView,
+            component: () => import('../../views/Admin/City/View.vue'),
             meta: {
                 title: 'Просмотр города',
             },
@@ -90,7 +71,7 @@ export default {
         {
             path: 'categories',
             name: 'Category.Index',
-            component: Category,
+            component: () => import('../../views/Admin/Category/Index.vue'),
             meta: {
                 title: 'Группы товаров',
             },
@@ -98,7 +79,7 @@ export default {
         {
             path: 'categories/:id',
             name: 'Category.View',
-            component: CategoryView,
+            component: () => import('../../views/Admin/Category/View.vue'),
             meta: {
                 title: 'Просмотр группы товаров',
             },
@@ -106,7 +87,7 @@ export default {
         {
             path: 'customers',
             name: 'Customer.Index',
-            component: Customer,
+            component: () => import('../../views/Admin/Customer/Index.vue'),
             meta: {
                 title: 'Контрагенты',
             },
@@ -114,7 +95,7 @@ export default {
         {
             path: 'customers/:id',
             name: 'Customer.View',
-            component: CustomerView,
+            component: () => import('../../views/Admin/Customer/View.vue'),
             meta: {
                 title: 'Просмотр контрагента',
             },
@@ -122,7 +103,7 @@ export default {
         {
             path: 'products',
             name: 'Product.Index',
-            component: Product,
+            component: () => import('../../views/Admin/Product/Index.vue'),
             meta: {
                 title: 'Ассортимент продукции',
             },
@@ -130,7 +111,7 @@ export default {
         {
             path: 'products/:id',
             name: 'Product.View',
-            component: ProductView,
+            component: () => import('../../views/Admin/Product/View.vue'),
             meta: {
                 title: 'Просмотр продукта',
             },
@@ -138,7 +119,7 @@ export default {
         {
             path: 'reports',
             name: 'Report.Index',
-            component: Report,
+            component: () => import('../../views/Admin/Report.vue'),
             meta: {
                 title: 'Генератор отчётов',
             },
@@ -146,7 +127,7 @@ export default {
         {
             path: 'retailers',
             name: 'Retailer.Index',
-            component: Retailer,
+            component: () => import('../../views/Admin/Retailer/Index.vue'),
             meta: {
                 title: 'Торговые сети',
             },
@@ -154,7 +135,7 @@ export default {
         {
             path: 'retailers/:id',
             name: 'Retailer.View',
-            component: RetailerView,
+            component: () => import('../../views/Admin/Retailer/View.vue'),
             meta: {
                 title: 'Просмотр торговой сети',
             },

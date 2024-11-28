@@ -362,12 +362,12 @@ const updateSellers = (updatedItem) => {
     const supervisorIdx = supervisors.value.findIndex(s => s.id === updatedItem.id);
 
     // TODO: убрать выводы в консоль
-    console.log('sellerIdx', sellerIdx);
-    console.log('supervisorIdx', supervisorIdx);
+    // console.log('sellerIdx', sellerIdx);
+    // console.log('supervisorIdx', supervisorIdx);
 
     // обновляем имя или статус ТП, привязанных к супервайзеру (вложенные ТП)
     if (sellerIdx === -1 && supervisorIdx === -1 && updatedItem.isSupervisor === false && updatedItem.supervisorId !== null) {
-        console.log('обновляем имя или статус ТП, привязанных к супервайзеру');
+        // console.log('обновляем имя или статус ТП, привязанных к супервайзеру');
         const supervisorIdx = supervisors.value.findIndex(s => s.id === updatedItem.supervisorId);
         const idx = supervisors.value[supervisorIdx].sellers.findIndex(s => s.id === updatedItem.id);
         supervisors.value[supervisorIdx].sellers[idx] = updatedItem;
@@ -378,10 +378,10 @@ const updateSellers = (updatedItem) => {
     // добавляем нового супервайзера либо переносим ТП из списка супервайзеров по кнопке вниз
     if (sellerIdx === -1 && supervisorIdx === -1 && updatedItem.isSupervisor === true && updatedItem.supervisorId === null) {
         if (updatedItem.sellers.length === 0) {
-            console.log('добавляем нового супервайзера');
+            // console.log('добавляем нового супервайзера');
             supervisors.value.push(updatedItem);
         } else {
-            console.log('!!! либо переносим ТП из списка супервайзеров по кнопке вниз');
+            // console.log('!!! либо переносим ТП из списка супервайзеров по кнопке вниз');
             supervisors.value.forEach(({ sellers }) => {
                 const idx = sellers.findIndex(s => s.id === updatedItem.id);
                 sellers.splice(idx, 1);
@@ -391,9 +391,9 @@ const updateSellers = (updatedItem) => {
 
     // добавляем нового ТП или переносим из прикрепленных к супервайзеру ТП по кнопке вниз
     if (sellerIdx === -1 && supervisorIdx === -1 && updatedItem.isSupervisor === false && updatedItem.supervisorId === null) {
-        console.log('a) добавляем нового торгового представителя');
+        // console.log('a) добавляем нового торгового представителя');
         sellers.value.push(updatedItem);
-        console.log('b) переносим ТП по кнопке вниз и отцепляем его от супервайзера');
+        // console.log('b) переносим ТП по кнопке вниз и отцепляем его от супервайзера');
         supervisors.value.forEach(({ sellers }) => {
             const idx = sellers.findIndex(s => s.id === updatedItem.id);
             if (idx !== -1) {
@@ -405,22 +405,22 @@ const updateSellers = (updatedItem) => {
 
     // переносим из супервайзеров в ТП по кнопке вниз
     if (sellerIdx === -1 && supervisorIdx !== -1 && updatedItem.isSupervisor === false && updatedItem.supervisorId === null) {
-        console.log('a) переносим из супервайзеров в ТП по кнопке вниз');
+        // console.log('a) переносим из супервайзеров в ТП по кнопке вниз');
         sellers.value.push(updatedItem);
-        console.log('b) переносим супервайзера в ТП');
+        // console.log('b) переносим супервайзера в ТП');
         supervisors.value.splice(supervisorIdx, 1);
     }
 
     // переносим из ТП в супервайзеров по кнопке вверх
     if (sellerIdx !== -1 && supervisorIdx === -1 && updatedItem.isSupervisor === true) {
-        console.log('переносим из ТП в супервайзеров по кнопке вверх');
+        // console.log('переносим из ТП в супервайзеров по кнопке вверх');
         supervisors.value.push(updatedItem);
         sellers.value.splice(sellerIdx, 1);
     }
 
     // перетаскиваем одного ТП в список супервайзеров
     if (sellerIdx !== -1 && supervisorIdx === -1 && updatedItem.isSupervisor === false && updatedItem.supervisorId !== null) {
-        console.log('перетаскиваем одного ТП в список супервайзеров');
+        // console.log('перетаскиваем одного ТП в список супервайзеров');
         sellers.value.splice(sellerIdx, 1);
         const supervisorIdx = supervisors.value.findIndex(s => s.id === updatedItem.supervisorId);
         supervisors.value[supervisorIdx].sellers.push(updatedItem);
@@ -430,10 +430,10 @@ const updateSellers = (updatedItem) => {
     // меняем имя ТП в списке ТП либо обновляем статус ТП либо удаляем
     if (sellerIdx !== -1 && supervisorIdx === -1 && updatedItem.isSupervisor === false && updatedItem.supervisorId === null) {
         if (updatedItem.deletedAt !== null) {
-            console.log('удаляем ТП полностью');
+            // console.log('удаляем ТП полностью');
             sellers.value.splice(sellerIdx, 1);
         } else {
-            console.log('меняем имя ТП в списке ТП либо обновляем статус ТП');
+            // console.log('меняем имя ТП в списке ТП либо обновляем статус ТП');
             sellers.value[sellerIdx] = updatedItem;
         }
     }
@@ -441,10 +441,10 @@ const updateSellers = (updatedItem) => {
     // меняем имя супервайзера в списке супервайзеров либо обновляем его статус либо удаляем
     if (supervisorIdx !== -1 && updatedItem.isSupervisor === true) {
         if (updatedItem.deletedAt !== null) {
-            console.log('удаляем супервайзера полностью');
+            // console.log('удаляем супервайзера полностью');
             supervisors.value.splice(supervisorIdx, 1);
         } else {
-            console.log('меняем имя супервайзера в списке супервайзеров либо обновляем его статус');
+            // console.log('меняем имя супервайзера в списке супервайзеров либо обновляем его статус');
             const sellers = supervisors.value[supervisorIdx].sellers;
             supervisors.value[supervisorIdx] = updatedItem;
             supervisors.value[supervisorIdx].sellers = sellers;
