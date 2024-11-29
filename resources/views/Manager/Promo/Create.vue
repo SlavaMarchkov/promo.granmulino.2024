@@ -255,12 +255,12 @@
                     <p>Loading...</p>
                 </template>
             </Suspense>
-            <Suspense v-if="currentPromoType.type === 'SALES_PEOPLE_BOOST' && state.promo.customerId">
+            <Suspense v-if="currentPromoType.type === 'SALES_PEOPLE_BOOST'">
                 <template #default>
                     <SalesPeopleBoost
                         :title="currentPromoType.title"
-                        :sellers="state.customerSellers"
                         :customer-id="+state.promo.customerId"
+                        :customer-name="state.customerName"
                         @add-sellers-to-promo="addSellersHandler"
                     />
                 </template>
@@ -298,6 +298,12 @@
                 v-if="currentPromoType.type === 'IN_OUT'"
                 :title="currentPromoType.title"
             ></component>
+            <div v-if="currentPromoType.type === ''" class="alert alert-warning  alert-dismissible fade show" role="alert">
+                <h4 class="alert-heading">Детали промо-акции</h4>
+                <p>Здесь будут выведены поля для ввода ассортимента, команды торговых представителей и др. в зависимости от выбранного вида промо-акции.</p>
+                <hr>
+                <p>Выберите вид промо-акции в выпадающем списке в панели общих настроек промо-акции.</p>
+            </div>
         </div>
     </div>
 </template>
@@ -377,16 +383,19 @@ const initialFormData = () => ({
     startDate: '',
     endDate: '',
     comments: '',
+    totalSalesBefore: 0,
+    totalSalesPlan: 0,
+    totalBudgetPlan: 0,
     products: [],
     sellers: [],
 });
 
 const state = reactive({
-    customerSellers: [],
     customers: [],
     retailers: [],
     cities: [],
     channels: [],
+    customerName: '',
     promo: initialFormData(),
 });
 
@@ -418,15 +427,6 @@ const getCustomers = async () => {
     state.customers = data.customers;
 };
 
-const getCustomerSellers = async (customerId) => {
-    const { status, data } = await get(`${MANAGER_URLS.CUSTOMER}/${customerId}`, {
-        params: {
-            'customer_sellers': true,
-        },
-    });
-    if ( status === 'success' ) state.customerSellers = data.sellers;
-};
-
 watch(
     () => state.promo.promoType,
     async (newValue) => {
@@ -438,20 +438,13 @@ watch(
         state.promo.discount = null;
         state.promo.promoForRetail = currentPromoType.isForRetail;
 
-        if ( promoType === 'SALES_PEOPLE_BOOST' && state.promo.customerId ) {
-            await getCustomerSellers(state.promo.customerId);
-        }
-
         await getChannels(currentPromoType);
     },
 );
 
 watch(
     () => state.promo.customerId,
-    async (newValue) => {
-        if ( state.promo.promoType === 'SALES_PEOPLE_BOOST' ) {
-            await getCustomerSellers(state.promo.customerId);
-        }
+    (newValue) => {
         onCustomerChange(newValue);
     },
 );
@@ -463,6 +456,8 @@ const onCustomerChange = (customerId) => {
     state.promo.cityId = customer.city.id;
     state.promo.products = [];
     state.promo.sellers = [];
+
+    state.customerName = customer.name;
 
     state.promo.retailerId = '';
     state.customers.map(customer => {
@@ -480,8 +475,11 @@ const removeProductHandler = (index) => {
     state.promo.products.splice(index, 1);
 };
 
-const addSellersHandler = (sellers) => {
-    state.promo.sellers = sellers;
+const addSellersHandler = (sellers, salesBefore, salesPlan, budgetPlan) => {
+    state.promo.sellers = sellers.filter(item => (item.salesBefore !== 0 || item.salesBefore !== null) && item.salesPlan !== 0);
+    state.promo.totalSalesBefore = salesBefore;
+    state.promo.totalSalesPlan = salesPlan;
+    state.promo.totalBudgetPlan = budgetPlan;
 };
 
 const savePromo = async () => {

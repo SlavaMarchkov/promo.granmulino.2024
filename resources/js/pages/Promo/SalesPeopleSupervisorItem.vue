@@ -15,7 +15,7 @@
             <div class="col-md-2 col-sm-6">
                 <TheInput
                     :id="`${props.supervisor.id}_SV_salesBefore`"
-                    class="text-end"
+                    class="fw-bold border-primary text-end"
                     type="text"
                     readonly
                 />
@@ -26,7 +26,7 @@
             <div class="col-md-2 col-sm-6">
                 <TheInput
                     :id="`${props.supervisor.id}_SV_salesPlan`"
-                    class="text-end"
+                    class="fw-bold border-success text-end"
                     type="text"
                     readonly
                 />
@@ -51,7 +51,7 @@
 import SalesPeopleSellerItem from '@/pages/Promo/SalesPeopleSellerItem.vue';
 import TheInput from '@/components/form/TheInput.vue';
 import { computed, reactive } from 'vue';
-import { formatNumber } from '@/helpers/formatters.js';
+import { formatNumber, formatNumberWithFractions } from '@/helpers/formatters.js';
 import { BOOST_SUPERVISOR_QUOTIENT } from '@/helpers/constants.js';
 
 const props = defineProps({
@@ -82,7 +82,6 @@ const addSeller = (seller) => {
     emit('addToCheckedSellers', seller);
 
     let supervisorObj = props.supervisor;
-    console.log(supervisorObj);
 
     const itemIdx = state.sellers.findIndex(ss => ss.id === seller.id);
 
@@ -95,8 +94,8 @@ const addSeller = (seller) => {
     const salesBeforeEl = document.getElementById(`${props.supervisor.id}_SV_salesBefore`);
     const salesPlanEl = document.getElementById(`${props.supervisor.id}_SV_salesPlan`);
 
-    salesBeforeEl.value = formatNumber(salesBefore.value);
-    salesPlanEl.value = formatNumber(salesPlan.value);
+    salesBeforeEl.value = salesBefore.value === 0 ? '' : formatNumber(salesBefore.value);
+    salesPlanEl.value = salesPlan.value === 0 ? '' : formatNumberWithFractions(salesPlan.value);
 
     supervisorObj.sellerId = supervisorObj.id;
     supervisorObj.salesBefore = salesBefore;
@@ -108,6 +107,7 @@ const addSeller = (seller) => {
 
 const salesBefore = computed(() => {
     return state.sellers.reduce((acc, el) => {
+        if (isNaN(el.salesBefore)) el.salesBefore = 0;
         return acc + el.salesBefore;
     }, 0);
 });

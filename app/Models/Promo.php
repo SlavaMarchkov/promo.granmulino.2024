@@ -25,6 +25,12 @@ class Promo extends Model
         'start_date',
         'end_date',
         'comments',
+        'total_sales_before',
+        'total_sales_plan',
+        'total_sales_on_time',
+        'total_sales_after',
+        'total_budget_plan',
+        'total_budget_actual',
     ];
 
     protected $casts = [

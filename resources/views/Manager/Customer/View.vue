@@ -1,11 +1,7 @@
 <template>
     <div v-if="spinnerStore.isLoading" class="row">
         <div class="col-12">
-            <div class="card">
-                <div class="card-body">
-                    <h4 class="my-4">Загрузка...</h4>
-                </div>
-            </div>
+            <h4 class="my-4"><TheSpinner /></h4>
         </div>
     </div>
     <template v-else>
@@ -289,6 +285,7 @@ import { MANAGER_URLS } from '@/helpers/constants.js';
 import Alert from '@/components/Alert.vue';
 import TheSellers from '@/pages/Customer/TheSellers.vue';
 import TheBadge from '@/components/core/TheBadge.vue';
+import TheSpinner from '@/components/core/TheSpinner.vue';
 
 const route = useRoute();
 const router = useRouter();

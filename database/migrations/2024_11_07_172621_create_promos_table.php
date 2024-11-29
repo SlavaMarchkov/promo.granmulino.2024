@@ -44,6 +44,13 @@ return new class extends Migration {
             $table->date('end_date')->nullable();
             $table->longText('comments')->nullable();
 
+            $table->decimal('total_sales_before', 10, 0)->default(0);
+            $table->decimal('total_sales_plan', 10, 0)->default(0);
+            $table->decimal('total_sales_on_time', 10, 0)->default(0);
+            $table->decimal('total_sales_after', 10, 0)->default(0);
+            $table->decimal('total_budget_plan', 10, 0)->default(0);
+            $table->decimal('total_budget_actual', 10, 0)->default(0);
+
             $table->timestamps();
         });
 
