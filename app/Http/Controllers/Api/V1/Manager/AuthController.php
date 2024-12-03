@@ -8,15 +8,13 @@ use App\Enums\User\RoleEnum;
 use App\Http\Controllers\ApiController;
 use App\Http\Requests\User\LoginRequest;
 use App\Http\Resources\V1\User\UserResource;
-use App\Mail\Manager\LoginMail;
-use App\Mail\Manager\LogoutMail;
+use App\Jobs\LoginManagerJob;
+use App\Jobs\LogoutManagerJob;
 use App\Models\Role;
 use App\Models\User;
-use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
 use Symfony\Component\HttpFoundation\Response;
 
 final class AuthController extends ApiController
@@ -52,14 +50,7 @@ final class AuthController extends ApiController
             ]);
 
             Log::info('User ID={id} just logged in.', ['id' => $user->id]);
-
-            // TODO: email or TG notification when user signs in
-            // Notification::send($administrators, new AdminNewUserNotification($user));
-            try {
-                Mail::to(config('mail.to.admin'))->send(new LoginMail($user));
-            } catch (Exception $exception) {
-                // TODO: log exception
-            }
+            LoginManagerJob::dispatch($user);
 
             return $this->successResponse(
                 ['token' => $token],
@@ -89,12 +80,7 @@ final class AuthController extends ApiController
         $user->tokens()->delete();
 
         Log::info('User ID={id} just logged out.', ['id' => $user->id]);
-
-        try {
-            Mail::to(config('mail.to.admin'))->send(new LogoutMail($user));
-        } catch (Exception $exception) {
-            // TODO: log exception
-        }
+        LogoutManagerJob::dispatch($user);
 
         return $this->successResponse(
             '',

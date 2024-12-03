@@ -11,7 +11,8 @@ use Illuminate\Queue\SerializesModels;
 
 class LoginMail extends Mailable
 {
-    use Queueable, SerializesModels;
+    use Queueable;
+    use SerializesModels;
 
     protected User|null $user;
 
