@@ -29,6 +29,7 @@ final class LoginManagerJob implements ShouldQueue
     public function handle()
     : void
     {
+        info('User ID={id} just logged in.', ['id' => $this->user->id]);
         Mail::to(config('mail.to.admin'))->send(new LoginMail($this->user));
     }
 }

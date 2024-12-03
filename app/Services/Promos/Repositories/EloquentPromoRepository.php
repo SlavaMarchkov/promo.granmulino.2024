@@ -53,11 +53,6 @@ final class EloquentPromoRepository implements PromoRepositoryInterface
 
             DB::commit();
 
-            Log::info('Promo ID={id}, type={type} was created.', [
-                'id' => $promo->id,
-                'type' => $data['promo_type'],
-            ]);
-
             return $promo;
         } catch (Exception $exception) {
             DB::rollBack();

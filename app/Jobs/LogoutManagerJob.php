@@ -29,6 +29,7 @@ final class LogoutManagerJob implements ShouldQueue
     public function handle()
     : void
     {
+        info('User ID={id} just logged out.', ['id' => $this->user->id]);
         Mail::to(config('mail.to.admin'))->send(new LogoutMail($this->user));
     }
 }

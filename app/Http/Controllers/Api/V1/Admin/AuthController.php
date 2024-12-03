@@ -8,14 +8,12 @@ use App\Enums\User\RoleEnum;
 use App\Http\Controllers\ApiController;
 use App\Http\Requests\User\LoginRequest;
 use App\Http\Resources\V1\User\UserResource;
-use App\Mail\Admin\LoginMail;
-use App\Mail\Admin\LogoutMail;
 use App\Models\User;
-use Exception;
+use App\Notifications\LoginAdminNotification;
+use Illuminate\Auth\Events\Logout;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Mail;
 use Symfony\Component\HttpFoundation\Response;
 
 final class AuthController extends ApiController
@@ -58,13 +56,7 @@ final class AuthController extends ApiController
                 'logged_in_at' => now(),
             ]);
 
-            // TODO: email or TG notification when user signs in
-            // Notification::send($administrators, new AdminNewUserNotification($user));
-            try {
-                Mail::to(config('mail.to.admin'))->send(new LoginMail($admin));
-            } catch (Exception $exception) {
-                // TODO: log exception
-            }
+            $admin->notify(new LoginAdminNotification());
 
             return $this->successResponse(
                 ['token' => $token],
@@ -93,12 +85,7 @@ final class AuthController extends ApiController
         $admin = auth()->user();
         $admin->tokens()->delete();
 
-        try {
-            // TODO: сделать отправку уведомления асинхронной
-            Mail::to(config('mail.to.admin'))->send(new LogoutMail($admin));
-        } catch (Exception $exception) {
-            // TODO: log exception
-        }
+        event(new Logout('web', $admin));
 
         return $this->successResponse(
             '',

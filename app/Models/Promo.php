@@ -7,8 +7,10 @@ namespace App\Models;
 
 use App\Enums\Promo\StatusEnum;
 use App\Enums\Promo\TypeEnum;
+use App\Events\Promo\CreatedEvent;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Promo extends Model
 {
@@ -39,6 +41,20 @@ class Promo extends Model
         'start_date' => 'date',
         'end_date'   => 'date',
     ];
+
+    protected static function booted()
+    : void
+    {
+        self::created(function (Promo $promo) {
+            event(new CreatedEvent($promo));
+        });
+    }
+
+    public function mark()
+    : HasOne
+    {
+        return $this->hasOne(PromoMark::class, 'promo_id', 'id');
+    }
 
     public function promo_products()
     : HasMany

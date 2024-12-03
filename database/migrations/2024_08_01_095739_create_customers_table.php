@@ -26,6 +26,21 @@ return new class extends Migration {
             $table->timestamps();
         });
 
+        Schema::create('customer_profiles', function (Blueprint $table) {
+            $table->id();
+
+            $table->foreignIdFor(Customer::class)
+                ->constrained()
+                ->cascadeOnUpdate();
+
+            $table->string('address', 255)->nullable();
+            $table->string('phone', 255)->nullable();
+            $table->string('website', 32)->nullable();
+            $table->string('email', 32)->nullable();
+
+            $table->timestamps();
+        });
+
         Schema::create('customer_sellers', function (Blueprint $table) {
             $table->id();
 
@@ -48,6 +63,7 @@ return new class extends Migration {
     {
         if (!app()->isProduction()) {
             Schema::dropIfExists('customers');
+            Schema::dropIfExists('customer_profiles');
             Schema::dropIfExists('customer_sellers');
         }
     }

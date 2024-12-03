@@ -14,7 +14,6 @@ use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
 
 final class AuthController extends ApiController
@@ -49,7 +48,6 @@ final class AuthController extends ApiController
                 'logged_in_at' => now(),
             ]);
 
-            Log::info('User ID={id} just logged in.', ['id' => $user->id]);
             LoginManagerJob::dispatch($user);
 
             return $this->successResponse(
@@ -79,7 +77,6 @@ final class AuthController extends ApiController
         $user = auth()->user();
         $user->tokens()->delete();
 
-        Log::info('User ID={id} just logged out.', ['id' => $user->id]);
         LogoutManagerJob::dispatch($user);
 
         return $this->successResponse(

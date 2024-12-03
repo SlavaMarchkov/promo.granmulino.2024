@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Events\Customer\CreatedEvent;
 use App\Traits\Models\HasPreviousNext;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Customer extends Model
 {
@@ -26,6 +28,20 @@ class Customer extends Model
         'is_active' => 'boolean',
         'data'      => 'array',
     ];
+
+    protected static function booted()
+    : void
+    {
+        self::created(function (Customer $customer) {
+            event(new CreatedEvent($customer));
+        });
+    }
+
+    public function profile()
+    : HasOne
+    {
+        return $this->hasOne(CustomerProfile::class, 'customer_id', 'id');
+    }
 
     public function region()
     : BelongsTo

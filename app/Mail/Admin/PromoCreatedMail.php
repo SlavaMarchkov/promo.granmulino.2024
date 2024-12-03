@@ -1,31 +1,32 @@
 <?php
 
+declare(strict_types=1);
+
+// 03.12.2024 at 16:32:46
 namespace App\Mail\Admin;
 
-use App\Models\User;
+use App\Models\Promo;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class LoginMail extends Mailable
+class PromoCreatedMail extends Mailable
 {
     use Queueable;
     use SerializesModels;
 
-    protected User|null $admin;
-
-    public function __construct(User|null $admin)
-    {
-        $this->admin = $admin;
+    public function __construct(
+        private readonly Promo $promo,
+    ) {
     }
 
     public function envelope()
     : Envelope
     {
         return new Envelope(
-            subject: '[Alert] ' . config('app.name') . ' - Вход для администратора',
+            subject: '[Alert] ' . config('app.name') . ' - Новая промо-акция',
         );
     }
 
@@ -33,11 +34,10 @@ class LoginMail extends Mailable
     : Content
     {
         return new Content(
-            markdown: 'Admin.emails.login',
+            markdown: 'Admin.emails.promo-created',
             with: [
-                'name'  => $this->admin?->display_name,
-                'email' => $this->admin?->email,
-            ],
+                'promo' => $this->promo
+            ]
         );
     }
 
