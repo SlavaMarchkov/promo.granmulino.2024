@@ -8,10 +8,13 @@ namespace App\Models;
 use App\Enums\Promo\StatusEnum;
 use App\Enums\Promo\TypeEnum;
 use App\Events\Promo\CreatedEvent;
+use App\Observers\PromoObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
+#[ObservedBy([PromoObserver::class])]
 class Promo extends Model
 {
     protected $fillable = [
@@ -47,6 +50,14 @@ class Promo extends Model
     {
         self::created(function (Promo $promo) {
             event(new CreatedEvent($promo));
+        });
+
+        // TODO: перенести в Observers
+        self::updated(function (Promo $promo) {
+            if ($promo->wasChanged()) {
+                dump($promo->getOriginal());
+                dump($promo->getAttributes());
+            }
         });
     }
 
