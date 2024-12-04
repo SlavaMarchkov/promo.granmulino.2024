@@ -215,13 +215,6 @@
                     </select>
                 </div>
                 <div class="col-12">
-                    <TheLabel for="image">Изображение продукта</TheLabel>
-                    <TheInput
-                        id="image"
-                        type="file"
-                    />
-                </div>
-                <div class="col-12">
                     <div class="form-check">
                         <input
                             id="is-active"
@@ -234,6 +227,15 @@
                             Продукт в продаже?
                         </label>
                     </div>
+                </div>
+                <div class="col-12">
+                    <TheLabel for="image">Изображение продукта</TheLabel>
+                    <TheInput
+                        id="image"
+                        type="file"
+                        @change="handleFileChange"
+                    />
+                    <img :src="getImage()" alt="" class="img-thumbnail mt-3" width="150" />
                 </div>
             </div>
         </template>
@@ -255,13 +257,13 @@
     <Modal
         id="viewModalPopUp"
         :close-func="closeViewModal"
-        :custom-classes="['']"
+        :custom-classes="['modal-dialog-scrollable']"
     >
         <template #title>
             Просмотр продукта <b>{{ state.product.name }}</b>
         </template>
         <template #body>
-            <table class="table table-bordered mt-3 align-middle text-wrap"
+            <table class="table table-bordered mt-3 align-top text-wrap"
                    style="width: 100%;">
                 <tbody>
                 <tr>
@@ -287,6 +289,16 @@
                 <tr>
                     <th>В продаже?</th>
                     <td><TheBadge :is-active="state.product.isActive" /></td>
+                </tr>
+                <tr>
+                    <th>Картинка</th>
+                    <td>
+                        <img
+                            :src="productImage"
+                            :alt="state.product.name"
+                            class="img-thumbnail"
+                        />
+                    </td>
                 </tr>
                 </tbody>
             </table>
@@ -320,7 +332,9 @@ import {
     ADMIN_URLS,
     DELETE_TH_FIELD,
     EDIT_TH_FIELD,
+    NO_PRODUCT_IMG,
     PRICE_TH_FIELD,
+    PRODUCT_IMG_PATH,
     PRODUCT_TH_FIELDS,
     ROLES,
 } from '@/helpers/constants.js';
@@ -349,6 +363,7 @@ const initialFormData = () => ({
     weight: '',
     price: '',
     categoryId: '',
+    image: '',
     isActive: true,
 });
 
@@ -439,24 +454,59 @@ const clearSearch = () => {
     arrayHandlers.resetSortKeys();
 };
 
-const saveProduct = async () => {
-    if ( state.isEditing ) {
-        const response = await update(`${ ADMIN_URLS.PRODUCT }/${ state.product.id }`, state.product);
-        if ( response && response.status === 'success' ) {
-            alertStore.clear();
-            modalPopUp.hide();
-            await getProducts();
+const getImage = () => {
+    let image = `${PRODUCT_IMG_PATH}${NO_PRODUCT_IMG}`;
+
+    if (state.product.image) {
+        if (state.product.image.indexOf('base64') !== -1) {
+            image = state.product.image;
+        } else {
+            image = PRODUCT_IMG_PATH + state.product.image;
         }
-    } else {
-        const response = await post(ADMIN_URLS.PRODUCT, state.product);
-        if ( response && response.status === 'success' ) {
-            alertStore.clear();
-            state.product = initialFormData();
-            modalPopUp.hide();
-            arrayHandlers.resetSearchKeys(searchBy);
-            arrayHandlers.resetSortKeys('id', false);
-            await getProducts();
-        }
+    }
+
+    return image;
+};
+
+const productImage = computed(() => {
+    return state.product.image
+        ? `${PRODUCT_IMG_PATH}${state.product.image}`
+        : `${PRODUCT_IMG_PATH}${NO_PRODUCT_IMG}`
+});
+
+// TODO: figure out FileReader
+const handleFileChange = (evt) => {
+    const file = evt.target.files[0];
+    const reader = new FileReader();
+    reader.onloadend = (file) => {
+        state.product.image = reader.result;
+    };
+    reader.readAsDataURL(file);
+};
+
+const saveProduct = () => {
+    state.isEditing ? updateProduct() : createProduct();
+};
+
+const createProduct = async () => {
+    const response = await post(ADMIN_URLS.PRODUCT, state.product);
+    if ( response && response.status === 'success' ) {
+        alertStore.clear();
+        state.product = initialFormData();
+        modalPopUp.hide();
+        arrayHandlers.resetSearchKeys(searchBy);
+        arrayHandlers.resetSortKeys('id', false);
+        await getProducts();
+    }
+};
+
+const updateProduct = async () => {
+    const response = await update(`${ ADMIN_URLS.PRODUCT }/${ state.product.id }`, state.product);
+    if ( response && response.status === 'success' ) {
+        alertStore.clear();
+        state.product = initialFormData();
+        modalPopUp.hide();
+        await getProducts();
     }
 };
 

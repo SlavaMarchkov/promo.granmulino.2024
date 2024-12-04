@@ -3,13 +3,19 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Str;
+use Intervention\Image\Laravel\Facades\Image;
+
+const PRODUCT_IMG_WIDTH  = 800;
+const PRODUCT_IMG_HEIGHT = 800;
+const PRODUCT_IMG_PATH = '/assets/img/products/';
+const NO_PRODUCT_IMG = 'no-image.png';
 
 if (!function_exists('to_boolean')) {
     /**
      * Convert to boolean
      *
      * @param $key
-     * @return boolean
+     * @return bool
      */
     function to_boolean($key)
     : bool
@@ -58,5 +64,48 @@ if (!function_exists('check_id_for_empty_array')) {
     : int|string|null
     {
         return (is_array($item_id) && empty($item_id)) ? null : $item_id;
+    }
+}
+
+if (!function_exists('upload_image')) {
+    /**
+     * Uploads an image as a .webp file
+     *
+     * @param string $image
+     * @return string
+     */
+    function upload_image(string $image)
+    : string
+    {
+        if ($image !== '') {
+            $name = md5((string)time()) . '.webp';
+
+            $img = Image::read($image)
+                ->scaleDown(PRODUCT_IMG_HEIGHT)
+                ->toWebp(80);
+
+            $upload_path = public_path() . PRODUCT_IMG_PATH;
+            $img->save($upload_path . $name);
+
+            return $name;
+        }
+
+        return NO_PRODUCT_IMG;
+    }
+}
+
+if (!function_exists('remove_image')) {
+    /**
+     * Removes an image
+     *
+     * @param string $image
+     * @return void
+     */
+    function remove_image(string|null $image)
+    : void {
+        $file = public_path() . PRODUCT_IMG_PATH . $image;
+        if (file_exists($file)) {
+            @unlink($file);
+        }
     }
 }

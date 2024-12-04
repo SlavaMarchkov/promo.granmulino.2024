@@ -32,8 +32,8 @@ final class StoreUpdateRequest extends FormRequest
                 'decimal:2',
                 'regex:/\d{1,3}.\d{2}/',
             ],
-            'is_active' => ['required', new BooleanRule()],
-            'image'       => ['exclude_unless:image,null', 'image', 'mimes:jpeg,png,jpg', 'max:2048'],
+            'is_active'   => ['required', new BooleanRule()],
+            'image'       => ['nullable', 'string'],
             'category_id' => ['required', 'nullable', 'exists:categories,id'],
         ];
     }

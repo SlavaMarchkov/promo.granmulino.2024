@@ -1,5 +1,5 @@
-insert into customer_sellers (id, customer_id, name, supervisor_id, is_active, is_supervisor, deleted_at, created_at, updated_at)
-values (1, 76, 'Новикова Марина', null, 1, 1, null, '2024-11-27 02:42:00', '2024-11-27 02:42:00'),
+INSERT INTO customer_sellers (id, customer_id, name, supervisor_id, is_active, is_supervisor, deleted_at, created_at, updated_at)
+VALUES (1, 76, 'Новикова Марина', null, 1, 1, null, '2024-11-27 02:42:00', '2024-11-27 02:42:00'),
        (2, 76, 'Виноградов Виталий', null, 1, 1, null, '2024-11-27 02:42:10', '2024-11-27 02:42:10'),
        (3, 76, 'Душкин Денис', null, 1, 1, null, '2024-11-27 02:42:20', '2024-11-27 02:42:20'),
        (4, 76, 'Хвостенко Роман', null, 1, 1, null, '2024-11-27 02:42:28', '2024-11-27 02:42:28'),

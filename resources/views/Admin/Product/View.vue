@@ -1,80 +1,83 @@
 <template>
-    <div class="row">
+    <div v-if="spinnerStore.isLoading" class="row">
         <div class="col-12">
-            <div class="card">
-                <div class="card-body">
-                    <template v-if="spinnerStore.isLoading">
-                        <h4 class="my-4">Загрузка...</h4>
-                        <table class="table table-bordered mb-4 align-middle text-wrap"
+            <h4 class="my-4"><TheSpinner /></h4>
+        </div>
+    </div>
+    <template v-else>
+        <div v-if="isItemFound" class="row">
+            <div class="col-xl-6">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h3 class="mb-0">{{ item.name }}</h3>
+                    </div>
+                    <div class="card-body py-5">
+                        <table class="table table-bordered align-middle text-wrap"
                                style="width: 100%;">
                             <tbody>
                             <tr>
-                                <th style="width: 20%;">ID</th>
-                                <td></td>
+                                <th style="width: 30%;">ID</th>
+                                <td>{{ item.id }}</td>
                             </tr>
                             <tr>
                                 <th>Название</th>
-                                <td></td>
+                                <td>{{ item.name }}</td>
+                            </tr>
+                            <tr>
+                                <th>Вес, г</th>
+                                <td>{{ formatNumber(item.weight) }}</td>
+                            </tr>
+                            <tr v-if="isPriceAdmin">
+                                <th>Себестоимость, руб.</th>
+                                <td>{{ item.price }}</td>
+                            </tr>
+                            <tr>
+                                <th>Группа товаров</th>
+                                <td>{{ item.category }}</td>
+                            </tr>
+                            <tr>
+                                <th>В продаже?</th>
+                                <td><TheBadge :is-active="item.isActive" /></td>
                             </tr>
                             </tbody>
                         </table>
-                        <button
-                            class="btn btn-outline-secondary"
-                            disabled
-                            role="button"
-                        >Пред.
-                        </button>
-                        <button
-                            class="btn btn-outline-secondary mx-2"
-                            disabled
-                            role="button"
-                        >След.
-                        </button>
-                    </template>
-                    <template v-else>
-                        <div v-if="isItemFound">
-                            <h4 class="my-4">{{ item.name }}</h4>
-                            <table class="table table-bordered mb-4 align-middle text-wrap"
-                                   style="width: 100%;">
-                                <tbody>
-                                <tr>
-                                    <th style="width: 20%;">ID</th>
-                                    <td>{{ item.id }}</td>
-                                </tr>
-                                <tr>
-                                    <th>Название</th>
-                                    <td>{{ item.name }}</td>
-                                </tr>
-                                </tbody>
-                            </table>
-                            <button
-                                @click="navigateToPreviousItem"
-                                class="btn btn-outline-secondary"
-                                :disabled="item.prev === null"
-                                role="button"
-                            >Пред.
-                            </button>
-                            <button
-                                @click="navigateToNextItem"
-                                class="btn btn-outline-secondary mx-2"
-                                :disabled="item.next === null"
-                                role="button"
-                            >След.
-                            </button>
-                        </div>
-                        <Alert v-else class="mt-3"/>
-                    </template>
-                    <hr>
-                    <RouterLink
-                        :to="{ name: 'Product.Index' }"
-                        class="btn btn-secondary my-2"
-                        role="button"
-                    >Обратно на Ассортимент
-                    </RouterLink>
+                    </div>
+                    <div class="card-footer">
+                        <TheButton
+                            @click="navigateToPreviousItem"
+                            class="btn-outline-secondary"
+                            :disabled="item.prev === null"
+                        >Пред.</TheButton>
+                        <TheButton
+                            @click="navigateToNextItem"
+                            class="btn-outline-secondary mx-2"
+                            :disabled="item.next === null"
+                        >След.</TheButton>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-6">
+                <div class="card">
+                    <div class="card-body mb-4 text-center">
+                        <h5 class="card-title">Изображение продукта</h5>
+                        <img
+                            :src="`${PRODUCT_IMG_PATH}${item.image}`"
+                            :alt="item.name"
+                            class="img-thumbnail img-fluid"
+                        />
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+        <Alert v-else class="mt-3"/>
+    </template>
+    <hr>
+    <RouterLink
+        :to="{ name: 'Product.Index' }"
+        class="btn btn-secondary my-2"
+        role="button"
+    >Обратно на Ассортимент
+    </RouterLink>
 </template>
 
 <script setup>
@@ -83,14 +86,23 @@ import { useRoute, useRouter } from 'vue-router';
 import { useHttpService } from '@/use/useHttpService.js';
 import { useSpinnerStore } from '@/stores/spinners.js';
 import Alert from '@/components/Alert.vue';
-import { ADMIN_URLS } from '@/helpers/constants.js';
+import { ADMIN_URLS, PRODUCT_IMG_PATH, ROLES } from '@/helpers/constants.js';
+import TheSpinner from '@/components/core/TheSpinner.vue';
+import TheButton from '@/components/core/TheButton.vue';
+import { formatNumber } from '@/helpers/formatters.js';
+import TheBadge from '@/components/core/TheBadge.vue';
+import { useAuthStore } from '@/stores/auth.js';
 
 const route = useRoute();
 const router = useRouter();
+const authStore = useAuthStore();
 const spinnerStore = useSpinnerStore();
 
 const { get } = useHttpService();
 const id = +route.params.id;
+
+const role = authStore.getUser.role;
+const isPriceAdmin = computed(() => role === ROLES.PRICE_ADMIN);
 
 const item = ref({});
 

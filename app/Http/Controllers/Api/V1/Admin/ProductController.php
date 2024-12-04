@@ -17,15 +17,14 @@ final class ProductController extends ApiController
 {
     public function __construct(
         private readonly ProductService $productService,
-    )
-    {
+    ) {
     }
 
     public function index()
     : JsonResponse
     {
         $products = $this->productService->getProducts([
-            ...request()->all()
+            ...request()->all(),
         ]);
 
         return $this->successResponse(
@@ -36,9 +35,11 @@ final class ProductController extends ApiController
     }
 
     public function store(StoreUpdateRequest $request)
-    : JsonResponse
-    {
+    : JsonResponse {
         $data = $request->validated();
+
+        $data['image'] = upload_image($data['image']);
+
         $product = $this->productService->storeProduct($data);
 
         return $this->successResponse(
@@ -50,8 +51,7 @@ final class ProductController extends ApiController
     }
 
     public function show(Product $product)
-    : JsonResponse
-    {
+    : JsonResponse {
         $product = $this->productService->findProduct($product);
 
         return $this->successResponse(
@@ -62,9 +62,14 @@ final class ProductController extends ApiController
     }
 
     public function update(StoreUpdateRequest $request, Product $product)
-    : JsonResponse
-    {
+    : JsonResponse {
         $data = $request->validated();
+
+        if ($data['image'] !== $product->image) {
+            remove_image($product->image);
+            $data['image'] = upload_image($data['image']);
+        }
+
         $product = $this->productService->updateProduct($product, $data);
 
         return $this->successResponse(
@@ -75,8 +80,7 @@ final class ProductController extends ApiController
     }
 
     public function destroy(Product $product)
-    : JsonResponse
-    {
+    : JsonResponse {
         $result = $this->productService->deleteProduct($product);
 
         return ($result == 0)

@@ -294,3 +294,5 @@ export const BOOST_SUPERVISOR_QUOTIENT = 5;
 export const DEFAULT_SURPLUS_PERCENT = 30;
 export const TWO_WEEKS_AHEAD = new Date(new Date().getTime() + 12096e5);
 export const FOUR_WEEKS_AHEAD = new Date(new Date().getTime() + 12096e5 * 2);
+export const PRODUCT_IMG_PATH = '/assets/img/products/';
+export const NO_PRODUCT_IMG = 'no-image.png';
