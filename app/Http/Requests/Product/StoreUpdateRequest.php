@@ -47,6 +47,7 @@ final class StoreUpdateRequest extends FormRequest
             'price'       => 'Цена',
             'is_active'   => 'В продаже',
             'category_id' => 'Группа товаров',
+            'image'       => 'Картинка',
         ];
     }
 
@@ -64,9 +65,11 @@ final class StoreUpdateRequest extends FormRequest
     : void
     {
         $is_active = $this->input('is_active', true);
+        $image = $this->input('image', null);
 
         $this->merge([
             'is_active' => to_boolean($is_active),
+            'image'     => check_item_for_empty_array($image),
         ]);
     }
 }

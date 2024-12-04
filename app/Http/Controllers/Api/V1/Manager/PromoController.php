@@ -8,12 +8,16 @@ namespace App\Http\Controllers\Api\V1\Manager;
 use App\Http\Controllers\ApiController;
 use App\Http\Requests\Promo\StoreRequest;
 use App\Http\Resources\V1\Promo\PromoResource;
+use App\Models\Promo;
 use App\Services\Promos\PromoService;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 final class PromoController extends ApiController
 {
+    use AuthorizesRequests;
+
     public function __construct(
         private readonly PromoService $promoService,
     )
@@ -22,7 +26,7 @@ final class PromoController extends ApiController
 
     public function index()
     {
-
+        $this->authorize('viewAny', Promo::class);
     }
 
     public function store(StoreRequest $request)

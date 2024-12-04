@@ -44,7 +44,7 @@ final class SellerStoreUpdateRequest extends FormRequest
         $this->merge([
             'is_active'     => to_boolean(request('is_active')),
             'is_supervisor' => to_boolean(request('is_supervisor')),
-            'supervisor_id' => check_id_for_empty_array(request('supervisor_id')),
+            'supervisor_id' => check_item_for_empty_array(request('supervisor_id')),
         ]);
     }
 }

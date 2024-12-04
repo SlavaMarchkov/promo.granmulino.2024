@@ -38,7 +38,9 @@ final class ProductController extends ApiController
     : JsonResponse {
         $data = $request->validated();
 
-        $data['image'] = upload_image($data['image']);
+        if ($data['image']) {
+            $data['image'] = upload_image($data['image']);
+        }
 
         $product = $this->productService->storeProduct($data);
 
@@ -65,7 +67,7 @@ final class ProductController extends ApiController
     : JsonResponse {
         $data = $request->validated();
 
-        if ($data['image'] !== $product->image) {
+        if ($data['image'] && $data['image'] !== $product->image) {
             remove_image($product->image);
             $data['image'] = upload_image($data['image']);
         }

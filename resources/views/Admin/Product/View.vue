@@ -61,7 +61,7 @@
                     <div class="card-body mb-4 text-center">
                         <h5 class="card-title">Изображение продукта</h5>
                         <img
-                            :src="`${PRODUCT_IMG_PATH}${item.image}`"
+                            :src="productImage"
                             :alt="item.name"
                             class="img-thumbnail img-fluid"
                         />
@@ -72,6 +72,10 @@
         <Alert v-else class="mt-3"/>
     </template>
     <hr>
+    <TheButton
+        @click="print"
+        class="btn-secondary"
+    >Print</TheButton>
     <RouterLink
         :to="{ name: 'Product.Index' }"
         class="btn btn-secondary my-2"
@@ -86,7 +90,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { useHttpService } from '@/use/useHttpService.js';
 import { useSpinnerStore } from '@/stores/spinners.js';
 import Alert from '@/components/Alert.vue';
-import { ADMIN_URLS, PRODUCT_IMG_PATH, ROLES } from '@/helpers/constants.js';
+import { ADMIN_URLS, NO_PRODUCT_IMG, PRODUCT_IMG_PATH, ROLES } from '@/helpers/constants.js';
 import TheSpinner from '@/components/core/TheSpinner.vue';
 import TheButton from '@/components/core/TheButton.vue';
 import { formatNumber } from '@/helpers/formatters.js';
@@ -126,11 +130,18 @@ const isItemFound = computed(() => {
     return Object.keys(item.value).length !== 0;
 });
 
+const productImage = computed(() => item.value.image ? `${PRODUCT_IMG_PATH}${item.value.image}` : [NO_PRODUCT_IMG]);
+
 const navigateToPreviousItem = () => {
     router.push({ name: 'Product.View', params: { id: item.value.prev } });
 };
 
 const navigateToNextItem = () => {
     router.push({ name: 'Product.View', params: { id: item.value.next } });
+};
+
+const print = () => {
+    window.print();
+    router.push('/').catch(() => {});
 };
 </script>

@@ -47,7 +47,7 @@ final class StoreUpdateRequest extends FormRequest
     {
         $this->merge([
             'is_active' => to_boolean(request('is_active')),
-            'user_id'   => check_id_for_empty_array(request('user_id')),
+            'user_id'   => check_item_for_empty_array(request('user_id')),
         ]);
     }
 }

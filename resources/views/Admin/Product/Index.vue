@@ -455,7 +455,7 @@ const clearSearch = () => {
 };
 
 const getImage = () => {
-    let image = `${PRODUCT_IMG_PATH}${NO_PRODUCT_IMG}`;
+    let image = [NO_PRODUCT_IMG];
 
     if (state.product.image) {
         if (state.product.image.indexOf('base64') !== -1) {
@@ -468,11 +468,7 @@ const getImage = () => {
     return image;
 };
 
-const productImage = computed(() => {
-    return state.product.image
-        ? `${PRODUCT_IMG_PATH}${state.product.image}`
-        : `${PRODUCT_IMG_PATH}${NO_PRODUCT_IMG}`
-});
+const productImage = computed(() => state.product.image ? `${PRODUCT_IMG_PATH}${state.product.image}` : [NO_PRODUCT_IMG]);
 
 // TODO: figure out FileReader
 const handleFileChange = (evt) => {

@@ -5,10 +5,8 @@ declare(strict_types=1);
 use Illuminate\Support\Str;
 use Intervention\Image\Laravel\Facades\Image;
 
-const PRODUCT_IMG_WIDTH  = 800;
 const PRODUCT_IMG_HEIGHT = 800;
 const PRODUCT_IMG_PATH = '/assets/img/products/';
-const NO_PRODUCT_IMG = 'no-image.png';
 
 if (!function_exists('to_boolean')) {
     /**
@@ -18,8 +16,7 @@ if (!function_exists('to_boolean')) {
      * @return bool
      */
     function to_boolean($key)
-    : bool
-    {
+    : bool {
         return filter_var($key, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
     }
 }
@@ -32,8 +29,7 @@ if (!function_exists('process_name')) {
      * @return string
      */
     function process_name($name)
-    : string
-    {
+    : string {
         return Str::ucfirst(Str::lower(Str::squish($name)));
     }
 }
@@ -46,24 +42,22 @@ if (!function_exists('process_code')) {
      * @return string
      */
     function process_code($code)
-    : string
-    {
+    : string {
         return Str::upper($code);
     }
 }
 
-if (!function_exists('check_id_for_empty_array')) {
+if (!function_exists('check_item_for_empty_array')) {
     /**
      * Checks form input $item_id and, in case it is an empty array, makes this input null.
      * The function is needed in form request validations when updating an entry.
      *
-     * @param mixed $item_id
+     * @param mixed $item
      * @return int|string|null
      */
-    function check_id_for_empty_array(mixed $item_id)
-    : int|string|null
-    {
-        return (is_array($item_id) && empty($item_id)) ? null : $item_id;
+    function check_item_for_empty_array(mixed $item)
+    : int|string|null {
+        return ((is_array($item) || is_object($item)) && empty($item)) ? null : $item;
     }
 }
 
@@ -75,22 +69,17 @@ if (!function_exists('upload_image')) {
      * @return string
      */
     function upload_image(string $image)
-    : string
-    {
-        if ($image !== '') {
-            $name = md5((string)time()) . '.webp';
+    : string {
+        $name = md5((string)time()) . '.webp';
 
-            $img = Image::read($image)
-                ->scaleDown(PRODUCT_IMG_HEIGHT)
-                ->toWebp(80);
+        $img = Image::read($image)
+            ->scaleDown(PRODUCT_IMG_HEIGHT)
+            ->toWebp(80);
 
-            $upload_path = public_path() . PRODUCT_IMG_PATH;
-            $img->save($upload_path . $name);
+        $upload_path = public_path() . PRODUCT_IMG_PATH;
+        $img->save($upload_path . $name);
 
-            return $name;
-        }
-
-        return NO_PRODUCT_IMG;
+        return $name;
     }
 }
 
@@ -98,7 +87,7 @@ if (!function_exists('remove_image')) {
     /**
      * Removes an image
      *
-     * @param string $image
+     * @param string|null $image
      * @return void
      */
     function remove_image(string|null $image)
