@@ -37,19 +37,6 @@ final class CustomerController extends ApiController
         );
     }
 
-    /*
-     * TODO - удалить у менеджера
-     * public function store(StoreUpdateRequest $request)
-    : JsonResponse
-    {
-        return $this->successResponse(
-            new CustomerResource(Customer::create($request->validated())),
-            'success',
-            __('crud.customers.created'),
-            Response::HTTP_CREATED,
-        );
-    }*/
-
     public function show(Customer $customer)
     : JsonResponse
     {

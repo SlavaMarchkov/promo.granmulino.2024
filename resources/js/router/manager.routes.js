@@ -61,6 +61,14 @@ export default {
             },
         },
         {
+            path: 'promo/:id',
+            name: 'Manager.Promo.View',
+            component: () => import('../../views/Manager/Promo/View.vue'),
+            meta: {
+                title: 'Просмотр промо-акции',
+            },
+        },
+        {
             path: 'promo/create',
             name: 'Manager.Promo.Create',
             component: () => import('../../views/Manager/Promo/Create.vue'),

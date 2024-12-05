@@ -14,15 +14,24 @@ class PromoPolicy
 {
     use HandlesAuthorization;
 
+    public function before(User $user)
+    : ?true {
+        if ($user->isManager()) {
+            return true;
+        }
+        return null;
+    }
+
     public function viewAny(User $user)
+    : bool {
+        return $user->isManager();
+    }
+
+    public function view(User $user, Promo $promo)
     : Response {
         return $user->isSuperAdmin($user->role)
             ? Response::allow()
             : Response::deny('Not allowed', \Symfony\Component\HttpFoundation\Response::HTTP_FORBIDDEN);
-    }
-
-    public function view(User $user, Promo $promo)
-    : bool {
     }
 
     public function create(User $user)

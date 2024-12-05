@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Api\V1\Manager;
 
 use App\Http\Controllers\ApiController;
 use App\Http\Requests\Promo\StoreRequest;
+use App\Http\Resources\V1\Promo\PromoCollection;
 use App\Http\Resources\V1\Promo\PromoResource;
 use App\Models\Promo;
 use App\Services\Promos\PromoService;
@@ -25,8 +26,20 @@ final class PromoController extends ApiController
     }
 
     public function index()
+    : JsonResponse
     {
         $this->authorize('viewAny', Promo::class);
+
+        $promos = $this->promoService->getPromos([
+            'user_id' => auth()->id(),
+            ...request()->all(),
+        ]);
+
+        return $this->successResponse(
+            new PromoCollection($promos),
+            'success',
+            __('crud.promos.all'),
+        );
     }
 
     public function store(StoreRequest $request)

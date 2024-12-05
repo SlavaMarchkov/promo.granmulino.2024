@@ -6,9 +6,13 @@ declare(strict_types=1);
 namespace App\Services\Promos\Repositories;
 
 use App\Models\Promo;
+use Illuminate\Database\Eloquent\Collection;
 
 interface PromoRepositoryInterface
 {
+    public function get(array $params = [])
+    : Collection;
+
     public function createFromArray(array $data)
     : Promo;
 }
