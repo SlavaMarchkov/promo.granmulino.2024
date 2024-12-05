@@ -236,7 +236,11 @@
                 <div class="card-footer">
                     <TheButton
                         @click="savePromo"
-                        class="btn-primary"
+                        :class="[
+                            'btn-primary',
+                            { 'btn-cursor-not-allowed' : !isFormValid() }
+                        ]"
+                        :disabled="!isFormValid()"
                     >Сохранить
                     </TheButton>
                 </div>
@@ -247,8 +251,9 @@
                 <template #default>
                     <TheDiscount
                         :title="currentPromoType.title"
-                        @add-product-to-promo="addProductHandler"
-                        @remove-product-from-promo="removeProductHandler"
+                        :customer-name="state.customerName"
+                        :retailer-name="state.retailerName"
+                        @add-products-to-promo="addProductHandler"
                     />
                 </template>
                 <template #fallback>
@@ -396,6 +401,7 @@ const state = reactive({
     cities: [],
     channels: [],
     customerName: '',
+    retailerName: '',
     promo: initialFormData(),
 });
 
@@ -449,6 +455,13 @@ watch(
     },
 );
 
+watch(
+    () => state.promo.retailerId,
+    (newValue) => {
+        state.retailerName = state.retailers.find(retailer => +retailer.id === +newValue).name;
+    },
+);
+
 const onCustomerChange = (customerId) => {
     const customer = state.customers.find(customer => +customer.id === +customerId);
 
@@ -467,12 +480,11 @@ const onCustomerChange = (customerId) => {
     });
 };
 
-const addProductHandler = (product) => {
-    state.promo.products.push(product);
-};
-
-const removeProductHandler = (index) => {
-    state.promo.products.splice(index, 1);
+const addProductHandler = (products, salesBefore, salesPlan, budgetPlan) => {
+    state.promo.products = products;
+    state.promo.totalSalesBefore = salesBefore;
+    state.promo.totalSalesPlan = salesPlan;
+    state.promo.totalBudgetPlan = budgetPlan;
 };
 
 const addSellersHandler = (sellers, salesBefore, salesPlan, budgetPlan) => {
@@ -480,6 +492,11 @@ const addSellersHandler = (sellers, salesBefore, salesPlan, budgetPlan) => {
     state.promo.totalSalesBefore = salesBefore;
     state.promo.totalSalesPlan = salesPlan;
     state.promo.totalBudgetPlan = budgetPlan;
+};
+
+const isFormValid = () => {
+    return (currentPromoType.type === 'DISCOUNT' && state.promo.products.length > 0)
+        || (currentPromoType.type === 'SALES_PEOPLE_BOOST' && state.promo.sellers.length > 0);
 };
 
 const savePromo = async () => {

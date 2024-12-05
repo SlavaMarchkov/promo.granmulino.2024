@@ -4,6 +4,24 @@
             <div class="card-header bg-success text-white">{{ props.title }}</div>
             <div class="card-body mt-3">
                 <div class="d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">Итоговый бюджет на промо-акцию:</h4>
+                    <h4 class="text-primary fw-bold mb-0">{{ isNaN(totalBudgetPlan) ? '0' : formatNumber(totalBudgetPlan) }} руб.</h4>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-6">
+                        <div class="mb-0 alert border-primary fade show" role="alert">
+                            <h5 class="mb-0">Дистрибутор: <span class="fw-bold text-primary">{{ props.customerName }}</span></h5>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="mb-0 alert border-primary fade show" role="alert">
+                            <h5 class="mb-0">Сеть: <span class="fw-bold text-primary">{{ props.retailerName }}</span></h5>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <div class="d-flex justify-content-between align-items-center">
                     <span>Ассортимент для промо-акции</span>
                     <TheButton
                         @click="addProductModalInit"
@@ -11,10 +29,9 @@
                     >Добавить</TheButton>
                 </div>
                 <hr>
-                <h5 class="mb-3">Итоговый бюджет на промо-акцию: <span class="fw-bold text-primary">{{ formatNumber(totalBudget) }} руб.</span></h5>
-                <div v-if="addedProducts.length > 0" class="row row-cols-xl-3 row-cols-lg-3 row-cols-md-2 row-cols-sm-2 row-cols-1 g-3">
+                <div v-if="state.addedProducts.length > 0" class="row row-cols-xl-3 row-cols-lg-3 row-cols-md-2 row-cols-sm-2 row-cols-1 g-3">
                     <DiscountProductCard
-                        :products="addedProducts"
+                        :products="state.addedProducts"
                         @remove-product="removeProduct"
                     />
                 </div>
@@ -159,7 +176,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, reactive, ref, watch } from 'vue';
+import { computed, onMounted, reactive, watch } from 'vue';
 import { useHttpService } from '@/use/useHttpService.js';
 import { formatNumber } from '@/helpers/formatters.js';
 import Modal from '@/components/Modal.vue';
@@ -177,11 +194,18 @@ const props = defineProps({
         required: true,
         default: 'Title is required',
     },
+    customerName: {
+        type: String,
+        default: '',
+    },
+    retailerName: {
+        type: String,
+        default: '',
+    },
 });
 
 const emit = defineEmits([
-    'addProductToPromo',
-    'removeProductFromPromo',
+    'addProductsToPromo',
 ]);
 
 const initialFormData = () => ({
@@ -198,11 +222,10 @@ const initialFormData = () => ({
 const state = reactive({
     categories: [],
     products: [],
+    addedProducts: [],
+    addedProductsIds: [],
     form: initialFormData(),
 });
-
-const addedProducts = ref([]);
-const addedProductsIds = ref([]);
 
 let modalPopUp = null;
 
@@ -245,11 +268,11 @@ const displayProducts = () => {
             state.products = category.products;
         }
     });
-    state.products = state.products.filter(pr => !addedProductsIds.value.includes(pr.id));
+    state.products = state.products.filter(pr => !state.addedProductsIds.includes(pr.id));
 };
 
 const addProduct = () => {
-    addedProducts.value.push({
+    state.addedProducts.push({
         categoryId: state.form.categoryId,
         productId: state.form.productId,
         categoryName: getCategoryName(),
@@ -259,24 +282,34 @@ const addProduct = () => {
         surplusPlan: state.form.surplusPlan,
         budgetPlan: state.form.budgetPlan,
     });
-    addedProductsIds.value.push(+state.form.productId);
-    emit('addProductToPromo', state.form);
+    state.addedProductsIds.push(+state.form.productId);
+    emit('addProductsToPromo',
+        state.addedProducts,
+        totalSalesBefore.value,
+        totalSalesPlan.value,
+        totalBudgetPlan.value,
+    );
     closeModal();
 };
 
 const removeProduct = (index) => {
-    addedProducts.value.splice(index, 1);
-    addedProductsIds.value.splice(index, 1);
-    emit('removeProductFromPromo', index);
+    state.addedProducts.splice(index, 1);
+    state.addedProductsIds.splice(index, 1);
+    emit('addProductsToPromo',
+        state.addedProducts,
+        totalSalesBefore.value,
+        totalSalesPlan.value,
+        totalBudgetPlan.value,
+    );
 };
 
 const getCategoryName = () => {
-  const catIdx = state.categories.findIndex(c => c.id === +state.form.categoryId);
+  const catIdx = state.categories.findIndex(c => +c.id === +state.form.categoryId);
   return state.categories[catIdx].name;
 };
 
 const getProductName = () => {
-  const catIdx = state.categories.findIndex(c => c.id === +state.form.categoryId);
+  const catIdx = state.categories.findIndex(c => +c.id === +state.form.categoryId);
   const prodIdx = state.categories[catIdx].products.findIndex(p => p.id === +state.form.productId);
   return state.categories[catIdx].products[prodIdx].name;
 };
@@ -297,8 +330,20 @@ const isFormValid = computed(() => {
     return valid;
 });
 
-const totalBudget = computed(() => {
-   return addedProducts.value.reduce((acc, pr) => {
+const totalSalesBefore = computed(() => {
+    return state.addedProducts.reduce((acc, pr) => {
+        return acc + parseInt(pr.salesBefore);
+    }, 0);
+});
+
+const totalSalesPlan = computed(() => {
+    return state.addedProducts.reduce((acc, pr) => {
+        return acc + parseInt(pr.salesPlan);
+    }, 0);
+});
+
+const totalBudgetPlan = computed(() => {
+   return state.addedProducts.reduce((acc, pr) => {
        return acc + parseInt(pr.budgetPlan);
    }, 0);
 });

@@ -51,6 +51,10 @@ final class StoreRequest extends FormRequest
             'end_date'    => ['required', 'date_format:Y-m-d', 'date', 'after:start_date'],
             'comments'    => ['nullable', 'string'],
 
+            'total_sales_before' => ['required', 'numeric'],
+            'total_sales_plan'   => ['required', 'numeric'],
+            'total_budget_plan'  => ['required', 'numeric'],
+
             'products' => [
                 'nullable',
                 'array',
@@ -91,7 +95,7 @@ final class StoreRequest extends FormRequest
     : array
     {
         return [
-            'end_date.after' => 'Дата окончания должна быть после даты начала.'
+            'end_date.after' => 'Дата окончания должна быть после даты начала.',
         ];
     }
 }

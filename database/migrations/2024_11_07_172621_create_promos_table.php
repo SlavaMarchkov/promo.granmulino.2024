@@ -57,7 +57,7 @@ return new class extends Migration {
         Schema::create('promo_products', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('promo_id');
+            $table->foreignId('promo_id')->constrained()->cascadeOnDelete();
             $table->foreignId('category_id')->nullable();
             $table->foreignId('product_id')->nullable();
 
@@ -78,7 +78,7 @@ return new class extends Migration {
         Schema::create('promo_sellers', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('promo_id');
+            $table->foreignId('promo_id')->constrained()->cascadeOnDelete();
             $table->foreignId('customer_id');
             $table->foreignId('seller_id');
 
@@ -97,7 +97,7 @@ return new class extends Migration {
         Schema::create('promo_marks', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('promo_id');
+            $table->foreignId('promo_id')->constrained()->cascadeOnDelete();
             $table->unsignedTinyInteger('goals')->default(0);
             $table->unsignedTinyInteger('sales')->default(0);
             $table->unsignedTinyInteger('outlets')->default(0);
