@@ -7,10 +7,12 @@ namespace App\Http\Controllers\Api\V1\Admin;
 use App\Http\Controllers\ApiController;
 use App\Http\Requests\City\StoreUpdateRequest;
 use App\Http\Resources\V1\City\CityCollection;
+use App\Http\Resources\V1\City\CityFullResource;
 use App\Http\Resources\V1\City\CityResource;
 use App\Models\City;
 use App\Services\Cities\CityService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Cache;
 use Symfony\Component\HttpFoundation\Response;
 
 final class CityController extends ApiController
@@ -23,7 +25,11 @@ final class CityController extends ApiController
     public function index()
     : JsonResponse
     {
-        $cities = $this->cityService->getCities();
+        $key = 'cities-list-admin';
+
+        $cities = Cache::remember($key, now()->addDay(), function () {
+            return $this->cityService->getCities();
+        });
 
         return $this->successResponse(
             new CityCollection($cities),
@@ -52,7 +58,7 @@ final class CityController extends ApiController
         $city = $this->cityService->findCity($city);
 
         return $this->successResponse(
-            new CityResource($city),
+            new CityFullResource($city),
             'success',
             __('crud.cities.one'),
         );

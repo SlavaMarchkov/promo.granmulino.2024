@@ -1,14 +1,12 @@
 <template>
     <div class="row mb-4">
         <div class="col-12">
-            <button
-                class="btn btn-primary"
-                type="button"
+            <TheButton
+                v-show="isSuperAdmin"
+                class="btn-primary"
                 @click="createProductInit"
-                :disabled="!isSuperAdmin"
-            >
-                Новый продукт
-            </button>
+            >Новый продукт
+            </TheButton>
         </div>
     </div>
     <div class="row mb-2">
@@ -347,13 +345,14 @@ const arrayHandlers = useArrayHandlers();
 const { get, post, update, destroy } = useHttpService();
 
 const role = authStore.getUser.role;
+
 const isSuperAdmin = computed(() => role === ROLES.SUPER_ADMIN);
 const isPriceAdmin = computed(() => role === ROLES.PRICE_ADMIN);
 
 const thItems = computed(() => {
-    return isSuperAdmin
+    return isSuperAdmin.value
         ? PRODUCT_TH_FIELDS.concat(EDIT_TH_FIELD, DELETE_TH_FIELD)
-        : isPriceAdmin
+        : isPriceAdmin.value
             ? PRODUCT_TH_FIELDS.concat(PRICE_TH_FIELD, EDIT_TH_FIELD)
             : PRODUCT_TH_FIELDS;
 });
@@ -389,6 +388,9 @@ let viewModalPopUp = null;
 function resetState() {
     state.isEditing = false;
     state.product = initialFormData();
+    if ( document.activeElement ) {
+        document.activeElement.blur();
+    }
 }
 
 onMounted(async () => {

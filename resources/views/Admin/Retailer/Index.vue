@@ -1,13 +1,12 @@
 <template>
     <div class="row mb-4">
         <div class="col-12">
-            <button
-                class="btn btn-primary"
-                type="button"
+            <TheButton
+                v-show="isSuperAdmin"
+                class="btn-primary"
                 @click="createRetailerInit"
-            >
-                Новая торговая сеть
-            </button>
+            >Новая торговая сеть
+            </TheButton>
         </div>
     </div>
     <div class="row mb-2">
@@ -119,15 +118,15 @@
                                     @runButtonHandler="viewRetailerInit"
                                 >View
                                 </TdButton>
-                                <TdButton
-                                    :id="item.id"
-                                    intent="edit"
-                                    @runButtonHandler="editRetailerInit"
-                                >Edit
-                                </TdButton>
                                 <template
                                     v-if="isSuperAdmin"
                                 >
+                                    <TdButton
+                                        :id="item.id"
+                                        intent="edit"
+                                        @runButtonHandler="editRetailerInit"
+                                    >Edit
+                                    </TdButton>
                                     <TdButton
                                         :id="item.id"
                                         intent="delete"
@@ -271,10 +270,6 @@
                     <th>Активна?</th>
                     <td><TheBadge :is-active="state.retailer.isActive" /></td>
                 </tr>
-                <tr>
-                    <th>Описание</th>
-                    <td>{{ state.retailer.description }}</td>
-                </tr>
                 </tbody>
             </table>
         </template>
@@ -322,9 +317,9 @@ const role = authStore.getUser.role;
 const isSuperAdmin = computed(() => role === ROLES.SUPER_ADMIN);
 
 const thItems = computed(() => {
-    return isSuperAdmin
+    return isSuperAdmin.value
         ? RETAILER_TH_FIELDS.concat(EDIT_TH_FIELD, DELETE_TH_FIELD)
-        : RETAILER_TH_FIELDS.concat(EDIT_TH_FIELD);
+        : RETAILER_TH_FIELDS;
 });
 
 const initialFormData = () => ({
@@ -360,12 +355,13 @@ let viewModalPopUp = null;
 function resetState() {
     state.isEditing = false;
     state.retailer = initialFormData();
+    if ( document.activeElement ) {
+        document.activeElement.blur();
+    }
 }
 
 onMounted(async () => {
     await getRetailers();
-    await getCustomers();
-    await getCities();
     modalPopUp = new bootstrap.Modal(document.getElementById('modalPopUp'));
     modalPopUp._element.addEventListener('hide.bs.modal', resetState);
 });
@@ -376,16 +372,6 @@ const getRetailers = async () => {
 };
 
 const getOneRetailer = (id) => state.retailers.find(retailer => retailer.id === id);
-
-const getCustomers = async () => {
-    const { data } = await get(ADMIN_URLS.CUSTOMER);
-    state.customers = data.customers;
-};
-
-const getCities = async () => {
-    const { data } = await get(ADMIN_URLS.CITY);
-    state.cities = data.cities;
-};
 
 const createRetailerInit = () => {
     alertStore.clear();

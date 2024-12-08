@@ -7,10 +7,12 @@ namespace App\Http\Controllers\Api\V1\Admin;
 use App\Http\Controllers\ApiController;
 use App\Http\Requests\Product\StoreUpdateRequest;
 use App\Http\Resources\V1\Product\ProductCollection;
+use App\Http\Resources\V1\Product\ProductFullResource;
 use App\Http\Resources\V1\Product\ProductResource;
 use App\Models\Product;
 use App\Services\Products\ProductService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Cache;
 use Symfony\Component\HttpFoundation\Response;
 
 final class ProductController extends ApiController
@@ -23,9 +25,11 @@ final class ProductController extends ApiController
     public function index()
     : JsonResponse
     {
-        $products = $this->productService->getProducts([
-            ...request()->all(),
-        ]);
+        $key = 'products-list-admin';
+
+        $products = Cache::remember($key, now()->addDay(), function () {
+            return $this->productService->getProducts([...request()->all()]);
+        });
 
         return $this->successResponse(
             new ProductCollection($products),
@@ -57,7 +61,7 @@ final class ProductController extends ApiController
         $product = $this->productService->findProduct($product);
 
         return $this->successResponse(
-            new ProductResource($product),
+            new ProductFullResource($product),
             'success',
             __('crud.products.one'),
         );

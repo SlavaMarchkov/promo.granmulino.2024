@@ -1,13 +1,12 @@
 <template>
     <div class="row mb-4">
         <div class="col-12">
-            <button
-                class="btn btn-primary"
-                type="button"
+            <TheButton
+                v-show="isSuperAdmin"
+                class="btn-primary"
                 @click="createRegionInit"
-            >
-                Новый регион
-            </button>
+            >Новый регион
+            </TheButton>
         </div>
     </div>
     <div class="row mb-2">
@@ -78,15 +77,15 @@
                                     @runButtonHandler="viewRegionInit"
                                 >View
                                 </TdButton>
-                                <TdButton
-                                    :id="item.id"
-                                    intent="edit"
-                                    @runButtonHandler="editRegionInit"
-                                >Edit
-                                </TdButton>
                                 <template
                                     v-if="isSuperAdmin"
                                 >
+                                    <TdButton
+                                        :id="item.id"
+                                        intent="edit"
+                                        @runButtonHandler="editRegionInit"
+                                    >Edit
+                                    </TdButton>
                                     <TdButton
                                         :id="item.id"
                                         intent="delete"
@@ -225,9 +224,9 @@ const role = authStore.getUser.role;
 const isSuperAdmin = computed(() => role === ROLES.SUPER_ADMIN);
 
 const thItems = computed(() => {
-    return isSuperAdmin
+    return isSuperAdmin.value
         ? REGION_TH_FIELDS.concat(EDIT_TH_FIELD, DELETE_TH_FIELD)
-        : REGION_TH_FIELDS.concat(EDIT_TH_FIELD);
+        : REGION_TH_FIELDS;
 });
 
 const initialFormData = () => ({
@@ -252,6 +251,9 @@ let viewModalPopUp = null;
 function resetState() {
     state.isEditing = false;
     state.region = initialFormData();
+    if ( document.activeElement ) {
+        document.activeElement.blur();
+    }
 }
 
 onMounted(async () => {

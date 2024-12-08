@@ -1,14 +1,12 @@
 <template>
     <div class="row mb-4">
         <div class="col-12">
-            <button
-                class="btn btn-primary"
-                type="button"
+            <TheButton
+                v-show="isSuperAdmin"
+                class="btn-primary"
                 @click="createCategoryInit"
-                :disabled="!isSuperAdmin"
-            >
-                Новая группа товаров
-            </button>
+            >Новая группа товаров
+            </TheButton>
         </div>
     </div>
     <div class="row mb-2">
@@ -246,7 +244,7 @@ const role = authStore.getUser.role;
 const isSuperAdmin = computed(() => role === ROLES.SUPER_ADMIN);
 
 const thItems = computed(() => {
-    return isSuperAdmin
+    return isSuperAdmin.value
         ? CATEGORY_TH_FIELDS.concat(EDIT_TH_FIELD, DELETE_TH_FIELD)
         : CATEGORY_TH_FIELDS;
 });
@@ -273,6 +271,9 @@ let viewModalPopUp = null;
 function resetState() {
     state.isEditing = false;
     state.category = initialFormData();
+    if ( document.activeElement ) {
+        document.activeElement.blur();
+    }
 }
 
 onMounted(async () => {

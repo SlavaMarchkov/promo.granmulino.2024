@@ -12,8 +12,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 class CityResource extends JsonResource
 {
     public function toArray(Request $request)
-    : array
-    {
+    : array {
         return [
             'id'         => $this->id,
             'name'       => $this->name,
@@ -23,9 +22,6 @@ class CityResource extends JsonResource
             'latitude'   => $this->latitude,
             'country'    => $this->country,
             'state'      => $this->state,
-
-            'next' => $this->findNext($this->id),
-            'prev' => $this->findPrevious($this->id),
         ];
     }
 }

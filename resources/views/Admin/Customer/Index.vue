@@ -1,13 +1,12 @@
 <template>
     <div class="row mb-4">
         <div class="col-12">
-            <button
+            <TheButton
+                v-show="isSuperAdmin"
                 @click="createCustomerInit"
-                class="btn btn-primary"
-                type="button"
-            >
-                Новый контрагент
-            </button>
+                class="btn-primary"
+            >Новый контрагент
+            </TheButton>
         </div>
     </div>
     <div class="row mb-2">
@@ -42,7 +41,7 @@
                 </div>
                 <div class="col-md-4 mb-2">
                     <InputGroup
-                        v-model="searchBy.city"
+                        v-model="searchBy.cityName"
                         placeholder="Поиск по городу"
                     >
                         Город
@@ -96,13 +95,13 @@
                                     </RouterLink>
                                 </td>
                                 <td class="text-start">
-                                    {{ item.user }}
+                                    {{ item.userName }}
                                 </td>
                                 <td class="text-start">
-                                    {{ item.region }}
+                                    {{ item.regionName }}
                                 </td>
                                 <td class="text-start">
-                                    {{ item.city }}
+                                    {{ item.cityName }}
                                 </td>
                                 <td>
                                     <TheBadge :is-active="item.isActive"/>
@@ -113,15 +112,15 @@
                                     @runButtonHandler="viewCustomerInit"
                                 >View
                                 </TdButton>
-                                <TdButton
-                                    :id="item.id"
-                                    intent="edit"
-                                    @runButtonHandler="editCustomerInit"
-                                >Edit
-                                </TdButton>
                                 <template
                                     v-if="isSuperAdmin"
                                 >
+                                    <TdButton
+                                        :id="item.id"
+                                        intent="edit"
+                                        @runButtonHandler="editCustomerInit"
+                                    >Edit
+                                    </TdButton>
                                     <TdButton
                                         :id="item.id"
                                         intent="delete"
@@ -219,9 +218,7 @@
                         type="button"
                         :class="[
                             'btn-light',
-                            {
-                                'btn-disabled': state.customer.userId === null,
-                            }
+                            { 'btn-disabled': state.customer.userId === null }
                         ]"
                         :disabled="state.customer.userId === null"
                     >
@@ -290,23 +287,19 @@
                 </tr>
                 <tr>
                     <th>Регион</th>
-                    <td>{{ state.customer.region }}</td>
+                    <td>{{ state.customer.regionName }}</td>
                 </tr>
                 <tr>
                     <th>Город</th>
-                    <td>{{ state.customer.city }}</td>
+                    <td>{{ state.customer.cityName }}</td>
                 </tr>
                 <tr>
                     <th>Менеджер</th>
-                    <td>{{ state.customer.user }}</td>
+                    <td>{{ state.customer.userName }}</td>
                 </tr>
                 <tr>
                     <th>Активен?</th>
                     <td><TheBadge :is-active="state.customer.isActive" /></td>
-                </tr>
-                <tr>
-                    <th>Описание</th>
-                    <td>{{ state.customer.description }}</td>
                 </tr>
                 </tbody>
             </table>
@@ -348,9 +341,9 @@ const role = authStore.getUser.role;
 const isSuperAdmin = computed(() => role === ROLES.SUPER_ADMIN);
 
 const thItems = computed(() => {
-    return isSuperAdmin
+    return isSuperAdmin.value
         ? CUSTOMER_TH_FIELDS.concat(EDIT_TH_FIELD, DELETE_TH_FIELD)
-        : CUSTOMER_TH_FIELDS.concat(EDIT_TH_FIELD);
+        : CUSTOMER_TH_FIELDS;
 });
 
 const initialFormData = () => ({
@@ -375,7 +368,7 @@ const searchBy = reactive({
     name: '',
     userId: '',
     regionId: '',
-    city: '',
+    cityName: '',
     isActive: false,
 });
 
@@ -385,6 +378,9 @@ let viewModalPopUp = null;
 function resetState() {
     state.isEditing = false;
     state.customer = initialFormData();
+    if ( document.activeElement ) {
+        document.activeElement.blur();
+    }
 }
 
 onMounted(async () => {

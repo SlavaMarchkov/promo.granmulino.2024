@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Http\Resources\V1\Region;
 
 use App\Http\Resources\V1\City\CityResource;
-use App\Http\Resources\V1\Customer\CustomerResource;
 use App\Models\Region;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -14,8 +13,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 class RegionResource extends JsonResource
 {
     public function toArray(Request $request)
-    : array
-    {
+    : array {
         return [
             'id'             => $this->id,
             'code'           => $this->code,
@@ -23,10 +21,6 @@ class RegionResource extends JsonResource
             'citiesCount'    => $this->cities_count,
             'customersCount' => $this->customers_count,
             'cities'         => CityResource::collection($this->whenLoaded('cities')),
-            'customers'      => CustomerResource::collection($this->whenLoaded('customers')),
-
-            'next' => $this->findNext($this->id),
-            'prev' => $this->findPrevious($this->id),
         ];
     }
 }

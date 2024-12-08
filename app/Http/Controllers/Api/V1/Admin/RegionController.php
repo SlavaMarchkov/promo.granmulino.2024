@@ -7,10 +7,12 @@ namespace App\Http\Controllers\Api\V1\Admin;
 use App\Http\Controllers\ApiController;
 use App\Http\Requests\Region\StoreUpdateRequest;
 use App\Http\Resources\V1\Region\RegionCollection;
+use App\Http\Resources\V1\Region\RegionFullResource;
 use App\Http\Resources\V1\Region\RegionResource;
 use App\Models\Region;
 use App\Services\Regions\RegionService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Cache;
 use Symfony\Component\HttpFoundation\Response;
 
 final class RegionController extends ApiController
@@ -23,9 +25,13 @@ final class RegionController extends ApiController
     public function index()
     : JsonResponse
     {
-        $regions = $this->regionService->getRegions([
-            'cities' => true,
-        ]);
+        $key = 'regions-list-admin';
+
+        $regions = Cache::remember($key, now()->addDay(), function () {
+            return $this->regionService->getRegions([
+                'cities' => true,
+            ]);
+        });
 
         return $this->successResponse(
             new RegionCollection($regions),
@@ -54,7 +60,7 @@ final class RegionController extends ApiController
         $region = $this->regionService->findRegion($region);
 
         return $this->successResponse(
-            new RegionResource($region),
+            new RegionFullResource($region),
             'success',
             __('crud.regions.one'),
         );

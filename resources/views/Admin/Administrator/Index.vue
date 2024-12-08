@@ -340,6 +340,9 @@ let viewModalPopUp = null;
 function resetState() {
     state.isEditing = false;
     state.user = initialFormData();
+    if ( document.activeElement ) {
+        document.activeElement.blur();
+    }
 }
 
 onMounted(async () => {

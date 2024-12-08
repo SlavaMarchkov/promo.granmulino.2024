@@ -7,10 +7,12 @@ namespace App\Http\Controllers\Api\V1\Admin;
 use App\Http\Controllers\ApiController;
 use App\Http\Requests\Retailer\StoreUpdateRequest;
 use App\Http\Resources\V1\Retailer\RetailerCollection;
+use App\Http\Resources\V1\Retailer\RetailerFullResource;
 use App\Http\Resources\V1\Retailer\RetailerResource;
 use App\Models\Retailer;
 use App\Services\Retailers\RetailerService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Cache;
 use Symfony\Component\HttpFoundation\Response;
 
 final class RetailerController extends ApiController
@@ -24,10 +26,11 @@ final class RetailerController extends ApiController
     public function index()
     : JsonResponse
     {
-        $retailers = $this->retailerService->getRetailers([
-            'with_city'     => true,
-            'with_customer' => true,
-        ]);
+        $key = 'retailers-list-admin';
+
+        $retailers = Cache::remember($key, now()->addDay(), function () {
+            return $this->retailerService->getRetailers([...request()->all()]);
+        });
 
         return $this->successResponse(
             new RetailerCollection($retailers),
@@ -56,7 +59,7 @@ final class RetailerController extends ApiController
         $retailer = $this->retailerService->findRetailer($retailer);
 
         return $this->successResponse(
-            new RetailerResource($retailer),
+            new RetailerFullResource($retailer),
             'success',
             __('crud.retailers.one'),
         );

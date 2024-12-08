@@ -7,10 +7,12 @@ namespace App\Http\Controllers\Api\V1\Admin;
 use App\Http\Controllers\ApiController;
 use App\Http\Requests\Category\StoreUpdateRequest;
 use App\Http\Resources\V1\Category\CategoryCollection;
+use App\Http\Resources\V1\Category\CategoryFullResource;
 use App\Http\Resources\V1\Category\CategoryResource;
 use App\Models\Category;
 use App\Services\Categories\CategoryService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Cache;
 use Symfony\Component\HttpFoundation\Response;
 
 final class CategoryController extends ApiController
@@ -24,9 +26,11 @@ final class CategoryController extends ApiController
     public function index()
     : JsonResponse
     {
-        $categories = $this->categoryService->getCategories([
-            ...request()->all()
-        ]);
+        $key = 'categories-list-admin';
+
+        $categories = Cache::remember($key, now()->addDay(), function () {
+            return $this->categoryService->getCategories([...request()->all()]);
+        });
 
         return $this->successResponse(
             new CategoryCollection($categories),
@@ -55,7 +59,7 @@ final class CategoryController extends ApiController
         $category = $this->categoryService->findCategory($category);
 
         return $this->successResponse(
-            new CategoryResource($category),
+            new CategoryFullResource($category),
             'success',
             __('crud.categories.one'),
         );

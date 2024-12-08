@@ -114,9 +114,9 @@ export const RETAILER_TH_FIELDS = [
 export const CUSTOMER_TH_FIELDS = [
     { column: 'id', label: 'ID', sortable: true, is_num: true, width: 6 },
     { column: 'name', label: 'Название', sortable: true, is_num: false },
-    { column: 'user', label: 'Менеджер', sortable: true, is_num: false },
-    { column: 'region', label: 'Регион', sortable: true, is_num: false },
-    { column: 'city', label: 'Город', sortable: true, is_num: false },
+    { column: 'userName', label: 'Менеджер', sortable: true, is_num: false },
+    { column: 'regionName', label: 'Регион', sortable: true, is_num: false },
+    { column: 'cityName', label: 'Город', sortable: true, is_num: false },
     { column: 'isActive', label: 'Активен?', sortable: true, is_num: true },
     { column: 'view', label: 'Просмотр', sortable: false, is_num: false, width: 10 },
 ];

@@ -14,14 +14,12 @@ use Illuminate\Database\Eloquent\Collection;
 final class EloquentRetailerRepository implements RetailerRepositoryInterface
 {
     public function find(Retailer $retailer)
-    : ?Retailer
-    {
+    : ?Retailer {
         return Retailer::query()->where('id', $retailer->id)->first();
     }
 
     public function get(array $params = [])
-    : Collection
-    {
+    : Collection {
         $retailersSql = Retailer::query();
         $this->applyFilters($retailersSql, $params);
         return $retailersSql->get();
@@ -34,8 +32,7 @@ final class EloquentRetailerRepository implements RetailerRepositoryInterface
     }
 
     public function createFromArray(array $data)
-    : Retailer
-    {
+    : Retailer {
         return Retailer::query()->create($data);
     }
 
@@ -47,8 +44,7 @@ final class EloquentRetailerRepository implements RetailerRepositoryInterface
     }
 
     public function delete(Retailer $retailer)
-    : int
-    {
+    : int {
         // TODO: Проверить наличие брифов и др. зависимостей
         return 1;
         /*$customers_count = $retailer->customer->count();
@@ -63,11 +59,15 @@ final class EloquentRetailerRepository implements RetailerRepositoryInterface
     private function applyFilters(Builder $qb, array $params)
     : void
     {
-        // TODO: заменить названия параметров
-        /*$qb->when($params['with_city'] == true, function (Builder $query) {
-            return $query->with('city');
-        })->when($params['with_customer'] == true, function (Builder $query) {
-            return $query->with('customer');
-        });*/
+        $qb->when(
+            isset($params['user_id']),
+            fn(Builder $query) => $query->where('user_id', (int)$params['user_id']),
+        )->when(
+            isset($params['city']) && to_boolean($params['city']),
+            fn(Builder $query) => $query->with('city'),
+        )->when(
+            isset($params['customer']) && to_boolean($params['customer']),
+            fn(Builder $query) => $query->with('customer')
+        );
     }
 }

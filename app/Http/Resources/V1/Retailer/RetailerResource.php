@@ -12,8 +12,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 class RetailerResource extends JsonResource
 {
     public function toArray(Request $request)
-    : array
-    {
+    : array {
         return [
             'id'              => $this->id,
             'name'            => $this->name,
@@ -21,7 +20,6 @@ class RetailerResource extends JsonResource
             'label'           => $this->type->label(),
             'typeDescription' => $this->type->description(),
             'typeBgColor'     => $this->type->backgroundColor(),
-            'description'     => $this->description ?? '',
 
             'isActive' => $this->is_active,
             'isDirect' => $this->is_direct,
@@ -30,9 +28,6 @@ class RetailerResource extends JsonResource
             'cityId'     => $this->city_id,
             'customer'   => $this->customer->name,
             'city'       => $this->city->name,
-
-            'next' => $this->findNext($this->id),
-            'prev' => $this->findPrevious($this->id),
         ];
     }
 }

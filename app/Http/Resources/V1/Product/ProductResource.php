@@ -25,9 +25,6 @@ class ProductResource extends JsonResource
             'isActive'   => $this->is_active,
             'categoryId' => $this->category_id,
             'category'   => $this->category->name,
-
-            'next' => $this->findNext($this->id),
-            'prev' => $this->findPrevious($this->id),
         ];
     }
 }

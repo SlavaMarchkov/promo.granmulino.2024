@@ -11,8 +11,10 @@ use App\Http\Resources\V1\Customer\CustomerResource;
 use App\Models\Customer;
 use App\Services\Customers\CustomerService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Cache;
 use Symfony\Component\HttpFoundation\Response;
 
+// TODO: make Abilities
 final class CustomerController extends ApiController
 {
     public function __construct(
@@ -24,7 +26,12 @@ final class CustomerController extends ApiController
     public function index()
     : JsonResponse
     {
-        $customers = $this->customerService->getCustomers([]);
+        $key = 'customers-list-admin';
+
+        if (!$customers = Cache::get($key)) {
+            $customers = $this->customerService->getCustomers([...request()->all()]);
+            Cache::put($key, $customers, now()->addDay());
+        }
 
         return $this->successResponse(
             new CustomerCollection($customers),
