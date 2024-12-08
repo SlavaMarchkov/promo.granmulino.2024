@@ -31,7 +31,12 @@ export function useArrayHandlers() {
                 tempArr = tempArr.filter(item => item[key] === true);
             } else if (!key.startsWith('is') && obj[key] !== '') {
                 if (key.endsWith('Id')) {
-                    tempArr = tempArr.filter(item => item[key] === parseInt(obj[key], 10));
+                    tempArr = tempArr.filter(item => {
+                        if ( obj[key] === 'null' ) {
+                            return item[key] === JSON.parse(obj[key]);
+                        }
+                        return item[key] === parseInt(obj[key], 10);
+                    });
                 } else if (key === 'type') {
                     tempArr = tempArr.filter(item => item[key] === obj[key]);
                 } else {

@@ -26,7 +26,7 @@
                     <SelectGroup
                         v-model="searchBy.userId"
                         :chooseFrom="'-- Выберите менеджера --'"
-                        :items="state.users"
+                        :items="state.users.concat({ id: 'null', fullName: 'без менеджера' })"
                         selectedOption="fullName"
                     >Менеджер
                     </SelectGroup>
