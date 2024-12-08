@@ -33,7 +33,7 @@
                             </tr>
                             <tr>
                                 <th>Группа товаров</th>
-                                <td>{{ item.category }}</td>
+                                <td>{{ item.categoryName }}</td>
                             </tr>
                             <tr>
                                 <th>В продаже?</th>
@@ -115,7 +115,11 @@ onMounted(async () => {
 });
 
 const fetchDetails = async (id) => {
-    const response = await get(`${ ADMIN_URLS.PRODUCT }/${ id }`);
+    const response = await get(`${ADMIN_URLS.PRODUCT}/${id}`, {
+        params: {
+            category: true,
+        },
+    });
     if ( response.status === 'success' ) item.value = response.data;
 };
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Resources\V1\Product;
 
+use App\Http\Resources\V1\Category\CategoryResource;
 use App\Models\Product;
 use Illuminate\Http\Request;
 
@@ -14,6 +15,8 @@ class ProductFullResource extends ProductResource
     : array {
         return [
             ...parent::toArray($request),
+
+            'category' => new CategoryResource($this->whenLoaded('category')),
 
             'next' => $this->findNext($this->id),
             'prev' => $this->findPrevious($this->id),

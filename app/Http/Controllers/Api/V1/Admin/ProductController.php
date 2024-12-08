@@ -17,6 +17,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 final class ProductController extends ApiController
 {
+    private const CACHE_KEY = 'products-list-admin';
+
     public function __construct(
         private readonly ProductService $productService,
     ) {
@@ -25,10 +27,9 @@ final class ProductController extends ApiController
     public function index()
     : JsonResponse
     {
-        $key = 'products-list-admin';
-        // Cache::forget($key);
+//        Cache::forget(self::CACHE_KEY);
 
-        $products = Cache::remember($key, now()->addDay(), function () {
+        $products = Cache::remember(self::CACHE_KEY, now()->addDay(), function () {
             return $this->productService->getProducts([...request()->all()]);
         });
 
@@ -47,6 +48,7 @@ final class ProductController extends ApiController
             $data['image'] = upload_image($data['image']);
         }
 
+        Cache::forget(self::CACHE_KEY);
         $product = $this->productService->storeProduct($data);
 
         return $this->successResponse(
@@ -57,6 +59,7 @@ final class ProductController extends ApiController
         );
     }
 
+    // TODO: передача параметров в запрос
     public function show(Product $product)
     : JsonResponse {
         $product = $this->productService->findProduct($product);
@@ -77,6 +80,7 @@ final class ProductController extends ApiController
             $data['image'] = upload_image($data['image']);
         }
 
+        Cache::forget(self::CACHE_KEY);
         $product = $this->productService->updateProduct($product, $data);
 
         return $this->successResponse(

@@ -232,8 +232,15 @@
                         id="image"
                         type="file"
                         @change="handleFileChange"
+                        accept="image/*"
                     />
-                    <img :src="getImage()" alt="" class="img-thumbnail mt-3" width="150" />
+                    <img
+                        ref="uploadedProductImageRef"
+                        :src="productImage"
+                        alt="Изображение продукта"
+                        class="img-thumbnail mt-3"
+                        width="150"
+                    />
                 </div>
             </div>
         </template>
@@ -282,7 +289,7 @@
                 </tr>
                 <tr>
                     <th>Группа товаров</th>
-                    <td>{{ state.product.category }}</td>
+                    <td>{{ state.product.categoryName }}</td>
                 </tr>
                 <tr>
                     <th>В продаже?</th>
@@ -308,7 +315,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, reactive } from 'vue';
+import { computed, onMounted, reactive, ref } from 'vue';
 import { useAlertStore } from '@/stores/alerts.js';
 import { useSpinnerStore } from '@/stores/spinners.js';
 import { useAuthStore } from '@/stores/auth.js';
@@ -328,6 +335,7 @@ import ThSort from '@/components/table/ThSort.vue';
 import TdButton from '@/components/table/TdButton.vue';
 import {
     ADMIN_URLS,
+    ALLOWED_FILE_TYPES,
     DELETE_TH_FIELD,
     EDIT_TH_FIELD,
     NO_PRODUCT_IMG,
@@ -362,6 +370,7 @@ const initialFormData = () => ({
     weight: '',
     price: '',
     categoryId: '',
+    categoryName: '',
     image: '',
     isActive: true,
 });
@@ -372,6 +381,8 @@ const state = reactive({
     product: initialFormData(),
     isEditing: false,
 });
+
+const uploadedProductImageRef = ref(null);
 
 // TODO - сделать фильтр по весу (вес в виде массива с весами продукции)
 const searchBy = reactive({
@@ -458,30 +469,33 @@ const clearSearch = () => {
     arrayHandlers.resetSortKeys();
 };
 
-const getImage = () => {
-    let image = [NO_PRODUCT_IMG];
+const productImage = computed(() => state.product.image
+    ? `${PRODUCT_IMG_PATH}${state.product.image}`
+    : [NO_PRODUCT_IMG],
+);
 
-    if (state.product.image) {
-        if (state.product.image.indexOf('base64') !== -1) {
-            image = state.product.image;
-        } else {
-            image = PRODUCT_IMG_PATH + state.product.image;
-        }
+const handleFileChange = (evt) => {
+    const files = evt.target.files;
+    const countFiles = files.length;
+
+    if ( !countFiles ) {
+        alert('Не выбран файл!');
+        return;
     }
 
-    return image;
-};
+    const file = files[0];
+    const fileName = file.name.toLowerCase();
 
-const productImage = computed(() => state.product.image ? `${PRODUCT_IMG_PATH}${state.product.image}` : [NO_PRODUCT_IMG]);
+    const matches = ALLOWED_FILE_TYPES.some(type => fileName.endsWith(type));
 
-// TODO: figure out FileReader
-const handleFileChange = (evt) => {
-    const file = evt.target.files[0];
-    const reader = new FileReader();
-    reader.onloadend = (file) => {
-        state.product.image = reader.result;
-    };
-    reader.readAsDataURL(file);
+    if ( matches ) {
+        const reader = new FileReader();
+        reader.onerror = () => alert(`Произошла ошибка при чтении файла: ${fileName}`);
+        reader.onloadend = () => uploadedProductImageRef.value.src = reader.result;
+        reader.readAsDataURL(file);
+    } else {
+        alert('Загружать можно только изображения');
+    }
 };
 
 const saveProduct = () => {
@@ -489,7 +503,11 @@ const saveProduct = () => {
 };
 
 const createProduct = async () => {
-    const response = await post(ADMIN_URLS.PRODUCT, state.product);
+    const product = {
+        ...state.product,
+        image: uploadedProductImageRef.value.src,
+    };
+    const response = await post(ADMIN_URLS.PRODUCT, product);
     if ( response && response.status === 'success' ) {
         alertStore.clear();
         state.product = initialFormData();
@@ -501,7 +519,17 @@ const createProduct = async () => {
 };
 
 const updateProduct = async () => {
-    const response = await update(`${ ADMIN_URLS.PRODUCT }/${ state.product.id }`, state.product);
+    const product = { ...state.product };
+    const updatedImage = uploadedProductImageRef.value.src;
+
+    if ( updatedImage.indexOf('base64') !== -1 ) {
+        product.image = product.image !== null && updatedImage.includes(product.image.toString())
+            ? product.image.toString()
+            : updatedImage;
+    }
+
+    const response = await update(`${ADMIN_URLS.PRODUCT}/${product.id}`, product);
+
     if ( response && response.status === 'success' ) {
         alertStore.clear();
         state.product = initialFormData();
