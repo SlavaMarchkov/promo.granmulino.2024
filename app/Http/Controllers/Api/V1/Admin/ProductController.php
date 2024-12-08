@@ -26,6 +26,7 @@ final class ProductController extends ApiController
     : JsonResponse
     {
         $key = 'products-list-admin';
+        // Cache::forget($key);
 
         $products = Cache::remember($key, now()->addDay(), function () {
             return $this->productService->getProducts([...request()->all()]);

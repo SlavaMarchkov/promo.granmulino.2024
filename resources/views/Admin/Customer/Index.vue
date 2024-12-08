@@ -392,14 +392,24 @@ onMounted(async () => {
 });
 
 const getCustomers = async () => {
-    const { data } = await get(ADMIN_URLS.CUSTOMER);
+    const { data } = await get(ADMIN_URLS.CUSTOMER, {
+        params: {
+            user: true,
+            region: true,
+            city: true,
+        },
+    });
     state.customers = data.customers;
 };
 
 const getOneCustomer = (id) => state.customers.find(customer => customer.id === id);
 
 const getRegions = async () => {
-    const { data } = await get(ADMIN_URLS.REGION);
+    const { data } = await get(ADMIN_URLS.REGION, {
+        params: {
+            cities: false,
+        },
+    });
     state.regions = data.regions;
 };
 

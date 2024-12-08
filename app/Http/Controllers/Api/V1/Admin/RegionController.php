@@ -26,11 +26,10 @@ final class RegionController extends ApiController
     : JsonResponse
     {
         $key = 'regions-list-admin';
+        // Cache::forget($key);
 
         $regions = Cache::remember($key, now()->addDay(), function () {
-            return $this->regionService->getRegions([
-                'cities' => true,
-            ]);
+            return $this->regionService->getRegions([...request()->all()]);
         });
 
         return $this->successResponse(

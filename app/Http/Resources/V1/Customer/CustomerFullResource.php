@@ -24,6 +24,7 @@ class CustomerFullResource extends CustomerResource
             'user'      => new UserResource($this->whenLoaded('user')),
             'region'    => new RegionResource($this->whenLoaded('region')),
             'city'      => new CityResource($this->whenLoaded('city')),
+
             'retailers' => RetailerResource::collection($this->whenLoaded('retailers')),
             'sellers'   => CustomerSellerResource::collection($this->whenLoaded('customer_sellers')),
 

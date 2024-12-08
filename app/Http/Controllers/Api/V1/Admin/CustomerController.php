@@ -27,6 +27,7 @@ final class CustomerController extends ApiController
     : JsonResponse
     {
         $key = 'customers-list-admin';
+        // Cache::forget($key);
 
         if (!$customers = Cache::get($key)) {
             $customers = $this->customerService->getCustomers([...request()->all()]);

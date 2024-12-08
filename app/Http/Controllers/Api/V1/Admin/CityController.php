@@ -26,6 +26,7 @@ final class CityController extends ApiController
     : JsonResponse
     {
         $key = 'cities-list-admin';
+        // Cache::forget($key);
 
         $cities = Cache::remember($key, now()->addDay(), function () {
             return $this->cityService->getCities();

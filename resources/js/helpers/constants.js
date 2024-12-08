@@ -151,7 +151,7 @@ export const PRODUCT_TH_FIELDS = [
     { column: 'id', label: 'ID', sortable: true, is_num: true, width: 6 },
     { column: 'name', label: 'Название', sortable: true, is_num: false },
     { column: 'weight', label: 'Вес, г', sortable: true, is_num: true },
-    { column: 'category', label: 'Группа товаров', sortable: true, is_num: false },
+    { column: 'categoryName', label: 'Группа товаров', sortable: true, is_num: false },
     { column: 'isActive', label: 'В продаже?', sortable: true, is_num: true, width: 15 },
     { column: 'view', label: 'Просмотр', sortable: false, is_num: false, width: 10 },
 ];

@@ -16,7 +16,8 @@ class RegionFullResource extends RegionResource
         return [
             ...parent::toArray($request),
 
-            'customers' => CustomerResource::collection($this->whenLoaded('customers')),
+            'customers'      => CustomerResource::collection($this->whenLoaded('customers')),
+            'customersCount' => $this->whenLoaded('customers', fn() => $this->customers_count),
 
             'next' => $this->findNext($this->id),
             'prev' => $this->findPrevious($this->id),

@@ -98,7 +98,7 @@
                                     {{ formatNumber(item.weight) }}
                                 </td>
                                 <td class="text-start">
-                                    {{ item.category }}
+                                    {{ item.categoryName }}
                                 </td>
                                 <td>
                                     <TheBadge :is-active="item.isActive"/>
@@ -403,6 +403,7 @@ onMounted(async () => {
 const getProducts = async () => {
     const { data } = await get(ADMIN_URLS.PRODUCT, {
         params: {
+            'category': true,
             'is_active': false,
         },
     });
@@ -414,7 +415,8 @@ const getOneProduct = (id) => state.products.find(product => product.id === id);
 const getCategories = async () => {
     const { data } = await get(ADMIN_URLS.CATEGORY, {
         params: {
-            'is_active': true,
+            'products': false,
+            'product_is_active': true,
         },
     });
     state.categories = data.categories;

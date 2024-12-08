@@ -58,7 +58,10 @@ final class EloquentProductRepository implements ProductRepositoryInterface
     {
         $qb->when(
             isset($params['is_active']) && to_boolean($params['is_active']),
-            fn($qb) => $qb->where('is_active', true),
+            fn(Builder $query) => $query->where('is_active', true),
+        )->when(
+            isset($params['category']) && to_boolean($params['category']),
+            fn(Builder $query) => $query->with('category'),
         );
     }
 }

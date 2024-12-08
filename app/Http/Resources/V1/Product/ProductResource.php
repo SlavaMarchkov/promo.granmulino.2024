@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Resources\V1\Product;
 
+use App\Enums\User\RoleEnum;
+use App\Http\Resources\V1\Category\CategoryResource;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -13,18 +15,18 @@ class ProductResource extends JsonResource
 {
     public function toArray(Request $request)
     : array {
-        $role = $request->user()->role;
-        $isPriceAdmin = $request->user()->isPriceAdmin($role);
+        $isPriceAdmin = $request->user()->role->slug === RoleEnum::PRICE_ADMIN->name;
 
         return [
-            'id'         => $this->id,
-            'name'       => $this->name,
-            'weight'     => $this->weight,
-            'price'      => $this->when($isPriceAdmin, fn() => $this->price),
-            'image'      => $this->image,
-            'isActive'   => $this->is_active,
-            'categoryId' => $this->category_id,
-            'category'   => $this->category->name,
+            'id'           => $this->id,
+            'name'         => $this->name,
+            'weight'       => $this->weight,
+            'price'        => $this->when($isPriceAdmin, fn() => $this->price),
+            'image'        => $this->image,
+            'isActive'     => $this->is_active,
+            'category'     => new CategoryResource($this->whenLoaded('category')),
+            'categoryId'   => $this->whenLoaded('category', fn() => $this->category->id),
+            'categoryName' => $this->whenLoaded('category', fn() => $this->category->name),
         ];
     }
 }
