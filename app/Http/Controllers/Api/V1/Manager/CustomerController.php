@@ -48,6 +48,7 @@ final class CustomerController extends ApiController
         $this->authorize('view', $customer);
 
         $customer = $this->customerService->findCustomer($customer, [
+            'user_id' => auth()->id(),
             ...request()->all()
         ]);
 

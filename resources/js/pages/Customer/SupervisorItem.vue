@@ -71,8 +71,7 @@ const props = defineProps({
         required: true,
     },
     index: {
-        type: Number,
-        default: 1,
+        type: [Number, String],
     },
 });
 

@@ -15,4 +15,13 @@ interface PromoRepositoryInterface
 
     public function createFromArray(array $data)
     : Promo;
+
+    public function find(Promo $promo, array $params = [])
+    : ?Promo;
+
+    public function getProducts(int $promo_id)
+    : Collection;
+
+    public function getSellers(int $promo_id)
+    : Collection;
 }

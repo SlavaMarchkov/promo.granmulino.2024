@@ -13,14 +13,6 @@ class CustomerSellerPolicy
 {
     use HandlesAuthorization;
 
-    /*public function before(User $user)
-    : ?true {
-        if ($user->isManager()) {
-            return true;
-        }
-        return null;
-    }*/
-
     public function viewAny(User $user, Customer $customer)
     : bool
     {

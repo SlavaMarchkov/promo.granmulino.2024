@@ -81,9 +81,9 @@ export const MANAGER_URLS = {
     CATEGORY: '/categories',
     CHANNEL: '/channels',
     CUSTOMER: '/customers',
-    CUSTOMER_SELLER: '/sellers',
     PRODUCT: '/products',
     PROMO: '/promos',
+    SELLER: '/sellers',
     RETAILER: '/retailers',
     USER: '/users',
 };

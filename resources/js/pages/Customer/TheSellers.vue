@@ -77,7 +77,7 @@ const emit = defineEmits([
 ]);
 
 const saveSeller = async (item) => {
-    const { status, data } = await post(`${ MANAGER_URLS.CUSTOMER }/${ props.customerId }${ MANAGER_URLS.CUSTOMER_SELLER }`, item);
+    const { status, data } = await post(`${MANAGER_URLS.CUSTOMER}/${props.customerId}${MANAGER_URLS.SELLER}`, item);
     if ( status === 'success' ) {
         alertStore.clear();
         emit('updateSellers', data);
@@ -85,7 +85,10 @@ const saveSeller = async (item) => {
 };
 
 const updateSeller = async (item) => {
-    const { status, data } = await update(`${ MANAGER_URLS.CUSTOMER }/${ props.customerId }${ MANAGER_URLS.CUSTOMER_SELLER }/${ item.id }`, item);
+    const {
+        status,
+        data,
+    } = await update(`${MANAGER_URLS.CUSTOMER}/${props.customerId}${MANAGER_URLS.SELLER}/${item.id}`, item);
     if ( status === 'success' ) {
         alertStore.clear();
         emit('updateSellers', data);
@@ -94,7 +97,10 @@ const updateSeller = async (item) => {
 
 const deleteSeller = async (item) => {
     if ( confirm('Точно удалить сотрудника? Уверены?') ) {
-        const { status, data } = await destroy(`${ MANAGER_URLS.CUSTOMER }/${ props.customerId }${ MANAGER_URLS.CUSTOMER_SELLER }/${ item.id }`, item);
+        const {
+            status,
+            data,
+        } = await destroy(`${MANAGER_URLS.CUSTOMER}/${props.customerId}${MANAGER_URLS.SELLER}/${item.id}`, item);
         if ( status === 'success' ) {
             console.log(data);
             emit('updateSellers', data);

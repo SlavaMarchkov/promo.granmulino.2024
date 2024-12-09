@@ -8,6 +8,8 @@ namespace App\Services\Promos\Repositories;
 
 use App\Enums\Promo\TypeEnum;
 use App\Models\Promo;
+use App\Models\PromoProduct;
+use App\Models\PromoSeller;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -16,6 +18,20 @@ use Illuminate\Support\Facades\Log;
 
 final class EloquentPromoRepository implements PromoRepositoryInterface
 {
+    public function get(array $params = [])
+    : Collection {
+        $promosSql = Promo::query();
+        $this->applyFilters($promosSql, $params);
+        return $promosSql->get();
+    }
+
+    public function find(Promo $promo, array $params = [])
+    : ?Promo {
+        $promosSql = Promo::query()->where('id', $promo->id);
+        $this->applyFilters($promosSql, $params);
+        return $promosSql->first();
+    }
+
     /**
      * @throws Exception
      */
@@ -65,22 +81,24 @@ final class EloquentPromoRepository implements PromoRepositoryInterface
         }
     }
 
-    public function get(array $params = [])
-    : Collection {
-        $promosSql = Promo::query();
-        $this->applyFilters($promosSql, $params);
-        return $promosSql->get();
-    }
-
     private function applyFilters(Builder $qb, array $params)
     : void {
-        $qb->when(isset($params['user_id']), fn(Builder $query) => $query->where('user_id', (int)$params['user_id']))
+        $qb->when(
+            isset($params['user_id']),
+            fn(Builder $query) => $query->where('user_id', (int)$params['user_id'])
+        )
             /*->when(
                 isset($params['region']) && to_boolean($params['region']),
                 fn(Builder $query) => $query->with('region'),
             )
-            ->when(isset($params['city']) && to_boolean($params['city']), fn(Builder $query) => $query->with('city'))
-            ->when(isset($params['user']) && to_boolean($params['user']), fn(Builder $query) => $query->with('user'))
+            ->when(
+                isset($params['city']) && to_boolean($params['city']),
+                fn(Builder $query) => $query->with('city')
+            )
+            ->when(
+                isset($params['user']) && to_boolean($params['user']),
+                fn(Builder $query) => $query->with('user')
+            )
             ->when(
                 isset($params['retailers']) && to_boolean($params['retailers']),
                 fn(Builder $query) => $query->with('retailers'),
@@ -89,5 +107,19 @@ final class EloquentPromoRepository implements PromoRepositoryInterface
                 isset($params['customer_sellers']) && to_boolean($params['customer_sellers']),
                 fn(Builder $query) => $query->with('customer_sellers')->orderBy('name')->orderByDesc('is_active'),
             )*/;
+    }
+
+    public function getProducts(int $promo_id)
+    : Collection {
+        $productsSql = PromoProduct::query()
+            ->where('promo_id', $promo_id);
+        return $productsSql->get();
+    }
+
+    public function getSellers(int $promo_id)
+    : Collection {
+        $sellersSql = PromoSeller::query()
+            ->where('promo_id', $promo_id);
+        return $sellersSql->get();
     }
 }

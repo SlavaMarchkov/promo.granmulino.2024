@@ -8,6 +8,7 @@ namespace App\Http\Controllers\Api\V1\Manager;
 use App\Http\Controllers\ApiController;
 use App\Http\Requests\Promo\StoreRequest;
 use App\Http\Resources\V1\Promo\PromoCollection;
+use App\Http\Resources\V1\Promo\PromoFullResource;
 use App\Http\Resources\V1\Promo\PromoResource;
 use App\Models\Promo;
 use App\Services\Promos\PromoService;
@@ -43,8 +44,9 @@ final class PromoController extends ApiController
     }
 
     public function store(StoreRequest $request)
-    : JsonResponse
-    {
+    : JsonResponse {
+        $this->authorize('create', Promo::class);
+
         $data = $request->validated();
         $promo = $this->promoService->storePromo($data);
 
@@ -53,6 +55,22 @@ final class PromoController extends ApiController
             'success',
             __('crud.promos.created'),
             Response::HTTP_CREATED,
+        );
+    }
+
+    public function show(Promo $promo)
+    : JsonResponse {
+        $this->authorize('view', $promo);
+
+        $promo = $this->promoService->findPromo($promo, [
+            'user_id' => auth()->id(),
+            ...request()->all(),
+        ]);
+
+        return $this->successResponse(
+            new PromoFullResource($promo),
+            'success',
+            __('crud.promos.one'),
         );
     }
 }

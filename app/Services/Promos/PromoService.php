@@ -11,11 +11,11 @@ use App\Services\Promos\Handlers\CreatePromoHandler;
 use App\Services\Promos\Repositories\PromoRepositoryInterface;
 use Illuminate\Database\Eloquent\Collection;
 
-final class PromoService
+final readonly class PromoService
 {
     public function __construct(
-        private readonly PromoRepositoryInterface $promoRepository,
-        private readonly CreatePromoHandler $createPromoHandler,
+        private PromoRepositoryInterface $promoRepository,
+        private CreatePromoHandler $createPromoHandler,
     ) {
     }
 
@@ -27,5 +27,20 @@ final class PromoService
     public function getPromos(array $params = [])
     : Collection {
         return $this->promoRepository->get($params);
+    }
+
+    public function findPromo(Promo $promo, array $params = [])
+    : ?Promo {
+        return $this->promoRepository->find($promo, $params);
+    }
+
+    public function getPromoProducts(int $promo_id)
+    : Collection {
+        return $this->promoRepository->getProducts($promo_id);
+    }
+
+    public function getPromoSellers(int $promo_id)
+    : Collection {
+        return $this->promoRepository->getSellers($promo_id);
     }
 }
