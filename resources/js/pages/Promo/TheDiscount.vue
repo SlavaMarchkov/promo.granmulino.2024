@@ -240,6 +240,7 @@ onMounted(async () => {
     modalPopUp._element.addEventListener('hide.bs.modal', resetState);
 });
 
+// TODO: брать только активные продукты и выводить кол-во с форматированием
 const getCategories = async () => {
     const { data } = await get(MANAGER_URLS.CATEGORY, {
         params: {

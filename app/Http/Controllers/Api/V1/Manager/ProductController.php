@@ -9,9 +9,12 @@ use App\Http\Controllers\ApiController;
 use App\Http\Resources\V1\Product\ProductCollection;
 use App\Services\Products\ProductService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Cache;
 
 final class ProductController extends ApiController
 {
+    private const CACHE_KEY = 'products-list-manager';
+
     public function __construct(
         private readonly ProductService $productService,
     )
@@ -21,9 +24,9 @@ final class ProductController extends ApiController
     public function index()
     : JsonResponse
     {
-        $products = $this->productService->getProducts([
-            'is_active' => request()->boolean('is_active'),
-        ]);
+        $products = Cache::remember(self::CACHE_KEY, now()->addHour(), function () {
+            return $this->productService->getProducts([...request()->all()]);
+        });
 
         return $this->successResponse(
             new ProductCollection($products),

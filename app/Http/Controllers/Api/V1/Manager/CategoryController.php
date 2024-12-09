@@ -9,9 +9,12 @@ use App\Http\Controllers\ApiController;
 use App\Http\Resources\V1\Category\CategoryCollection;
 use App\Services\Categories\CategoryService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Cache;
 
 final class CategoryController extends ApiController
 {
+    private const CACHE_KEY = 'categories-list-manager';
+
     public function __construct(
         private readonly CategoryService $categoryService,
     )
@@ -21,9 +24,9 @@ final class CategoryController extends ApiController
     public function index()
     : JsonResponse
     {
-        $categories = $this->categoryService->getCategories([
-            ...request()->all()
-        ]);
+        $categories = Cache::remember(self::CACHE_KEY, now()->addHour(), function () {
+            return $this->categoryService->getCategories([...request()->all()]);
+        });
 
         return $this->successResponse(
             new CategoryCollection($categories),

@@ -117,7 +117,7 @@ const props = defineProps({
         default: 'Title is required',
     },
     customerId: {
-        type: Number,
+        type: [Number, String],
         required: true,
     },
     customerName: {
@@ -135,6 +135,15 @@ const state = reactive({
     checkedSellers: [],
     form: initialFormData(),
 });
+
+watch(
+    () => props.customerId,
+    async (newValue) => {
+        state.sellers = [];
+        state.checkedSellers = [];
+        if ( newValue !== '' ) await getCustomerSellers(newValue);
+    },
+);
 
 const getCustomerSellers = async (customerId) => {
     const { status, data } = await get(`${MANAGER_URLS.CUSTOMER}/${customerId}`, {
@@ -203,12 +212,4 @@ const totalBudgetPlan = computed(() => {
             return acc + parseInt(seller.budgetPlan);
         }, 0);
 });
-
-watch(
-    () => props.customerId,
-    async (newValue) => {
-        await getCustomerSellers(newValue);
-        state.checkedSellers = [];
-    },
-);
 </script>

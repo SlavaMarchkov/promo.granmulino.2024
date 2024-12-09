@@ -230,9 +230,9 @@
                                 style="height: 100px;"
                             ></textarea>
                         </div>
-                        <pre>{{ state.promo }}</pre>
                     </div>
                 </div>
+                <pre>{{ state.promo }}</pre>
                 <div class="card-footer">
                     <TheButton
                         @click="savePromo"
@@ -240,7 +240,8 @@
                             'btn-primary',
                             { 'btn-cursor-not-allowed' : !isFormValid() }
                         ]"
-                        :disabled="!isFormValid()"
+                        :disabled="spinnerStore.isButtonDisabled || !isFormValid()"
+                        :loading="spinnerStore.isButtonDisabled"
                     >Сохранить
                     </TheButton>
                 </div>
@@ -264,7 +265,7 @@
                 <template #default>
                     <SalesPeopleBoost
                         :title="currentPromoType.title"
-                        :customer-id="+state.promo.customerId"
+                        :customer-id="state.promo.customerId"
                         :customer-name="state.customerName"
                         @add-sellers-to-promo="addSellersHandler"
                     />
@@ -317,6 +318,7 @@
 import { computed, defineAsyncComponent, onMounted, reactive, watch } from 'vue';
 import { useAuthStore } from '@/stores/auth.js';
 import { useAlertStore } from '@/stores/alerts.js';
+import { useSpinnerStore } from '@/stores/spinners.js';
 import { useRouter } from 'vue-router';
 import { useHttpService } from '@/use/useHttpService.js';
 import { formatDateToISO } from '@/helpers/formatters.js';
@@ -333,6 +335,7 @@ import TheInOut from '@/pages/Promo/TheInOut.vue';
 
 const { get, post } = useHttpService();
 const alertStore = useAlertStore();
+const spinnerStore = useSpinnerStore();
 const router = useRouter();
 const authUser = useAuthStore().getUser;
 const arrayHandlers = useArrayHandlers();
@@ -369,10 +372,6 @@ const GiftForPurchase = defineAsyncComponent(() =>
 
 const RetailersBoost = defineAsyncComponent({
     loader: () => import('@/pages/Promo/RetailersBoost.vue'),
-    /* loadingComponent: LoadingComponent shows while loading */
-    /* errorComponent: ErrorComponent shows if there's an error */
-    delay: 1000 /* delay in ms before showing loading component */,
-    timeout: 3000 /* timeout after this many ms */,
 });
 
 const initialFormData = () => ({
@@ -380,11 +379,11 @@ const initialFormData = () => ({
     promoForRetail: false,
     discount: null,
     userId: authUser.id,
-    regionId: '',
-    cityId: '',
     channelId: '',
     customerId: '',
     retailerId: '',
+    regionId: '',
+    cityId: '',
     startDate: '',
     endDate: '',
     comments: '',
@@ -424,13 +423,13 @@ const getChannels = async (promoType) => {
 const getCustomers = async () => {
     const { data } = await get(MANAGER_URLS.CUSTOMER, {
         params: {
-            'region': true,
-            'city': true,
-            'user': true,
-            'retailers': true,
+            region: true,
+            city: true,
+            user: true,
+            retailers: true,
         },
     });
-    state.customers = data.customers;
+    state.customers = data;
 };
 
 watch(
@@ -439,10 +438,16 @@ watch(
         const promoType = newValue;
         currentPromoType = PROMO_TYPES.find(pt => pt.type === promoType);
 
+        state.promo.promoForRetail = currentPromoType.isForRetail;
+
+        state.promo.discount = null;
+        state.promo.channelId = '';
+        state.promo.customerId = '';
+        state.promo.retailerId = '';
+        state.promo.regionId = '';
+        state.promo.cityId = '';
         state.promo.products = [];
         state.promo.sellers = [];
-        state.promo.discount = null;
-        state.promo.promoForRetail = currentPromoType.isForRetail;
 
         await getChannels(currentPromoType);
     },
@@ -451,34 +456,36 @@ watch(
 watch(
     () => state.promo.customerId,
     (newValue) => {
-        onCustomerChange(newValue);
+        if ( newValue !== '' ) {
+            const customer = state.customers.find(customer => +customer.id === +newValue);
+
+            state.promo.regionId = customer.region.id;
+            state.promo.cityId = customer.city.id;
+            state.promo.products = [];
+            state.promo.sellers = [];
+
+            state.customerName = customer.name;
+
+            state.promo.retailerId = '';
+            state.customers.map(customer => {
+                if ( +customer.id === +newValue ) {
+                    state.retailers = customer.retailers;
+                }
+            });
+        } else {
+            state.customerName = newValue.toString();
+        }
     },
 );
 
 watch(
     () => state.promo.retailerId,
     (newValue) => {
-        state.retailerName = state.retailers.find(retailer => +retailer.id === +newValue).name;
+        state.retailerName = newValue !== ''
+            ? state.retailerName = state.retailers.find(retailer => +retailer.id === +newValue).name
+            : newValue.toString();
     },
 );
-
-const onCustomerChange = (customerId) => {
-    const customer = state.customers.find(customer => +customer.id === +customerId);
-
-    state.promo.regionId = customer.region.id;
-    state.promo.cityId = customer.city.id;
-    state.promo.products = [];
-    state.promo.sellers = [];
-
-    state.customerName = customer.name;
-
-    state.promo.retailerId = '';
-    state.customers.map(customer => {
-        if ( +customer.id === +customerId ) {
-            state.retailers = customer.retailers;
-        }
-    });
-};
 
 const addProductHandler = (products, salesBefore, salesPlan, budgetPlan) => {
     state.promo.products = products;
