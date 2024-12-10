@@ -34,9 +34,9 @@ final readonly class PromoService
         return $this->promoRepository->find($promo, $params);
     }
 
-    public function getPromoProducts(int $promo_id)
+    public function getPromoProducts(Promo $promo, array $params = [])
     : Collection {
-        return $this->promoRepository->getProducts($promo_id);
+        return $this->promoRepository->getProducts($promo, $params);
     }
 
     public function getPromoSellers(int $promo_id)

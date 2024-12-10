@@ -412,6 +412,7 @@ let currentPromoType = reactive({
 });
 
 onMounted(async () => {
+    state.promo = initialFormData();
     await getCustomers();
 });
 
@@ -510,7 +511,6 @@ const savePromo = async () => {
     const response = await post(MANAGER_URLS.PROMO, state.promo);
     if ( response && response.status === 'success' ) {
         alertStore.clear();
-        state.promo = initialFormData();
         await router.push({
             name: 'Manager.Promo.Index'
         });

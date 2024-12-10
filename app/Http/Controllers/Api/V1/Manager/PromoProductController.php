@@ -21,7 +21,10 @@ final class PromoProductController extends ApiController
 
     public function index(Promo $promo)
     : JsonResponse {
-        $products = $this->promoService->getPromoProducts($promo->id);
+        $products = $this->promoService->getPromoProducts(
+            $promo,
+            [...request()->all()],
+        );
 
         return $this->successResponse(
             PromoProductResource::collection($products),

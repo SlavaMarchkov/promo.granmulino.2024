@@ -31,4 +31,16 @@ class PromoProduct extends Model
     {
         return $this->belongsTo(Promo::class);
     }
+
+    public function category()
+    : BelongsTo
+    {
+        return $this->belongsTo(Category::class);
+    }
+
+    public function product()
+    : BelongsTo
+    {
+        return $this->belongsTo(Product::class);
+    }
 }

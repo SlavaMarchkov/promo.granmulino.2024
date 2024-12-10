@@ -14,19 +14,20 @@ class PromoProductResource extends JsonResource
     public function toArray(Request $request)
     : array {
         return [
-            'id'            => $this->id,
-            'promo_id'      => $this->promo_id,
-            'category_id'   => $this->category_id,
-            'product_id'    => $this->product_id,
-            'sales_before'  => $this->sales_before,
-            'sales_plan'    => $this->sales_plan,
-            'sales_on_time' => $this->sales_on_time,
-            'sales_after'   => $this->sales_after,
-            'compensation'  => $this->compensation,
-            'budget_plan'   => $this->budget_plan,
-            'budget_actual' => $this->budget_actual,
-            'profit_plan'   => $this->profit_plan,
-            'profit_actual' => $this->profit_actual,
+            'id'           => $this->id,
+            'promoId'      => $this->promo_id,
+            'categoryName' => $this->whenLoaded('category', fn() => $this->category->name),
+            'productName'  => $this->whenLoaded('product', fn() => $this->product->name),
+
+            'salesBefore'  => $this->sales_before,
+            'salesPlan'    => $this->sales_plan,
+            'salesOnTime'  => $this->sales_on_time,
+            'salesAfter'   => $this->sales_after,
+            'compensation' => $this->compensation,
+            'budgetPlan'   => $this->budget_plan,
+            'budgetActual' => $this->budget_actual,
+            'profitPlan'   => $this->profit_plan,
+            'profitActual' => $this->profit_actual,
         ];
     }
 }

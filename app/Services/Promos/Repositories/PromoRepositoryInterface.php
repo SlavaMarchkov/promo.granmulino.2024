@@ -19,7 +19,7 @@ interface PromoRepositoryInterface
     public function find(Promo $promo, array $params = [])
     : ?Promo;
 
-    public function getProducts(int $promo_id)
+    public function getProducts(Promo $promo, array $params = [])
     : Collection;
 
     public function getSellers(int $promo_id)

@@ -9,7 +9,6 @@
             <div class="col-12">
                 <div class="card">
                     <div class="card-body profile-card pt-4 d-flex flex-column">
-                        <pre>{{ promo }}</pre>
                         <h1 class="mb-3">kdkdkdk</h1>
                     </div>
                 </div>
@@ -92,7 +91,12 @@ watch(
 );
 
 const fetchPromoProducts = async (promoId) => {
-    const { status, data } = await get(`${MANAGER_URLS.PROMO}/${promoId}${MANAGER_URLS.PRODUCT}`);
+    const { status, data } = await get(`${MANAGER_URLS.PROMO}/${promoId}${MANAGER_URLS.PRODUCT}`, {
+        params: {
+            category: true,
+            product: true,
+        },
+    });
     if ( status === 'success' ) products.value = data;
 };
 
