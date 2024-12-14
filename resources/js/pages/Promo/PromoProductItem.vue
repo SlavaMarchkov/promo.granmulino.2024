@@ -1,21 +1,39 @@
 <template>
-    <li class="list-group-item m-0 px-3">
-        <div class="row align-items-center g-1">
-            <div class="col-md-1 text-center">{{ index + 1 }}</div>
-            <div class="col-md-4 fw-bold">{{ product.categoryName }} / {{ product.productName }}</div>
-            <div class="col-md-2 border">some3</div>
-            <div class="col-md-2">some4</div>
-            <div class="col-md-2">some5</div>
-            <div class="col-md-1">
+    <div class="col">
+        <div class="card mb-0">
+            <h6 class="card-header bg-secondary-subtle py-2 fw-bold text-black">
+                {{ product.categoryName }}</h6>
+            <h6 class="card-header py-2 fw-bold text-primary">
+                {{ product.productName }}
+            </h6>
+            <div class="card-body mt-2 pb-2">
+                <div class="row">
+                    <div class="col-7">Продажи "До"</div>
+                    <div class="col-5 fw-bold text-end">{{ formatNumber(product.salesBefore) }} шт.</div>
+                </div>
+                <div class="row">
+                    <div class="col-6">План</div>
+                    <div class="col-6 fw-bold text-end">{{ formatNumber(product.salesPlan) }} шт.</div>
+                </div>
+                <div class="row">
+                    <div class="col-7">Прирост</div>
+                    <div class="col-5 fw-bold text-end">{{ formatNumber(product.surplusPlan) }}&#8239;%</div>
+                </div>
+                <div class="row">
+                    <div class="col-6">Бюджет</div>
+                    <div class="col-6 fw-bold text-end">{{ formatNumber(product.budgetPlan) }} руб.</div>
+                </div>
+            </div>
+            <div class="card-footer py-2">
                 <TdButton
                     :id="product.id"
                     intent="edit"
                     class="w-100"
                     @runButtonHandler="modals.editModalPopUp = true"
-                >Edit</TdButton>
+                >Редактировать</TdButton>
             </div>
         </div>
-    </li>
+    </div>
 
     <TheModal
         v-if="modals.editModalPopUp"
@@ -29,6 +47,8 @@
             <p class="mb-1">Продукт: <span class="fw-bold text-primary">{{ product.productName }}</span></p>
         </template>
         <template #body>
+            <pre>{{ props.product }}</pre>
+            <pre>{{ state.form }}</pre>
             <div class="row mb-3 g-3">
                 <div class="col-md-2">
                     <TheLabel for="sales_before">Продажи "До акции"</TheLabel>
@@ -218,16 +238,14 @@ const modals = reactive({
 });
 
 const initialFormData = () => ({
-    categoryId: '',
-    productId: '',
-    salesBefore: props.product.salesBefore,
-    salesPlan: props.product.salesPlan,
+    salesBefore: formatNumber(props.product.salesBefore),
+    salesPlan: formatNumber(props.product.salesPlan),
     salesOnTime: '',
     salesAfter: '',
-    profitPlan: props.product.profitPlan,
+    profitPlan: formatNumber(props.product.profitPlan),
     profitActual: '',
     compensation: props.product.compensation,
-    budgetPlan: props.product.budgetPlan,
+    budgetPlan: formatNumber(props.product.budgetPlan),
     budgetActual: '',
 });
 

@@ -16,15 +16,13 @@
             <div v-if="products.length > 0" class="col-12">
                 <div class="card">
                     <div class="card-header"><h4 class="mb-0">Акционная продукция</h4></div>
-                    <div class="card-body">
-                        <ul class="list-group">
-                            <PromoProductItem
-                                v-for="(product, index) in products"
-                                :key="product.id"
-                                :index="index"
-                                :product="product"
-                            />
-                        </ul>
+                    <div class="card-body mt-3 row row-cols-xl-4 row-cols-lg-3 row-cols-md-3 row-cols-sm-2 row-cols-1 g-3">
+                        <PromoProductItem
+                            v-for="(product, index) in products"
+                            :key="product.id"
+                            :index="index"
+                            :product="product"
+                        />
                     </div>
                 </div>
             </div>

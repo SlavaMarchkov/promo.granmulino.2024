@@ -31,7 +31,10 @@
                 <hr>
                 <div v-if="state.addedProducts.length > 0" class="row row-cols-xl-3 row-cols-lg-3 row-cols-md-2 row-cols-sm-2 row-cols-1 g-3">
                     <DiscountProductCard
-                        :products="state.addedProducts"
+                        v-for="(product, index) in state.addedProducts"
+                        :key="product.id"
+                        :index="index"
+                        :product="product"
                         @remove-product="removeProduct"
                     />
                 </div>
