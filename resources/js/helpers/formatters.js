@@ -23,3 +23,13 @@ export function convertInputStringToNumber(str) {
     formattedStr = formattedStr.replace(/[^0-9.]+/g, '');
     return parseFloat(formattedStr);
 }
+
+export function isNumberNegative(num) {
+    return num.toString().startsWith('-');
+}
+
+export function processInputValue(value, el) {
+    const inputEl = document.getElementById(el);
+    const inputValue = convertInputStringToNumber(value);
+    inputEl.value = !isNaN(inputValue) ? formatNumber(inputValue) : '';
+}

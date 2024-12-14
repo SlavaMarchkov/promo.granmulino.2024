@@ -1,13 +1,14 @@
+import { convertInputStringToNumber } from '@/helpers/formatters.js';
+
 export function useCalculations() {
-    const calcSurplusPercent = (before, plan) => {
-        const numBefore = parseInt(before);
-        const numPlan = parseInt(plan);
-        return numBefore === 0
-            ? 0
-            : ((numPlan - numBefore) / numBefore * 100).toFixed();
+    const calcDifferencePercentage = (valueA, valueB) => {
+        const numA = convertInputStringToNumber(valueA);
+        const numB = convertInputStringToNumber(valueB);
+        const difference = numB - numA;
+        return numA === 0 ? 0 : Math.round((difference / numA) * 100);
     };
 
     return {
-        calcSurplusPercent,
+        calcDifferencePercentage,
     };
 }

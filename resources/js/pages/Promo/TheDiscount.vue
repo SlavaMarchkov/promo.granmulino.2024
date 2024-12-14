@@ -24,7 +24,7 @@
                 <div class="d-flex justify-content-between align-items-center">
                     <span>Ассортимент для промо-акции</span>
                     <TheButton
-                        @click="addProductModalInit"
+                        @click="modals.addModalPopUp = true; state.form = initialFormData();"
                         class="btn-success"
                     >Добавить</TheButton>
                 </div>
@@ -37,9 +37,10 @@
                 </div>
             </div>
         </div>
-        <Modal
-            id="modalPopUp"
-            :close-func="closeModal"
+        <TheModal
+            v-if="modals.addModalPopUp"
+            v-model="modals.addModalPopUp"
+            id="addModalPopUp"
             :custom-classes="['modal-lg']"
         >
             <template #title>
@@ -86,13 +87,14 @@
                             <TheInput
                                 id="sales_before"
                                 v-model="state.form.salesBefore"
-                                type="number"
-                                min="0"
+                                type="text"
+                                class="text-end"
                                 aria-describedby="sales_before_help"
+                                @blur="processInputValue($event.target.value, 'sales_before')"
                             />
                             <span class="input-group-text">шт.</span>
                         </div>
-                        <div id="sales_before_help" class="form-text">если продаж не было, укажите 0</div>
+                        <div id="sales_before_help" class="form-text">если продаж не было, введите 0</div>
                     </div>
                     <div class="col-md-4">
                         <TheLabel for="sales_plan" required>План продаж "Во время"</TheLabel>
@@ -100,8 +102,9 @@
                             <TheInput
                                 id="sales_plan"
                                 v-model="state.form.salesPlan"
-                                type="number"
-                                min="0"
+                                type="text"
+                                class="text-end"
+                                @blur="processInputValue($event.target.value, 'sales_plan')"
                             />
                             <span class="input-group-text">шт.</span>
                         </div>
@@ -112,7 +115,8 @@
                             <TheInput
                                 id="surplus_plan"
                                 v-model="state.form.surplusPlan"
-                                type="number"
+                                type="text"
+                                class="text-end fw-bold"
                                 disabled="disabled"
                                 aria-describedby="surplus_plan_help"
                             />
@@ -148,6 +152,7 @@
                             />
                             <span class="input-group-text">руб.</span>
                         </div>
+                        <div id="compensation_help" class="form-text">если компенсации нет, введите 0</div>
                     </div>
                     <div class="col-md-4">
                         <TheLabel for="budget_plan" required>Бюджет</TheLabel>
@@ -155,12 +160,14 @@
                             <TheInput
                                 id="budget_plan"
                                 v-model="state.form.budgetPlan"
-                                type="number"
+                                class="text-end fw-bold"
+                                type="text"
                                 disabled="disabled"
                                 aria-describedby="budget_plan_help"
                             />
                             <span class="input-group-text">руб.</span>
                         </div>
+                        <div id="budget_plan_help" class="form-text">компенсация * план продаж</div>
                     </div>
                 </div>
             </template>
@@ -171,22 +178,24 @@
                     :disabled="!isFormValid"
                 >Добавить</TheButton>
             </template>
-        </Modal>
+        </TheModal>
     </div>
 </template>
 
 <script setup>
 import { computed, onMounted, reactive, watch } from 'vue';
 import { useHttpService } from '@/use/useHttpService.js';
-import { formatNumber } from '@/helpers/formatters.js';
-import Modal from '@/components/Modal.vue';
+import { formatNumber, processInputValue } from '@/helpers/formatters.js';
+import TheModal from '@/components/TheModal.vue';
 import TheButton from '@/components/core/TheButton.vue';
 import TheLabel from '@/components/form/TheLabel.vue';
 import TheInput from '@/components/form/TheInput.vue';
 import { MANAGER_URLS } from '@/helpers/constants.js';
 import DiscountProductCard from '@/pages/Promo/DiscountProductCard.vue';
+import { useCalculations } from '@/use/useCalculations.js';
 
 const { get } = useHttpService();
+const { calcDifferencePercentage } = useCalculations();
 
 const props = defineProps({
     title: {
@@ -211,11 +220,11 @@ const emit = defineEmits([
 const initialFormData = () => ({
     categoryId: '',
     productId: '',
-    salesBefore: 0,
-    salesPlan: 0,
+    salesBefore: '',
+    salesPlan: '',
     surplusPlan: 0,
-    profitPlan: 0,
-    compensation: 0,
+    profitPlan: '',
+    compensation: '',
     budgetPlan: 0,
 });
 
@@ -227,20 +236,14 @@ const state = reactive({
     form: initialFormData(),
 });
 
-let modalPopUp = null;
-
-function resetState() {
-    state.products = [];
-    state.form = initialFormData();
-}
+const modals = reactive({
+    addModalPopUp: false,
+});
 
 onMounted(async () => {
     await getCategories();
-    modalPopUp = new bootstrap.Modal(document.getElementById('modalPopUp'));
-    modalPopUp._element.addEventListener('hide.bs.modal', resetState);
 });
 
-// TODO: брать только активные продукты и выводить кол-во с форматированием
 const getCategories = async () => {
     const { data } = await get(MANAGER_URLS.CATEGORY, {
         params: {
@@ -250,17 +253,6 @@ const getCategories = async () => {
         },
     });
     state.categories = data.categories;
-};
-
-const addProductModalInit = () => {
-    resetState();
-    modalPopUp.show();
-};
-
-const closeModal = () => {
-    resetState();
-    modalPopUp.hide();
-    modalPopUp._element.removeEventListener('hide.bs.modal', resetState);
 };
 
 const displayProducts = () => {
@@ -282,6 +274,8 @@ const addProduct = () => {
         salesPlan: state.form.salesPlan,
         surplusPlan: state.form.surplusPlan,
         budgetPlan: state.form.budgetPlan,
+        compensation: state.form.compensation,
+        profitPlan: state.form.profitPlan,
     });
     state.addedProductsIds.push(+state.form.productId);
     emit('addProductsToPromo',
@@ -290,7 +284,7 @@ const addProduct = () => {
         totalSalesPlan.value,
         totalBudgetPlan.value,
     );
-    closeModal();
+    modals.addModalPopUp = false;
 };
 
 const removeProduct = (index) => {
@@ -318,11 +312,19 @@ const getProductName = () => {
 const isFormValid = computed(() => {
     let valid = true;
 
+    const excludedKeys = [
+        'salesBefore',
+        'surplusPlan',
+        'compensation',
+        'budgetPlan'
+    ];
+
     for (let [key, value] of Object.entries(state.form)) {
-        if (key === 'salesBefore' || key === 'surplusPlan') {
+        if ( excludedKeys.includes(key) ) {
             continue;
         }
         if ( !value ) {
+            console.log(key, ' : ', value);
             valid = false;
             break;
         }
@@ -350,7 +352,7 @@ const totalBudgetPlan = computed(() => {
 });
 
 watch(() => state.form.salesBefore,
-    () => calcSurplusPlan()
+    () => calcSurplusPlan(),
 );
 
 watch(() => state.form.salesPlan,
@@ -367,9 +369,10 @@ watch(() => state.form.compensation,
 );
 
 function calcSurplusPlan() {
-    const salesBefore = +state.form.salesBefore;
-    const salesPlan = +state.form.salesPlan;
-    state.form.surplusPlan = salesBefore === 0 ? 0 : ((salesPlan - salesBefore) / salesBefore * 100).toFixed();
+    const result = calcDifferencePercentage(
+        state.form.salesBefore.toString(),
+        state.form.salesPlan.toString());
+    state.form.surplusPlan = !isNaN(result) ? result : 0;
 }
 
 function calcBudgetPlan() {

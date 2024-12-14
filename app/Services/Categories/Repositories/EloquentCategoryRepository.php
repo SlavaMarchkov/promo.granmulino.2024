@@ -14,35 +14,30 @@ final class EloquentCategoryRepository implements CategoryRepositoryInterface
 {
 
     public function find(Category $category)
-    : ?Category
-    {
+    : ?Category {
         return Category::query()->where('id', $category->id)->first();
     }
 
     public function get(array $params = [])
-    : Collection
-    {
+    : Collection {
         $categoriesSql = Category::query();
         $this->applyFilters($categoriesSql, $params);
         return $categoriesSql->get();
     }
 
     public function createFromArray(array $data)
-    : Category
-    {
+    : Category {
         return Category::query()->create($data);
     }
 
     public function updateFromArray(Category $category, array $data)
-    : Category
-    {
+    : Category {
         $category->update($data);
         return $category;
     }
 
     public function delete(Category $category)
-    : int
-    {
+    : int {
         $products_count = $category->products->count();
 
         if ($products_count == 0) {
@@ -53,23 +48,25 @@ final class EloquentCategoryRepository implements CategoryRepositoryInterface
     }
 
     private function applyFilters(Builder $qb, array $params)
-    : void
-    {
+    : void {
         $qb->when(
-                isset($params['category_is_active']) && to_boolean($params['category_is_active']),
-                fn($qb) => $qb->where('is_active', true)
-            )
-            ->when(
-                isset($params['products']) && to_boolean($params['products']),
-                fn(Builder $query) => $query->with('products'))
-            ->withCount([
-                'products' => function (Builder $query) use ($params) {
-                    $query->when(
+            isset($params['category_is_active']) && to_boolean($params['category_is_active']),
+            fn(Builder $query) => $query->where('is_active', true)
+                ->when(
+                    isset($params['products']) && to_boolean($params['products']),
+                    fn(Builder $query) => $query->with(
+                        'products',
+                        fn($qb) => $qb->when(
+                            isset($params['product_is_active']) && to_boolean($params['product_is_active']),
+                            fn(Builder $query) => $query->where('is_active', true),
+                        ),
+                    ),
+                )->withCount([
+                    'products' => fn(Builder $query) => $query->when(
                         isset($params['product_is_active']) && to_boolean($params['product_is_active']),
-                        fn($qb) => $qb->where('is_active', true)
-                    );
-                },
-            ])
-        ;
+                        fn($qb) => $qb->where('is_active', true),
+                    ),
+                ]),
+        );
     }
 }
