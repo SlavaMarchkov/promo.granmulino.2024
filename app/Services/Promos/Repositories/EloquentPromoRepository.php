@@ -92,6 +92,12 @@ final class EloquentPromoRepository implements PromoRepositoryInterface
         )->when(
             isset($params['product']) && to_boolean($params['product']),
             fn(Builder $query) => $query->with('product'),
+        )->when(
+            isset($params['customer']) && to_boolean($params['customer']),
+            fn(Builder $query) => $query->with('customer'),
+        )->when(
+            isset($params['retailer']) && to_boolean($params['retailer']),
+            fn(Builder $query) => $query->with('retailer'),
         );
     }
 

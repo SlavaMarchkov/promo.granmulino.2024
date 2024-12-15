@@ -15,12 +15,24 @@ class PromoResource extends JsonResource
     public function toArray(Request $request)
     : array {
         return [
-            'id'              => $this->id,
-            'status'          => $this->status,
-            'promoType'       => $this->promo_type,
-            'startDate'       => $this->start_date,
-            'endDate'         => $this->end_date,
-            'totalBudgetPlan' => $this->total_budget_plan,
+            'id'                => $this->id,
+            'status'            => $this->status,
+            'statusColor'       => $this->status->backgroundColor(),
+            'statusLabel'       => $this->status->label(),
+            'discount'          => $this->discount,
+            'totalBudgetPlan'   => $this->total_budget_plan,
+            'totalBudgetActual' => $this->total_budget_actual,
+
+            'promoType'    => $this->promo_type,
+            'promoLabel'   => $this->promo_type->label(),
+            'promoBgColor' => $this->promo_type->backgroundColor(),
+            'promoCode'    => $this->promo_type->promoTypeCode(),
+
+            'customerName' => $this->whenLoaded('customer', fn() => $this->customer->name),
+            'retailerName' => $this->whenLoaded('retailer', fn() => $this->retailer->name),
+
+            'startDate' => $this->start_date->format('d.m.Y'),
+            'endDate'   => $this->end_date->format('d.m.Y'),
         ];
     }
 }

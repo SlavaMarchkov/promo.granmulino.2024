@@ -13,7 +13,7 @@ class PromoMark extends Model
         'promo_id',
         'goals',
         'sales',
-        'outlets',
+        'staff',
         'comments',
     ];
 

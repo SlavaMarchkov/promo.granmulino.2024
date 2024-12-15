@@ -16,8 +16,6 @@ class PromoFullResource extends PromoResource
         return [
             ...parent::toArray($request),
 
-            'promoType'  => $this->promo_type,
-            'discount'   => $this->discount,
             'userId'     => $this->user_id,
             'regionId'   => $this->region_id,
             'cityId'     => $this->city_id,
@@ -27,12 +25,10 @@ class PromoFullResource extends PromoResource
 
             'comments' => $this->comments,
 
-            'totalSalesBefore'  => $this->total_sales_before,
-            'totalSalesPlan'    => $this->total_sales_plan,
-            'totalSalesOnTime'  => $this->total_sales_on_time,
-            'totalSalesAfter'   => $this->total_sales_after,
-            'totalBudgetPlan'   => $this->total_budget_plan,
-            'totalBudgetActual' => $this->total_budget_actual,
+            'totalSalesBefore' => $this->total_sales_before,
+            'totalSalesPlan'   => $this->total_sales_plan,
+            'totalSalesOnTime' => $this->total_sales_on_time,
+            'totalPromoProfit' => $this->total_promo_profit,
 
             'createdAt' => $this->created_at,
             'updatedAt' => $this->updated_at,

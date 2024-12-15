@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api\V1\Manager;
 
 use App\Http\Controllers\ApiController;
+use App\Http\Resources\V1\Customer\CustomerCollection;
 use App\Http\Resources\V1\Customer\CustomerFullResource;
 use App\Models\Customer;
 use App\Services\Customers\CustomerService;
@@ -36,7 +37,7 @@ final class CustomerController extends ApiController
         });
 
         return $this->successResponse(
-            CustomerFullResource::collection($customers),
+            new CustomerCollection($customers),
             'success',
             __('crud.customers.all'),
         );

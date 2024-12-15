@@ -128,19 +128,19 @@
                         <div id="surplus_plan_help" class="form-text">рассчитывается автоматически</div>
                     </div>
                     <div class="col-md-4">
-                        <TheLabel for="profit_plan" required>Прибыль на 1 шт.</TheLabel>
+                        <TheLabel for="profit_per_unit" required>Прибыль на 1 шт.</TheLabel>
                         <div class="input-group">
                             <TheInput
-                                id="profit_plan"
-                                v-model="state.form.profitPlan"
+                                id="profit_per_unit"
+                                v-model="state.form.profitPerUnit"
                                 type="number"
                                 min="0"
                                 step="0.01"
-                                aria-describedby="profit_plan_help"
+                                aria-describedby="profit_per_unit_help"
                             />
                             <span class="input-group-text">руб.</span>
                         </div>
-                        <div id="profit_plan_help" class="form-text">берётся из P&L</div>
+                        <div id="profit_per_unit_help" class="form-text">берётся из P&L</div>
                     </div>
                     <div class="col-md-4">
                         <TheLabel for="compensation" required>Компенсация на 1 шт.</TheLabel>
@@ -198,7 +198,7 @@ import DiscountProductCard from '@/pages/Promo/DiscountProductCard.vue';
 import { useCalculations } from '@/use/useCalculations.js';
 
 const { get } = useHttpService();
-const { calcDifferencePercentage } = useCalculations();
+const { calcDifferencePercentage, calcBudget } = useCalculations();
 
 const props = defineProps({
     title: {
@@ -226,7 +226,7 @@ const initialFormData = () => ({
     salesBefore: '',
     salesPlan: '',
     surplusPlan: 0,
-    profitPlan: '',
+    profitPerUnit: '',
     compensation: '',
     budgetPlan: 0,
 });
@@ -278,7 +278,7 @@ const addProduct = () => {
         surplusPlan: state.form.surplusPlan,
         budgetPlan: state.form.budgetPlan,
         compensation: state.form.compensation,
-        profitPlan: state.form.profitPlan,
+        profitPerUnit: state.form.profitPerUnit,
     });
     state.addedProductsIds.push(+state.form.productId);
     emit('addProductsToPromo',
@@ -379,8 +379,6 @@ function calcSurplusPlan() {
 }
 
 function calcBudgetPlan() {
-    const salesPlan = +state.form.salesPlan;
-    const compensation = +state.form.compensation;
-    state.form.budgetPlan = parseInt((compensation * salesPlan).toFixed(0));
+    state.form.budgetPlan = calcBudget(state.form.salesPlan, state.form.compensation);
 }
 </script>

@@ -18,12 +18,11 @@ class PromoProduct extends Model
         'sales_before',
         'sales_plan',
         'sales_on_time',
-        'sales_after',
         'compensation',
         'budget_plan',
         'budget_actual',
-        'profit_plan',
-        'profit_actual',
+        'profit_per_unit',
+        'total_profit',
     ];
 
     public function promo()

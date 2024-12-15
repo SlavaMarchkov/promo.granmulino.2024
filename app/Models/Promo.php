@@ -11,6 +11,7 @@ use App\Events\Promo\CreatedEvent;
 use App\Observers\PromoObserver;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
@@ -33,9 +34,9 @@ class Promo extends Model
         'total_sales_before',
         'total_sales_plan',
         'total_sales_on_time',
-        'total_sales_after',
         'total_budget_plan',
         'total_budget_actual',
+        'total_promo_profit',
     ];
 
     protected $casts = [
@@ -65,6 +66,18 @@ class Promo extends Model
     : HasOne
     {
         return $this->hasOne(PromoMark::class, 'promo_id', 'id');
+    }
+
+    public function customer()
+    : BelongsTo
+    {
+        return $this->belongsTo(Customer::class);
+    }
+
+    public function retailer()
+    : BelongsTo
+    {
+        return $this->belongsTo(Retailer::class);
     }
 
     public function promo_products()

@@ -17,10 +17,10 @@
                 </div>
                 <div class="row">
                     <div class="col-7">Прирост</div>
-                    <div class="col-5 fw-bold text-end">{{ formatNumber(product.surplusPlan) }}&#8239;%</div>
+                    <div class="col-5 fw-bold text-end">{{ formatNumber(calcSurplusPlan) }}&#8239;%</div>
                 </div>
                 <div class="row">
-                    <div class="col-6">Бюджет</div>
+                    <div class="col-6">Бюджет, план</div>
                     <div class="col-6 fw-bold text-end">{{ formatNumber(product.budgetPlan) }} руб.</div>
                 </div>
             </div>
@@ -43,12 +43,11 @@
     >
         <template #title>
             <h4>Редактирование акционного продукта</h4>
-            <p class="mb-1">Группа товара: <span class="fw-bold text-primary">{{ product.categoryName }}</span></p>
-            <p class="mb-1">Продукт: <span class="fw-bold text-primary">{{ product.productName }}</span></p>
         </template>
         <template #body>
-            <pre>{{ props.product }}</pre>
-            <pre>{{ state.form }}</pre>
+            <h5>Группа товара: <span class="fw-bold text-primary">{{ product.categoryName }}</span></h5>
+            <h5>Продукт: <span class="fw-bold text-primary">{{ product.productName }}</span></h5>
+            <hr>
             <div class="row mb-3 g-3">
                 <div class="col-md-2">
                     <TheLabel for="sales_before">Продажи "До акции"</TheLabel>
@@ -145,6 +144,33 @@
                     </div>
                 </div>
                 <div class="col-md-2">
+                    <TheLabel for="budget_actual" required>Бюджет, факт</TheLabel>
+                    <div class="input-group">
+                        <TheInput
+                            id="budget_actual"
+                            type="text"
+                            v-model="state.form.budgetActual"
+                            class="text-end bg-warning-light"
+                            readonly="readonly"
+                        />
+                        <span class="input-group-text">руб.</span>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <TheLabel for="budget_diff" required>Бюджет, план - факт</TheLabel>
+                    <div class="input-group">
+                        <TheInput
+                            id="budget_diff"
+                            type="text"
+                            v-model="state.form.budgetDiff"
+                            class="text-end fw-bold"
+                            :class="calcBudgetDiffClass"
+                            readonly="readonly"
+                        />
+                        <span class="input-group-text">руб.</span>
+                    </div>
+                </div>
+                <div class="col-md-2">
                     <TheLabel for="compensation" required>Компенсация на 1 шт.</TheLabel>
                     <div class="input-group">
                         <TheInput
@@ -156,44 +182,26 @@
                         <span class="input-group-text">руб.</span>
                     </div>
                 </div>
-                <div class="col-md-3">
-                    <TheLabel for="profit_plan" required>Прибыль на 1 шт.</TheLabel>
+                <div class="col-md-2">
+                    <TheLabel for="profit_per_unit" required>Прибыль на 1 шт.</TheLabel>
                     <div class="input-group">
                         <TheInput
-                            id="profit_plan"
-                            v-model="state.form.profitPlan"
-                            type="number"
-                            min="0"
-                            step="0.01"
-                            aria-describedby="profit_plan_help"
-                        />
-                        <span class="input-group-text">руб.</span>
-                    </div>
-                    <div id="profit_plan_help" class="form-text">берётся из P&L</div>
-                </div>
-                <div class="col-md-3">
-                    <TheLabel for="compensation" required>Компенсация на 1 шт.</TheLabel>
-                    <div class="input-group">
-                        <TheInput
-                            id="compensation"
-                            v-model="state.form.compensation"
-                            type="number"
-                            min="0"
-                            step="0.01"
-                            aria-describedby="compensation_help"
+                            id="profit_per_unit"
+                            v-model="state.form.profitPerUnit"
+                            type="text"
+                            class="text-end bg-warning-light"
                         />
                         <span class="input-group-text">руб.</span>
                     </div>
                 </div>
-                <div class="col-md-3">
-                    <TheLabel for="budget_plan" required>Бюджет</TheLabel>
+                <div class="col-md-2">
+                    <TheLabel for="total_profit" required>Общая прибыль</TheLabel>
                     <div class="input-group">
                         <TheInput
-                            id="budget_plan"
-                            v-model="state.form.budgetPlan"
-                            type="number"
-                            disabled="disabled"
-                            aria-describedby="budget_plan_help"
+                            id="total_profit"
+                            v-model="state.form.totalProfit"
+                            type="text"
+                            class="text-end bg-warning-light"
                         />
                         <span class="input-group-text">руб.</span>
                     </div>
@@ -220,7 +228,7 @@ import TdButton from '@/components/table/TdButton.vue';
 import TheLabel from '@/components/form/TheLabel.vue';
 import TheInput from '@/components/form/TheInput.vue';
 
-const { calcDifferencePercentage } = useCalculations();
+const { calcDifferencePercentage, calcBudget } = useCalculations();
 
 const props = defineProps({
     index: {
@@ -242,11 +250,12 @@ const initialFormData = () => ({
     salesPlan: formatNumber(props.product.salesPlan),
     salesOnTime: '',
     salesAfter: '',
-    profitPlan: formatNumber(props.product.profitPlan),
-    profitActual: '',
+    profitPerUnit: props.product.profitPerUnit,
     compensation: props.product.compensation,
     budgetPlan: formatNumber(props.product.budgetPlan),
     budgetActual: '',
+    budgetDiff: '',
+    totalProfit: '',
 });
 
 const state = reactive({
@@ -278,6 +287,7 @@ const calcSurplusPlan = computed(() => {
 const calcSurplusActual = computed(() => {
     const result = calcDifferencePercentage(state.form.salesBefore, state.form.salesOnTime);
     if ( !isNaN(result) ) {
+        calcBudgetActual();
         return formatNumber(result);
     }
 });
@@ -309,5 +319,35 @@ const calcSurplusDiffClass = computed(() => {
         : calcSurplusDiff.value.toString() === '0'
             ? 'bg-warning-subtle text-black'
             : 'bg-success-subtle text-success';
+});
+
+const calcBudgetActual = () => {
+    state.form.budgetActual = formatNumber(calcBudget(state.form.salesOnTime, state.form.compensation));
+    calcBudgetDiff();
+    calcTotalProfit();
+};
+
+const calcBudgetDiff = () => {
+    const planNum = convertInputStringToNumber(state.form.budgetPlan);
+    const actualNum = convertInputStringToNumber(state.form.budgetActual);
+    state.form.budgetDiff = formatNumber(planNum - actualNum);
+};
+
+const calcTotalProfit = () => {
+    const salesOnTimeNum = convertInputStringToNumber(state.form.salesOnTime);
+    state.form.totalProfit = formatNumber(state.form.profitPerUnit * salesOnTimeNum);
+};
+
+const calcBudgetDiffClass = computed(() => {
+    if ( state.form.budgetDiff ) {
+        const budgetDiffNum = convertInputStringToNumber(state.form.budgetDiff);
+        return isNumberNegative(budgetDiffNum)
+            ? 'bg-success-subtle text-success'
+            : budgetDiffNum === 0
+                ? 'bg-warning-subtle text-black'
+                : 'bg-danger-subtle text-danger';
+    } else {
+        return 'bg-warning-subtle text-black';
+    }
 });
 </script>

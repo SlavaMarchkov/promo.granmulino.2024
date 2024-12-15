@@ -14,7 +14,7 @@
                 </div>
                 <div class="col-md-4 mb-2">
                     <InputGroup
-                        v-model="searchBy.city"
+                        v-model="searchBy.cityName"
                         placeholder="Поиск по городу"
                     >
                         Город
@@ -37,8 +37,8 @@
                 <h5 class="card-header">{{ item.name }}</h5>
                 <div class="card-body mt-3">
                     <ul class="mb-0 list-unstyled">
-                        <li><strong>Регион</strong>: {{ item.city.regionName }}</li>
-                        <li><strong>Город</strong>: {{ item.city.name }}</li>
+                        <li><strong>Регион</strong>: {{ item.regionName }}</li>
+                        <li><strong>Город</strong>: {{ item.cityName }}</li>
                         <li><strong>Работает</strong>: <TheBadge :is-active="item.isActive" /></li>
                     </ul>
                 </div>
@@ -88,7 +88,7 @@ const state = reactive({
 
 const searchBy = reactive({
     name: '',
-    city: '',
+    cityName: '',
     isActive: false,
 });
 
@@ -99,7 +99,8 @@ onMounted(async () => {
 const getCustomers = async () => {
     const { data } = await get(MANAGER_URLS.CUSTOMER, {
         params: {
-            'city': true,
+            region: true,
+            city: true,
         },
     });
     state.customers = data.customers;

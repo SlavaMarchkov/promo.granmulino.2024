@@ -4,7 +4,7 @@
         class="row row-cols-xl-4 row-cols-lg-3 row-cols-md-3 row-cols-sm-2 row-cols-1 g-3"
     >
         <PromoCard
-            v-for="(promo, index) in state.promos"
+            v-for="promo in state.promos"
             :key="promo.id"
             :promo="promo"
         />
@@ -42,7 +42,12 @@ onMounted(async () => {
 });
 
 const getPromos = async () => {
-    const { data } = await get(MANAGER_URLS.PROMO);
+    const { data } = await get(MANAGER_URLS.PROMO, {
+        params: {
+            customer: true,
+            retailer: true,
+        },
+    });
     state.promos = data.promos;
 };
 </script>
