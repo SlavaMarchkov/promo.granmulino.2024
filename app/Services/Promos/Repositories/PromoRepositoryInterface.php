@@ -6,6 +6,7 @@ declare(strict_types=1);
 namespace App\Services\Promos\Repositories;
 
 use App\Models\Promo;
+use App\Models\PromoProduct;
 use Illuminate\Database\Eloquent\Collection;
 
 interface PromoRepositoryInterface
@@ -24,4 +25,7 @@ interface PromoRepositoryInterface
 
     public function getSellers(int $promo_id)
     : Collection;
+
+    public function updatePromoProductFromArray(int $promo_id, PromoProduct $promoProduct, array $data)
+    : PromoProduct;
 }

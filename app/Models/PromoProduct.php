@@ -22,7 +22,7 @@ class PromoProduct extends Model
         'budget_plan',
         'budget_actual',
         'profit_per_unit',
-        'total_profit',
+        'promo_profit',
     ];
 
     public function promo()

@@ -8,20 +8,33 @@
             </h6>
             <div class="card-body mt-2 pb-2">
                 <div class="row">
-                    <div class="col-7">Продажи "До"</div>
-                    <div class="col-5 fw-bold text-end">{{ formatNumber(product.salesBefore) }} шт.</div>
+                    <div class="col-6">Продажи "До"</div>
+                    <div class="col-6 fw-bold text-end">{{ formatNumber(product.salesBefore) }} шт.</div>
                 </div>
                 <div class="row">
                     <div class="col-6">План</div>
                     <div class="col-6 fw-bold text-end">{{ formatNumber(product.salesPlan) }} шт.</div>
                 </div>
                 <div class="row">
-                    <div class="col-7">Прирост</div>
-                    <div class="col-5 fw-bold text-end">{{ formatNumber(calcSurplusPlan) }}&#8239;%</div>
+                    <div class="col-6">Прирост</div>
+                    <div class="col-6 fw-bold text-end">{{ formatNumber(calcSurplusPlan) }}&#8239;%</div>
                 </div>
                 <div class="row">
                     <div class="col-6">Бюджет, план</div>
                     <div class="col-6 fw-bold text-end">{{ formatNumber(product.budgetPlan) }} руб.</div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-6">Продажи "Во время"</div>
+                    <div class="col-6 fw-bold text-end">{{ formatNumber(product.salesOnTime) }} шт.</div>
+                </div>
+                <div class="row">
+                    <div class="col-6">Бюджет, факт</div>
+                    <div class="col-6 fw-bold text-end">{{ formatNumber(product.budgetActual) }} руб.</div>
+                </div>
+                <div class="row">
+                    <div class="col-6">Прибыль на SKU</div>
+                    <div class="col-6 fw-bold text-end">{{ formatNumber(product.totalProfit) }} руб.</div>
                 </div>
             </div>
             <div class="card-footer py-2">
@@ -89,7 +102,7 @@
                     </div>
                 </div>
                 <div class="col-md-2">
-                    <TheLabel for="sales_on_time">Продажи "Во время"</TheLabel>
+                    <TheLabel for="sales_on_time" required>Продажи "Во время"</TheLabel>
                     <div class="input-group">
                         <TheInput
                             id="sales_on_time"
@@ -131,7 +144,7 @@
             </div>
             <div class="row g-3">
                 <div class="col-md-2">
-                    <TheLabel for="budget_plan" required>Бюджет, план</TheLabel>
+                    <TheLabel for="budget_plan">Бюджет, план</TheLabel>
                     <div class="input-group">
                         <TheInput
                             id="budget_plan"
@@ -144,7 +157,7 @@
                     </div>
                 </div>
                 <div class="col-md-2">
-                    <TheLabel for="budget_actual" required>Бюджет, факт</TheLabel>
+                    <TheLabel for="budget_actual">Бюджет, факт</TheLabel>
                     <div class="input-group">
                         <TheInput
                             id="budget_actual"
@@ -157,7 +170,7 @@
                     </div>
                 </div>
                 <div class="col-md-2">
-                    <TheLabel for="budget_diff" required>Бюджет, план - факт</TheLabel>
+                    <TheLabel for="budget_diff">Бюджет, план - факт</TheLabel>
                     <div class="input-group">
                         <TheInput
                             id="budget_diff"
@@ -171,7 +184,7 @@
                     </div>
                 </div>
                 <div class="col-md-2">
-                    <TheLabel for="compensation" required>Компенсация на 1 шт.</TheLabel>
+                    <TheLabel for="compensation">Компенсация на 1 шт.</TheLabel>
                     <div class="input-group">
                         <TheInput
                             id="compensation"
@@ -195,11 +208,11 @@
                     </div>
                 </div>
                 <div class="col-md-2">
-                    <TheLabel for="total_profit" required>Общая прибыль</TheLabel>
+                    <TheLabel for="total_profit" required>Прибыль на SKU</TheLabel>
                     <div class="input-group">
                         <TheInput
                             id="total_profit"
-                            v-model="state.form.totalProfit"
+                            v-model="state.form.promoProfit"
                             type="text"
                             class="text-end bg-warning-light"
                         />
@@ -212,7 +225,7 @@
             <TheButton
                 class="btn-warning w-25"
                 type="button"
-                @click="saveProductItem"
+                @click="saveChangesHandler"
             >Сохранить изменения</TheButton>
         </template>
     </TheModal>
@@ -241,40 +254,40 @@ const props = defineProps({
     },
 });
 
+const emit = defineEmits([
+    'updateProductItem',
+]);
+
 const modals = reactive({
     editModalPopUp: false,
 });
 
 const initialFormData = () => ({
+    id: props.product.id.toString(),
     salesBefore: formatNumber(props.product.salesBefore),
     salesPlan: formatNumber(props.product.salesPlan),
-    salesOnTime: '',
-    salesAfter: '',
+    salesOnTime: formatNumber(props.product.salesOnTime),
     profitPerUnit: props.product.profitPerUnit,
     compensation: props.product.compensation,
     budgetPlan: formatNumber(props.product.budgetPlan),
     budgetActual: '',
     budgetDiff: '',
-    totalProfit: '',
+    promoProfit: '',
 });
 
 const state = reactive({
     form: initialFormData(),
 });
 
-const saveProductItem = async () => {
-    console.log('saving...');
-    //editModalPopUp.hide();
-    // get(`${MANAGER_URLS.PROMO}/${promoId}`);
-    /*const response = await post(ADMIN_URLS.CATEGORY, state.category);
-    if ( response && response.status === 'success' ) {
-        alertStore.clear();
-        state.category = initialFormData();
-        editModalPopUp.hide();
-        arrayHandlers.resetSearchKeys(searchBy);
-        arrayHandlers.resetSortKeys('id', false);
-        await getCategories();
-    }*/
+const saveChangesHandler = () => {
+    emit('updateProductItem', processObjectEntries());
+    modals.editModalPopUp = false;
+};
+
+const processObjectEntries = () => {
+    const obj = {};
+    Object.keys(state.form).map(key => obj[key] = convertInputStringToNumber(state.form[key]));
+    return obj;
 };
 
 const calcSurplusPlan = computed(() => {
@@ -324,7 +337,7 @@ const calcSurplusDiffClass = computed(() => {
 const calcBudgetActual = () => {
     state.form.budgetActual = formatNumber(calcBudget(state.form.salesOnTime, state.form.compensation));
     calcBudgetDiff();
-    calcTotalProfit();
+    calcPromoProfit();
 };
 
 const calcBudgetDiff = () => {
@@ -333,9 +346,9 @@ const calcBudgetDiff = () => {
     state.form.budgetDiff = formatNumber(planNum - actualNum);
 };
 
-const calcTotalProfit = () => {
+const calcPromoProfit = () => {
     const salesOnTimeNum = convertInputStringToNumber(state.form.salesOnTime);
-    state.form.totalProfit = formatNumber(state.form.profitPerUnit * salesOnTimeNum);
+    state.form.promoProfit = formatNumber(state.form.profitPerUnit * salesOnTimeNum);
 };
 
 const calcBudgetDiffClass = computed(() => {

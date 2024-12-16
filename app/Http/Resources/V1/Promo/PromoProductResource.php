@@ -26,7 +26,7 @@ class PromoProductResource extends JsonResource
             'budgetPlan'    => $this->budget_plan,
             'budgetActual'  => $this->budget_actual,
             'profitPerUnit' => $this->profit_per_unit,
-            'totalProfit'   => $this->total_profit,
+            'promoProfit'   => $this->promo_profit,
         ];
     }
 }

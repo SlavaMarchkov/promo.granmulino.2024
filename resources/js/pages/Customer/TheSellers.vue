@@ -16,7 +16,11 @@
         />
     </div>
     <div v-else class="row">
-        <p class="mb-0"><span class="text-danger">Не добавлено ни одного супервайзера!</span><br>Введите поочерёдно ФИО супервайзеров, отметив при этом галочку.</p>
+        <div class="col-12">
+            <div class="bd-callout bd-callout-warning mb-0">
+                <p class="mb-0"><span class="fw-bold text-danger">Не добавлено ни одного супервайзера!</span><br>Введите поочерёдно ФИО супервайзеров, отметив при этом галочку.</p>
+            </div>
+        </div>
     </div>
     <hr>
     <h4 class="mb-3">Торговые представители без привязки к супервайзерам</h4>
@@ -33,7 +37,11 @@
         />
     </div>
     <div v-else class="row">
-        <p class="mb-0"><span class="text-danger">Команда торговых представителей ещё не создана!</span><br>Наполните команду, вводя поочерёдно ФИО торговых представителей.</p>
+        <div class="col-12">
+            <div class="bd-callout bd-callout-warning mb-0">
+                <p class="mb-0">Наполните команду:<br>Шаг 1. Введите поочерёдно ФИО торговых представителей.<br>Шаг 2. Привяжите их к супервайзерам перетаскиванием мышкой.</p>
+            </div>
+        </div>
     </div>
     <hr>
     <Alert/>

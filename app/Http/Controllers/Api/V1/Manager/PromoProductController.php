@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api\V1\Manager;
 
 use App\Http\Controllers\ApiController;
+use App\Http\Requests\Promo\PromoProductUpdateRequest;
 use App\Http\Resources\V1\Promo\PromoProductResource;
 use App\Models\Promo;
 use App\Models\PromoProduct;
 use App\Services\Promos\PromoService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 final class PromoProductController extends ApiController
 {
@@ -33,16 +33,16 @@ final class PromoProductController extends ApiController
         );
     }
 
-    public function store(Request $request)
-    {
-    }
+    public function update(int $promo_id, PromoProduct $product, PromoProductUpdateRequest $request)
+    : JsonResponse {
+        $data = $request->validated();
+        $product = $this->promoService->updatePromoProduct($promo_id, $product, $data);
 
-    public function show(PromoProduct $promoProduct)
-    {
-    }
-
-    public function update(Request $request, PromoProduct $promoProduct)
-    {
+        return $this->successResponse(
+            new PromoProductResource($product),
+            'success',
+            __('crud.products.updated'),
+        );
     }
 
     public function destroy(PromoProduct $promoProduct)

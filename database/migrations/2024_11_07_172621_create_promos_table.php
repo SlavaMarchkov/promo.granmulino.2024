@@ -50,6 +50,7 @@ return new class extends Migration {
             $table->decimal('total_budget_plan', 10, 0)->default(0);
             $table->decimal('total_budget_actual', 10, 0)->default(0);
             $table->decimal('total_promo_profit', 10, 0)->default(0);
+            $table->decimal('total_mark', 3)->default(0.00);
 
             $table->timestamps();
         });
@@ -69,7 +70,7 @@ return new class extends Migration {
             $table->decimal('budget_plan', 10, 0)->default(0);
             $table->decimal('budget_actual', 10, 0)->default(0);
             $table->decimal('profit_per_unit', 10, 2)->default(0);
-            $table->decimal('total_profit', 10, 0)->default(0);
+            $table->decimal('promo_profit', 10, 0)->default(0);
 
             $table->timestamps();
         });

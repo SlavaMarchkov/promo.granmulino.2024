@@ -24,7 +24,7 @@
                 <div class="d-flex justify-content-between align-items-center">
                     <span>Ассортимент для промо-акции</span>
                     <TheButton
-                        @click="modals.addModalPopUp = true; state.form = initialFormData();"
+                        @click="modals.addModalPopUp = true; state.form = initialFormData(); state.products = [];"
                         class="btn-success"
                     >Добавить</TheButton>
                 </div>
@@ -287,6 +287,7 @@ const addProduct = () => {
         totalSalesPlan.value,
         totalBudgetPlan.value,
     );
+    state.products = [];
     modals.addModalPopUp = false;
 };
 
@@ -327,7 +328,6 @@ const isFormValid = computed(() => {
             continue;
         }
         if ( !value ) {
-            console.log(key, ' : ', value);
             valid = false;
             break;
         }
@@ -379,6 +379,7 @@ function calcSurplusPlan() {
 }
 
 function calcBudgetPlan() {
-    state.form.budgetPlan = calcBudget(state.form.salesPlan, state.form.compensation);
+    const result = calcBudget(state.form.salesPlan, state.form.compensation);
+    state.form.budgetPlan = !isNaN(result) ? result : 0;
 }
 </script>

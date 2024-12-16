@@ -36,8 +36,7 @@ final class EloquentPromoRepository implements PromoRepositoryInterface
      * @throws Exception
      */
     public function createFromArray(array $data)
-    : Promo
-    {
+    : Promo {
         try {
             $promo = new Promo();
             $promo->fill($data);
@@ -81,11 +80,42 @@ final class EloquentPromoRepository implements PromoRepositoryInterface
         }
     }
 
+    /**
+     * @throws Exception
+     */
+    public function updatePromoProductFromArray(int $promo_id, PromoProduct $promoProduct, array $data)
+    : PromoProduct {
+        try {
+            $promo = Promo::query()->where('id', $promo_id)->first();
+
+            DB::beginTransaction();
+
+            $promo->update([
+                'total_sales_on_time' => $promo->total_sales_on_time + $data['sales_on_time'],
+                'total_budget_actual' => $promo->total_budget_actual + $data['budget_actual'],
+                'total_promo_profit' => $promo->total_promo_profit + $data['promo_profit'],
+            ]);
+
+            $promoProduct->update($data);
+
+            DB::commit();
+
+            return $promoProduct;
+        } catch (Exception $exception) {
+            DB::rollBack();
+            Log::error('Error updating the Promo with ID={id}. Error: {error}', [
+                'id' => $promo_id,
+                'error' => $exception->getMessage(),
+            ]);
+            throw $exception;
+        }
+    }
+
     private function applyFilters(Builder $qb, array $params)
     : void {
         $qb->when(
             isset($params['user_id']),
-            fn(Builder $query) => $query->where('user_id', (int)$params['user_id'])
+            fn(Builder $query) => $query->where('user_id', (int)$params['user_id']),
         )->when(
             isset($params['category']) && to_boolean($params['category']),
             fn(Builder $query) => $query->with('category'),
@@ -98,6 +128,9 @@ final class EloquentPromoRepository implements PromoRepositoryInterface
         )->when(
             isset($params['retailer']) && to_boolean($params['retailer']),
             fn(Builder $query) => $query->with('retailer'),
+        )->when(
+            isset($params['city']) && to_boolean($params['city']),
+            fn(Builder $query) => $query->with('city'),
         );
     }
 

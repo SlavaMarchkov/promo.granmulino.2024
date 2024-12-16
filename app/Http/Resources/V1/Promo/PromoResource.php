@@ -22,11 +22,12 @@ class PromoResource extends JsonResource
             'discount'          => $this->discount,
             'totalBudgetPlan'   => $this->total_budget_plan,
             'totalBudgetActual' => $this->total_budget_actual,
+            'totalMark'         => $this->total_mark,
 
             'promoType'    => $this->promo_type,
-            'promoLabel'   => $this->promo_type->label(),
-            'promoBgColor' => $this->promo_type->backgroundColor(),
-            'promoCode'    => $this->promo_type->promoTypeCode(),
+            'promoLabel'   => $this->promo_type?->label(),
+            'promoBgColor' => $this->promo_type?->backgroundColor(),
+            'promoCode'    => $this->promo_type?->promoTypeCode(),
 
             'customerName' => $this->whenLoaded('customer', fn() => $this->customer->name),
             'retailerName' => $this->whenLoaded('retailer', fn() => $this->retailer->name),

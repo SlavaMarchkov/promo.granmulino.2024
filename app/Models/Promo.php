@@ -37,6 +37,7 @@ class Promo extends Model
         'total_budget_plan',
         'total_budget_actual',
         'total_promo_profit',
+        'total_mark',
     ];
 
     protected $casts = [
@@ -55,10 +56,11 @@ class Promo extends Model
 
         // TODO: перенести в Observers
         self::updated(function (Promo $promo) {
-            if ($promo->wasChanged()) {
-                dump($promo->getOriginal());
-                dump($promo->getAttributes());
-            }
+//            if ($promo->wasChanged()) {
+                // TODO: создать event(new UpdatedEvent($promo));
+//                dump($promo->getOriginal());
+//                dump($promo->getAttributes());
+//            }
         });
     }
 
@@ -78,6 +80,12 @@ class Promo extends Model
     : BelongsTo
     {
         return $this->belongsTo(Retailer::class);
+    }
+
+    public function city()
+    : BelongsTo
+    {
+        return $this->belongsTo(City::class);
     }
 
     public function promo_products()

@@ -7,7 +7,9 @@ namespace App\Services\Promos;
 
 
 use App\Models\Promo;
+use App\Models\PromoProduct;
 use App\Services\Promos\Handlers\CreatePromoHandler;
+use App\Services\Promos\Handlers\UpdatePromoProductHandler;
 use App\Services\Promos\Repositories\PromoRepositoryInterface;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -16,6 +18,7 @@ final readonly class PromoService
     public function __construct(
         private PromoRepositoryInterface $promoRepository,
         private CreatePromoHandler $createPromoHandler,
+        private UpdatePromoProductHandler $updatePromoProductHandler,
     ) {
     }
 
@@ -42,5 +45,10 @@ final readonly class PromoService
     public function getPromoSellers(int $promo_id)
     : Collection {
         return $this->promoRepository->getSellers($promo_id);
+    }
+
+    public function updatePromoProduct(int $promo_id, PromoProduct $promoProduct, array $data)
+    : PromoProduct {
+        return $this->updatePromoProductHandler->handle($promo_id, $promoProduct, $data);
     }
 }

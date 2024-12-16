@@ -33,3 +33,7 @@ export function processInputValue(value, el) {
     const inputValue = convertInputStringToNumber(value);
     inputEl.value = !isNaN(inputValue) ? formatNumber(inputValue) : '';
 }
+
+export function formatStringAsNumber(str) {
+    return formatNumber(convertInputStringToNumber(str));
+}

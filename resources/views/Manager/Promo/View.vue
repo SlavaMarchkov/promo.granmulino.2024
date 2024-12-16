@@ -12,38 +12,56 @@
                         <h3 class="mb-0">{{ promo.promoCode }}{{ promo.discount !== null ? `-${promo.discount}` : '' }}</h3>
                         <h4 class="mb-0"><span :class="[ 'badge', promo.statusColor ]">{{ promo.statusLabel }}</span></h4>
                     </div>
-                    <div class="card-body pt-4 d-flex">
+                    <div class="card-body mt-2 row g-3">
                         <div class="col-3">
                             <div class="card mb-0">
                                 <div class="card-body">
                                     <h5 class="card-title">Место проведения <span>| Канал продаж</span></h5>
-                                    <div class="d-flex align-items-center">
-                                        Контрагент
-                                        Торговая сеть
-                                        Регион
-                                        Город
+                                    <div class="row">
+                                        <div class="col-6">Контрагент</div>
+                                        <div class="col-6 fw-bold text-end">{{ promo.customerName }}</div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-6">Торговая сеть</div>
+                                        <div class="col-6 fw-bold text-end">{{ promo.retailerName }}</div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-6">Регион (код)</div>
+                                        <div class="col-6 fw-bold text-end">{{ promo.regionCode }}</div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-6">Город</div>
+                                        <div class="col-6 fw-bold text-end">{{ promo.cityName }}</div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-3">
+                        <div class="col-2">
                             <div class="card mb-0">
                                 <div class="card-body">
                                     <h5 class="card-title">Даты проведения</h5>
-                                    <div class="d-flex align-items-center">
-                                        Дата начала
-                                        Дата окончания
+                                    <div class="row">
+                                        <div class="col-6">Начало</div>
+                                        <div class="col-6 fw-bold text-end">{{ promo.startDate }}</div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-6">Окончание</div>
+                                        <div class="col-6 fw-bold text-end">{{ promo.endDate }}</div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-3">
+                        <div class="col-2">
                             <div class="card mb-0">
                                 <div class="card-body">
                                     <h5 class="card-title">Бюджет</h5>
-                                    <div class="d-flex align-items-center">
-                                        План
-                                        Факт
+                                    <div class="row">
+                                        <div class="col-4">План</div>
+                                        <div class="col-8 fw-bold text-end">{{ formatNumber(promo.totalBudgetPlan) }} руб.</div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-4">Факт</div>
+                                        <div class="col-8 fw-bold text-end">{{ formatNumber(promo.totalBudgetActual) }} руб.</div>
                                     </div>
                                 </div>
                             </div>
@@ -51,9 +69,29 @@
                         <div class="col-3">
                             <div class="card mb-0">
                                 <div class="card-body">
+                                    <h5 class="card-title">Продажи</h5>
+                                    <div class="row">
+                                        <div class="col-6">Продажи "До"</div>
+                                        <div class="col-6 fw-bold text-end">{{ formatNumber(promo.totalSalesBefore) }} шт.</div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-6">План продаж</div>
+                                        <div class="col-6 fw-bold text-end">{{ formatNumber(promo.totalSalesPlan) }} шт.</div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-6">Продажи "Во время"</div>
+                                        <div class="col-6 fw-bold text-end">{{ formatNumber(promo.totalSalesOnTime) }} шт.</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-2">
+                            <div class="card mb-0">
+                                <div class="card-body">
                                     <h5 class="card-title">Общая прибыль</h5>
-                                    <div class="d-flex align-items-center">
-                                        Прибыль
+                                    <div class="row">
+                                        <div class="col-6">Прибыль</div>
+                                        <div class="col-6 fw-bold text-end">{{ formatNumber(promo.totalPromoProfit) }} руб.</div>
                                     </div>
                                 </div>
                             </div>
@@ -133,6 +171,7 @@
                             :key="product.id"
                             :index="index"
                             :product="product"
+                            @update-product-item="updatePromoProduct"
                         />
                     </div>
                 </div>
@@ -160,13 +199,14 @@ import Alert from '@/components/Alert.vue';
 import TheSpinner from '@/components/core/TheSpinner.vue';
 import PromoProductItem from '@/pages/Promo/PromoProductItem.vue';
 import TheButton from '@/components/core/TheButton.vue';
+import { formatNumber } from '@/helpers/formatters.js';
 
 const route = useRoute();
 const router = useRouter();
 const spinnerStore = useSpinnerStore();
 const arrayHandlers = useArrayHandlers();
 
-const { get } = useHttpService();
+const { get, update } = useHttpService();
 const promoId = +route.params.id;
 
 const promo = ref({});
@@ -182,7 +222,13 @@ const isPromoFound = computed(() => {
 });
 
 const fetchDetails = async (promoId) => {
-    const { status, data } = await get(`${MANAGER_URLS.PROMO}/${promoId}`);
+    const { status, data } = await get(`${ MANAGER_URLS.PROMO }/${ promoId }`, {
+        params: {
+            customer: true,
+            retailer: true,
+            city: true,
+        },
+    });
     if ( status === 'success' ) promo.value = data;
 };
 
@@ -201,7 +247,7 @@ watch(
 );
 
 const fetchPromoProducts = async (promoId) => {
-    const { status, data } = await get(`${MANAGER_URLS.PROMO}/${promoId}${MANAGER_URLS.PRODUCT}`, {
+    const { status, data } = await get(`${ MANAGER_URLS.PROMO }/${ promoId }${ MANAGER_URLS.PRODUCT }`, {
         params: {
             category: true,
             product: true,
@@ -211,7 +257,20 @@ const fetchPromoProducts = async (promoId) => {
 };
 
 const fetchPromoSellers = async (promoId) => {
-    const { status, data } = await get(`${MANAGER_URLS.PROMO}/${promoId}${MANAGER_URLS.SELLER}`);
+    const { status, data } = await get(`${ MANAGER_URLS.PROMO }/${ promoId }${ MANAGER_URLS.SELLER }`);
     if ( status === 'success' ) sellers.value = data;
+};
+
+// TODO: выводить оба изменения и в Promo, и в PromoProduct
+const updatePromoProduct = async (product) => {
+    const response = await update(`${ MANAGER_URLS.PROMO }/${ promoId }${ MANAGER_URLS.PRODUCT }/${ product.id }`, product);
+    if ( response && response.status === 'success' ) {
+        await fetchDetails(promoId);
+        /*const idx = products.value.findIndex(pr => pr.id === response.data.id);
+        products.value[idx] = {
+            ...products.value[idx],
+            ...response.data,
+        };*/
+    }
 };
 </script>

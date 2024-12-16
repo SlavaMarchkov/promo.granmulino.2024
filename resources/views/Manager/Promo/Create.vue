@@ -429,7 +429,7 @@ const getCustomers = async () => {
             retailers: true,
         },
     });
-    state.customers = data;
+    state.customers = data.customers;
 };
 
 watch(
