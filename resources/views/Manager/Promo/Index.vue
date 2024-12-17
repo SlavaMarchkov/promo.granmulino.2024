@@ -14,7 +14,7 @@
                 <h4 class="mb-0"><span :class="[ 'badge', promo.statusColor ]">{{ promo.statusLabel }}</span></h4>
             </template>
             <template #body>
-                <TwoColumnRow title="Контрагент">{{ promo.customerName }}</TwoColumnRow>
+                <TwoColumnRow title="Дистрибутор">{{ promo.customerName }}</TwoColumnRow>
                 <TwoColumnRow title="Торговая сеть">{{ promo.retailerName }}</TwoColumnRow>
                 <TwoColumnRow title="Дата начала">{{ promo.startDate }}</TwoColumnRow>
                 <TwoColumnRow title="Дата окончания">{{ promo.endDate }}</TwoColumnRow>

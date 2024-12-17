@@ -17,7 +17,7 @@ class PromoFullResource extends PromoResource
             ...parent::toArray($request),
 
             'userId'     => $this->user_id,
-            'channelId'  => $this->channel_id,
+            'channelName' => $this->whenLoaded('channel', fn() => $this->channel->name),
             'regionCode' => $this->whenLoaded('customer', fn() => $this->customer->region->code),
             'cityName'   => $this->whenLoaded('city', fn() => $this->city->name),
 

@@ -5,95 +5,103 @@
         </div>
     </div>
     <template v-else>
-        <div v-if="isPromoFound" class="row profile">
+        <div v-if="isPromoFound" class="row promo-view">
             <div class="col-12">
                 <div class="card">
-                    <div class="card-header bg-light d-flex justify-content-between">
-                        <h3 class="mb-0">{{ promo.promoCode }}{{ promo.discount !== null ? `-${promo.discount}` : '' }}</h3>
+                    <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                        <h3 class="mb-0">{{ promo.promoCode }}{{ promo.discount !== null ? `-${promo.discount}` : '' }}&nbsp;<span
+                            class="text-secondary fs-5">|&nbsp;{{ promo.channelName }}</span></h3>
+                        <h2 class="mb-0">0.0</h2>
                         <h4 class="mb-0"><span :class="[ 'badge', promo.statusColor ]">{{ promo.statusLabel }}</span></h4>
                     </div>
-                    <div class="card-body mt-2 row g-3">
-                        <div class="col-3">
-                            <div class="card mb-0">
-                                <div class="card-body">
-                                    <h5 class="card-title">Место проведения <span>| Канал продаж</span></h5>
-                                    <div class="row">
-                                        <div class="col-6">Контрагент</div>
-                                        <div class="col-6 fw-bold text-end">{{ promo.customerName }}</div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-6">Торговая сеть</div>
-                                        <div class="col-6 fw-bold text-end">{{ promo.retailerName }}</div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-6">Регион (код)</div>
-                                        <div class="col-6 fw-bold text-end">{{ promo.regionCode }}</div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-6">Город</div>
-                                        <div class="col-6 fw-bold text-end">{{ promo.cityName }}</div>
-                                    </div>
+                    <div class="card-body mt-2 g-3">
+                        <div class="row mb-2">
+                            <div class="col-4">
+                                <div class="mb-0 alert border-primary">
+                                    <h5 class="mb-0 text-secondary">Дистрибутор: <span
+                                        class="fw-bold text-accent">{{ promo.customerName }}</span></h5>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="mb-0 alert border-success" role="alert">
+                                    <h5 class="mb-0 text-secondary">Сеть: <span
+                                        class="fw-bold text-accent">{{ promo.retailerName }}</span></h5>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="mb-0 alert border-info" role="alert">
+                                    <h5 class="mb-0 text-secondary">Период: <span
+                                        class="fw-bold text-accent">{{ promo.startDate }} - {{ promo.endDate }}</span>
+                                    </h5>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-2">
-                            <div class="card mb-0">
-                                <div class="card-body">
-                                    <h5 class="card-title">Даты проведения</h5>
-                                    <div class="row">
-                                        <div class="col-6">Начало</div>
-                                        <div class="col-6 fw-bold text-end">{{ promo.startDate }}</div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-6">Окончание</div>
-                                        <div class="col-6 fw-bold text-end">{{ promo.endDate }}</div>
-                                    </div>
-                                </div>
+                        <div class="row">
+                            <div class="col-4">
+                                <TheCard class="info-card revenue-card">
+                                    <template #header>
+                                        <h5 class="mb-0 card-title p-0">Бюджет</h5>
+                                    </template>
+                                    <template #body>
+                                        <div class="d-flex align-items-center">
+                                            <div
+                                                class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                                <i class="bi bi-currency-dollar"></i>
+                                            </div>
+                                            <div class="ps-3">
+                                                <h6>{{ formatNumber(promo.totalBudgetActual) }} &#8381;</h6>
+                                                <span class="text-success small pt-1 fw-bold">{{
+                                                        formatNumber(promo.totalBudgetPlan)
+                                                    }} &#8381;</span><span
+                                                class="text-muted small pt-2 ps-1"> | план</span>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </TheCard>
                             </div>
-                        </div>
-                        <div class="col-2">
-                            <div class="card mb-0">
-                                <div class="card-body">
-                                    <h5 class="card-title">Бюджет</h5>
-                                    <div class="row">
-                                        <div class="col-4">План</div>
-                                        <div class="col-8 fw-bold text-end">{{ formatNumber(promo.totalBudgetPlan) }} руб.</div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-4">Факт</div>
-                                        <div class="col-8 fw-bold text-end">{{ formatNumber(promo.totalBudgetActual) }} руб.</div>
-                                    </div>
-                                </div>
+                            <div class="col-4">
+                                <TheCard class="info-card sales-card">
+                                    <template #header>
+                                        <h5 class="mb-0 card-title p-0">Продажи</h5>
+                                        <h5 :class="['mb-0 fw-bold', calcSurplusTextColor]"><i
+                                            :class="['bi', calcSurplus >= 0 ? 'bi-arrow-up' : 'bi-arrow-down' ]"></i>&nbsp;{{
+                                                calcSurplus
+                                            }}&#8239;%</h5>
+                                    </template>
+                                    <template #body>
+                                        <div class="d-flex align-items-center">
+                                            <div
+                                                class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                                <i class="bi bi-cart"></i>
+                                            </div>
+                                            <div class="ps-3">
+                                                <h6>{{ formatNumber(promo.totalSalesOnTime) }} шт.</h6>
+                                                <span class="text-success small pt-1 fw-bold">{{
+                                                        formatNumber(promo.totalSalesPlan)
+                                                    }} шт.</span> <span
+                                                class="text-muted small pt-2 ps-1"> | план</span>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </TheCard>
                             </div>
-                        </div>
-                        <div class="col-3">
-                            <div class="card mb-0">
-                                <div class="card-body">
-                                    <h5 class="card-title">Продажи</h5>
-                                    <div class="row">
-                                        <div class="col-6">Продажи "До"</div>
-                                        <div class="col-6 fw-bold text-end">{{ formatNumber(promo.totalSalesBefore) }} шт.</div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-6">План продаж</div>
-                                        <div class="col-6 fw-bold text-end">{{ formatNumber(promo.totalSalesPlan) }} шт.</div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-6">Продажи "Во время"</div>
-                                        <div class="col-6 fw-bold text-end">{{ formatNumber(promo.totalSalesOnTime) }} шт.</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-2">
-                            <div class="card mb-0">
-                                <div class="card-body">
-                                    <h5 class="card-title">Общая прибыль</h5>
-                                    <div class="row">
-                                        <div class="col-6">Прибыль</div>
-                                        <div class="col-6 fw-bold text-end">{{ formatNumber(promo.totalPromoProfit) }} руб.</div>
-                                    </div>
-                                </div>
+                            <div class="col-4">
+                                <TheCard class="info-card profit-card">
+                                    <template #header>
+                                        <h5 class="mb-0 card-title p-0">Общая прибыль</h5>
+                                    </template>
+                                    <template #body>
+                                        <div class="d-flex align-items-center">
+                                            <div
+                                                class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                                <i class="bi bi-cash-stack"></i>
+                                            </div>
+                                            <div class="ps-3">
+                                                <h6>{{ formatNumber(promo.totalPromoProfit) }} &#8381;</h6>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </TheCard>
                             </div>
                         </div>
                     </div>
@@ -165,14 +173,21 @@
             <div v-if="products.length > 0" class="col-12">
                 <div class="card">
                     <div class="card-header"><h4 class="mb-0">Акционная продукция</h4></div>
-                    <div class="card-body mt-2 row row-cols-xl-4 row-cols-lg-3 row-cols-md-3 row-cols-sm-2 row-cols-1 g-3">
-                        <PromoProductItem
-                            v-for="(product, index) in products"
-                            :key="product.id"
-                            :index="index"
-                            :product="product"
-                            @update-product-item="updatePromoProduct"
-                        />
+                    <div class="card-body mt-3">
+                        <div class="row">
+                            <div class="col-12">
+                                <Alert/>
+                            </div>
+                        </div>
+                        <div class="row row-cols-xl-4 row-cols-lg-3 row-cols-md-3 row-cols-sm-2 row-cols-1 g-3">
+                            <PromoProductItem
+                                v-for="(product, index) in products"
+                                :key="product.id"
+                                :index="index"
+                                :product="product"
+                                @update-product-item="updatePromoProduct"
+                            />
+                        </div>
                     </div>
                 </div>
             </div>
@@ -199,12 +214,17 @@ import Alert from '@/components/Alert.vue';
 import TheSpinner from '@/components/core/TheSpinner.vue';
 import PromoProductItem from '@/pages/Promo/PromoProductItem.vue';
 import TheButton from '@/components/core/TheButton.vue';
-import { formatNumber } from '@/helpers/formatters.js';
+import { formatNumber, isNumberNegative } from '@/helpers/formatters.js';
+import TheCard from '@/components/core/TheCard.vue';
+import { useConvertCase } from '@/use/useConvertCase.js';
+import { useCalculations } from '@/use/useCalculations.js';
 
 const route = useRoute();
 const router = useRouter();
 const spinnerStore = useSpinnerStore();
 const arrayHandlers = useArrayHandlers();
+const { makeConvertibleObject, toCamel } = useConvertCase();
+const { calcDifferencePercentage } = useCalculations();
 
 const { get, update } = useHttpService();
 const promoId = +route.params.id;
@@ -227,6 +247,7 @@ const fetchDetails = async (promoId) => {
             customer: true,
             retailer: true,
             city: true,
+            channel: true,
         },
     });
     if ( status === 'success' ) promo.value = data;
@@ -261,16 +282,37 @@ const fetchPromoSellers = async (promoId) => {
     if ( status === 'success' ) sellers.value = data;
 };
 
-// TODO: выводить оба изменения и в Promo, и в PromoProduct
 const updatePromoProduct = async (product) => {
     const response = await update(`${ MANAGER_URLS.PROMO }/${ promoId }${ MANAGER_URLS.PRODUCT }/${ product.id }`, product);
     if ( response && response.status === 'success' ) {
-        await fetchDetails(promoId);
-        /*const idx = products.value.findIndex(pr => pr.id === response.data.id);
+        const data = makeConvertibleObject(JSON.parse(response.data), toCamel);
+        const idx = products.value.findIndex(pr => pr.id === product.id);
         products.value[idx] = {
             ...products.value[idx],
-            ...response.data,
-        };*/
+            ...data.product,
+        };
+        promo.value = {
+            ...promo.value,
+            ...data.promo,
+        };
     }
 };
+
+const calcSurplus = computed(() => {
+    const result = calcDifferencePercentage(
+        promo.value.totalSalesPlan,
+        promo.value.totalSalesOnTime,
+    );
+    if ( !isNaN(result) ) {
+        return formatNumber(result);
+    }
+});
+
+const calcSurplusTextColor = computed(() => {
+    return isNumberNegative(calcSurplus.value)
+        ? 'text-danger'
+        : calcSurplus.value === 0
+            ? 'text-secondary'
+            : 'text-success';
+});
 </script>

@@ -36,10 +36,10 @@ final class PromoProductController extends ApiController
     public function update(int $promo_id, PromoProduct $product, PromoProductUpdateRequest $request)
     : JsonResponse {
         $data = $request->validated();
-        $product = $this->promoService->updatePromoProduct($promo_id, $product, $data);
+        $array = $this->promoService->updatePromoProduct($promo_id, $product, $data);
 
         return $this->successResponse(
-            new PromoProductResource($product),
+            json_encode($array),
             'success',
             __('crud.products.updated'),
         );

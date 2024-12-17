@@ -84,23 +84,55 @@ final class EloquentPromoRepository implements PromoRepositoryInterface
      * @throws Exception
      */
     public function updatePromoProductFromArray(int $promo_id, PromoProduct $promoProduct, array $data)
-    : PromoProduct {
+    : array
+    {
         try {
             $promo = Promo::query()->where('id', $promo_id)->first();
 
             DB::beginTransaction();
 
-            $promo->update([
-                'total_sales_on_time' => $promo->total_sales_on_time + $data['sales_on_time'],
-                'total_budget_actual' => $promo->total_budget_actual + $data['budget_actual'],
-                'total_promo_profit' => $promo->total_promo_profit + $data['promo_profit'],
-            ]);
-
             $promoProduct->update($data);
+
+            $promo_with_sum = Promo::query()
+                ->where('id', $promo_id)
+                ->withSum('promo_products', 'sales_before')
+                ->withSum('promo_products', 'sales_plan')
+                ->withSum('promo_products', 'sales_on_time')
+                ->withSum('promo_products', 'budget_plan')
+                ->withSum('promo_products', 'budget_actual')
+                ->withSum('promo_products', 'promo_profit')
+                ->first();
+
+            $promo->update([
+                'total_sales_before'  => $promo_with_sum->promo_products_sum_sales_before,
+                'total_sales_plan'    => $promo_with_sum->promo_products_sum_sales_plan,
+                'total_sales_on_time' => $promo_with_sum->promo_products_sum_sales_on_time,
+                'total_budget_plan'   => $promo_with_sum->promo_products_sum_budget_plan,
+                'total_budget_actual' => $promo_with_sum->promo_products_sum_budget_actual,
+                'total_promo_profit'  => $promo_with_sum->promo_products_sum_promo_profit,
+            ]);
 
             DB::commit();
 
-            return $promoProduct;
+            $array['promo'] = $promo->only([
+                'total_sales_before',
+                'total_sales_plan',
+                'total_sales_on_time',
+                'total_budget_plan',
+                'total_budget_actual',
+                'total_promo_profit',
+            ]);
+
+            $array['product'] = $promoProduct->only([
+                'sales_before',
+                'sales_plan',
+                'sales_on_time',
+                'budget_plan',
+                'budget_actual',
+                'promo_profit',
+            ]);
+
+            return $array;
         } catch (Exception $exception) {
             DB::rollBack();
             Log::error('Error updating the Promo with ID={id}. Error: {error}', [
@@ -131,6 +163,9 @@ final class EloquentPromoRepository implements PromoRepositoryInterface
         )->when(
             isset($params['city']) && to_boolean($params['city']),
             fn(Builder $query) => $query->with('city'),
+        )->when(
+            isset($params['channel']) && to_boolean($params['channel']),
+            fn(Builder $query) => $query->with('channel'),
         );
     }
 

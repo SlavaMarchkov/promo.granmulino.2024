@@ -27,5 +27,5 @@ interface PromoRepositoryInterface
     : Collection;
 
     public function updatePromoProductFromArray(int $promo_id, PromoProduct $promoProduct, array $data)
-    : PromoProduct;
+    : array;
 }

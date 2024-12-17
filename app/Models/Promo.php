@@ -70,6 +70,12 @@ class Promo extends Model
         return $this->hasOne(PromoMark::class, 'promo_id', 'id');
     }
 
+    public function channel()
+    : HasOne
+    {
+        return $this->hasOne(Channel::class, 'id', 'channel_id');
+    }
+
     public function customer()
     : BelongsTo
     {

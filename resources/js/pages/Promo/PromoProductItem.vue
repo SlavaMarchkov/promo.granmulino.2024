@@ -1,52 +1,31 @@
 <template>
-    <div class="col">
-        <div class="card mb-0">
-            <h6 class="card-header bg-secondary-subtle py-2 fw-bold text-black">
-                {{ product.categoryName }}</h6>
-            <h6 class="card-header py-2 fw-bold text-primary">
-                {{ product.productName }}
-            </h6>
-            <div class="card-body mt-2 pb-2">
-                <div class="row">
-                    <div class="col-6">Продажи "До"</div>
-                    <div class="col-6 fw-bold text-end">{{ formatNumber(product.salesBefore) }} шт.</div>
-                </div>
-                <div class="row">
-                    <div class="col-6">План</div>
-                    <div class="col-6 fw-bold text-end">{{ formatNumber(product.salesPlan) }} шт.</div>
-                </div>
-                <div class="row">
-                    <div class="col-6">Прирост</div>
-                    <div class="col-6 fw-bold text-end">{{ formatNumber(calcSurplusPlan) }}&#8239;%</div>
-                </div>
-                <div class="row">
-                    <div class="col-6">Бюджет, план</div>
-                    <div class="col-6 fw-bold text-end">{{ formatNumber(product.budgetPlan) }} руб.</div>
-                </div>
-                <hr>
-                <div class="row">
-                    <div class="col-6">Продажи "Во время"</div>
-                    <div class="col-6 fw-bold text-end">{{ formatNumber(product.salesOnTime) }} шт.</div>
-                </div>
-                <div class="row">
-                    <div class="col-6">Бюджет, факт</div>
-                    <div class="col-6 fw-bold text-end">{{ formatNumber(product.budgetActual) }} руб.</div>
-                </div>
-                <div class="row">
-                    <div class="col-6">Прибыль на SKU</div>
-                    <div class="col-6 fw-bold text-end">{{ formatNumber(product.totalProfit) }} руб.</div>
-                </div>
-            </div>
-            <div class="card-footer py-2">
-                <TdButton
-                    :id="product.id"
-                    intent="edit"
-                    class="w-100"
-                    @runButtonHandler="modals.editModalPopUp = true"
-                >Редактировать</TdButton>
-            </div>
-        </div>
-    </div>
+    <TheCard
+        :header-classes="['bg-secondary-subtle py-2 fw-bold text-black']"
+        with-footer
+    >
+        <template #header>
+            <h5 class="mb-0">{{ product.categoryName }}</h5>
+        </template>
+        <template #body>
+            <h5 class="mb-0 fw-bold text-primary">{{ product.productName }}</h5>
+            <hr>
+            <TwoColumnRow title='Продажи "До"'>{{ formatNumber(product.salesBefore) }} шт.</TwoColumnRow>
+            <TwoColumnRow title="План">{{ formatNumber(product.salesPlan) }} шт.</TwoColumnRow>
+            <TwoColumnRow title="Прирост">{{ formatNumber(calcSurplusPlan) }}&#8239;%</TwoColumnRow>
+            <TwoColumnRow title="Бюджет, план">{{ formatNumber(product.budgetPlan) }} руб.</TwoColumnRow>
+            <hr>
+            <TwoColumnRow cols="7" title='Продажи "Во время"'>{{ formatNumber(product.salesOnTime) }} шт.</TwoColumnRow>
+            <TwoColumnRow title="Бюджет, факт">{{ formatNumber(product.budgetActual) }} руб.</TwoColumnRow>
+            <TwoColumnRow title="Прибыль на SKU">{{ formatNumber(product.promoProfit) }} руб.</TwoColumnRow>
+        </template>
+        <template #footer>
+            <TheButton
+                class="btn-warning w-100"
+                @click="handleBtnClick"
+            >Редактировать
+            </TheButton>
+        </template>
+    </TheCard>
 
     <TheModal
         v-if="modals.editModalPopUp"
@@ -55,7 +34,7 @@
         :custom-classes="['modal-xl']"
     >
         <template #title>
-            <h4>Редактирование акционного продукта</h4>
+            <h4 class="mb-0">Редактирование акционного продукта</h4>
         </template>
         <template #body>
             <h5>Группа товара: <span class="fw-bold text-primary">{{ product.categoryName }}</span></h5>
@@ -223,7 +202,11 @@
         </template>
         <template #footer>
             <TheButton
-                class="btn-warning w-25"
+                :class="[
+                    'btn-warning w-25',
+                    { 'btn-cursor-not-allowed' : !isFormValid() }
+                ]"
+                :disabled="!isFormValid()"
                 type="button"
                 @click="saveChangesHandler"
             >Сохранить изменения</TheButton>
@@ -237,11 +220,14 @@ import { useCalculations } from '@/use/useCalculations.js';
 import { convertInputStringToNumber, formatNumber, isNumberNegative, processInputValue } from '@/helpers/formatters.js';
 import TheButton from '@/components/core/TheButton.vue';
 import TheModal from '@/components/TheModal.vue';
-import TdButton from '@/components/table/TdButton.vue';
 import TheLabel from '@/components/form/TheLabel.vue';
 import TheInput from '@/components/form/TheInput.vue';
+import TheCard from '@/components/core/TheCard.vue';
+import TwoColumnRow from '@/components/core/TwoColumnRow.vue';
+import { useAlertStore } from '@/stores/alerts.js';
 
 const { calcDifferencePercentage, calcBudget } = useCalculations();
+const alertStore = useAlertStore();
 
 const props = defineProps({
     index: {
@@ -266,7 +252,7 @@ const initialFormData = () => ({
     id: props.product.id.toString(),
     salesBefore: formatNumber(props.product.salesBefore),
     salesPlan: formatNumber(props.product.salesPlan),
-    salesOnTime: formatNumber(props.product.salesOnTime),
+    salesOnTime: '',
     profitPerUnit: props.product.profitPerUnit,
     compensation: props.product.compensation,
     budgetPlan: formatNumber(props.product.budgetPlan),
@@ -278,6 +264,16 @@ const initialFormData = () => ({
 const state = reactive({
     form: initialFormData(),
 });
+
+const handleBtnClick = () => {
+    alertStore.clear();
+    modals.editModalPopUp = true;
+    state.form = initialFormData();
+};
+
+const isFormValid = () => {
+    return state.form.salesOnTime !== '';
+};
 
 const saveChangesHandler = () => {
     emit('updateProductItem', processObjectEntries());

@@ -17,7 +17,8 @@ final readonly class UpdatePromoProductHandler
     }
 
     public function handle(int $promo_id, PromoProduct $promoProduct, array $data)
-    : PromoProduct {
+    : array
+    {
         return $this->promoRepository->updatePromoProductFromArray($promo_id, $promoProduct, $data);
     }
 }

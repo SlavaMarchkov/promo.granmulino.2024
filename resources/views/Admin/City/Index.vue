@@ -203,7 +203,6 @@
                 :disabled="spinnerStore.isButtonDisabled"
                 :loading="spinnerStore.isButtonDisabled"
                 class="w-25"
-                type="button"
                 @click="saveCity"
             >
                 <span v-if="state.isEditing">Сохранить</span>
