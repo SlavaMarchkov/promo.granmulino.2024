@@ -11,27 +11,35 @@
     <template v-else>
         <div v-if="isItemFound" class="row profile">
             <div class="col-xl-4">
-                <div class="card">
-                    <div class="card-body profile-card pt-3 d-flex flex-column">
-                        <div class="mb-3 d-flex justify-content-between align-items-center">
-                            <h1>{{ item.name }}</h1>
-                            <h4><span :class="['badge', 'rounded', item.typeBgColor]">{{ item.label }}</span></h4>
-                        </div>
-                        <h3>Дистрибутор:
-                            <RouterLink
+                <TheCard
+                    :body-classes="['profile-card pt-2 d-flex flex-column']"
+                    :header-classes="['bg-light']"
+                >
+                    <template #header>
+                        <h2 class="mb-0">{{ item.name }}</h2>
+                        <h4 class="mb-0"><span :class="['badge', 'rounded', item.typeBgColor]">{{ item.label }}</span>
+                        </h4>
+                    </template>
+                    <template #body>
+                        <TwoColumnRow title="<h3>Дистрибутор</h3>">
+                            <h3>
+                                <RouterLink
                                 :to="{ name: 'Manager.Customer.View', params: { id: item.customerId } }"
                             >{{ item.customer }}
-                            </RouterLink>
-                        </h3>
-                        <h3>Город: {{ item.city }}</h3>
-                        <h3>Работает: <TheBadge :is-active="item.isActive" /></h3>
-                    </div>
-                </div>
+                                </RouterLink>
+                            </h3>
+                        </TwoColumnRow>
+                        <TwoColumnRow title="<h3>Город</h3>"><h3>{{ item.city }}</h3></TwoColumnRow>
+                        <TwoColumnRow title="<h3>Работает</h3>">
+                            <TheBadge :is-active="item.isActive"/>
+                        </TwoColumnRow>
+                    </template>
+                </TheCard>
             </div>
             <div class="col-xl-8">
                 <div class="card">
                     <div class="card-body pt-3">
-
+                        В разработке
                     </div>
                 </div>
             </div>
@@ -56,6 +64,8 @@ import { useSpinnerStore } from '@/stores/spinners.js';
 import { MANAGER_URLS } from '@/helpers/constants.js';
 import Alert from '@/components/Alert.vue';
 import TheBadge from '@/components/core/TheBadge.vue';
+import TheCard from '@/components/core/TheCard.vue';
+import TwoColumnRow from '@/components/core/TwoColumnRow.vue';
 
 const route = useRoute();
 const router = useRouter();
@@ -78,9 +88,7 @@ const fetchDetails = async (retailerId) => {
 
 watch(
     () => route.params.id,
-    () => {
-        fetchDetails(route.params.id);
-    },
+    () => fetchDetails(route.params.id),
 );
 
 const isItemFound = computed(() => {

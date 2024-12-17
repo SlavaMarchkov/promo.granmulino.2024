@@ -32,27 +32,31 @@
         </div>
     </div>
     <div v-if="filteredItems.length > 0" class="row row-cols-xl-4 row-cols-lg-3 row-cols-md-3 row-cols-sm-2 row-cols-1 g-3">
-        <div class="col" v-for="item in filteredItems" :key="item.id">
-            <div class="card mb-0">
-                <h5 class="card-header d-flex justify-content-between">
-                    {{ item.name }}
-                    <span :class="['badge', 'rounded', item.typeBgColor]">{{ item.label }}</span>
-                </h5>
-                <div class="card-body mt-3">
-                    <ul class="mb-2 list-unstyled">
-                        <li><strong>Дистрибутор</strong>: {{ item.customer }}</li>
-                        <li><strong>Город</strong>: {{ item.city }}</li>
-                        <li><strong>Работает</strong>: <TheBadge :is-active="item.isActive" /></li>
-                    </ul>
-                </div>
-                <div class="card-footer">
-                    <RouterLink
-                        :to="{ name: 'Manager.Retailer.View', params: { id: item.id } }"
-                        class="btn btn-outline-primary"
-                    >Подробнее</RouterLink>
-                </div>
-            </div>
-        </div>
+        <TheCard
+            v-for="item in filteredItems"
+            :key="item.id"
+            :header-classes="['bg-light']"
+            with-footer
+        >
+            <template #header>
+                <h4 class="mb-0">{{ item.name }}</h4>
+                <p class="mb-0"><span :class="['badge', 'rounded', item.typeBgColor]">{{ item.label }}</span></p>
+            </template>
+            <template #body>
+                <TwoColumnRow title="Дистрибутор">{{ item.customer }}</TwoColumnRow>
+                <TwoColumnRow title="Город">{{ item.city }}</TwoColumnRow>
+                <TwoColumnRow title="Работает">
+                    <TheBadge :is-active="item.isActive"/>
+                </TwoColumnRow>
+            </template>
+            <template #footer>
+                <RouterLink
+                    :to="{ name: 'Manager.Retailer.View', params: { id: item.id } }"
+                    class="btn btn-outline-primary"
+                >Подробнее
+                </RouterLink>
+            </template>
+        </TheCard>
     </div>
     <div v-else class="row mb-4">
         <div class="col-12">
@@ -79,6 +83,8 @@ import TheCheckbox from '@/components/form/TheCheckbox.vue';
 import TheFilter from '@/components/core/TheFilter.vue';
 import { MANAGER_URLS } from '@/helpers/constants.js';
 import TheBadge from '@/components/core/TheBadge.vue';
+import TwoColumnRow from '@/components/core/TwoColumnRow.vue';
+import TheCard from '@/components/core/TheCard.vue';
 
 const alertStore = useAlertStore();
 const spinnerStore = useSpinnerStore();

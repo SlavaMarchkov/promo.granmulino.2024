@@ -7,17 +7,27 @@
     <template v-else>
         <div v-if="isItemFound" class="row profile">
             <div class="col-xl-4">
-                <div class="card">
-                    <div class="card-body profile-card pt-4 d-flex flex-column">
-                        <h1 class="mb-3">{{ item.name }}</h1>
-                        <h3>Регион: {{ item.region.name }}</h3>
-                        <h3>Город: {{ item.city.name }}</h3>
-                        <h3>Работает: <TheBadge :is-active="item.isActive" /></h3>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="card-header h4">Торговые сети</div>
-                    <div class="card-body mt-3">
+                <TheCard
+                    :body-classes="['profile-card pt-2 d-flex flex-column']"
+                    :header-classes="['bg-light']"
+                    class="mb-4"
+                >
+                    <template #header>
+                        <h2 class="mb-0">{{ item.name }}</h2>
+                    </template>
+                    <template #body>
+                        <TwoColumnRow cols="3" title="<h3>Регион</h3>"><h3>{{ item.region.name }}</h3></TwoColumnRow>
+                        <TwoColumnRow title="<h3>Город</h3>"><h3>{{ item.city.name }}</h3></TwoColumnRow>
+                        <TwoColumnRow title="<h3>Работает</h3>">
+                            <TheBadge :is-active="item.isActive"/>
+                        </TwoColumnRow>
+                    </template>
+                </TheCard>
+                <TheCard :header-classes="['bg-light']">
+                    <template #header>
+                        <h4 class="mb-0">Торговые сети</h4>
+                    </template>
+                    <template #body>
                         <div v-if="item.retailers.length > 0" class="list-group">
                             <button
                                 v-for="(retailer, index) in item.retailers"
@@ -35,8 +45,8 @@
                             </button>
                         </div>
                         <p v-else class="mb-0">Дистрибутор не имеет торговых сетей.</p>
-                    </div>
-                </div>
+                    </template>
+                </TheCard>
             </div>
             <div class="col-xl-8">
                 <div class="card">
@@ -100,6 +110,8 @@ import Alert from '@/components/Alert.vue';
 import TheSellers from '@/pages/Customer/TheSellers.vue';
 import TheBadge from '@/components/core/TheBadge.vue';
 import TheSpinner from '@/components/core/TheSpinner.vue';
+import TheCard from '@/components/core/TheCard.vue';
+import TwoColumnRow from '@/components/core/TwoColumnRow.vue';
 
 const route = useRoute();
 const router = useRouter();
@@ -163,9 +175,7 @@ const fetchSellers = async (customerId) => {
 
 watch(
     () => route.params.id,
-    () => {
-        fetchDetails(route.params.id);
-    },
+    () => fetchDetails(route.params.id),
 );
 
 const updateSellers = (updatedItem) => {

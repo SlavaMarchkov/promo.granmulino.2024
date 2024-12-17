@@ -3,11 +3,35 @@
         v-if="state.promos.length > 0"
         class="row row-cols-xl-4 row-cols-lg-3 row-cols-md-3 row-cols-sm-2 row-cols-1 g-3"
     >
-        <PromoCard
+        <TheCard
             v-for="promo in state.promos"
             :key="promo.id"
-            :promo="promo"
-        />
+            :header-classes="['bg-light']"
+            with-footer
+        >
+            <template #header>
+                <h3 class="mb-0">{{ promo.promoCode }}{{ promo.discount !== null ? `-${promo.discount}` : '' }}</h3>
+                <h4 class="mb-0"><span :class="[ 'badge', promo.statusColor ]">{{ promo.statusLabel }}</span></h4>
+            </template>
+            <template #body>
+                <TwoColumnRow title="Контрагент">{{ promo.customerName }}</TwoColumnRow>
+                <TwoColumnRow title="Торговая сеть">{{ promo.retailerName }}</TwoColumnRow>
+                <TwoColumnRow title="Дата начала">{{ promo.startDate }}</TwoColumnRow>
+                <TwoColumnRow title="Дата окончания">{{ promo.endDate }}</TwoColumnRow>
+                <hr>
+                <TwoColumnRow class="fs-5" title="Бюджет, план">{{ formatNumber(promo.totalBudgetPlan) }} руб.
+                </TwoColumnRow>
+                <TwoColumnRow class="fs-5" title="Бюджет, факт">{{ formatNumber(promo.totalBudgetActual) }} руб.
+                </TwoColumnRow>
+            </template>
+            <template #footer>
+                <RouterLink
+                    :to="{ name: 'Manager.Promo.View', params: { id: promo.id }}"
+                    class="btn btn-outline-primary"
+                >Подробнее
+                </RouterLink>
+            </template>
+        </TheCard>
     </div>
     <div v-else class="row mb-4">
         <div class="col-12">
@@ -28,7 +52,9 @@ import { onMounted, reactive } from 'vue';
 import { useSpinnerStore } from '@/stores/spinners.js';
 import { MANAGER_URLS } from '@/helpers/constants.js';
 import { useHttpService } from '@/use/useHttpService.js';
-import PromoCard from '@/pages/Promo/PromoCard.vue';
+import TheCard from '@/components/core/TheCard.vue';
+import { formatNumber } from '@/helpers/formatters.js';
+import TwoColumnRow from '@/components/core/TwoColumnRow.vue';
 
 const spinnerStore = useSpinnerStore();
 const { get } = useHttpService();

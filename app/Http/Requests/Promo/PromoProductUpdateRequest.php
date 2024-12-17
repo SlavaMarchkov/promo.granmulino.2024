@@ -27,7 +27,7 @@ final class PromoProductUpdateRequest extends FormRequest
             'budget_plan'     => ['required', 'numeric'],
             'budget_actual'   => ['required', 'numeric'],
             'profit_per_unit' => ['required', 'numeric'],
-            'total_profit'    => ['required', 'numeric'],
+            '111promo_profit' => ['required', 'numeric'],
         ];
     }
 }

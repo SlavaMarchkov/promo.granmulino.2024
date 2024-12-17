@@ -29,6 +29,7 @@ class CustomerResource extends JsonResource
 
             'userName'   => $this->whenLoaded('user', fn() => $this->user->full_name),
             'regionName' => $this->whenLoaded('region', fn() => $this->region->name),
+            'regionCode' => $this->whenLoaded('region', fn() => $this->region->code),
             'cityName'   => $this->whenLoaded('city', fn() => $this->city->name),
         ];
     }

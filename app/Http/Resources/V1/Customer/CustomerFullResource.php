@@ -17,7 +17,7 @@ class CustomerFullResource extends CustomerResource
 
             'description' => $this->description ?? '',
 
-            'sellers'   => CustomerSellerResource::collection($this->whenLoaded('customer_sellers')),
+            'sellers' => CustomerSellerResource::collection($this->whenLoaded('customer_sellers')),
 
             'next' => $this->findNext($this->id),
             'prev' => $this->findPrevious($this->id),

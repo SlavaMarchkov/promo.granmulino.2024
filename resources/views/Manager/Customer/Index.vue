@@ -32,24 +32,30 @@
         </div>
     </div>
     <div v-if="filteredItems.length > 0" class="row row-cols-xl-4 row-cols-lg-3 row-cols-md-3 row-cols-sm-2 row-cols-1 g-3">
-        <div class="col" v-for="item in filteredItems" :key="item.id">
-            <div class="card mb-0">
-                <h5 class="card-header">{{ item.name }}</h5>
-                <div class="card-body mt-3">
-                    <ul class="mb-0 list-unstyled">
-                        <li><strong>Регион</strong>: {{ item.regionName }}</li>
-                        <li><strong>Город</strong>: {{ item.cityName }}</li>
-                        <li><strong>Работает</strong>: <TheBadge :is-active="item.isActive" /></li>
-                    </ul>
-                </div>
-                <div class="card-footer">
-                    <RouterLink
-                        :to="{ name: 'Manager.Customer.View', params: { id: item.id }}"
-                        class="btn btn-outline-primary"
-                    >Подробнее</RouterLink>
-                </div>
-            </div>
-        </div>
+        <TheCard
+            v-for="item in filteredItems"
+            :key="item.id"
+            :header-classes="['bg-light']"
+            with-footer
+        >
+            <template #header>
+                <h4 class="mb-0">{{ item.name }}</h4>
+            </template>
+            <template #body>
+                <TwoColumnRow title="Регион (код)">{{ item.regionCode }}</TwoColumnRow>
+                <TwoColumnRow title="Город">{{ item.cityName }}</TwoColumnRow>
+                <TwoColumnRow title="Работает">
+                    <TheBadge :is-active="item.isActive"/>
+                </TwoColumnRow>
+            </template>
+            <template #footer>
+                <RouterLink
+                    :to="{ name: 'Manager.Customer.View', params: { id: item.id }}"
+                    class="btn btn-outline-primary"
+                >Подробнее
+                </RouterLink>
+            </template>
+        </TheCard>
     </div>
     <div v-else class="row mb-4">
         <div class="col-12">
@@ -76,6 +82,8 @@ import TheCheckbox from '@/components/form/TheCheckbox.vue';
 import TheFilter from '@/components/core/TheFilter.vue';
 import { MANAGER_URLS } from '@/helpers/constants.js';
 import TheBadge from '@/components/core/TheBadge.vue';
+import TheCard from '@/components/core/TheCard.vue';
+import TwoColumnRow from '@/components/core/TwoColumnRow.vue';
 
 const alertStore = useAlertStore();
 const spinnerStore = useSpinnerStore();
