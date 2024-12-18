@@ -11,8 +11,8 @@
                     <div class="card-header bg-light d-flex justify-content-between align-items-center">
                         <h3 class="mb-0">{{ promo.promoCode }}{{ promo.discount !== null ? `-${promo.discount}` : '' }}&nbsp;<span
                             class="text-secondary fs-5">|&nbsp;{{ promo.channelName }}</span></h3>
-                        <h2 class="mb-0">0.0</h2>
                         <h4 class="mb-0"><span :class="[ 'badge', promo.statusColor ]">{{ promo.statusLabel }}</span></h4>
+                        <h2 class="mb-0"><span :class="[ 'badge', promoMarkBgColor ]">{{ promo.totalMark }}</span></h2>
                     </div>
                     <div class="card-body mt-2 g-3">
                         <div class="row mb-2">
@@ -106,63 +106,43 @@
                         </div>
                     </div>
                     <div class="card-footer">
-                        <div class="accordion" id="promoComments">
+                        <div id="promoDetails" class="accordion">
                             <div class="accordion-item">
-                                <h2 class="accordion-header" id="headingOne">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                                <h2
+                                    id="promoComments"
+                                    class="accordion-header"
+                                >
+                                    <button aria-controls="collapsePromoComments" aria-expanded="false" class="accordion-button collapsed"
+                                            data-bs-target="#collapsePromoComments" data-bs-toggle="collapse"
+                                            type="button">
                                         <span class="card-title p-0 m-0">Механика промо-акции</span>
                                     </button>
                                 </h2>
-                                <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#promoComments">
+                                <div id="collapsePromoComments" aria-labelledby="promoComments"
+                                     class="accordion-collapse collapse" data-bs-parent="#promoDetails">
                                     <div class="accordion-body">
                                         {{ promo.comments }}
                                     </div>
                                 </div>
                             </div>
                             <div class="accordion-item">
-                                <h2 class="accordion-header" id="headingTwo">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                <h2
+                                    id="promoMark"
+                                    class="accordion-header"
+                                >
+                                    <button aria-controls="collapsePromoMark" aria-expanded="false" class="accordion-button collapsed"
+                                            data-bs-target="#collapsePromoMark" data-bs-toggle="collapse"
+                                            type="button">
                                         <span class="card-title p-0 m-0">Оценки промо-акции</span>
                                     </button>
                                 </h2>
-                                <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#promoComments">
+                                <div id="collapsePromoMark" aria-labelledby="promoMark"
+                                     class="accordion-collapse collapse" data-bs-parent="#promoDetails">
                                     <div class="accordion-body">
-                                        <div class="row mb-4">
-                                            <div class="col-3">
-                                                <label for="promo_goals" class="form-label">Цель промо-акции: <span class="fw-bold fs-5">3.5</span></label>
-                                                <input type="range" class="form-range" min="0" max="5" step="0.5" id="promo_goals">
-                                            </div>
-                                            <div class="col-3">
-                                                <label for="promo_sales" class="form-label">Продажи: <span class="fw-bold fs-5">3.5</span></label>
-                                                <input type="range" class="form-range" min="0" max="5" step="0.5" id="promo_sales">
-                                            </div>
-                                            <div class="col-3">
-                                                <label for="promo_staff" class="form-label">Участие персонала: <span class="fw-bold fs-5">3.5</span></label>
-                                                <input type="range" class="form-range" min="0" max="5" step="0.5" id="promo_staff">
-                                            </div>
-                                            <div class="col-3 text-center">
-                                                <label for="promo_mark" class="form-label">Итоговая оценка</label>
-                                                <input type="text" class="form-control text-center fw-bold" id="promo_mark" value="3.5">
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-6">
-                                                <div class="form-floating">
-                                                    <textarea
-                                                        class="form-control border border-dark"
-                                                        placeholder="Укажите здесь свои выводы по промо-акции"
-                                                        id="promo_comments"
-                                                        style="height: 60px;"
-                                                    ></textarea>
-                                                    <label for="promo_comments">Выводы по промо-акции</label>
-                                                </div>
-                                            </div>
-                                            <div class="col-6 align-content-center">
-                                                <TheButton
-                                                    class="btn-primary"
-                                                >Сохранить оценку и выводы</TheButton>
-                                            </div>
-                                        </div>
+                                        <PromoMark
+                                            :mark="promo.mark"
+                                            @update-promo-mark="updatePromoMark"
+                                        />
                                     </div>
                                 </div>
                             </div>
@@ -213,11 +193,11 @@ import { MANAGER_URLS } from '@/helpers/constants.js';
 import Alert from '@/components/Alert.vue';
 import TheSpinner from '@/components/core/TheSpinner.vue';
 import PromoProductItem from '@/pages/Promo/PromoProductItem.vue';
-import TheButton from '@/components/core/TheButton.vue';
 import { formatNumber, isNumberNegative } from '@/helpers/formatters.js';
 import TheCard from '@/components/core/TheCard.vue';
 import { useConvertCase } from '@/use/useConvertCase.js';
 import { useCalculations } from '@/use/useCalculations.js';
+import PromoMark from '@/pages/Promo/PromoMark.vue';
 
 const route = useRoute();
 const router = useRouter();
@@ -242,14 +222,7 @@ const isPromoFound = computed(() => {
 });
 
 const fetchDetails = async (promoId) => {
-    const { status, data } = await get(`${ MANAGER_URLS.PROMO }/${ promoId }`, {
-        params: {
-            customer: true,
-            retailer: true,
-            city: true,
-            channel: true,
-        },
-    });
+    const { status, data } = await get(`${MANAGER_URLS.PROMO}/${promoId}`);
     if ( status === 'success' ) promo.value = data;
 };
 
@@ -298,6 +271,13 @@ const updatePromoProduct = async (product) => {
     }
 };
 
+const updatePromoMark = async (mark) => {
+    const response = await update(`${MANAGER_URLS.PROMO}/${promoId}${MANAGER_URLS.MARK}/${mark.id}`, mark);
+    if ( response && response.status === 'success' ) {
+        promo.value = { ...response.data };
+    }
+};
+
 const calcSurplus = computed(() => {
     const result = calcDifferencePercentage(
         promo.value.totalSalesPlan,
@@ -314,5 +294,12 @@ const calcSurplusTextColor = computed(() => {
         : calcSurplus.value === 0
             ? 'text-secondary'
             : 'text-success';
+});
+
+const promoMarkBgColor = computed(() => {
+    return promo.value.totalMark > 0 && promo.value.totalMark <= 3
+        ? 'bg-danger'
+        : promo.value.totalMark > 3 && promo.value.totalMark <= 5
+            ? 'bg-success' : 'bg-secondary';
 });
 </script>

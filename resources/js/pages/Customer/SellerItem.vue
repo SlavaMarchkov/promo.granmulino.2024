@@ -7,13 +7,13 @@
                 class="form-control"
                 v-model="props.seller.name"
                 :disabled="!props.seller.isActive"
-                :style="{ 'cursor: not-allowed': !props.seller.isActive }"
+                :style="!props.seller.isActive ? 'cursor: not-allowed;' : ''"
             >
             <TheButton
                 @click="updateSellerName"
                 class="btn-outline-primary fs-5 pt-1 pb-0"
                 :disabled="!props.seller.isActive"
-                :style="{ 'cursor: not-allowed': !props.seller.isActive }"
+                :style="!props.seller.isActive ? 'cursor: not-allowed;' : ''"
                 title="Сохранить изменения"
             ><i :class="props.seller.isActive !== false ? 'bi-check-lg' : 'bi-dash'"></i>
             </TheButton>
@@ -22,7 +22,7 @@
                 @click="upgradeSeller"
                 class="btn-outline-secondary fs-5 pt-1 pb-0"
                 :disabled="!props.seller.isActive"
-                :style="{ 'cursor: not-allowed': !props.seller.isActive }"
+                :style="!props.seller.isActive ? 'cursor: not-allowed;' : ''"
                 title="Сделать супервайзером"
             ><i class="bi-arrow-up"></i>
             </TheButton>
@@ -31,7 +31,7 @@
                 @click="detachSeller"
                 class="btn-outline-secondary fs-5 pt-1 pb-0"
                 :disabled="!props.seller.isActive"
-                :style="{ 'cursor: not-allowed': !props.seller.isActive }"
+                :style="!props.seller.isActive ? 'cursor: not-allowed;' : ''"
                 title="Переместить в ТП"
             ><i class="bi-arrow-down"></i>
             </TheButton>
@@ -48,7 +48,7 @@
                 @click="destroySeller"
                 class="btn-outline-danger fs-5 pt-1 pb-0"
                 :disabled="props.seller.isActive || props.seller.supervisorId !== null"
-                :style="{ 'cursor: not-allowed' : props.seller.isActive || props.seller.supervisorId !== null }"
+                :style="props.seller.isActive || props.seller.supervisorId !== null ? 'cursor: not-allowed;' : ''"
                 title="Удалить"
             ><i class="bi-trash"></i>
             </TheButton>

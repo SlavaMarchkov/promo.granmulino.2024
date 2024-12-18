@@ -22,6 +22,7 @@ class PromoProductResource extends JsonResource
             'salesBefore'   => $this->sales_before,
             'salesPlan'     => $this->sales_plan,
             'salesOnTime'   => $this->sales_on_time,
+            'salesAfter' => $this->sales_after,
             'compensation'  => $this->compensation,
             'budgetPlan'    => $this->budget_plan,
             'budgetActual'  => $this->budget_actual,

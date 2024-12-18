@@ -7,13 +7,13 @@
                 class="form-control fw-bold"
                 v-model="props.supervisor.name"
                 :disabled="!props.supervisor.isActive"
-                :style="{ 'cursor: not-allowed': !props.supervisor.isActive }"
+                :style="!props.supervisor.isActive ? 'cursor: not-allowed;' : ''"
             >
             <TheButton
                 @click="updateSupervisorName"
                 class="btn-outline-primary fs-5 pt-1 pb-0"
                 :disabled="!props.supervisor.isActive"
-                :style="{ 'cursor: not-allowed': !props.supervisor.isActive }"
+                :style="!props.supervisor.isActive ? 'cursor: not-allowed;' : ''"
                 title="Сохранить изменения"
             ><i :class="props.supervisor.isActive !== false ? 'bi-check-lg' : 'bi-dash'"></i>
             </TheButton>
@@ -21,7 +21,7 @@
                 @click="downgradeSupervisor"
                 class="btn-outline-secondary fs-5 pt-1 pb-0"
                 :disabled="props.supervisor.sellers.length > 0"
-                :style="{ 'cursor: not-allowed': props.supervisor.sellers.length > 0 }"
+                :style="props.supervisor.sellers.length > 0 ? 'cursor: not-allowed;' : ''"
                 title="Разжаловать в ТП"
             ><i class="bi-arrow-down"></i>
             </TheButton>
@@ -32,7 +32,7 @@
                     props.supervisor.isActive === false ? 'btn-outline-success' : 'btn-outline-danger'
                 ]"
                 :disabled="props.supervisor.sellers.length > 0"
-                :style="{ 'cursor: not-allowed': props.supervisor.sellers.length > 0 }"
+                :style="props.supervisor.sellers.length > 0 ? 'cursor: not-allowed;' : ''"
                 :title="props.supervisor.isActive !== false ? 'Деактивировать' : 'Активировать'"
             ><i :class="props.supervisor.isActive !== false ? 'bi-x-lg' : 'bi-arrow-counterclockwise'"></i>
             </TheButton>
@@ -40,7 +40,7 @@
                 @click="destroySupervisor"
                 class="btn-outline-danger fs-5 pt-1 pb-0"
                 :disabled="props.supervisor.sellers.length > 0 || props.supervisor.isActive"
-                :style="{ 'cursor: not-allowed': (props.supervisor.sellers.length > 0 || props.supervisor.isActive) }"
+                :style="(props.supervisor.sellers.length > 0 || props.supervisor.isActive) ? 'cursor: not-allowed;' : ''"
                 title="Удалить"
             ><i class="bi-trash"></i>
             </TheButton>

@@ -6,6 +6,7 @@ declare(strict_types=1);
 namespace App\Services\Promos\Repositories;
 
 use App\Models\Promo;
+use App\Models\PromoMark;
 use App\Models\PromoProduct;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -28,4 +29,7 @@ interface PromoRepositoryInterface
 
     public function updatePromoProductFromArray(int $promo_id, PromoProduct $promoProduct, array $data)
     : array;
+
+    public function updatePromoMarkFromArray(int $promo_id, PromoMark $promoMark, array $data)
+    : ?Promo;
 }

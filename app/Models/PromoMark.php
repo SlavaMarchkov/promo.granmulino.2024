@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class PromoMark extends Model
 {
@@ -18,8 +18,8 @@ class PromoMark extends Model
     ];
 
     public function promo()
-    : BelongsTo
+    : HasOne
     {
-        return $this->belongsTo(Promo::class, 'promo_id', 'id');
+        return $this->hasOne(Promo::class, 'id', 'promo_id');
     }
 }

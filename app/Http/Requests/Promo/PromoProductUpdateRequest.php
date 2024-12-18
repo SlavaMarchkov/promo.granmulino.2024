@@ -19,10 +19,11 @@ final class PromoProductUpdateRequest extends FormRequest
     : array
     {
         return [
-            'id'              => ['required', 'numeric', 'exists:promo_products,id'],
+            //'id'              => ['required', 'numeric', 'exists:promo_products,id'],
             'sales_before'    => ['required', 'numeric'],
             'sales_plan'      => ['required', 'numeric'],
             'sales_on_time'   => ['required', 'numeric'],
+            'sales_after'  => ['nullable', 'numeric'],
             'compensation'    => ['required', 'numeric'],
             'budget_plan'     => ['required', 'numeric'],
             'budget_actual'   => ['required', 'numeric'],

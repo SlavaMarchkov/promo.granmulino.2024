@@ -50,8 +50,9 @@ class UserSeeder extends Seeder
                 'first_name'   => 'Вячеслав',
                 'middle_name'  => 'Александрович',
                 'display_name' => 'Марчков Вячеслав (супер-админ)',
-                'email'        => 'slavamarchkov@gmail.com',
-                'password'     => bcrypt('QmVnBaf46Jes8nPWuZcq'),
+                'email'    => 'mailru@gmail.com',
+//                'password'     => bcrypt('QmVnBaf46Jes8nPWuZcq'),
+                'password' => bcrypt('12345678'),
                 'is_admin'     => true,
                 'role_id'      => DB::table('roles')
                                       ->select('id')

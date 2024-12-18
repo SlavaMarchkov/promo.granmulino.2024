@@ -34,6 +34,7 @@ class Promo extends Model
         'total_sales_before',
         'total_sales_plan',
         'total_sales_on_time',
+        'total_sales_after',
         'total_budget_plan',
         'total_budget_actual',
         'total_promo_profit',

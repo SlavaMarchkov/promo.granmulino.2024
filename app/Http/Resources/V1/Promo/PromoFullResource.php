@@ -16,16 +16,17 @@ class PromoFullResource extends PromoResource
         return [
             ...parent::toArray($request),
 
-            'userId'     => $this->user_id,
+            'userId'          => $this->user_id,
             'channelName' => $this->whenLoaded('channel', fn() => $this->channel->name),
-            'regionCode' => $this->whenLoaded('customer', fn() => $this->customer->region->code),
-            'cityName'   => $this->whenLoaded('city', fn() => $this->city->name),
+            'regionCode'      => $this->whenLoaded('customer', fn() => $this->customer->region->code),
+            'cityName'        => $this->whenLoaded('city', fn() => $this->city->name),
 
             'comments' => $this->comments,
 
             'totalSalesBefore' => $this->total_sales_before,
             'totalSalesPlan'   => $this->total_sales_plan,
             'totalSalesOnTime' => $this->total_sales_on_time,
+            'totalSalesAfter' => $this->total_sales_after,
             'totalPromoProfit' => $this->total_promo_profit,
 
             'createdAt' => $this->created_at,

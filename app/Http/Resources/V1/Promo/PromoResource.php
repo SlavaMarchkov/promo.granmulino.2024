@@ -34,6 +34,8 @@ class PromoResource extends JsonResource
 
             'startDate' => $this->start_date->format('d.m.Y'),
             'endDate'   => $this->end_date->format('d.m.Y'),
+
+            'mark' => new PromoMarkResource($this->whenLoaded('mark')),
         ];
     }
 }

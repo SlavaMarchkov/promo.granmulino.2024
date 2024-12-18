@@ -116,6 +116,12 @@ export function useArrayHandlers() {
         }, []);
     };
 
+    const getAverageOfArray = (arr) => {
+        const arrLength = arr.length;
+        const sum = arr.reduce((acc, val) => acc + (+val || 0), 0);
+        return arrLength ? (sum / arrLength).toFixed(2) : 0;
+    };
+
     return {
         sortBy,
         setSort,
@@ -126,5 +132,6 @@ export function useArrayHandlers() {
         sortArrayByStringColumn,
         sortArrayByBoolean,
         getUniqueObjectsFromArray,
+        getAverageOfArray,
     };
 }

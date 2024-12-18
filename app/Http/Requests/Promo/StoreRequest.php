@@ -53,6 +53,7 @@ final class StoreRequest extends FormRequest
 
             'total_sales_before' => ['required', 'numeric'],
             'total_sales_plan'   => ['required', 'numeric'],
+            'total_sales_after' => ['nullable', 'numeric'],
             'total_budget_plan'  => ['required', 'numeric'],
 
             'products' => [

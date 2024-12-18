@@ -8,6 +8,7 @@ namespace App\Services\Promos\Repositories;
 
 use App\Enums\Promo\TypeEnum;
 use App\Models\Promo;
+use App\Models\PromoMark;
 use App\Models\PromoProduct;
 use App\Models\PromoSeller;
 use Exception;
@@ -143,6 +144,40 @@ final class EloquentPromoRepository implements PromoRepositoryInterface
         }
     }
 
+    /**
+     * @throws Exception
+     */
+    public function updatePromoMarkFromArray(int $promo_id, PromoMark $promoMark, array $data)
+    : ?Promo {
+        try {
+            $promo = Promo::query()->where('id', $promo_id)->first();
+
+            DB::beginTransaction();
+
+            $avg = round(collect([$data['goals'], $data['sales'], $data['staff']])->avg(), 2);
+
+            $promoMark->update($data);
+            $promo->update(['total_mark' => $avg]);
+
+            DB::commit();
+
+            return Promo::query()
+                ->where('id', $promo_id)
+                ->with('customer')
+                ->with('retailer')
+                ->with('mark')
+                ->with('channel')
+                ->first();
+        } catch (Exception $exception) {
+            DB::rollBack();
+            Log::error('Error updating marks for the Promo with ID={id}. Error: {error}', [
+                'id'    => $promo_id,
+                'error' => $exception->getMessage(),
+            ]);
+            throw $exception;
+        }
+    }
+
     private function applyFilters(Builder $qb, array $params)
     : void {
         $qb->when(
@@ -166,6 +201,9 @@ final class EloquentPromoRepository implements PromoRepositoryInterface
         )->when(
             isset($params['channel']) && to_boolean($params['channel']),
             fn(Builder $query) => $query->with('channel'),
+        )->when(
+            isset($params['mark']) && to_boolean($params['mark']),
+            fn(Builder $query) => $query->with('mark'),
         );
     }
 

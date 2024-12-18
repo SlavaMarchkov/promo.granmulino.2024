@@ -7,8 +7,10 @@ namespace App\Services\Promos;
 
 
 use App\Models\Promo;
+use App\Models\PromoMark;
 use App\Models\PromoProduct;
 use App\Services\Promos\Handlers\CreatePromoHandler;
+use App\Services\Promos\Handlers\UpdatePromoMarkHandler;
 use App\Services\Promos\Handlers\UpdatePromoProductHandler;
 use App\Services\Promos\Repositories\PromoRepositoryInterface;
 use Illuminate\Database\Eloquent\Collection;
@@ -19,6 +21,7 @@ final readonly class PromoService
         private PromoRepositoryInterface $promoRepository,
         private CreatePromoHandler $createPromoHandler,
         private UpdatePromoProductHandler $updatePromoProductHandler,
+        private UpdatePromoMarkHandler $updatePromoMarkHandler,
     ) {
     }
 
@@ -51,5 +54,10 @@ final readonly class PromoService
     : array
     {
         return $this->updatePromoProductHandler->handle($promo_id, $promoProduct, $data);
+    }
+
+    public function updatePromoMark(int $promo_id, PromoMark $promoMark, array $data)
+    : ?Promo {
+        return $this->updatePromoMarkHandler->handle($promo_id, $promoMark, $data);
     }
 }

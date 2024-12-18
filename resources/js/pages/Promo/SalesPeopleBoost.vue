@@ -105,7 +105,6 @@ const initialFormData = () => ({
     salesBefore: 0,
     salesPlan: 0,
     surplusPlan: 0,
-    salesAfter: 0,
     budgetPlan: 0,
     budgetActual: 0,
 });
