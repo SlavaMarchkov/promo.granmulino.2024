@@ -18,10 +18,10 @@ final class EloquentCategoryRepository implements CategoryRepositoryInterface
         return Category::query()->where('id', $category->id)->first();
     }
 
-    public function get(array $params = [])
+    public function get(array $params = [], bool $isAdmin = false)
     : Collection {
         $categoriesSql = Category::query();
-        $this->applyFilters($categoriesSql, $params);
+        $isAdmin ? $this->applyAdminFilters($categoriesSql, $params) : $this->applyFilters($categoriesSql, $params);
         return $categoriesSql->get();
     }
 
@@ -68,5 +68,23 @@ final class EloquentCategoryRepository implements CategoryRepositoryInterface
                     ),
                 ]),
         );
+    }
+
+    private function applyAdminFilters(Builder $qb, array $params)
+    : void {
+        $qb->when(
+            isset($params['category_is_active']) && to_boolean($params['category_is_active']),
+            fn(Builder $query) => $query->where('is_active', true),
+        )
+            ->when(
+                isset($params['products']) && to_boolean($params['products']),
+                fn(Builder $query) => $query->with('products'),
+            )
+            ->withCount([
+                'products' => fn(Builder $query) => $query->when(
+                    isset($params['product_is_active']) && to_boolean($params['product_is_active']),
+                    fn($qb) => $qb->where('is_active', true),
+                ),
+            ]);
     }
 }

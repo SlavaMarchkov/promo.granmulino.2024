@@ -27,7 +27,7 @@ final class ProductController extends ApiController
     public function index()
     : JsonResponse
     {
-//        Cache::forget(self::CACHE_KEY);
+        Cache::forget(self::CACHE_KEY);
 
         $products = Cache::remember(self::CACHE_KEY, now()->addDay(), function () {
             return $this->productService->getProducts([...request()->all()]);
@@ -59,10 +59,12 @@ final class ProductController extends ApiController
         );
     }
 
-    // TODO: передача параметров в запрос
     public function show(Product $product)
     : JsonResponse {
-        $product = $this->productService->findProduct($product);
+        $product = $this->productService->findProduct(
+            $product,
+            [...request()->all()],
+        );
 
         return $this->successResponse(
             new ProductFullResource($product),

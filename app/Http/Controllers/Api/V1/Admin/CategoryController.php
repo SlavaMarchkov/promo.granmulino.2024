@@ -17,6 +17,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 final class CategoryController extends ApiController
 {
+    private const CACHE_KEY = 'categories-list-admin';
+
     public function __construct(
         private readonly CategoryService $categoryService,
     )
@@ -26,11 +28,13 @@ final class CategoryController extends ApiController
     public function index()
     : JsonResponse
     {
-        $key = 'categories-list-admin';
-        // Cache::forget($key);
+        Cache::forget(self::CACHE_KEY);
 
-        $categories = Cache::remember($key, now()->addDay(), function () {
-            return $this->categoryService->getCategories([...request()->all()]);
+        $categories = Cache::remember(self::CACHE_KEY, now()->addDay(), function () {
+            return $this->categoryService->getCategories(
+                [...request()->all()],
+                true,
+            );
         });
 
         return $this->successResponse(

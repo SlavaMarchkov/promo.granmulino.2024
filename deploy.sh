@@ -20,5 +20,3 @@ php82 artisan view:cache
 php82 artisan up
 
 echo "Deploy done!"
-
-php82 artisan queue:work

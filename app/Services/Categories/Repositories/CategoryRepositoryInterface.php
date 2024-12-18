@@ -13,7 +13,7 @@ interface CategoryRepositoryInterface
     public function find(Category $category)
     : ?Category;
 
-    public function get(array $params = [])
+    public function get(array $params = [], bool $isAdmin = false)
     : Collection;
 
     public function createFromArray(array $data)

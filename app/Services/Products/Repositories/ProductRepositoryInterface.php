@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Collection;
 
 interface ProductRepositoryInterface
 {
-    public function find(Product $product)
+    public function find(Product $product, array $params = [])
     : ?Product;
 
     public function get(array $params = [])

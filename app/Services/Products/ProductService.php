@@ -15,38 +15,32 @@ final readonly class ProductService
 {
     public function __construct(
         private ProductRepositoryInterface $productRepository,
-        private CreateProductHandler       $createProductHandler,
-    )
-    {
+        private CreateProductHandler $createProductHandler,
+    ) {
     }
 
-    public function findProduct(Product $product)
-    : ?Product
-    {
-        return $this->productRepository->find($product);
+    public function findProduct(Product $product, array $params = [])
+    : ?Product {
+        return $this->productRepository->find($product, $params);
     }
 
     public function getProducts(array $params)
-    : Collection
-    {
+    : Collection {
         return $this->productRepository->get($params);
     }
 
     public function storeProduct(array $data)
-    : Product
-    {
+    : Product {
         return $this->createProductHandler->handle($data);
     }
 
     public function updateProduct(Product $product, array $data)
-    : Product
-    {
+    : Product {
         return $this->productRepository->updateFromArray($product, $data);
     }
 
     public function deleteProduct(Product $product)
-    : int
-    {
+    : int {
         return $this->productRepository->delete($product);
     }
 }

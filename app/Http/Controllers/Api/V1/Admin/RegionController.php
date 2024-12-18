@@ -17,6 +17,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 final class RegionController extends ApiController
 {
+    private const CACHE_KEY = 'regions-list-admin';
+
     public function __construct(
         private readonly RegionService $regionService,
     )
@@ -25,10 +27,9 @@ final class RegionController extends ApiController
     public function index()
     : JsonResponse
     {
-        $key = 'regions-list-admin';
-        // Cache::forget($key);
+        Cache::forget(self::CACHE_KEY);
 
-        $regions = Cache::remember($key, now()->addDay(), function () {
+        $regions = Cache::remember(self::CACHE_KEY, now()->addDay(), function () {
             return $this->regionService->getRegions([...request()->all()]);
         });
 

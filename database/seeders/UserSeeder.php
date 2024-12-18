@@ -22,9 +22,9 @@ class UserSeeder extends Seeder
                 'password'     => bcrypt('110@altan.ru'),
                 'is_admin'     => false,
                 'role_id'      => DB::table('roles')
-                                      ->select('id')
-                                      ->where('slug', RoleEnum::MANAGER->getName())
-                                      ->value('id'),
+                    ->select('id')
+                    ->where('slug', RoleEnum::MANAGER->getName())
+                    ->value('id'),
             ],
         );
 
@@ -38,9 +38,9 @@ class UserSeeder extends Seeder
                 'password'     => bcrypt('x2AlqA2tyL4Atqu'),
                 'is_admin'     => true,
                 'role_id'      => DB::table('roles')
-                                      ->select('id')
-                                      ->where('slug', RoleEnum::ADMIN->getName())
-                                      ->value('id'),
+                    ->select('id')
+                    ->where('slug', RoleEnum::ADMIN->getName())
+                    ->value('id'),
             ],
         );
 
@@ -50,14 +50,13 @@ class UserSeeder extends Seeder
                 'first_name'   => 'Вячеслав',
                 'middle_name'  => 'Александрович',
                 'display_name' => 'Марчков Вячеслав (супер-админ)',
-                'email'    => 'mailru@gmail.com',
-//                'password'     => bcrypt('QmVnBaf46Jes8nPWuZcq'),
-                'password' => bcrypt('12345678'),
+                'email'        => 'slavamarchkov@gmail.com',
+                'password'     => bcrypt('QmVnBaf46Jes8nPWuZcq'),
                 'is_admin'     => true,
                 'role_id'      => DB::table('roles')
-                                      ->select('id')
-                                      ->where('slug', RoleEnum::SUPER_ADMIN->getName())
-                                      ->value('id'),
+                    ->select('id')
+                    ->where('slug', RoleEnum::SUPER_ADMIN->getName())
+                    ->value('id'),
             ],
         );
 
@@ -71,9 +70,9 @@ class UserSeeder extends Seeder
                 'password'     => bcrypt('5XcJSrKhKS6d5rU'),
                 'is_admin'     => true,
                 'role_id'      => DB::table('roles')
-                                      ->select('id')
-                                      ->where('slug', RoleEnum::PRICE_ADMIN->getName())
-                                      ->value('id'),
+                    ->select('id')
+                    ->where('slug', RoleEnum::PRICE_ADMIN->getName())
+                    ->value('id'),
             ],
         );
     }

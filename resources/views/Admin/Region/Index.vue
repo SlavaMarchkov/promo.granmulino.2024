@@ -263,7 +263,11 @@ onMounted(async () => {
 });
 
 const getRegions = async () => {
-    const { data } = await get(ADMIN_URLS.REGION);
+    const { data } = await get(ADMIN_URLS.REGION, {
+        params: {
+            cities: true,
+        },
+    });
     state.regions = data.regions;
 };
 

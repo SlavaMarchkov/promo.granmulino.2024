@@ -26,10 +26,10 @@ final readonly class CategoryService
         return $this->categoryRepository->find($category);
     }
 
-    public function getCategories(array $params = [])
+    public function getCategories(array $params = [], bool $isAdmin = false)
     : Collection
     {
-        return $this->categoryRepository->get($params);
+        return $this->categoryRepository->get($params, $isAdmin);
     }
 
     public function storeCategory(array $data)

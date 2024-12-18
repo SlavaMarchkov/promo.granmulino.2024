@@ -12,10 +12,12 @@ use Illuminate\Database\Eloquent\Collection;
 final class EloquentProductRepository implements ProductRepositoryInterface
 {
 
-    public function find(Product $product)
+    public function find(Product $product, array $params = [])
     : ?Product
     {
-        return Product::query()->where('id', $product->id)->first();
+        $productSql = Product::query()->where('id', $product->id);
+        $this->applyFilters($productSql, $params);
+        return $productSql->first();
     }
 
     public function get(array $params = [])
