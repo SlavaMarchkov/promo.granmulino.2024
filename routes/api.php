@@ -73,7 +73,6 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
             'customers.sellers' => CustomerSellerController::class,
             'promos.products'   => PromoProductController::class,
             'promos.sellers'    => PromoSellerController::class,
-            'promos.marks' => PromoMarkController::class,
         ]);
     });
 });
