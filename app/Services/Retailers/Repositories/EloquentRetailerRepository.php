@@ -8,7 +8,7 @@ namespace App\Services\Retailers\Repositories;
 
 use App\Models\Retailer;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Builder;
+use App\Services\Retailers\Filters\RetailerFilter;
 use Illuminate\Database\Eloquent\Collection;
 
 final class EloquentRetailerRepository implements RetailerRepositoryInterface
@@ -20,8 +20,8 @@ final class EloquentRetailerRepository implements RetailerRepositoryInterface
 
     public function get(array $params = [])
     : Collection {
-        $retailersSql = Retailer::query();
-        $this->applyFilters($retailersSql, $params);
+        $filter = new RetailerFilter($params);
+        $retailersSql = Retailer::filter($filter);
         return $retailersSql->get();
     }
 
@@ -54,20 +54,5 @@ final class EloquentRetailerRepository implements RetailerRepositoryInterface
         }
 
         return $customers_count;*/
-    }
-
-    private function applyFilters(Builder $qb, array $params)
-    : void
-    {
-        $qb->when(
-            isset($params['user_id']),
-            fn(Builder $query) => $query->where('user_id', (int)$params['user_id']),
-        )->when(
-            isset($params['city']) && to_boolean($params['city']),
-            fn(Builder $query) => $query->with('city'),
-        )->when(
-            isset($params['customer']) && to_boolean($params['customer']),
-            fn(Builder $query) => $query->with('customer')
-        );
     }
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Enums\Retailer\TypeEnum;
+use App\Traits\Models\HasFilter;
 use App\Traits\Models\HasPreviousNext;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -12,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Retailer extends Model
 {
     use HasPreviousNext;
+    use HasFilter;
 
     protected $fillable = [
         'name',

@@ -8,20 +8,28 @@ namespace App\Services\Customers\Repositories;
 use App\Models\Customer;
 use App\Models\CustomerSeller;
 use App\Services\Customers\Filters\CustomerFilter;
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Log;
 
 final readonly class EloquentCustomerRepository implements CustomerRepositoryInterface
 {
-    public function __construct(
-        private CustomerFilter $filter
-    ) {
-    }
 
+    /**
+     * @throws BindingResolutionException
+     */
     public function find(Customer $customer, array $params = [])
     : ?Customer {
-        $customersSql = Customer::query()->where('id', $customer->id);
-        $this->filter->applyFilter($customersSql, $params);
-        return $customersSql->first();
+        try {
+            $filter = app()->make(CustomerFilter::class, ['params' => $params]);
+            $customersSql = Customer::query()
+                ->where('id', $customer->id)
+                ->filter($filter);
+            return $customersSql->first();
+        } catch (BindingResolutionException $e) {
+            Log::error('Error in CustomerFilter: ' . $e->getMessage());
+            throw new BindingResolutionException($e->getMessage());
+        }
     }
 
     public function findSeller(int $id)
@@ -32,8 +40,8 @@ final readonly class EloquentCustomerRepository implements CustomerRepositoryInt
 
     public function get(array $params = [])
     : Collection {
-        $customersSql = Customer::query();
-        $this->filter->applyFilter($customersSql, $params);
+        $filter = new CustomerFilter($params);
+        $customersSql = Customer::filter($filter);
         return $customersSql->get();
     }
 

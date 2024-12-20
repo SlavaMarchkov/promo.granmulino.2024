@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace App\Services\Customers\Filters;
 
+use App\Contracts\AbstractFilter;
 use Illuminate\Database\Eloquent\Builder;
 
-final class CustomerFilter
+final class CustomerFilter extends AbstractFilter
 {
 
     private const USER_ID          = 'user_id';
@@ -16,16 +17,7 @@ final class CustomerFilter
     private const RETAILERS        = 'retailers';
     private const CUSTOMER_SELLERS = 'customer_sellers';
 
-    public function applyFilter(Builder $builder, array $params = [])
-    : void {
-        foreach ($this->getCallbacks() as $key => $callback) {
-            if (isset($params[$key])) {
-                $this->$callback($builder, $params[$key]);
-            }
-        }
-    }
-
-    private function getCallbacks()
+    public function getCallbacks()
     : array
     {
         return [
