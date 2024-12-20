@@ -17,6 +17,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 final class CityController extends ApiController
 {
+    private const CACHE_KEY = 'cities-list-admin';
+
     public function __construct(
         private readonly CityService $cityService,
     )
@@ -25,10 +27,9 @@ final class CityController extends ApiController
     public function index()
     : JsonResponse
     {
-        $key = 'cities-list-admin';
-        // Cache::forget($key);
+        Cache::forget(self::CACHE_KEY);
 
-        $cities = Cache::remember($key, now()->addDay(), function () {
+        $cities = Cache::remember(self::CACHE_KEY, now()->addDay(), function () {
             return $this->cityService->getCities();
         });
 

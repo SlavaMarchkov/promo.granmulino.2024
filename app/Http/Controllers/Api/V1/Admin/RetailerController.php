@@ -17,6 +17,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 final class RetailerController extends ApiController
 {
+    private const CACHE_KEY = 'retailers-list-admin';
+
     public function __construct(
         private readonly RetailerService $retailerService,
     )
@@ -26,9 +28,9 @@ final class RetailerController extends ApiController
     public function index()
     : JsonResponse
     {
-        $key = 'retailers-list-admin';
+        Cache::forget(self::CACHE_KEY);
 
-        $retailers = Cache::remember($key, now()->addDay(), function () {
+        $retailers = Cache::remember(self::CACHE_KEY, now()->addDay(), function () {
             return $this->retailerService->getRetailers([...request()->all()]);
         });
 

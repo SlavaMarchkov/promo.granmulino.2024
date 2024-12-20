@@ -17,6 +17,8 @@ use Symfony\Component\HttpFoundation\Response;
 // TODO: make Abilities
 final class CustomerController extends ApiController
 {
+    private const CACHE_KEY = 'customers-list-admin';
+
     public function __construct(
         private readonly CustomerService $customerService,
     )
@@ -26,12 +28,11 @@ final class CustomerController extends ApiController
     public function index()
     : JsonResponse
     {
-        $key = 'customers-list-admin';
-        // Cache::forget($key);
+        Cache::forget(self::CACHE_KEY);
 
-        if (!$customers = Cache::get($key)) {
+        if (!$customers = Cache::get(self::CACHE_KEY)) {
             $customers = $this->customerService->getCustomers([...request()->all()]);
-            Cache::put($key, $customers, now()->addDay());
+            Cache::put(self::CACHE_KEY, $customers, now()->addDay());
         }
 
         return $this->successResponse(

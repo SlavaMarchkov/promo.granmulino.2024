@@ -27,7 +27,9 @@ class CustomerResource extends JsonResource
             'city'      => new CityResource($this->whenLoaded('city')),
             'retailers' => RetailerResource::collection($this->whenLoaded('retailers')),
 
+            'userId'   => $this->whenLoaded('user', fn() => $this->user->id),
             'userName'   => $this->whenLoaded('user', fn() => $this->user->full_name),
+            'regionId' => $this->whenLoaded('region', fn() => $this->region->id),
             'regionName' => $this->whenLoaded('region', fn() => $this->region->name),
             'regionCode' => $this->whenLoaded('region', fn() => $this->region->code),
             'cityName'   => $this->whenLoaded('city', fn() => $this->city->name),

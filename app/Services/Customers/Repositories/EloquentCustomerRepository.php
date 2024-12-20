@@ -7,16 +7,20 @@ namespace App\Services\Customers\Repositories;
 
 use App\Models\Customer;
 use App\Models\CustomerSeller;
-use Illuminate\Database\Eloquent\Builder;
+use App\Services\Customers\Filters\CustomerFilter;
 use Illuminate\Database\Eloquent\Collection;
 
-final class EloquentCustomerRepository implements CustomerRepositoryInterface
+final readonly class EloquentCustomerRepository implements CustomerRepositoryInterface
 {
+    public function __construct(
+        private CustomerFilter $filter
+    ) {
+    }
 
     public function find(Customer $customer, array $params = [])
     : ?Customer {
         $customersSql = Customer::query()->where('id', $customer->id);
-        $this->applyFilters($customersSql, $params);
+        $this->filter->applyFilter($customersSql, $params);
         return $customersSql->first();
     }
 
@@ -29,7 +33,7 @@ final class EloquentCustomerRepository implements CustomerRepositoryInterface
     public function get(array $params = [])
     : Collection {
         $customersSql = Customer::query();
-        $this->applyFilters($customersSql, $params);
+        $this->filter->applyFilter($customersSql, $params);
         return $customersSql->get();
     }
 
@@ -46,12 +50,14 @@ final class EloquentCustomerRepository implements CustomerRepositoryInterface
     public function updateFromArray(Customer $customer, array $data)
     : Customer {
         $customer->update($data);
+        $customer->fresh();
         return $customer;
     }
 
     public function updateSellerFromArray(CustomerSeller $customerSeller, array $data)
     : CustomerSeller {
         $customerSeller->update($data);
+        $customerSeller->fresh();
         return $customerSeller;
     }
 
@@ -77,34 +83,6 @@ final class EloquentCustomerRepository implements CustomerRepositoryInterface
         }
 
         return $sellers_count;
-    }
-
-    private function applyFilters(Builder $qb, array $params)
-    : void {
-        $qb->when(
-            isset($params['user_id']),
-            fn(Builder $query) => $query->where('user_id', (int)$params['user_id'])
-        )
-            ->when(
-                isset($params['region']) && to_boolean($params['region']),
-                fn(Builder $query) => $query->with('region'),
-            )
-            ->when(
-                isset($params['city']) && to_boolean($params['city']),
-                fn(Builder $query) => $query->with('city')
-            )
-            ->when(
-                isset($params['user']) && to_boolean($params['user']),
-                fn(Builder $query) => $query->with('user')
-            )
-            ->when(
-                isset($params['retailers']) && to_boolean($params['retailers']),
-                fn(Builder $query) => $query->with('retailers'),
-            )
-            ->when(
-                isset($params['customer_sellers']) && to_boolean($params['customer_sellers']),
-                fn(Builder $query) => $query->with('customer_sellers')->orderBy('name')->orderByDesc('is_active'),
-            );
     }
 
     public function getSellers(int $customer_id)

@@ -95,7 +95,7 @@
                                 </td>
                                 <td class="text-start">
                                         <span
-                                            :class="['badge', 'bg-opacity-75', item.typeBgColor]"
+                                            :class="['badge', item.typeBgColor]"
                                             :title="item.typeDescription"
                                             style="font-size: 0.8em;"
                                         >{{ item.label }}</span>
@@ -362,6 +362,8 @@ function resetState() {
 
 onMounted(async () => {
     await getRetailers();
+    await getCustomers();
+    await getCities();
     modalPopUp = new bootstrap.Modal(document.getElementById('modalPopUp'));
     modalPopUp._element.addEventListener('hide.bs.modal', resetState);
 });
@@ -369,6 +371,16 @@ onMounted(async () => {
 const getRetailers = async () => {
     const { data } = await get(ADMIN_URLS.RETAILER);
     state.retailers = data.retailers;
+};
+
+const getCustomers = async () => {
+    const { data } = await get(ADMIN_URLS.CUSTOMER);
+    state.customers = data.customers;
+};
+
+const getCities = async () => {
+    const { data } = await get(ADMIN_URLS.CITY);
+    state.cities = data.cities;
 };
 
 const getOneRetailer = (id) => state.retailers.find(retailer => retailer.id === id);
