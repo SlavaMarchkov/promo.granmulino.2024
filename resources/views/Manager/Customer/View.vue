@@ -16,14 +16,17 @@
                         <h2 class="mb-0">{{ item.name }}</h2>
                     </template>
                     <template #body>
-                        <TwoColumnRow cols="3" title="<h3>Регион</h3>"><h3>{{ item.region.name }}</h3></TwoColumnRow>
+                        <TwoColumnRow title="<h3>Регион</h3>"><h3>{{ item.region.name }}</h3></TwoColumnRow>
                         <TwoColumnRow title="<h3>Город</h3>"><h3>{{ item.city.name }}</h3></TwoColumnRow>
                         <TwoColumnRow title="<h3>Работает</h3>">
                             <TheBadge :is-active="item.isActive"/>
                         </TwoColumnRow>
                     </template>
                 </TheCard>
-                <TheCard :header-classes="['bg-light']">
+                <TheCard
+                    :header-classes="['bg-light']"
+                    class="mb-4"
+                >
                     <template #header>
                         <h4 class="mb-0">Торговые сети</h4>
                     </template>

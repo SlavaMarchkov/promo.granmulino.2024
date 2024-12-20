@@ -4,7 +4,7 @@
             <TheFilter
                 @reset-filter="clearSearch"
             >
-                <div class="col-md-4 mb-2">
+                <div class="col-xl-4 col-md-6 mb-2">
                     <InputGroup
                         v-model="searchBy.name"
                         placeholder="Поиск по названию"
@@ -12,7 +12,7 @@
                         Торговая сеть
                     </InputGroup>
                 </div>
-                <div class="col-md-4 mb-2">
+                <div class="col-xl-4 col-md-6 mb-2">
                     <InputGroup
                         v-model="searchBy.city"
                         placeholder="Поиск по городу"
@@ -20,7 +20,7 @@
                         Город
                     </InputGroup>
                 </div>
-                <div class="col-md-4 mb-2">
+                <div class="col-xl-4 col-md-6 mb-2">
                     <TheCheckbox
                         id="is_active"
                         v-model="searchBy.isActive"
@@ -31,7 +31,10 @@
             </TheFilter>
         </div>
     </div>
-    <div v-if="filteredItems.length > 0" class="row row-cols-xl-4 row-cols-lg-3 row-cols-md-3 row-cols-sm-2 row-cols-1 g-3">
+    <div
+        v-if="filteredItems.length > 0"
+        class="row row-cols-xl-3 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-3"
+    >
         <TheCard
             v-for="item in filteredItems"
             :key="item.id"

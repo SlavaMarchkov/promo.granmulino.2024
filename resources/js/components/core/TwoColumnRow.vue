@@ -1,30 +1,17 @@
 <template>
-    <div class="row">
-        <div :class="firstCol"><span v-html="props.title"></span></div>
-        <div :class="['fw-bold text-end', secondCol]">
+    <div class="row mb-3">
+        <div class="col-md-4 col-sm-6 text-accent"><span v-html="props.title"></span></div>
+        <div class="col-md-8 col-sm-6 fw-bold">
             <slot/>
         </div>
     </div>
 </template>
 
 <script setup>
-import { computed } from 'vue';
-
 const props = defineProps({
     title: {
         type: String,
         default: 'title',
     },
-    cols: {
-        type: [Number, String],
-        default: 6,
-    },
 });
-
-const firstCol = computed(() => `col-${props.cols}`);
-const secondCol = computed(() => `col-${12 - props.cols}`);
 </script>
-
-<style scoped>
-
-</style>

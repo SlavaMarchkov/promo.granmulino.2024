@@ -14,6 +14,7 @@
                 <TheCard
                     :body-classes="['profile-card pt-2 d-flex flex-column']"
                     :header-classes="['bg-light']"
+                    class="mb-4"
                 >
                     <template #header>
                         <h2 class="mb-0">{{ item.name }}</h2>

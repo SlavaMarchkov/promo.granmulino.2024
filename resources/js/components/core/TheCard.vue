@@ -60,7 +60,3 @@ const footerClasses = computed(() => {
     return [...baseFooterClasses, ...props.footerClasses];
 });
 </script>
-
-<style scoped>
-
-</style>
