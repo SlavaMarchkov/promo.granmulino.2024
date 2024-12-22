@@ -14,7 +14,7 @@
             </div>
             <div class="col-md-2 col-sm-6">
                 <TheInput
-                    :id="`${props.supervisor.id}_SV_salesBefore`"
+                    :id="`${props.index}_SV_salesBefore`"
                     class="fw-bold border-primary text-end"
                     type="text"
                     readonly
@@ -25,7 +25,7 @@
             </div>
             <div class="col-md-2 col-sm-6">
                 <TheInput
-                    :id="`${props.supervisor.id}_SV_salesPlan`"
+                    :id="`${props.index}_SV_salesPlan`"
                     class="fw-bold border-success text-end"
                     type="text"
                     readonly
@@ -48,11 +48,10 @@
 </template>
 
 <script setup>
+import { computed, reactive, watch } from 'vue';
 import SalesPeopleSellerItem from '@/pages/Promo/SalesPeopleSellerItem.vue';
 import TheInput from '@/components/form/TheInput.vue';
-import { computed, reactive } from 'vue';
-import { formatNumber, formatNumberWithFractions } from '@/helpers/formatters.js';
-import { BOOST_SUPERVISOR_QUOTIENT } from '@/helpers/constants.js';
+import { convertInputStringToNumber, formatNumber, formatNumberWithFractions } from '@/helpers/formatters.js';
 
 const props = defineProps({
     supervisor: {
@@ -61,7 +60,7 @@ const props = defineProps({
     },
     index: {
         type: Number,
-        default: 1,
+        default: 0,
     },
     sellers: {
         type: Array,
@@ -78,10 +77,13 @@ const state = reactive({
     sellers: [],
 });
 
+watch(
+    () => props.supervisor.compensationPlan,
+    (newValue) => onCompensationPlanChange(newValue),
+);
+
 const addSeller = (seller) => {
     emit('addToCheckedSellers', seller);
-
-    let supervisorObj = props.supervisor;
 
     const itemIdx = state.sellers.findIndex(ss => ss.id === seller.id);
 
@@ -91,11 +93,31 @@ const addSeller = (seller) => {
         state.sellers[itemIdx] = { ...seller };
     }
 
-    const salesBeforeEl = document.getElementById(`${props.supervisor.id}_SV_salesBefore`);
-    const salesPlanEl = document.getElementById(`${props.supervisor.id}_SV_salesPlan`);
+    const salesBeforeEl = document.getElementById(`${props.index}_SV_salesBefore`);
+    const salesPlanEl = document.getElementById(`${props.index}_SV_salesPlan`);
 
     salesBeforeEl.value = salesBefore.value === 0 ? '' : formatNumber(salesBefore.value);
     salesPlanEl.value = salesPlan.value === 0 ? '' : formatNumberWithFractions(salesPlan.value);
+
+    const supervisorObj = props.supervisor;
+
+    supervisorObj.sellerId = supervisorObj.id;
+    supervisorObj.salesBefore = salesBefore.value;
+    supervisorObj.salesPlan = salesPlan.value;
+    supervisorObj.budgetPlan = calcBudgetPlan(salesPlan.value, props.supervisor.compensationPlan);
+
+    emit('addToCheckedSellers', supervisorObj);
+};
+
+const onCompensationPlanChange = (compensationPlan) => {
+    const salesBeforeEl = document.getElementById(`${props.index}_SV_salesBefore`);
+    const salesPlanEl = document.getElementById(`${props.index}_SV_salesPlan`);
+
+    const salesBefore = convertInputStringToNumber(salesBeforeEl.value);
+    const salesPlan = salesPlanEl.value === '' ? 0 : convertInputStringToNumber(salesPlanEl.value);
+    const budgetPlan = calcBudgetPlan(salesPlan, compensationPlan);
+
+    const supervisorObj = props.supervisor;
 
     supervisorObj.sellerId = supervisorObj.id;
     supervisorObj.salesBefore = salesBefore;
@@ -108,17 +130,18 @@ const addSeller = (seller) => {
 const salesBefore = computed(() => {
     return state.sellers.reduce((acc, el) => {
         if (isNaN(el.salesBefore)) el.salesBefore = 0;
-        return acc + el.salesBefore;
+        return +(acc + el.salesBefore).toFixed(0);
     }, 0);
 });
 
 const salesPlan = computed(() => {
     return state.sellers.reduce((acc, el) => {
-        return acc + el.salesPlan;
+        return +(acc + el.salesPlan).toFixed(0);
     }, 0);
 });
 
-const budgetPlan = computed(() => {
-   return +(salesPlan.value * BOOST_SUPERVISOR_QUOTIENT / 100).toFixed(2);
-});
+const calcBudgetPlan = (salesPlan, compensationPlan) => {
+    const boostSupervisorQuotient = convertInputStringToNumber(compensationPlan.toString());
+    return +(salesPlan * boostSupervisorQuotient / 100).toFixed(2);
+};
 </script>

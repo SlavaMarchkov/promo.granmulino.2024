@@ -8,9 +8,6 @@
                     <h4 class="text-primary fw-bold mb-0">{{ isNaN(totalBudgetPlan) ? '0' : formatNumber(totalBudgetPlan) }} руб.</h4>
                 </div>
                 <hr>
-                <h5>Мотивация для расчёта бюджета: <span class="fw-bold text-primary">
-                    СВ: {{ BOOST_SUPERVISOR_QUOTIENT }}&#8239;% ТП: {{ BOOST_SELLER_QUOTIENT }}&#8239;%</span>
-                </h5>
                 <div v-if="!props.customerId" class="mt-5 alert alert-warning alert-dismissible fade show" role="alert">
                     <i class="bi bi-exclamation-triangle me-1"></i>
                     Выберите дистрибутора в общих настройках промо-акции для подгрузки его торгового персонала.
@@ -21,10 +18,49 @@
                     </div>
                     <div v-if="state.sellers.length === 0" class="mt-4 alert alert-warning alert-dismissible fade show" role="alert">
                         <i class="bi bi-exclamation-triangle me-1"></i>
-                        В команду дистрибьютора не добавлено ни одного торгового представителя. <RouterLink :to="{ name: 'Manager.Customer.View', params: { id: props.customerId }}" class="fw-bold">Перейдите в карточку контрагента</RouterLink> на вкладку "Команда ТП" и добавьте торговых представителей.
+                        В команду дистрибутора не добавлено ни одного торгового представителя.
+                        <RouterLink :to="{ name: 'Manager.Customer.View', params: { id: props.customerId }}"
+                                    class="fw-bold">Перейдите в карточку контрагента
+                        </RouterLink>
+                        на вкладку "Команда ТП" и добавьте торговых представителей.
                     </div>
                     <div v-else>
-                        <p>Введите план для торговых представителей, участвующих в акции.</p>
+                        <div class="row mb-3">
+                            <hr>
+                            <p><span class="fw-bold text-primary">Шаг 1.</span> Настройте процент мотивации для
+                                супервайзеров и торговых представителей:</p>
+                            <div class="col-md-6 col-sm-12">
+                                <TheLabel
+                                    for="motivation_for_supervisors"
+                                >Мотивация СВ: <span class="fw-bold text-primary fs-5">{{
+                                        state.motivationForSupervisors
+                                    }}&#8239;%</span>
+                                </TheLabel>
+                                <InputRange
+                                    id="motivation_for_supervisors"
+                                    v-model="state.motivationForSupervisors"
+                                    :max="10"
+                                    :min="0"
+                                    :step="1"
+                                />
+                            </div>
+                            <div class="col-md-6 col-sm-12">
+                                <TheLabel
+                                    for="motivation_for_sellers"
+                                >Мотивация ТП: <span class="fw-bold text-primary fs-5">{{ state.motivationForSellers }}&#8239;%</span>
+                                </TheLabel>
+                                <InputRange
+                                    id="motivation_for_sellers"
+                                    v-model="state.motivationForSellers"
+                                    :max="30"
+                                    :min="0"
+                                    :step="1"
+                                />
+                            </div>
+                        </div>
+                        <hr>
+                        <p><span class="fw-bold text-primary">Шаг 2.</span> Введите факт и план продаж (в рублях) для
+                            торговых представителей, участвующих в акции.</p>
                         <ul class="list-group">
                             <li class="list-group-item m-0 px-2">
                                 <div class="row g-2 text-center align-items-center p-0">
@@ -59,7 +95,7 @@
                                     <div class="col-md-5 col-sm-12"><span class="fw-bold">ИТОГО</span></div>
                                     <div class="col-md-2 col-sm-6">
                                         <TheInput
-                                            :value="isNaN(totalSalesBefore) ? '' : formatNumber(totalSalesBefore)"
+                                            :value="formatNumber(totalSalesBefore)"
                                             class="fw-bold border-secondary text-end"
                                             type="text"
                                             readonly
@@ -91,11 +127,13 @@
 import { computed, reactive, watch } from 'vue';
 import { useHttpService } from '@/use/useHttpService.js';
 import { useArrayHandlers } from '@/use/useArrayHandlers.js';
-import { BOOST_SELLER_QUOTIENT, BOOST_SUPERVISOR_QUOTIENT, MANAGER_URLS } from '@/helpers/constants.js';
+import { MANAGER_URLS } from '@/helpers/constants.js';
 import SalesPeopleSupervisorItem from '@/pages/Promo/SalesPeopleSupervisorItem.vue';
 import { formatNumber, formatNumberWithFractions } from '@/helpers/formatters.js';
 import SalesPeopleSellerItem from '@/pages/Promo/SalesPeopleSellerItem.vue';
 import TheInput from '@/components/form/TheInput.vue';
+import TheLabel from '@/components/form/TheLabel.vue';
+import InputRange from '@/components/form/InputRange.vue';
 
 const { get } = useHttpService();
 const arrayHandlers = useArrayHandlers();
@@ -107,6 +145,7 @@ const initialFormData = () => ({
     surplusPlan: 0,
     budgetPlan: 0,
     budgetActual: 0,
+    compensationPlan: 0,
 });
 
 const props = defineProps({
@@ -130,6 +169,8 @@ const emit = defineEmits([
 ]);
 
 const state = reactive({
+    motivationForSupervisors: 5,
+    motivationForSellers: 10,
     sellers: [],
     checkedSellers: [],
     form: initialFormData(),
@@ -138,8 +179,11 @@ const state = reactive({
 watch(
     () => props.customerId,
     async (newValue) => {
+        state.motivationForSupervisors = 5;
+        state.motivationForSellers = 10;
         state.sellers = [];
         state.checkedSellers = [];
+        state.form = initialFormData();
         if ( newValue !== '' ) await getCustomerSellers(newValue);
     },
 );
@@ -160,7 +204,7 @@ const supervisors = computed(() => {
         .map(item => ({
             ...item,
             ...state.form,
-            compensation: BOOST_SUPERVISOR_QUOTIENT,
+            compensationPlan: state.motivationForSupervisors,
         }));
 });
 
@@ -171,7 +215,7 @@ const sellers = computed(() => {
         .map(item => ({
             ...item,
             ...state.form,
-            compensation: BOOST_SELLER_QUOTIENT,
+            compensationPlan: state.motivationForSellers,
         }));
 });
 
@@ -194,14 +238,18 @@ const addToCheckedSellers = (seller) => {
 
 const totalSalesBefore = computed(() => {
     return state.checkedSellers.reduce((acc, seller) => {
-            if (seller.isSupervisor || seller.supervisorId === null) acc += parseInt(seller.salesBefore);
+        if ( (seller.isSupervisor || seller.supervisorId === null) && !isNaN(seller.salesBefore) ) {
+            acc += parseInt(seller.salesBefore);
+        }
             return acc;
         }, 0);
 });
 
 const totalSalesPlan = computed(() => {
     return state.checkedSellers.reduce((acc, seller) => {
-            if (seller.isSupervisor || seller.supervisorId === null) acc += seller.salesPlan;
+        if ( seller.isSupervisor || seller.supervisorId === null ) {
+            acc += seller.salesPlan;
+        }
             return acc;
         }, 0);
 });

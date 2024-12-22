@@ -14,8 +14,15 @@ export function useCalculations() {
         return parseInt((numA * numB).toFixed(0));
     };
 
+    const calcSalesSurplus = (valueA, valueB) => {
+        const numA = convertInputStringToNumber(valueA.toString());
+        const numB = convertInputStringToNumber(valueB.toString());
+        return parseInt((numA + (numA * numB) / 100).toFixed(2));
+    };
+
     return {
         calcDifferencePercentage,
         calcBudget,
+        calcSalesSurplus,
     };
 }

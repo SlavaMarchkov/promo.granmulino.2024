@@ -14,17 +14,20 @@ class PromoSellerResource extends JsonResource
     public function toArray(Request $request)
     : array {
         return [
-            'id'           => $this->id,
-            'promoId'      => $this->promo_id,
-            'customerId'   => $this->customer_id,
-            'sellerId'     => $this->seller_id,
-            'salesBefore'  => $this->sales_before,
-            'salesPlan'    => $this->sales_plan,
-            'surplusPlan'  => $this->surplus_plan,
-            'salesAfter'   => $this->sales_after,
-            'compensation' => $this->compensation,
-            'budgetPlan'   => $this->budget_plan,
-            'budgetActual' => $this->budget_actual,
+            'id'                 => $this->id,
+            'promoId'            => $this->promo_id,
+            'customerId'         => $this->customer_id,
+            'sellerId'           => $this->seller_id,
+            'supervisorId'       => $this->supervisor_id,
+            'isSupervisor'       => $this->is_supervisor,
+            'salesBefore'        => $this->sales_before,
+            'salesPlan'          => $this->sales_plan,
+            'surplusPlan'        => $this->surplus_plan,
+            'salesAfter'         => $this->sales_after,
+            'compensationPlan'   => $this->compensation_plan,
+            'compensationActual' => $this->compensation_actual,
+            'budgetPlan'         => $this->budget_plan,
+            'budgetActual'       => $this->budget_actual,
         ];
     }
 }

@@ -84,11 +84,15 @@ return new class extends Migration {
             $table->foreignId('customer_id');
             $table->foreignId('seller_id');
 
+            $table->unsignedBigInteger('supervisor_id')->nullable();
+            $table->boolean('is_supervisor')->nullable()->default(false);
+
             $table->decimal('sales_before', 10, 0)->default(0);
             $table->decimal('sales_plan', 10, 0)->default(0);
             $table->decimal('sales_after', 10, 0)->default(0);
             $table->decimal('surplus_plan', 4, 0)->default(0);
-            $table->unsignedSmallInteger('compensation')->default(0);
+            $table->unsignedSmallInteger('compensation_plan')->default(0);
+            $table->unsignedSmallInteger('compensation_actual')->default(0);
 
             $table->decimal('budget_plan', 10, 0)->default(0);
             $table->decimal('budget_actual', 10, 0)->default(0);

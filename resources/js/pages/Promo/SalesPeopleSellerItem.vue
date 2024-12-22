@@ -53,10 +53,14 @@
 </template>
 
 <script setup>
-import { BOOST_SELLER_QUOTIENT, DEFAULT_SURPLUS_PERCENT } from '@/helpers/constants.js';
+import { watch } from 'vue';
+import { DEFAULT_SURPLUS_PERCENT } from '@/helpers/constants.js';
 import TheButton from '@/components/core/TheButton.vue';
 import TheInput from '@/components/form/TheInput.vue';
 import { convertInputStringToNumber, formatNumber, formatNumberWithFractions } from '@/helpers/formatters.js';
+import { useCalculations } from '@/use/useCalculations.js';
+
+const { calcSalesSurplus } = useCalculations();
 
 const props = defineProps({
     seller: {
@@ -65,7 +69,7 @@ const props = defineProps({
     },
     index: {
         type: Number,
-        default: 1,
+        default: 0,
     },
 });
 
@@ -73,8 +77,13 @@ const emit = defineEmits([
     'addSeller',
 ]);
 
+watch(
+    () => props.seller.compensationPlan,
+    (newValue) => onCompensationPlanChange(newValue, props.index),
+);
+
 const onSalesBeforeChange = (evt, index) => {
-    let sellerObj = props.seller;
+    const sellerObj = props.seller;
 
     const salesBeforeEl = document.getElementById(`${index}_salesBefore`);
     const surplusPlanEl = document.getElementById(`${index}_surplusPlan`);
@@ -97,7 +106,6 @@ const onSalesBeforeChange = (evt, index) => {
         surplusPlanEl.setAttribute('readonly', 'readonly');
         salesPlanEl.setAttribute('readonly', 'readonly');
     } else if (salesBefore === 0) {
-        salesBefore = 0;
         surplusPlan = 0;
         salesPlan = 0;
         budgetPlan = 0;
@@ -110,8 +118,9 @@ const onSalesBeforeChange = (evt, index) => {
         surplusPlan = surplusPlanEl.value === ''
             ? DEFAULT_SURPLUS_PERCENT
             : convertInputStringToNumber(surplusPlanEl.value);
-        salesPlan = +(salesBefore + (salesBefore * surplusPlan) / 100).toFixed(2);
-        budgetPlan = calcBudgetPlan(salesPlan);
+
+        salesPlan = calcSalesSurplus(salesBefore, surplusPlan);
+        budgetPlan = calcBudgetPlan(salesPlan, props.seller.compensationPlan);
 
         salesBeforeEl.value = formatNumber(salesBefore);
         salesPlanEl.value = formatNumberWithFractions(salesPlan);
@@ -147,7 +156,7 @@ const onSurplusPlanChange = (evt, index) => {
     }
 
     salesPlan = +(salesBefore + (salesBefore * surplusPlan) / 100).toFixed(2);
-    budgetPlan = calcBudgetPlan(salesPlan);
+    budgetPlan = calcBudgetPlan(salesPlan, props.seller.compensationPlan);
 
     surplusPlanEl.value = formatNumber(surplusPlan);
     salesPlanEl.value = formatNumberWithFractions(salesPlan);
@@ -162,20 +171,20 @@ const onSurplusPlanChange = (evt, index) => {
 };
 
 const onSalesPlanChange = (evt, index) => {
-    let sellerObj = props.seller;
+    const sellerObj = props.seller;
 
     const salesPlanEl = document.getElementById(`${index}_salesPlan`);
 
     let salesPlan = convertInputStringToNumber(evt.target.value);
     let salesBefore = 0;
     let surplusPlan = 0;
-    let budgetPlan;
+    let budgetPlan = 0;
 
     if ( isNaN(salesPlan) ) {
         salesPlan = 0;
         salesPlanEl.value = salesPlan;
     } else {
-        budgetPlan = calcBudgetPlan(salesPlan);
+        budgetPlan = calcBudgetPlan(salesPlan, props.seller.compensationPlan);
         salesPlan = +(salesPlan).toFixed(2);
         salesPlanEl.value = formatNumber(salesPlan);
     }
@@ -188,12 +197,34 @@ const onSalesPlanChange = (evt, index) => {
     emit('addSeller', sellerObj);
 };
 
-const calcBudgetPlan = (salesPlan) => {
-    return +(salesPlan * BOOST_SELLER_QUOTIENT / 100).toFixed(2);
+const onCompensationPlanChange = (compensationPlan, index) => {
+    const sellerObj = props.seller;
+
+    const salesBeforeEl = document.getElementById(`${index}_salesBefore`);
+    const surplusPlanEl = document.getElementById(`${index}_surplusPlan`);
+    const salesPlanEl = document.getElementById(`${index}_salesPlan`);
+
+    const salesBefore = convertInputStringToNumber(salesBeforeEl.value);
+    const surplusPlan = convertInputStringToNumber(surplusPlanEl.value);
+    const salesPlan = salesPlanEl.value === '' ? 0 : convertInputStringToNumber(salesPlanEl.value);
+    const budgetPlan = calcBudgetPlan(salesPlan, compensationPlan);
+
+    sellerObj.sellerId = sellerObj.id;
+    sellerObj.salesBefore = salesBefore;
+    sellerObj.surplusPlan = surplusPlan;
+    sellerObj.salesPlan = salesPlan;
+    sellerObj.budgetPlan = budgetPlan;
+
+    emit('addSeller', sellerObj);
+};
+
+const calcBudgetPlan = (salesPlan, compensationPlan) => {
+    const boostSellerQuotient = convertInputStringToNumber(compensationPlan.toString());
+    return +(salesPlan * boostSellerQuotient / 100).toFixed(2);
 };
 
 const removeSeller = (index) => {
-    let sellerObj = props.seller;
+    const sellerObj = props.seller;
 
     const salesBeforeEl = document.getElementById(`${index}_salesBefore`);
     const surplusPlanEl = document.getElementById(`${index}_surplusPlan`);

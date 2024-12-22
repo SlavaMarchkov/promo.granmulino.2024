@@ -15,13 +15,20 @@ class PromoSeller extends Model
         'promo_id',
         'customer_id',
         'seller_id',
+        'supervisor_id',
+        'is_supervisor',
         'sales_before',
         'sales_plan',
         'surplus_plan',
         'sales_after',
-        'compensation',
+        'compensation_plan',
+        'compensation_actual',
         'budget_plan',
         'budget_actual',
+    ];
+
+    protected $casts = [
+        'is_supervisor' => 'boolean',
     ];
 
     public function promo()

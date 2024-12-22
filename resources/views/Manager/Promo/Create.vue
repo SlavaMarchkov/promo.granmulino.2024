@@ -236,7 +236,7 @@
                     <TheButton
                         @click="savePromo"
                         :class="[
-                            'btn-primary',
+                            'btn-primary w-50',
                             { 'btn-cursor-not-allowed' : !isFormValid() }
                         ]"
                         :disabled="spinnerStore.isButtonDisabled || !isFormValid()"
