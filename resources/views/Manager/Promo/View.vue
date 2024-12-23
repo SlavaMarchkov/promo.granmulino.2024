@@ -151,25 +151,26 @@
                 </div>
             </div>
             <div v-if="products.length > 0" class="col-12">
-                <div class="card">
-                    <div class="card-header"><h4 class="mb-0">Акционная продукция</h4></div>
-                    <div class="card-body mt-3">
+                <TheCard>
+                    <template #header><h4 class="mb-0">Акционная продукция</h4></template>
+                    <template #body>
                         <div class="row">
                             <div class="col-12">
                                 <Alert/>
                             </div>
                         </div>
-                        <div class="row row-cols-xl-4 row-cols-lg-3 row-cols-md-3 row-cols-sm-2 row-cols-1 g-3">
+                        <div class="row flex-column g-3">
                             <PromoProductItem
                                 v-for="(product, index) in products"
                                 :key="product.id"
                                 :index="index"
                                 :product="product"
+                                :promo-id="promoId"
                                 @update-product-item="updatePromoProduct"
                             />
                         </div>
-                    </div>
-                </div>
+                    </template>
+                </TheCard>
             </div>
         </div>
         <Alert v-else class="mt-3"/>
@@ -241,12 +242,7 @@ watch(
 );
 
 const fetchPromoProducts = async (promoId) => {
-    const { status, data } = await get(`${ MANAGER_URLS.PROMO }/${ promoId }${ MANAGER_URLS.PRODUCT }`, {
-        params: {
-            category: true,
-            product: true,
-        },
-    });
+    const { status, data } = await get(`${MANAGER_URLS.PROMO}/${promoId}${MANAGER_URLS.PRODUCT}`);
     if ( status === 'success' ) products.value = data;
 };
 
@@ -255,20 +251,16 @@ const fetchPromoSellers = async (promoId) => {
     if ( status === 'success' ) sellers.value = data;
 };
 
-const updatePromoProduct = async (product) => {
-    const response = await update(`${ MANAGER_URLS.PROMO }/${ promoId }${ MANAGER_URLS.PRODUCT }/${ product.id }`, product);
-    if ( response && response.status === 'success' ) {
-        const data = makeConvertibleObject(JSON.parse(response.data), toCamel);
-        const idx = products.value.findIndex(pr => pr.id === product.id);
-        products.value[idx] = {
-            ...products.value[idx],
-            ...data.product,
-        };
-        promo.value = {
-            ...promo.value,
-            ...data.promo,
-        };
-    }
+const updatePromoProduct = (data) => {
+    const idx = products.value.findIndex(pr => pr.id === data.product.id);
+    products.value[idx] = {
+        ...products.value[idx],
+        ...data.product,
+    };
+    promo.value = {
+        ...promo.value,
+        ...data.promo,
+    };
 };
 
 const updatePromoMark = async (mark) => {

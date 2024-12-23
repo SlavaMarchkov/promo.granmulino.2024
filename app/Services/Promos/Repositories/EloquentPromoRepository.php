@@ -11,26 +11,61 @@ use App\Models\Promo;
 use App\Models\PromoMark;
 use App\Models\PromoProduct;
 use App\Models\PromoSeller;
+use App\Services\Promos\Filters\Category;
+use App\Services\Promos\Filters\Channel;
+use App\Services\Promos\Filters\City;
+use App\Services\Promos\Filters\Customer;
+use App\Services\Promos\Filters\Id;
+use App\Services\Promos\Filters\Mark;
+use App\Services\Promos\Filters\Product;
+use App\Services\Promos\Filters\PromoId;
+use App\Services\Promos\Filters\Retailer;
+use App\Services\Promos\Filters\User;
 use Exception;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 final class EloquentPromoRepository implements PromoRepositoryInterface
 {
+    /**
+     * @throws BindingResolutionException
+     */
     public function get(array $params = [])
     : Collection {
-        $promosSql = Promo::query();
-        $this->applyFilters($promosSql, $params);
-        return $promosSql->get();
+        request()->merge($params);
+        $promos = app()->make(Pipeline::class)
+            ->send(Promo::query())
+            ->through([
+                User::class,
+                Customer::class,
+                Retailer::class,
+            ])
+            ->thenReturn();
+        return $promos->get();
     }
 
+    /**
+     * @throws BindingResolutionException
+     */
     public function find(Promo $promo, array $params = [])
     : ?Promo {
-        $promosSql = Promo::query()->where('id', $promo->id);
-        $this->applyFilters($promosSql, $params);
-        return $promosSql->first();
+        request()->merge(['id' => $promo->id, ...$params]);
+        $promo = app()->make(Pipeline::class)
+            ->send(Promo::query())
+            ->through([
+                User::class,
+                Id::class,
+                Customer::class,
+                Retailer::class,
+                City::class,
+                Channel::class,
+                Mark::class,
+            ])
+            ->thenReturn();
+        return $promo->first();
     }
 
     /**
@@ -125,6 +160,7 @@ final class EloquentPromoRepository implements PromoRepositoryInterface
             ]);
 
             $array['product'] = $promoProduct->only([
+                'id',
                 'sales_before',
                 'sales_plan',
                 'sales_on_time',
@@ -178,40 +214,21 @@ final class EloquentPromoRepository implements PromoRepositoryInterface
         }
     }
 
-    private function applyFilters(Builder $qb, array $params)
-    : void {
-        $qb->when(
-            isset($params['user_id']),
-            fn(Builder $query) => $query->where('user_id', (int)$params['user_id']),
-        )->when(
-            isset($params['category']) && to_boolean($params['category']),
-            fn(Builder $query) => $query->with('category'),
-        )->when(
-            isset($params['product']) && to_boolean($params['product']),
-            fn(Builder $query) => $query->with('product'),
-        )->when(
-            isset($params['customer']) && to_boolean($params['customer']),
-            fn(Builder $query) => $query->with('customer'),
-        )->when(
-            isset($params['retailer']) && to_boolean($params['retailer']),
-            fn(Builder $query) => $query->with('retailer'),
-        )->when(
-            isset($params['city']) && to_boolean($params['city']),
-            fn(Builder $query) => $query->with('city'),
-        )->when(
-            isset($params['channel']) && to_boolean($params['channel']),
-            fn(Builder $query) => $query->with('channel'),
-        )->when(
-            isset($params['mark']) && to_boolean($params['mark']),
-            fn(Builder $query) => $query->with('mark'),
-        );
-    }
-
+    /**
+     * @throws BindingResolutionException
+     */
     public function getProducts(Promo $promo, array $params = [])
     : Collection {
-        $productsSql = PromoProduct::query()->where('promo_id', $promo->id);
-        $this->applyFilters($productsSql, $params);
-        return $productsSql->get();
+        request()->merge(['promo_id' => $promo->id, ...$params]);
+        $promo_products = app()->make(Pipeline::class)
+            ->send(PromoProduct::query())
+            ->through([
+                PromoId::class,
+                Category::class,
+                Product::class,
+            ])
+            ->thenReturn();
+        return $promo_products->get();
     }
 
     public function getSellers(int $promo_id)

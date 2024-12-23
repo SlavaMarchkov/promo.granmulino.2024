@@ -3,39 +3,24 @@
         <div class="col-3">
             <TheLabel for="promo_goals">Цель промо-акции: <span class="fw-bold fs-5">{{ props.mark.goals }}</span>
             </TheLabel>
-            <input
+            <InputRange
                 id="promo_goals"
                 v-model="props.mark.goals"
-                class="form-range"
-                max="5"
-                min="0"
-                step="0.5"
-                type="range"
             />
         </div>
         <div class="col-3">
             <TheLabel for="promo_sales">Продажи: <span class="fw-bold fs-5">{{ props.mark.sales }}</span></TheLabel>
-            <input
+            <InputRange
                 id="promo_sales"
                 v-model="props.mark.sales"
-                class="form-range"
-                max="5"
-                min="0"
-                step="0.5"
-                type="range"
             />
         </div>
         <div class="col-3">
             <TheLabel for="promo_staff">Участие персонала: <span class="fw-bold fs-5">{{ props.mark.staff }}</span>
             </TheLabel>
-            <input
+            <InputRange
                 id="promo_staff"
                 v-model="props.mark.staff"
-                class="form-range"
-                max="5"
-                min="0"
-                step="0.5"
-                type="range"
             />
         </div>
         <div class="col-3 text-center">
@@ -76,6 +61,7 @@ import TheButton from '@/components/core/TheButton.vue';
 import TheLabel from '@/components/form/TheLabel.vue';
 import TheInput from '@/components/form/TheInput.vue';
 import { useArrayHandlers } from '@/use/useArrayHandlers.js';
+import InputRange from '@/components/form/InputRange.vue';
 
 const { getAverageOfArray } = useArrayHandlers();
 

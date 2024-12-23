@@ -99,4 +99,21 @@ final class StoreRequest extends FormRequest
             'end_date.after' => 'Дата окончания должна быть после даты начала.',
         ];
     }
+
+    protected function prepareForValidation()
+    : void
+    {
+        $sellers = request()->input('sellers');
+
+        if ($sellers) {
+            $this->merge([
+                'sellers' => array_map(function ($seller) {
+                    return [
+                        ...$seller,
+                        'is_supervisor' => to_boolean($seller['is_supervisor']),
+                    ];
+                }, $sellers),
+            ]);
+        }
+    }
 }

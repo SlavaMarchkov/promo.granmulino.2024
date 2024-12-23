@@ -32,8 +32,9 @@ final class PromoController extends ApiController
         $this->authorize('viewAny', Promo::class);
 
         $promos = $this->promoService->getPromos([
-            'user_id' => auth()->id(),
-            ...request()->all(),
+            'user_id'  => auth()->id(),
+            'customer' => true,
+            'retailer' => true,
         ]);
 
         return $this->successResponse(

@@ -1,29 +1,109 @@
 <template>
-    <TheCard
-        :header-classes="['bg-secondary-subtle py-2 fw-bold text-black']"
-        with-footer
-    >
+    <TheCard :header-classes="['bg-secondary-subtle py-2']">
         <template #header>
-            <h5 class="mb-0">{{ product.categoryName }}</h5>
-        </template>
-        <template #body>
-            <h5 class="mb-0 fw-bold text-primary">{{ product.productName }}</h5>
-            <hr>
-            <TwoColumnRow title='Продажи "До"'>{{ formatNumber(product.salesBefore) }} шт.</TwoColumnRow>
-            <TwoColumnRow title="План">{{ formatNumber(product.salesPlan) }} шт.</TwoColumnRow>
-            <TwoColumnRow title="Прирост">{{ formatNumber(calcSurplusPlan) }}&#8239;%</TwoColumnRow>
-            <TwoColumnRow title="Бюджет, план">{{ formatNumber(product.budgetPlan) }} руб.</TwoColumnRow>
-            <hr>
-            <TwoColumnRow cols="7" title='Продажи "Во время"'>{{ formatNumber(product.salesOnTime) }} шт.</TwoColumnRow>
-            <TwoColumnRow title="Бюджет, факт">{{ formatNumber(product.budgetActual) }} руб.</TwoColumnRow>
-            <TwoColumnRow title="Прибыль на SKU">{{ formatNumber(product.promoProfit) }} руб.</TwoColumnRow>
-        </template>
-        <template #footer>
+            <h5 class="mb-0">{{ props.index + 1 }}. {{ product.categoryName }}&nbsp;<span
+                class="text-primary fw-bold">|&nbsp;{{ product.productName }}</span></h5>
             <TheButton
-                class="btn-warning w-100"
+                class="btn-warning"
                 @click="handleBtnClick"
             >Редактировать
             </TheButton>
+        </template>
+        <template #body>
+            <div class="row">
+                <div class="col-3">
+                    <TheCard class="info-card revenue-card">
+                        <template #header>
+                            <h5 class="mb-0 card-title p-0">Бюджет</h5>
+                        </template>
+                        <template #body>
+                            <div class="d-flex align-items-center">
+                                <div
+                                    class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                    <i class="bi bi-currency-dollar"></i>
+                                </div>
+                                <div class="ps-3">
+                                    <h6>{{ formatNumber(product.budgetActual) }} &#8381;</h6>
+                                    <span class="text-success small pt-1 fw-bold">{{
+                                            formatNumber(product.budgetPlan)
+                                        }} &#8381;</span><span
+                                    class="text-muted small pt-2 ps-1"> | план</span>
+                                </div>
+                            </div>
+                        </template>
+                    </TheCard>
+                </div>
+                <div class="col-3">
+                    <TheCard class="info-card sales-card">
+                        <template #header>
+                            <h5 class="mb-0 card-title p-0">Продажи "До"</h5>
+                            <!--                            <h5 :class="['mb-0 fw-bold', calcSurplusTextColor]"><i
+                                                            :class="['bi', calcSurplus >= 0 ? 'bi-arrow-up' : 'bi-arrow-down' ]"></i>&nbsp;{{
+                                                                calcSurplus
+                                                            }}&#8239;%</h5>-->
+                        </template>
+                        <template #body>
+                            <div class="d-flex align-items-center">
+                                <div
+                                    class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                    <i class="bi bi-cart"></i>
+                                </div>
+                                <div class="ps-3">
+                                    <h6>{{ formatNumber(product.salesOnTime) }} шт.</h6>
+                                    <span class="text-success small pt-1 fw-bold">{{
+                                            formatNumber(product.salesPlan)
+                                        }} шт.</span> <span
+                                    class="text-muted small pt-2 ps-1"> | план</span>
+                                </div>
+                            </div>
+                        </template>
+                    </TheCard>
+                </div>
+                <div class="col-3">
+                    <TheCard class="info-card sales-card">
+                        <template #header>
+                            <h5 class="mb-0 card-title p-0">Продажи "Во время"</h5>
+                            <!--                            <h5 :class="['mb-0 fw-bold', calcSurplusTextColor]"><i
+                                                            :class="['bi', calcSurplus >= 0 ? 'bi-arrow-up' : 'bi-arrow-down' ]"></i>&nbsp;{{
+                                                                calcSurplus
+                                                            }}&#8239;%</h5>-->
+                        </template>
+                        <template #body>
+                            <div class="d-flex align-items-center">
+                                <div
+                                    class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                    <i class="bi bi-cart"></i>
+                                </div>
+                                <div class="ps-3">
+                                    <h6>{{ formatNumber(product.salesOnTime) }} шт.</h6>
+                                    <span class="text-success small pt-1 fw-bold">{{
+                                            formatNumber(product.salesPlan)
+                                        }} шт.</span> <span
+                                    class="text-muted small pt-2 ps-1"> | план</span>
+                                </div>
+                            </div>
+                        </template>
+                    </TheCard>
+                </div>
+                <div class="col-3">
+                    <TheCard class="info-card profit-card">
+                        <template #header>
+                            <h5 class="mb-0 card-title p-0">Прибыль на SKU</h5>
+                        </template>
+                        <template #body>
+                            <div class="d-flex align-items-center">
+                                <div
+                                    class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                    <i class="bi bi-cash-stack"></i>
+                                </div>
+                                <div class="ps-3">
+                                    <h6>{{ formatNumber(product.promoProfit) }} &#8381;</h6>
+                                </div>
+                            </div>
+                        </template>
+                    </TheCard>
+                </div>
+            </div>
         </template>
     </TheCard>
 
@@ -40,6 +120,7 @@
             <h5>Группа товара: <span class="fw-bold text-primary">{{ product.categoryName }}</span></h5>
             <h5>Продукт: <span class="fw-bold text-primary">{{ product.productName }}</span></h5>
             <hr>
+            <Alert/>
             <div class="row mb-3 g-3">
                 <div class="col-md-2">
                     <TheLabel for="sales_before">Продажи "До акции"</TheLabel>
@@ -149,7 +230,7 @@
                     </div>
                 </div>
                 <div class="col-md-2">
-                    <TheLabel for="budget_diff">Бюджет, план - факт</TheLabel>
+                    <TheLabel for="budget_diff">Бюджет, факт - план</TheLabel>
                     <div class="input-group">
                         <TheInput
                             id="budget_diff"
@@ -202,12 +283,10 @@
         </template>
         <template #footer>
             <TheButton
-                :class="[
-                    'btn-warning w-25',
-                    { 'btn-cursor-not-allowed' : !isFormValid() }
-                ]"
-                :disabled="!isFormValid()"
+                :disabled="spinnerStore.isButtonDisabled"
+                :loading="spinnerStore.isButtonDisabled"
                 type="button"
+                class="btn-warning w-25"
                 @click="saveChangesHandler"
             >Сохранить изменения</TheButton>
         </template>
@@ -216,23 +295,34 @@
 
 <script setup>
 import { computed, reactive } from 'vue';
-import { useCalculations } from '@/use/useCalculations.js';
-import { convertInputStringToNumber, formatNumber, isNumberNegative, processInputValue } from '@/helpers/formatters.js';
 import TheButton from '@/components/core/TheButton.vue';
 import TheModal from '@/components/TheModal.vue';
 import TheLabel from '@/components/form/TheLabel.vue';
 import TheInput from '@/components/form/TheInput.vue';
 import TheCard from '@/components/core/TheCard.vue';
-import TwoColumnRow from '@/components/core/TwoColumnRow.vue';
+import Alert from '@/components/Alert.vue';
+import { useCalculations } from '@/use/useCalculations.js';
 import { useAlertStore } from '@/stores/alerts.js';
+import { useHttpService } from '@/use/useHttpService.js';
+import { useSpinnerStore } from '@/stores/spinners.js';
+import { useConvertCase } from '@/use/useConvertCase.js';
+import { convertInputStringToNumber, formatNumber, isNumberNegative, processInputValue } from '@/helpers/formatters.js';
+import { MANAGER_URLS } from '@/helpers/constants.js';
 
 const { calcDifferencePercentage, calcBudget } = useCalculations();
 const alertStore = useAlertStore();
+const spinnerStore = useSpinnerStore();
+const { makeConvertibleObject, toCamel } = useConvertCase();
+const { update } = useHttpService();
 
 const props = defineProps({
     index: {
         type: Number,
-        default: 1,
+        default: 0,
+    },
+    promoId: {
+        type: Number,
+        required: true,
     },
     product: {
         type: Object,
@@ -252,11 +342,11 @@ const initialFormData = () => ({
     id: props.product.id.toString(),
     salesBefore: formatNumber(props.product.salesBefore),
     salesPlan: formatNumber(props.product.salesPlan),
-    salesOnTime: '',
+    salesOnTime: formatNumber(props.product.salesOnTime),
     profitPerUnit: props.product.profitPerUnit,
     compensation: props.product.compensation,
     budgetPlan: formatNumber(props.product.budgetPlan),
-    budgetActual: '',
+    budgetActual: formatNumber(props.product.budgetActual),
     budgetDiff: '',
     promoProfit: '',
 });
@@ -271,13 +361,14 @@ const handleBtnClick = () => {
     state.form = initialFormData();
 };
 
-const isFormValid = () => {
-    return state.form.salesOnTime !== '';
-};
-
-const saveChangesHandler = () => {
-    emit('updateProductItem', processObjectEntries());
-    modals.editModalPopUp = false;
+const saveChangesHandler = async () => {
+    const updatedProduct = processObjectEntries();
+    const response = await update(`${MANAGER_URLS.PROMO}/${props.promoId}${MANAGER_URLS.PRODUCT}/${updatedProduct.id}`, updatedProduct);
+    if ( response && response.status === 'success' ) {
+        const data = makeConvertibleObject(JSON.parse(response.data), toCamel);
+        emit('updateProductItem', data);
+        modals.editModalPopUp = false;
+    }
 };
 
 const processObjectEntries = () => {
@@ -339,7 +430,7 @@ const calcBudgetActual = () => {
 const calcBudgetDiff = () => {
     const planNum = convertInputStringToNumber(state.form.budgetPlan);
     const actualNum = convertInputStringToNumber(state.form.budgetActual);
-    state.form.budgetDiff = formatNumber(planNum - actualNum);
+    state.form.budgetDiff = formatNumber(actualNum - planNum);
 };
 
 const calcPromoProfit = () => {
@@ -350,7 +441,7 @@ const calcPromoProfit = () => {
 const calcBudgetDiffClass = computed(() => {
     if ( state.form.budgetDiff ) {
         const budgetDiffNum = convertInputStringToNumber(state.form.budgetDiff);
-        return isNumberNegative(budgetDiffNum)
+        return isNumberNegative(state.form.budgetDiff)
             ? 'bg-success-subtle text-success'
             : budgetDiffNum === 0
                 ? 'bg-warning-subtle text-black'

@@ -28,7 +28,7 @@ const props = defineProps({
     },
     step: {
         type: Number,
-        default: 0.5,
+        default: 0.1,
     },
 });
 

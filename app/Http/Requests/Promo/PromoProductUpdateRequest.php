@@ -19,7 +19,6 @@ final class PromoProductUpdateRequest extends FormRequest
     : array
     {
         return [
-            //'id'              => ['required', 'numeric', 'exists:promo_products,id'],
             'sales_before'    => ['required', 'numeric'],
             'sales_plan'      => ['required', 'numeric'],
             'sales_on_time'   => ['required', 'numeric'],
@@ -29,6 +28,22 @@ final class PromoProductUpdateRequest extends FormRequest
             'budget_actual'   => ['required', 'numeric'],
             'profit_per_unit' => ['required', 'numeric'],
             'promo_profit' => ['required', 'numeric'],
+        ];
+    }
+
+    public function attributes()
+    : array
+    {
+        return [
+            'sales_before'    => 'Продажи "До акции"',
+            'sales_plan'      => 'План продаж',
+            'sales_on_time'   => 'Продажи "Во время"',
+            'sales_after'     => 'Продажи "После"',
+            'compensation'    => 'Компенсация на 1 шт.',
+            'budget_plan'     => 'Бюджет, план',
+            'budget_actual'   => 'Бюджет, факт',
+            'profit_per_unit' => 'Прибыль на 1 шт.',
+            'promo_profit'    => 'Прибыль на SKU',
         ];
     }
 }

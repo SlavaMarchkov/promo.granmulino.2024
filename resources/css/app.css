@@ -763,7 +763,7 @@ h6 {
 
 /* Info Cards */
 .promo-view .info-card {
-    padding-bottom: 10px;
+    padding-bottom: 0;
 }
 
 .promo-view .info-card h6 {

@@ -23,7 +23,10 @@ final class PromoProductController extends ApiController
     : JsonResponse {
         $products = $this->promoService->getPromoProducts(
             $promo,
-            [...request()->all()],
+            [
+                'category' => true,
+                'product'  => true,
+            ],
         );
 
         return $this->successResponse(

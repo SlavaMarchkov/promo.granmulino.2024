@@ -1,12 +1,13 @@
 <template>
     <div
         v-if="state.promos.length > 0"
-        class="row row-cols-xl-4 row-cols-lg-3 row-cols-md-3 row-cols-sm-2 row-cols-1 g-3"
+        class="row row-cols-xl-3 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-3"
     >
         <TheCard
             v-for="promo in state.promos"
             :key="promo.id"
             :header-classes="['bg-light']"
+            :body-classes="['pb-2']"
             with-footer
         >
             <template #header>
@@ -15,7 +16,7 @@
             </template>
             <template #body>
                 <TwoColumnRow title="Дистрибутор">{{ promo.customerName }}</TwoColumnRow>
-                <TwoColumnRow title="Торговая сеть">{{ promo.retailerName }}</TwoColumnRow>
+                <TwoColumnRow title="Торговая сеть">{{ promo.retailerName ?? '&mdash;' }}</TwoColumnRow>
                 <TwoColumnRow title="Дата начала">{{ promo.startDate }}</TwoColumnRow>
                 <TwoColumnRow title="Дата окончания">{{ promo.endDate }}</TwoColumnRow>
                 <hr>
@@ -68,12 +69,7 @@ onMounted(async () => {
 });
 
 const getPromos = async () => {
-    const { data } = await get(MANAGER_URLS.PROMO, {
-        params: {
-            customer: true,
-            retailer: true,
-        },
-    });
+    const { data } = await get(MANAGER_URLS.PROMO);
     state.promos = data.promos;
 };
 </script>
