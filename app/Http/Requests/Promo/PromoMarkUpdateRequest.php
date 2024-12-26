@@ -24,4 +24,12 @@ final class PromoMarkUpdateRequest extends FormRequest
             'comments' => ['nullable', 'string'],
         ];
     }
+
+    public function attributes()
+    : array
+    {
+        return [
+            'comments' => 'Выводы по промо-акции',
+        ];
+    }
 }

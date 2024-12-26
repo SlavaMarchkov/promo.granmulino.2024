@@ -231,10 +231,18 @@ final class EloquentPromoRepository implements PromoRepositoryInterface
         return $promo_products->get();
     }
 
+    /**
+     * @throws BindingResolutionException
+     */
     public function getSellers(int $promo_id)
     : Collection {
-        $sellersSql = PromoSeller::query()
-            ->where('promo_id', $promo_id);
-        return $sellersSql->get();
+        request()->merge(['promo_id' => $promo_id]);
+        $promo_sellers = app()->make(Pipeline::class)
+            ->send(PromoSeller::query())
+            ->through([
+                PromoId::class,
+            ])
+            ->thenReturn();
+        return $promo_sellers->get();
     }
 }

@@ -7,6 +7,7 @@ namespace App\Http\Resources\V1\Promo;
 use App\Models\PromoSeller;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\DB;
 
 /** @mixin PromoSeller */
 class PromoSellerResource extends JsonResource
@@ -15,6 +16,7 @@ class PromoSellerResource extends JsonResource
     : array {
         return [
             'id'                 => $this->id,
+            'name'               => DB::table('customer_sellers')->where('id', $this->seller_id)->value('name'),
             'promoId'            => $this->promo_id,
             'customerId'         => $this->customer_id,
             'sellerId'           => $this->seller_id,

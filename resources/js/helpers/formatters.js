@@ -31,9 +31,5 @@ export function isNumberNegative(num) {
 export function processInputValue(value, el) {
     const inputEl = document.getElementById(el);
     const inputValue = convertInputStringToNumber(value);
-    inputEl.value = !isNaN(inputValue) ? formatNumber(inputValue) : '';
-}
-
-export function formatStringAsNumber(str) {
-    return formatNumber(convertInputStringToNumber(str));
+    inputEl.value = !isNaN(inputValue) ? formatNumber(inputValue) : 0;
 }

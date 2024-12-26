@@ -25,7 +25,7 @@
                             <div class="col-4">
                                 <div class="mb-0 alert border-success" role="alert">
                                     <h5 class="mb-0 text-secondary">Сеть: <span
-                                        class="fw-bold text-accent">{{ promo.retailerName }}</span></h5>
+                                        class="fw-bold text-accent">{{ promo.retailerName ?? '&mdash;' }}</span></h5>
                                 </div>
                             </div>
                             <div class="col-4">
@@ -139,6 +139,7 @@
                                 <div id="collapsePromoMark" aria-labelledby="promoMark"
                                      class="accordion-collapse collapse" data-bs-parent="#promoDetails">
                                     <div class="accordion-body">
+                                        <Alert />
                                         <PromoMark
                                             :mark="promo.mark"
                                             @update-promo-mark="updatePromoMark"
@@ -154,11 +155,6 @@
                 <TheCard>
                     <template #header><h4 class="mb-0">Акционная продукция</h4></template>
                     <template #body>
-                        <div class="row">
-                            <div class="col-12">
-                                <Alert/>
-                            </div>
-                        </div>
                         <div class="row flex-column g-3">
                             <PromoProductItem
                                 v-for="(product, index) in products"
@@ -169,6 +165,18 @@
                                 @update-product-item="updatePromoProduct"
                             />
                         </div>
+                    </template>
+                </TheCard>
+            </div>
+            <div v-if="sellers.length > 0" class="col-12">
+                <TheCard>
+                    <template #header><h4 class="mb-0">Мотивация команды ТП</h4></template>
+                    <template #body>
+                        <SalesPeopleBoost
+                            :items="sellers"
+                            :promo-id="promoId"
+                            @update-product-item="updatePromoProduct"
+                        />
                     </template>
                 </TheCard>
             </div>
@@ -196,15 +204,14 @@ import TheSpinner from '@/components/core/TheSpinner.vue';
 import PromoProductItem from '@/pages/Promo/PromoProductItem.vue';
 import { formatNumber, isNumberNegative } from '@/helpers/formatters.js';
 import TheCard from '@/components/core/TheCard.vue';
-import { useConvertCase } from '@/use/useConvertCase.js';
 import { useCalculations } from '@/use/useCalculations.js';
 import PromoMark from '@/pages/Promo/PromoMark.vue';
+import SalesPeopleBoost from '@/pages/PromoActual/SalesPeopleBoost.vue';
 
 const route = useRoute();
 const router = useRouter();
 const spinnerStore = useSpinnerStore();
 const arrayHandlers = useArrayHandlers();
-const { makeConvertibleObject, toCamel } = useConvertCase();
 const { calcDifferencePercentage } = useCalculations();
 
 const { get, update } = useHttpService();
@@ -242,7 +249,7 @@ watch(
 );
 
 const fetchPromoProducts = async (promoId) => {
-    const { status, data } = await get(`${MANAGER_URLS.PROMO}/${promoId}${MANAGER_URLS.PRODUCT}`);
+    const { status, data } = await get(`${ MANAGER_URLS.PROMO }/${ promoId }${ MANAGER_URLS.PRODUCT }`);
     if ( status === 'success' ) products.value = data;
 };
 
