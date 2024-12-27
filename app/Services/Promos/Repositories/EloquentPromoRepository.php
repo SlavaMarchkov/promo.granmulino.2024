@@ -19,6 +19,8 @@ use App\Services\Promos\Filters\Id;
 use App\Services\Promos\Filters\Mark;
 use App\Services\Promos\Filters\Product;
 use App\Services\Promos\Filters\PromoId;
+use App\Services\Promos\Filters\PromoProducts;
+use App\Services\Promos\Filters\PromoSellers;
 use App\Services\Promos\Filters\Retailer;
 use App\Services\Promos\Filters\User;
 use Exception;
@@ -63,6 +65,8 @@ final class EloquentPromoRepository implements PromoRepositoryInterface
                 City::class,
                 Channel::class,
                 Mark::class,
+                PromoSellers::class,
+                PromoProducts::class,
             ])
             ->thenReturn();
         return $promo->first();

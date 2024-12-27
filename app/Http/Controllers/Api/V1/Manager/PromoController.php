@@ -22,8 +22,7 @@ final class PromoController extends ApiController
 
     public function __construct(
         private readonly PromoService $promoService,
-    )
-    {
+    ) {
     }
 
     public function index()
@@ -64,12 +63,14 @@ final class PromoController extends ApiController
         $this->authorize('view', $promo);
 
         $promo = $this->promoService->findPromo($promo, [
-            'user_id'  => auth()->id(),
-            'customer' => true,
-            'retailer' => true,
-            'city'     => true,
-            'channel'  => true,
-            'mark'     => true,
+            'user_id'        => auth()->id(),
+            'customer'       => true,
+            'retailer'       => true,
+            'city'           => true,
+            'channel'        => true,
+            'mark'           => true,
+            'promo_products' => false,
+            'promo_sellers'  => false,
         ]);
 
         return $this->successResponse(

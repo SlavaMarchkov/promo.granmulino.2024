@@ -117,14 +117,20 @@ const props = defineProps({
     },
 });
 
+const emit = defineEmits([
+    'updateSupervisor',
+]);
+
 const initialFormData = () => ({
     id: props.supervisor.id,
+    name: props.supervisor.name,
     sellerId: props.supervisor.sellerId,
     supervisorId: props.supervisor.supervisorId,
     isSupervisor: props.supervisor.isSupervisor,
     salesBefore: formatNumber(props.supervisor.salesBefore),
     salesPlan: formatNumber(props.supervisor.salesPlan),
     salesAfter: formatNumber(props.supervisor.salesAfter),
+    surplusPlan: props.supervisor.surplusPlan,
     compensationPlan: props.supervisor.compensationPlan,
     compensationActual: props.supervisor.compensationActual,
     budgetPlan: formatNumberWithFractions(props.supervisor.budgetPlan),
@@ -148,6 +154,8 @@ const updateSeller = (seller) => {
 
     state.supervisor.salesAfter = formatNumber(calcSalesAfter());
     state.supervisor.budgetActual = formatNumberWithFractions(calcBudgetActual());
+
+    emit('updateSupervisor', state.supervisor, seller);
 };
 
 const calcSalesAfter = () => {

@@ -170,11 +170,16 @@
             </div>
             <div v-if="sellers.length > 0" class="col-12">
                 <TheCard>
-                    <template #header><h4 class="mb-0">Мотивация команды ТП</h4></template>
+                    <template #header>
+                        <h4 class="mb-0">Мотивация команды ТП</h4>
+                        <TheButton
+                            class="btn-success"
+                        >Сохранить изменения</TheButton>
+                    </template>
                     <template #body>
                         <SalesPeopleBoost
                             :items="sellers"
-                            :promo-id="promoId"
+                            :promo="promo"
                             @update-product-item="updatePromoProduct"
                         />
                     </template>
@@ -207,6 +212,7 @@ import TheCard from '@/components/core/TheCard.vue';
 import { useCalculations } from '@/use/useCalculations.js';
 import PromoMark from '@/pages/Promo/PromoMark.vue';
 import SalesPeopleBoost from '@/pages/PromoActual/SalesPeopleBoost.vue';
+import TheButton from '@/components/core/TheButton.vue';
 
 const route = useRoute();
 const router = useRouter();

@@ -32,8 +32,8 @@ class PromoFullResource extends PromoResource
             'createdAt' => $this->created_at,
             'updatedAt' => $this->updated_at,
 
-            'promoProductsCount' => $this->promo_products_count,
-            'promoSellersCount'  => $this->promo_sellers_count,
+            'promoProductsCount' => $this->whenLoaded('promo_products', fn() => $this->promo_products_count),
+            'promoSellersCount'  => $this->whenLoaded('promo_sellers', fn() => $this->promo_sellers_count),
 
             'products' => PromoProductResource::collection($this->whenLoaded('promo_products')),
             'sellers'  => PromoSellerResource::collection($this->whenLoaded('promo_sellers')),

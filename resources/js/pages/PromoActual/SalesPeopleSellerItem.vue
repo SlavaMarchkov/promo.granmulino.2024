@@ -109,6 +109,7 @@ const emit = defineEmits([
 
 const initialFormData = () => ({
     id: props.seller.id,
+    name: props.seller.name,
     sellerId: props.seller.sellerId,
     supervisorId: props.seller.supervisorId,
     isSupervisor: props.seller.isSupervisor,
