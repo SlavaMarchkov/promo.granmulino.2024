@@ -135,6 +135,10 @@ const props = defineProps({
     },
 });
 
+const emit = defineEmits([
+    'updatePromoSellers',
+]);
+
 const initialFormData = () => ({
     id: props.promo.id,
     totalSalesBefore: formatNumber(props.promo.totalSalesBefore),
@@ -152,6 +156,11 @@ const supervisors = computed(() => props.items.filter(seller => seller.isSupervi
 
 const sellers = computed(() => props.items.filter(seller => !seller.isSupervisor));
 
+const updateSeller = (seller) => {
+    const itemIdx = sellers.value.findIndex(item => item.id === seller.id);
+    sellers.value[itemIdx] = seller;
+};
+
 const updateSupervisor = (supervisor, seller) => {
     const itemIdx = supervisors.value.findIndex(item => item.id === supervisor.id);
     supervisors.value[itemIdx] = supervisor;
@@ -162,11 +171,10 @@ const updateSupervisor = (supervisor, seller) => {
         state.promo.totalSalesAfter = formatNumber(totalSalesAfter());
         state.promo.totalBudgetActual = formatNumberWithFractions(totalBudgetActual());
     });
-};
 
-const updateSeller = (seller) => {
-    const itemIdx = sellers.value.findIndex(item => item.id === seller.id);
-    sellers.value[itemIdx] = seller;
+    const mergedArray = supervisors.value.concat(sellers.value);
+
+    emit('updatePromoSellers', state.promo, mergedArray);
 };
 
 const totalSalesAfter = () => {

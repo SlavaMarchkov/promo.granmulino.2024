@@ -21,6 +21,14 @@ if (!function_exists('to_boolean')) {
     }
 }
 
+if (!function_exists('convert_string_to_number')) {
+    function convert_string_to_number($str)
+    : array|string|null {
+        $str = str_replace(',', '.', $str);
+        return preg_replace('/[^0-9.]/', '', $str);
+    }
+}
+
 if (!function_exists('process_name')) {
     /**
      * Make string Uppercase with lowercase for the rest: Example from EXAMPLE etc.

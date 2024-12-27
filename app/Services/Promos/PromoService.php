@@ -51,13 +51,17 @@ final readonly class PromoService
     }
 
     public function updatePromoProduct(int $promo_id, PromoProduct $promoProduct, array $data)
-    : array
-    {
+    : array {
         return $this->updatePromoProductHandler->handle($promo_id, $promoProduct, $data);
     }
 
     public function updatePromoMark(int $promo_id, PromoMark $promoMark, array $data)
     : ?Promo {
         return $this->updatePromoMarkHandler->handle($promo_id, $promoMark, $data);
+    }
+
+    public function updatePromo(Promo $promo, array $data)
+    : Promo {
+        return $this->promoRepository->updatePromoFromArray($promo, $data);
     }
 }

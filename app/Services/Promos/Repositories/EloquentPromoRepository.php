@@ -120,12 +120,17 @@ final class EloquentPromoRepository implements PromoRepositoryInterface
         }
     }
 
+    public function updatePromoFromArray(Promo $promo, array $data)
+    : Promo {
+        $promo->update($data);
+        return $promo;
+    }
+
     /**
      * @throws Exception
      */
     public function updatePromoProductFromArray(int $promo_id, PromoProduct $promoProduct, array $data)
-    : array
-    {
+    : array {
         try {
             $promo = Promo::query()->where('id', $promo_id)->first();
 
@@ -177,7 +182,7 @@ final class EloquentPromoRepository implements PromoRepositoryInterface
         } catch (Exception $exception) {
             DB::rollBack();
             Log::error('Error updating the Promo with ID={id}. Error: {error}', [
-                'id' => $promo_id,
+                'id'    => $promo_id,
                 'error' => $exception->getMessage(),
             ]);
             throw $exception;

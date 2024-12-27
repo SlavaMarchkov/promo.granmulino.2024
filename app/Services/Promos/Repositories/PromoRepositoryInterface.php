@@ -32,4 +32,7 @@ interface PromoRepositoryInterface
 
     public function updatePromoMarkFromArray(int $promo_id, PromoMark $promoMark, array $data)
     : ?Promo;
+
+    public function updatePromoFromArray(Promo $promo, array $data)
+    : Promo;
 }

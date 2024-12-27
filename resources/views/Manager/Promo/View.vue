@@ -173,14 +173,16 @@
                     <template #header>
                         <h4 class="mb-0">Мотивация команды ТП</h4>
                         <TheButton
+                            @click="updatePromo"
                             class="btn-success"
                         >Сохранить изменения</TheButton>
                     </template>
                     <template #body>
+                        <Alert />
                         <SalesPeopleBoost
                             :items="sellers"
                             :promo="promo"
-                            @update-product-item="updatePromoProduct"
+                            @update-promo-sellers="preparePromoSellersForUpdate"
                         />
                     </template>
                 </TheCard>
@@ -226,6 +228,8 @@ const promoId = +route.params.id;
 const promo = ref({});
 const products = ref([]);
 const sellers = ref([]);
+const updatedPromo = ref({});
+const updatedSellers = ref([]);
 
 onMounted(async () => {
     await fetchDetails(promoId);
@@ -277,10 +281,24 @@ const updatePromoProduct = (data) => {
 };
 
 const updatePromoMark = async (mark) => {
-    const response = await update(`${MANAGER_URLS.PROMO}/${promoId}${MANAGER_URLS.MARK}/${mark.id}`, mark);
+    const response = await update(`${ MANAGER_URLS.PROMO }/${ promoId }${ MANAGER_URLS.MARK }/${ mark.id }`, mark);
     if ( response && response.status === 'success' ) {
         promo.value = { ...response.data };
     }
+};
+
+const updatePromo = async () => {
+    const response = await update(`${ MANAGER_URLS.PROMO }/${ promoId }`, updatedPromo.value);
+    if ( response && response.status === 'success' ) {
+        promo.value = {
+            ...promo.value,
+            ...response.data,
+        };
+    }
+};
+
+const preparePromoSellersForUpdate = (promoObj, sellersArr) => {
+    updatedPromo.value = promoObj;
 };
 
 const calcSurplus = computed(() => {
