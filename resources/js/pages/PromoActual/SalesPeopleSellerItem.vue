@@ -4,7 +4,7 @@
             <div class="col-md-3 col-sm-12">
                 <TheInput
                     :value="props.seller.name"
-                    :class="{ 'border-danger': !props.seller.supervisorId }"
+                    :class="{ 'border-warning': !props.seller.supervisorId }"
                     readonly
                     :tabindex="-1"
                 />
@@ -13,7 +13,10 @@
                 <div class="row">
                     <div class="col-md-4 col-sm-6">
                         <TheInput
-                            class="text-end"
+                            :class="[
+                                'text-end',
+                                { 'border-warning': !props.seller.supervisorId }
+                            ]"
                             :model-value="state.seller.salesBefore"
                             readonly
                             :tabindex="-1"
@@ -21,7 +24,10 @@
                     </div>
                     <div class="col-md-4 col-sm-6">
                         <TheInput
-                            class="text-end"
+                            :class="[
+                                'text-end',
+                                { 'border-warning': !props.seller.supervisorId }
+                            ]"
                             :model-value="state.seller.salesPlan"
                             readonly
                             :tabindex="-1"
@@ -30,8 +36,10 @@
                     <div class="col-md-4 col-sm-6">
                         <TheInput
                             :id="`${index}_salesAfter`"
-                            class="text-end"
-                            :class="calcSalesAfterClass"
+                            :class="[
+                                'text-end',
+                                { 'border-warning': !props.seller.supervisorId }
+                            ]"
                             v-model="state.seller.salesAfter"
                             :tabindex="0"
                             @blur="processInputValue($event.target.value, `${index}_salesAfter`)"
@@ -43,7 +51,11 @@
                 <div class="row">
                     <div class="col-md-3 col-sm-6">
                         <TheInput
-                            class="text-end"
+                            :class="[
+                                'text-end',
+                                { 'border-warning': !props.seller.supervisorId },
+                                calcSalesAfterClass,
+                            ]"
                             :model-value="calcSalesDiff"
                             readonly
                             :tabindex="-1"
@@ -51,7 +63,10 @@
                     </div>
                     <div class="col-md-3 col-sm-6">
                         <TheInput
-                            class="text-end"
+                            :class="[
+                                'text-end',
+                                { 'border-warning': !props.seller.supervisorId }
+                            ]"
                             :model-value="state.seller.compensationPlan"
                             readonly
                             :tabindex="-1"
@@ -59,7 +74,10 @@
                     </div>
                     <div class="col-md-3 col-sm-6">
                         <TheInput
-                            class="text-end"
+                            :class="[
+                                'text-end',
+                                { 'border-warning': !props.seller.supervisorId }
+                            ]"
                             :model-value="state.seller.budgetPlan"
                             readonly
                             :tabindex="-1"
@@ -67,7 +85,11 @@
                     </div>
                     <div class="col-md-3 col-sm-6">
                         <TheInput
-                            class="text-end"
+                            :class="[
+                                'text-end',
+                                { 'border-warning': !props.seller.supervisorId },
+                                calcSalesAfterClass
+                            ]"
                             :model-value="calcBudgetActual"
                             readonly
                             :tabindex="-1"
@@ -80,7 +102,7 @@
 </template>
 
 <script setup>
-import { computed, reactive, watch } from 'vue';
+import { computed, onMounted, reactive, watch } from 'vue';
 import TheInput from '@/components/form/TheInput.vue';
 import {
     convertInputStringToNumber,
@@ -91,6 +113,11 @@ import {
 import { useCalculations } from '@/use/useCalculations.js';
 
 const { calcPercentage } = useCalculations();
+
+onMounted(() => {
+    const el = document.getElementById('0_salesAfter');
+    el.focus();
+});
 
 const props = defineProps({
     seller: {
@@ -146,17 +173,18 @@ const calcSalesDiff = computed(() => {
     }
 });
 
-// TODO: условная окраска;
 const calcSalesAfterClass = computed(() => {
-    /*return ()
-        ? 'border-danger'
-        : 'border-success';*/
+    const diff = convertInputStringToNumber(calcSalesDiff.value);
+    return diff < 90
+        ? 'border-danger bg-sales-fail text-danger'
+        : 'border-success bg-sales-success text-black';
 });
 
 const calcBudgetActual = computed(() => {
     const boostSellerQuotient = convertInputStringToNumber(state.seller.compensationPlan.toString());
+    const salesAfter = convertInputStringToNumber(state.seller.salesAfter.toString());
     const result = convertInputStringToNumber(calcSalesDiff.value) < 90
-        ? 0 : (state.seller.salesAfter * boostSellerQuotient / 100).toFixed(2);
+        ? 0 : (salesAfter * boostSellerQuotient / 100).toFixed(2);
     state.seller.budgetActual = result;
     return formatNumberWithFractions(result);
 });

@@ -120,10 +120,50 @@ final class EloquentPromoRepository implements PromoRepositoryInterface
         }
     }
 
+    /**
+     * @throws Exception
+     */
     public function updatePromoFromArray(Promo $promo, array $data)
-    : Promo {
-        $promo->update($data);
-        return $promo;
+    : array {
+        $promo_data = $data['promo'];
+        $sellers = $data['sellers'] ?? [];
+
+        try {
+            $promo = Promo::query()->where('id', $promo->id)->first();
+
+            DB::beginTransaction();
+
+            $promo->update($promo_data);
+
+            foreach ($sellers as $seller) {
+                $promo_seller = PromoSeller::query()->where('seller_id', $seller['seller_id'])->first();
+                $promo_seller->update([
+                    'sales_after' => $seller['sales_after'],
+                    'budget_actual' => $seller['budget_actual'],
+                ]);
+            }
+
+            DB::commit();
+
+            $array['promo'] = $promo->only([
+                'total_sales_after',
+                'total_budget_actual',
+            ]);
+
+            $array['sellers'] = PromoSeller::query()
+                ->where('promo_id', $promo->id)
+                ->get()
+                ->toArray();
+
+            return $array;
+        } catch (Exception $exception) {
+            DB::rollBack();
+            Log::error('Error updating marks for the Promo with ID={id}. Error: {error}', [
+                'id'    => $promo->id,
+                'error' => $exception->getMessage(),
+            ]);
+            throw $exception;
+        }
     }
 
     /**

@@ -39,6 +39,7 @@
                     v-if="seller.supervisorId === null"
                     :seller="seller"
                     :index="index"
+                    @update-seller="updateUnattachedSeller"
                 />
             </template>
             <li class="list-group-item m-0 px-2 bg-warning-light">
@@ -118,7 +119,7 @@ import { computed, nextTick, reactive } from 'vue';
 import SalesPeopleSupervisorItem from '@/pages/PromoActual/SalesPeopleSupervisorItem.vue';
 import { convertInputStringToNumber, formatNumber, formatNumberWithFractions } from '@/helpers/formatters.js';
 import TheInput from '@/components/form/TheInput.vue';
-import SalesPeopleSellerItem from '@/pages/Promo/SalesPeopleSellerItem.vue';
+import SalesPeopleSellerItem from '@/pages/PromoActual/SalesPeopleSellerItem.vue';
 import { useCalculations } from '@/use/useCalculations.js';
 
 const { calcPercentage } = useCalculations();
@@ -156,17 +157,7 @@ const supervisors = computed(() => props.items.filter(seller => seller.isSupervi
 
 const sellers = computed(() => props.items.filter(seller => !seller.isSupervisor));
 
-const updateSeller = (seller) => {
-    const itemIdx = sellers.value.findIndex(item => item.id === seller.id);
-    sellers.value[itemIdx] = seller;
-};
-
-const updateSupervisor = (supervisor, seller) => {
-    const itemIdx = supervisors.value.findIndex(item => item.id === supervisor.id);
-    supervisors.value[itemIdx] = supervisor;
-
-    updateSeller(seller);
-
+function combineChangedData() {
     nextTick(() => {
         state.promo.totalSalesAfter = formatNumber(totalSalesAfter());
         state.promo.totalBudgetActual = formatNumberWithFractions(totalBudgetActual());
@@ -175,16 +166,39 @@ const updateSupervisor = (supervisor, seller) => {
     const mergedArray = supervisors.value.concat(sellers.value);
 
     emit('updatePromoSellers', state.promo, mergedArray);
+}
+
+const updateSellers = (seller) => {
+    const itemIdx = sellers.value.findIndex(item => item.id === seller.id);
+    sellers.value[itemIdx] = seller;
+};
+
+const updateUnattachedSeller = (seller) => {
+    updateSellers(seller);
+    combineChangedData();
+};
+
+const updateSupervisor = (supervisor, seller) => {
+    const itemIdx = supervisors.value.findIndex(item => item.id === supervisor.id);
+    supervisors.value[itemIdx] = supervisor;
+    updateSellers(seller);
+    combineChangedData();
 };
 
 const totalSalesAfter = () => {
-    return supervisors.value.reduce((acc, supervisor) => {
-        if ( (supervisor.isSupervisor || supervisor.supervisorId === null) && isNaN(supervisor.salesAfter) ) {
-            const salesAfter = convertInputStringToNumber(supervisor.salesAfter);
+    const supervisorsTotalSalesAfter = supervisors.value.reduce((acc, supervisor) => {
+        return acc + convertInputStringToNumber(supervisor.salesAfter.toString());
+    }, 0);
+
+    const unattachedSellersTotalSalesAfter = sellers.value.reduce((acc, seller) => {
+        if ( seller.supervisorId === null ) {
+            const salesAfter = convertInputStringToNumber(seller.salesAfter.toString());
             acc += salesAfter;
         }
         return acc;
     }, 0);
+
+    return supervisorsTotalSalesAfter + unattachedSellersTotalSalesAfter;
 };
 
 const calcTotalSalesDiff = computed(() => {

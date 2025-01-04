@@ -37,7 +37,7 @@
                     <TheCard class="info-card sales-card">
                         <template #header>
                             <h5 class="mb-0 card-title p-0">Продажи "До"</h5>
-                            <!--                            <h5 :class="['mb-0 fw-bold', calcSurplusTextColor]"><i
+                            <!--    TODO                        <h5 :class="['mb-0 fw-bold', calcSurplusTextColor]"><i
                                                             :class="['bi', calcSurplus >= 0 ? 'bi-arrow-up' : 'bi-arrow-down' ]"></i>&nbsp;{{
                                                                 calcSurplus
                                                             }}&#8239;%</h5>-->

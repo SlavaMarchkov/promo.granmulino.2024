@@ -9,6 +9,7 @@
                         class="form-control fw-bold"
                         readonly
                         type="text"
+                        :tabindex="-1"
                     >
                 </div>
             </div>
@@ -16,8 +17,8 @@
                 <TheInput
                     :id="`${props.index}_SV_salesBefore`"
                     class="fw-bold border-primary text-end"
-                    type="text"
                     readonly
+                    :tabindex="-1"
                 />
             </div>
             <div class="col-md-2 col-sm-6">
@@ -27,8 +28,8 @@
                 <TheInput
                     :id="`${props.index}_SV_salesPlan`"
                     class="fw-bold border-success text-end"
-                    type="text"
                     readonly
+                    :tabindex="-1"
                 />
             </div>
             <div class="col-md-1 col-sm-6 text-center"></div>

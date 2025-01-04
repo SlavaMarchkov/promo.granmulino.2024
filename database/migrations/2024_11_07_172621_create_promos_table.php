@@ -44,13 +44,13 @@ return new class extends Migration {
             $table->date('end_date')->nullable();
             $table->longText('comments')->nullable();
 
-            $table->decimal('total_sales_before', 10, 0)->default(0);
-            $table->decimal('total_sales_plan', 10, 0)->default(0);
-            $table->decimal('total_sales_on_time', 10, 0)->default(0);
-            $table->decimal('total_sales_after', 10, 0)->default(0);
-            $table->decimal('total_budget_plan', 10, 0)->default(0);
-            $table->decimal('total_budget_actual', 10, 0)->default(0);
-            $table->decimal('total_promo_profit', 10, 0)->default(0);
+            $table->decimal('total_sales_before', 10, 2)->default(0.00);
+            $table->decimal('total_sales_plan', 10, 2)->default(0.00);
+            $table->decimal('total_sales_on_time', 10, 2)->default(0.00);
+            $table->decimal('total_sales_after', 10, 2)->default(0.00);
+            $table->decimal('total_budget_plan', 10, 2)->default(0.00);
+            $table->decimal('total_budget_actual', 10, 2)->default(0.00);
+            $table->decimal('total_promo_profit', 10, 2)->default(0.00);
             $table->decimal('total_mark', 3, 2)->default(0.00);
 
             $table->timestamps();
@@ -67,11 +67,11 @@ return new class extends Migration {
             $table->decimal('sales_plan', 10, 0)->default(0);
             $table->decimal('sales_after', 10, 0)->default(0);
             $table->decimal('sales_on_time', 10, 0)->default(0);
-            $table->decimal('compensation', 5, 2)->default(0);
+            $table->decimal('compensation', 5, 2)->default(0.00);
 
             $table->decimal('budget_plan', 10, 0)->default(0);
             $table->decimal('budget_actual', 10, 0)->default(0);
-            $table->decimal('profit_per_unit', 10, 2)->default(0);
+            $table->decimal('profit_per_unit', 10, 2)->default(0.00);
             $table->decimal('promo_profit', 10, 0)->default(0);
 
             $table->timestamps();
@@ -87,15 +87,15 @@ return new class extends Migration {
             $table->unsignedBigInteger('supervisor_id')->nullable();
             $table->boolean('is_supervisor')->nullable()->default(false);
 
-            $table->decimal('sales_before', 10, 0)->default(0);
-            $table->decimal('sales_plan', 10, 2)->default(0);
-            $table->decimal('sales_after', 10, 2)->default(0);
+            $table->decimal('sales_before', 10, 2)->default(0.00);
+            $table->decimal('sales_plan', 10, 2)->default(0.00);
+            $table->decimal('sales_after', 10, 2)->default(0.00);
             $table->decimal('surplus_plan', 4, 0)->default(0);
             $table->unsignedSmallInteger('compensation_plan')->default(0);
             $table->unsignedSmallInteger('compensation_actual')->default(0);
 
-            $table->decimal('budget_plan', 10, 2)->default(0);
-            $table->decimal('budget_actual', 10, 2)->default(0);
+            $table->decimal('budget_plan', 10, 2)->default(0.00);
+            $table->decimal('budget_actual', 10, 2)->default(0.00);
 
             $table->timestamps();
         });
@@ -104,9 +104,9 @@ return new class extends Migration {
             $table->id();
 
             $table->foreignId('promo_id')->constrained()->cascadeOnDelete();
-            $table->decimal('goals', 3, 2)->default(0);
-            $table->decimal('sales', 3, 2)->default(0);
-            $table->decimal('staff', 3, 2)->default(0);
+            $table->decimal('goals', 3, 2)->default(0.00);
+            $table->decimal('sales', 3, 2)->default(0.00);
+            $table->decimal('staff', 3, 2)->default(0.00);
             $table->longText('comments')->nullable();
 
             $table->timestamps();

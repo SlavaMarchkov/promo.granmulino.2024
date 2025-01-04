@@ -97,19 +97,23 @@
                                         <TheInput
                                             :value="formatNumber(totalSalesBefore)"
                                             class="fw-bold border-secondary text-end"
-                                            type="text"
                                             readonly
+                                            :tabindex="-1"
                                         />
                                     </div>
                                     <div class="col-md-2 col-sm-6">
-                                        <TheInput disabled="disabled" />
+                                        <TheInput
+                                            class="bg-warning-light"
+                                            readonly
+                                            :tabindex="-1"
+                                        />
                                     </div>
                                     <div class="col-md-2 col-sm-6">
                                         <TheInput
                                             :value="formatNumberWithFractions(totalSalesPlan)"
                                             class="fw-bold border-secondary text-end"
-                                            type="text"
                                             readonly
+                                            :tabindex="-1"
                                         />
                                     </div>
                                     <div class="col-md-1 col-sm-6"></div>

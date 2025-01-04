@@ -6,6 +6,7 @@
                     :value="props.seller.shortName"
                     :class="{ 'border-danger': !props.seller.supervisorId }"
                     readonly
+                    :tabindex="-1"
                 />
             </div>
             <div class="col-md-2 col-sm-6">
@@ -40,6 +41,7 @@
                     ]"
                     @input="onSalesPlanChange($event, index)"
                     readonly="readonly"
+                    :tabindex="-1"
                 />
             </div>
             <div class="col-md-1 col-sm-6 text-center">
@@ -104,7 +106,9 @@ const onSalesBeforeChange = (evt, index) => {
         surplusPlanEl.value = '';
         salesPlanEl.value = '';
         surplusPlanEl.setAttribute('readonly', 'readonly');
+        surplusPlanEl.setAttribute('tabindex', '-1');
         salesPlanEl.setAttribute('readonly', 'readonly');
+        salesPlanEl.setAttribute('tabindex', '-1');
     } else if (salesBefore === 0) {
         surplusPlan = 0;
         salesPlan = 0;
@@ -113,7 +117,9 @@ const onSalesBeforeChange = (evt, index) => {
         surplusPlanEl.value = surplusPlan;
         salesPlanEl.value = salesPlan;
         surplusPlanEl.setAttribute('readonly', 'readonly');
+        surplusPlanEl.setAttribute('tabindex', '-1');
         salesPlanEl.removeAttribute('readonly');
+        salesPlanEl.removeAttribute('tabindex');
     } else {
         surplusPlan = surplusPlanEl.value === ''
             ? DEFAULT_SURPLUS_PERCENT
@@ -124,6 +130,7 @@ const onSalesBeforeChange = (evt, index) => {
 
         salesBeforeEl.value = formatNumber(salesBefore);
         salesPlanEl.value = formatNumberWithFractions(salesPlan);
+        salesPlanEl.setAttribute('tabindex', '-1');
         salesPlanEl.setAttribute('readonly', 'readonly');
         surplusPlanEl.removeAttribute('readonly');
         surplusPlanEl.value = surplusPlan;

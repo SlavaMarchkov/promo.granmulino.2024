@@ -19,8 +19,14 @@ final class PromoDataUpdateRequest extends FormRequest
     : array
     {
         return [
-            'total_sales_after'   => ['required'],
-            'total_budget_actual' => ['required'],
+            'promo'                     => ['array'],
+            'promo.total_sales_after'   => ['required'],
+            'promo.total_budget_actual' => ['required'],
+
+            'sellers'                 => ['array'],
+            'sellers.*.seller_id'     => ['required', 'numeric'],
+            'sellers.*.sales_after'   => ['required', 'numeric'],
+            'sellers.*.budget_actual' => ['required', 'numeric'],
         ];
     }
 
@@ -28,19 +34,28 @@ final class PromoDataUpdateRequest extends FormRequest
     : array
     {
         return [
-            'total_sales_after'   => 'Продажи, факт',
-            'total_budget_actual' => 'Бюджет, факт',
+            'promo.total_sales_after'   => 'Продажи, факт',
+            'promo.total_budget_actual' => 'Бюджет, факт',
         ];
     }
 
     protected function prepareForValidation()
     : void
     {
-        $arr = [];
-        $inputArr = request()->only('total_sales_after', 'total_budget_actual');
-        foreach ($inputArr as $key => $value) {
-            $arr[$key] = convert_string_to_number($value);
-        }
-        $this->merge($arr);
+        $promo = request()->input('promo');
+        $sellers = request()->input('sellers');
+
+        $this->merge([
+            'promo'   => array_map(function ($value) {
+                return convert_string_to_number($value);
+            }, $promo),
+            'sellers' => array_map(function ($seller) {
+                return [
+                    'seller_id'     => $seller['seller_id'],
+                    'sales_after'   => convert_string_to_number($seller['sales_after']),
+                    'budget_actual' => convert_string_to_number($seller['budget_actual']),
+                ];
+            }, $sellers),
+        ]);
     }
 }

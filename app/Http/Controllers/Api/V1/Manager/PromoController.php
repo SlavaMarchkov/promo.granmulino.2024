@@ -85,10 +85,10 @@ final class PromoController extends ApiController
     : JsonResponse {
         $data = $request->validated();
 
-        $promo = $this->promoService->updatePromo($promo, $data);
+        $array = $this->promoService->updatePromo($promo, $data);
 
         return $this->successResponse(
-            new PromoFullResource($promo),
+            json_encode($array),
             'success',
             __('crud.promos.updated'),
         );
