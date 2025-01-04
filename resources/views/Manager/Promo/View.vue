@@ -125,11 +125,9 @@
                         <h4 class="mb-0">Мотивация команды ТП</h4>
                         <TheButton
                             @click="updatePromo"
-                            :class="[
-                                'btn-success',
-                                { 'btn-cursor-not-allowed' : !isFormValid() }
-                            ]"
-                            :disabled="spinnerStore.isButtonDisabled || !isFormValid()"
+                            class="btn-success"
+                            style="width: 15%;"
+                            :disabled="spinnerStore.isButtonDisabled"
                             :loading="spinnerStore.isButtonDisabled"
                         >Сохранить изменения</TheButton>
                     </template>
@@ -156,7 +154,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, onMounted, reactive, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useHttpService } from '@/use/useHttpService.js';
 import { useArrayHandlers } from '@/use/useArrayHandlers.js';
@@ -171,21 +169,18 @@ import ProductCards from '@/pages/PromoActual/ProductCards.vue';
 import SalesCards from '@/pages/PromoActual/SalesCards.vue';
 import SalesPeopleBoost from '@/pages/PromoActual/SalesPeopleBoost.vue';
 import TheButton from '@/components/core/TheButton.vue';
-import { useConvertCase } from '@/use/useConvertCase.js';
 
 const route = useRoute();
 const router = useRouter();
 const spinnerStore = useSpinnerStore();
 const arrayHandlers = useArrayHandlers();
-const { makeConvertibleObject, toCamel } = useConvertCase();
-
 const { get, update } = useHttpService();
 const promoId = +route.params.id;
 
 const promo = ref({});
 const products = ref([]);
 const sellers = ref([]);
-const updatedPromo = ref({
+let updatedPromo = reactive({
     promo: null,
     sellers: null,
 });
@@ -217,10 +212,6 @@ watch(
     },
 );
 
-const isFormValid = () => {
-    return Object.keys(updatedPromo.value).length !== 0;
-};
-
 const fetchPromoProducts = async (promoId) => {
     const { status, data } = await get(`${ MANAGER_URLS.PROMO }/${ promoId }${ MANAGER_URLS.PRODUCT }`);
     if ( status === 'success' ) products.value = data;
@@ -246,27 +237,30 @@ const updatePromoProduct = (data) => {
 const updatePromoMark = async (mark) => {
     const response = await update(`${ MANAGER_URLS.PROMO }/${ promoId }${ MANAGER_URLS.MARK }/${ mark.id }`, mark);
     if ( response && response.status === 'success' ) {
-        promo.value = { ...response.data };
+        promo.value = {
+            ...response.data,
+        };
     }
 };
 
 const updatePromo = async () => {
-    const response = await update(`${ MANAGER_URLS.PROMO }/${ promoId }`, updatedPromo.value);
+    const response = await update(`${ MANAGER_URLS.PROMO }/${ promoId }`, updatedPromo);
     if ( response && response.status === 'success' ) {
-        const data = makeConvertibleObject(JSON.parse(response.data), toCamel);
         promo.value = {
             ...promo.value,
-            ...data.promo,
+            ...response.data,
         };
-        sellers.value = {
-            ...data.sellers,
+        sellers.value = updatedPromo.sellers;
+        updatedPromo = {
+            promo: null,
+            sellers: null,
         };
     }
 };
 
 const preparePromoSellersForUpdate = (promoObj, sellersArr) => {
-    updatedPromo.value.promo = promoObj;
-    updatedPromo.value.sellers = sellersArr;
+    updatedPromo.promo = promoObj;
+    updatedPromo.sellers = sellersArr;
 };
 
 const promoMarkBgColor = computed(() => {

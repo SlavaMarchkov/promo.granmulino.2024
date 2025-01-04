@@ -80,7 +80,7 @@
         </div>
     </li>
     <template
-        v-for="(seller, index) in props.sellers"
+        v-for="(seller, index) in sellers"
         :key="seller.id"
     >
         <SalesPeopleSellerItem
@@ -141,16 +141,11 @@ const state = reactive({
     supervisor: initialFormData(),
 });
 
-const sellers = ref([]);
+const sellers = ref(props.sellers);
 
 const updateSeller = (seller) => {
     const itemIdx = sellers.value.findIndex(item => item.id === seller.id);
-
-    if (itemIdx === -1) {
-        sellers.value.push(seller);
-    } else {
-        sellers.value[itemIdx] = { ...seller };
-    }
+    sellers.value[itemIdx] = { ...seller };
 
     state.supervisor.salesAfter = formatNumber(calcSalesAfter());
     state.supervisor.budgetActual = formatNumberWithFractions(calcBudgetActual());
@@ -159,10 +154,12 @@ const updateSeller = (seller) => {
 };
 
 const calcSalesAfter = () => {
-    return sellers.value.reduce((acc, el) => {
-        if ( !isNaN(el.salesAfter) ) {
-            return +(acc + el.salesAfter).toFixed(0);
+    return sellers.value.reduce((acc, seller) => {
+        if ( state.supervisor.sellerId === seller.supervisorId ) {
+            const salesAfter = convertInputStringToNumber(seller.salesAfter.toString());
+            acc += salesAfter;
         }
+        return acc;
     }, 0);
 };
 

@@ -34,5 +34,5 @@ interface PromoRepositoryInterface
     : ?Promo;
 
     public function updatePromoFromArray(Promo $promo, array $data)
-    : array;
+    : Promo;
 }

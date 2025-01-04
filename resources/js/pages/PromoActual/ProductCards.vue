@@ -3,6 +3,10 @@
         <TheCard class="info-card revenue-card">
             <template #header>
                 <h5 class="mb-0 card-title p-0">Бюджет</h5>
+                <h5 :class="['mb-0 fw-bold', calcBudgetDiffTextColor]"><i
+                    :class="['bi', calcBudgetDiff === '0' ? '' : calcBudgetDiff >= 0 ? 'bi-arrow-up' : 'bi-arrow-down' ]"></i>&nbsp;{{
+                        calcBudgetDiff
+                    }}&#8239;%</h5>
             </template>
             <template #body>
                 <div class="d-flex align-items-center">
@@ -26,7 +30,7 @@
             <template #header>
                 <h5 class="mb-0 card-title p-0">Продажи</h5>
                 <h5 :class="['mb-0 fw-bold', calcSurplusTextColor]"><i
-                    :class="['bi', calcSurplus >= 0 ? 'bi-arrow-up' : 'bi-arrow-down' ]"></i>&nbsp;{{
+                    :class="['bi', calcSurplus === '0' ? '' : calcSurplus >= 0 ? 'bi-arrow-up' : 'bi-arrow-down' ]"></i>&nbsp;{{
                         calcSurplus
                     }}&#8239;%</h5>
             </template>
@@ -112,10 +116,28 @@ const calcSurplus = computed(() => {
     }
 });
 
+const calcBudgetDiff = computed(() => {
+    const result = calcDifferencePercentage(
+        props.totalBudgetPlan,
+        props.totalBudgetActual,
+    );
+    if ( !isNaN(result) ) {
+        return formatNumber(result);
+    }
+});
+
 const calcSurplusTextColor = computed(() => {
     return isNumberNegative(calcSurplus.value)
         ? 'text-danger'
-        : calcSurplus.value === 0
+        : calcSurplus.value === '0'
+            ? 'text-secondary'
+            : 'text-success';
+});
+
+const calcBudgetDiffTextColor = computed(() => {
+    return !isNumberNegative(calcBudgetDiff.value)
+        ? 'text-danger'
+        : calcBudgetDiff.value === '0'
             ? 'text-secondary'
             : 'text-success';
 });

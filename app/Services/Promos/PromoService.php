@@ -61,7 +61,7 @@ final readonly class PromoService
     }
 
     public function updatePromo(Promo $promo, array $data)
-    : array {
+    : Promo {
         return $this->promoRepository->updatePromoFromArray($promo, $data);
     }
 }
