@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\V1\Manager\CategoryController;
 use App\Http\Controllers\Api\V1\Manager\ChannelController;
 use App\Http\Controllers\Api\V1\Manager\CityController;
 use App\Http\Controllers\Api\V1\Manager\CustomerController;
+use App\Http\Controllers\Api\V1\Manager\CustomerProductController;
 use App\Http\Controllers\Api\V1\Manager\CustomerSellerController;
 use App\Http\Controllers\Api\V1\Manager\ProductController;
 use App\Http\Controllers\Api\V1\Manager\PromoController;
@@ -67,12 +68,13 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::put('promos/{promo}/marks/{mark}', [PromoMarkController::class, 'update'])->name('promos.marks.update');
 
         Route::apiResources([
-            'promos'            => PromoController::class,
-            'retailers'         => RetailerController::class,
-            'customers'         => CustomerController::class,
-            'customers.sellers' => CustomerSellerController::class,
-            'promos.products'   => PromoProductController::class,
-            'promos.sellers'    => PromoSellerController::class,
+            'promos'             => PromoController::class,
+            'retailers'          => RetailerController::class,
+            'customers'          => CustomerController::class,
+            'customers.products' => CustomerProductController::class,
+            'customers.sellers'  => CustomerSellerController::class,
+            'promos.products'    => PromoProductController::class,
+            'promos.sellers'     => PromoSellerController::class,
         ]);
     });
 });

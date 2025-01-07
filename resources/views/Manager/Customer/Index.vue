@@ -108,12 +108,7 @@ onMounted(async () => {
 });
 
 const getCustomers = async () => {
-    const { data } = await get(MANAGER_URLS.CUSTOMER, {
-        params: {
-            region: true,
-            city: true,
-        },
-    });
+    const { data } = await get(MANAGER_URLS.CUSTOMER);
     state.customers = data.customers;
 };
 

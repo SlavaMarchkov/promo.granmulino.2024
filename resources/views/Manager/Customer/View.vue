@@ -59,7 +59,7 @@
                                 <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview" aria-selected="true" role="tab">Профиль</button>
                             </li>
                             <li class="nav-item" role="presentation">
-                                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-edit" aria-selected="false" tabindex="-1" role="tab">Прайс-лист</button>
+                                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#price-list" aria-selected="false" tabindex="-1" role="tab">Прайс-лист</button>
                             </li>
                             <li class="nav-item" role="presentation">
                                 <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-settings" aria-selected="false" tabindex="-1" role="tab">Настройки</button>
@@ -72,10 +72,14 @@
                             <div class="tab-pane fade show active profile-overview" id="profile-overview" role="tabpanel">
                                 <h5 class="card-title">В разработке</h5>
                             </div>
-                            <div class="tab-pane fade profile-edit pt-3" id="profile-edit" role="tabpanel">
-                                <h5 class="card-title">В разработке</h5>
+                            <div class="tab-pane fade pt-1" id="price-list" role="tabpanel">
+                                <PriceList
+                                    :customer-id="customerId"
+                                    :categories="filteredCategories"
+                                    @update-categories="updateCategories"
+                                />
                             </div>
-                            <div class="tab-pane fade pt-3" id="profile-settings" role="tabpanel">
+                            <div class="tab-pane fade pt-1" id="profile-settings" role="tabpanel">
                                 <h5 class="card-title">В разработке</h5>
                             </div>
                             <div class="tab-pane fade pt-1" id="the-sellers" role="tabpanel">
@@ -111,6 +115,7 @@ import { useSpinnerStore } from '@/stores/spinners.js';
 import { MANAGER_URLS } from '@/helpers/constants.js';
 import Alert from '@/components/Alert.vue';
 import TheSellers from '@/pages/Customer/TheSellers.vue';
+import PriceList from '@/pages/Customer/PriceList.vue';
 import TheBadge from '@/components/core/TheBadge.vue';
 import TheSpinner from '@/components/core/TheSpinner.vue';
 import TheCard from '@/components/core/TheCard.vue';
@@ -127,31 +132,56 @@ const customerId = +route.params.id;
 const item = ref({});
 const supervisors = ref([]);
 const sellers = ref([]);
+const categories = ref([]);
+const products = ref([]);
 
 onMounted(async () => {
-    await fetchDetails(customerId);
+    await getDetails(customerId);
+    await getCategories();
 });
 
 const isItemFound = computed(() => {
     return Object.keys(item.value).length !== 0;
 });
 
-const fetchDetails = async (customerId) => {
-    await get(`${ MANAGER_URLS.CUSTOMER }/${ customerId }`, {
-        params: {
-            city: true,
-            region: true,
-            retailers: true,
-            customer_supervisors: false,
-            customer_sellers: false,
-        }
-    }).then(({ status, data }) => {
+const getDetails = async (customerId) => {
+    await get(`${ MANAGER_URLS.CUSTOMER }/${ customerId }`).then(({ status, data }) => {
         if ( status === 'success' ) item.value = data;
-    }).then(() => fetchSellers(customerId));
+    })
+        .then(() => fetchSellers(customerId))
+        .then(() => fetchProducts(customerId));
 };
 
+const getCategories = async () => {
+    const { status, data } = await get(MANAGER_URLS.CATEGORY);
+    if ( status === 'success' ) categories.value = data.categories;
+};
+
+const fetchProducts = async (customerId) => {
+    const { status, data } = await get(`${ MANAGER_URLS.CUSTOMER }/${ customerId }${ MANAGER_URLS.PRODUCT }`);
+    if ( status === 'success' ) products.value = data.products;
+};
+
+const filteredCategories = computed(() => {
+    return categories.value.map(category => {
+        return {
+            id: category.id,
+            name: category.name,
+            count: category.productsCount,
+            products: category.products.map(product => {
+                const customerProduct = products.value.find(pr => pr.productId === product.id);
+                return {
+                    customerId: customerId,
+                    ...product,
+                    ...customerProduct,
+                };
+            }),
+        };
+    });
+});
+
 const fetchSellers = async (customerId) => {
-    const { status, data } = await get(`${MANAGER_URLS.CUSTOMER}/${customerId}${MANAGER_URLS.SELLER}`);
+    const { status, data } = await get(`${ MANAGER_URLS.CUSTOMER }/${ customerId }${ MANAGER_URLS.SELLER }`);
     if ( status === 'success' ) {
         supervisors.value = data.sellers.filter(s => s.isSupervisor === true);
 
@@ -178,7 +208,7 @@ const fetchSellers = async (customerId) => {
 
 watch(
     () => route.params.id,
-    () => fetchDetails(route.params.id),
+    () => getDetails(route.params.id),
 );
 
 const updateSellers = (updatedItem) => {
@@ -263,5 +293,9 @@ const updateSellers = (updatedItem) => {
 
     const tempArr2 = arrayHandlers.sortArrayByStringColumn(supervisors.value, 'name');
     supervisors.value = arrayHandlers.sortArrayByBoolean(tempArr2, 'isActive');
+};
+
+const updateCategories = (updatedProducts) => {
+    products.value = updatedProducts;
 };
 </script>

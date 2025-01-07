@@ -6,6 +6,7 @@ declare(strict_types=1);
 namespace App\Services\Customers\Repositories;
 
 use App\Models\Customer;
+use App\Models\CustomerProduct;
 use App\Models\CustomerSeller;
 use App\Services\Customers\Filters\CustomerFilter;
 use Illuminate\Contracts\Container\BindingResolutionException;
@@ -99,5 +100,25 @@ final readonly class EloquentCustomerRepository implements CustomerRepositoryInt
             ->where('customer_id', $customer_id)
             ->orderBy('name')->orderByDesc('is_active');
         return $sellersSql->get();
+    }
+
+    public function getProducts(int $customer_id)
+    : Collection {
+        $productsSql = CustomerProduct::query()->where('customer_id', $customer_id);
+        return $productsSql->get();
+    }
+
+    public function createProductsFromArray(Customer $customer, array $data)
+    : Collection {
+        foreach ($data['products'] as $product) {
+            CustomerProduct::updateOrCreate(
+                ['customer_id' => $product['customer_id'], 'product_id' => $product['product_id']],
+                $product,
+            );
+        }
+        $customer->fresh();
+        return CustomerProduct::query()
+            ->where('customer_id', $customer->id)
+            ->get();
     }
 }

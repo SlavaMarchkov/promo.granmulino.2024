@@ -17,17 +17,20 @@ final class CategoryController extends ApiController
 
     public function __construct(
         private readonly CategoryService $categoryService,
-    )
-    {
+    ) {
     }
 
     public function index()
     : JsonResponse
     {
-        Cache::forget(self::CACHE_KEY);
+        // TODO: Cache::forget(self::CACHE_KEY);
 
         $categories = Cache::remember(self::CACHE_KEY, now()->addHour(), function () {
-            return $this->categoryService->getCategories([...request()->all()]);
+            return $this->categoryService->getCategories([
+                'category_is_active' => true,
+                'product_is_active'  => true,
+                'products'           => true,
+            ]);
         });
 
         return $this->successResponse(

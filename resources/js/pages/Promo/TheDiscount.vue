@@ -248,13 +248,7 @@ onMounted(async () => {
 });
 
 const getCategories = async () => {
-    const { data } = await get(MANAGER_URLS.CATEGORY, {
-        params: {
-            'category_is_active': true,
-            'product_is_active': true,
-            'products': true,
-        },
-    });
+    const { data } = await get(MANAGER_URLS.CATEGORY);
     state.categories = data.categories;
 };
 

@@ -43,6 +43,7 @@ return new class extends Migration {
             $table->date('start_date')->nullable();
             $table->date('end_date')->nullable();
             $table->longText('comments')->nullable();
+            $table->decimal('transport_rate', 10, 0)->nullable();
 
             $table->decimal('total_sales_before', 10, 2)->default(0.00);
             $table->decimal('total_sales_plan', 10, 2)->default(0.00);

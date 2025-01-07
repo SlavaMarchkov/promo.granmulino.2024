@@ -22,6 +22,7 @@ class PromoFullResource extends PromoResource
             'cityName'        => $this->whenLoaded('city', fn() => $this->city->name),
 
             'comments' => $this->comments,
+            'transport_rate' => $this->transport_rate,
 
             'totalSalesBefore' => $this->total_sales_before,
             'totalSalesPlan'   => $this->total_sales_plan,

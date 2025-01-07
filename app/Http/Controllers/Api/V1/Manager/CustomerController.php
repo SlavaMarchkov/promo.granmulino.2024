@@ -21,8 +21,8 @@ final class CustomerController extends ApiController
 
     public function __construct(
         private readonly CustomerService $customerService,
-    )
-    {}
+    ) {
+    }
 
     public function index()
     : JsonResponse
@@ -32,7 +32,8 @@ final class CustomerController extends ApiController
         $customers = Cache::remember(self::CACHE_KEY, now()->addHour(), function () {
             return $this->customerService->getCustomers([
                 'user_id' => auth()->id(),
-                ...request()->all(),
+                'city'    => true,
+                'region'  => true,
             ]);
         });
 
@@ -44,13 +45,15 @@ final class CustomerController extends ApiController
     }
 
     public function show(Customer $customer)
-    : JsonResponse
-    {
+    : JsonResponse {
         $this->authorize('view', $customer);
 
         $customer = $this->customerService->findCustomer($customer, [
-            'user_id' => auth()->id(),
-            ...request()->all()
+            'user_id'          => auth()->id(),
+            'city'             => true,
+            'region'           => true,
+            'retailers'        => true,
+            'customer_sellers' => false,
         ]);
 
         return $this->successResponse(

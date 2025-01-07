@@ -71,12 +71,12 @@ const props = defineProps({
     supervisors: {
         type: Array,
         required: true,
-        default: [],
+        default: () => [],
     },
     sellers: {
         type: Array,
         required: true,
-        default: [],
+        default: () => [],
     },
 });
 

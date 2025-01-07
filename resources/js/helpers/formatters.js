@@ -18,8 +18,9 @@ export function formatDateToISO(date) {
     return new Date(date.getTime() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0];
 }
 
-export function convertInputStringToNumber(str) {
-    let formattedStr = str.replace(/,/g, '.');
+export function convertInputStringToNumber(value) {
+    let formattedStr = value.toString();
+    formattedStr = formattedStr.replace(/,/g, '.');
     formattedStr = formattedStr.replace(/[^0-9.]+/g, '');
     return parseFloat(formattedStr);
 }

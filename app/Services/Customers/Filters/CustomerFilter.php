@@ -14,6 +14,7 @@ final class CustomerFilter extends AbstractFilter
     private const REGION           = 'region';
     private const CITY             = 'city';
     private const USER             = 'user';
+    private const PRODUCTS         = 'products';
     private const RETAILERS        = 'retailers';
     private const CUSTOMER_SELLERS = 'customer_sellers';
 
@@ -25,6 +26,7 @@ final class CustomerFilter extends AbstractFilter
             self::REGION           => 'region',
             self::CITY             => 'city',
             self::USER             => 'user',
+            self::PRODUCTS         => 'products',
             self::RETAILERS        => 'retailers',
             self::CUSTOMER_SELLERS => 'customer_sellers',
         ];
@@ -53,6 +55,13 @@ final class CustomerFilter extends AbstractFilter
     : void {
         if (to_boolean($value)) {
             $builder->with('user');
+        }
+    }
+
+    public function products(Builder $builder, string $value)
+    : void {
+        if (to_boolean($value)) {
+            $builder->with('products');
         }
     }
 

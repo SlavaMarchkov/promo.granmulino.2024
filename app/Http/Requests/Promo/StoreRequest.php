@@ -50,6 +50,7 @@ final class StoreRequest extends FormRequest
             'start_date'  => ['required', 'date_format:Y-m-d', 'date'],
             'end_date'    => ['required', 'date_format:Y-m-d', 'date', 'after:start_date'],
             'comments'    => ['nullable', 'string'],
+            'transport_rate'    => ['nullable', 'numeric'],
 
             'total_sales_before' => ['required', 'numeric'],
             'total_sales_plan'   => ['required', 'numeric'],

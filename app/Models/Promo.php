@@ -31,6 +31,7 @@ class Promo extends Model
         'start_date',
         'end_date',
         'comments',
+        'transport_rate',
         'total_sales_before',
         'total_sales_plan',
         'total_sales_on_time',

@@ -9,6 +9,7 @@ namespace App\Services\Customers;
 use App\Models\Customer;
 use App\Models\CustomerSeller;
 use App\Services\Customers\Handlers\CreateCustomerHandler;
+use App\Services\Customers\Handlers\CreateCustomerProductHandler;
 use App\Services\Customers\Handlers\CreateCustomerSellerHandler;
 use App\Services\Customers\Handlers\UpdateCustomerSellerHandler;
 use App\Services\Customers\Repositories\CustomerRepositoryInterface;
@@ -21,6 +22,7 @@ final readonly class CustomerService
         private CreateCustomerHandler $createCustomerHandler,
         private CreateCustomerSellerHandler $createSellerHandler,
         private UpdateCustomerSellerHandler $updateSellerHandler,
+        private CreateCustomerProductHandler $createProductHandler,
     ) {
     }
 
@@ -59,6 +61,11 @@ final readonly class CustomerService
         return $this->customerRepository->getSellers($customer_id);
     }
 
+    public function getCustomerProducts(int $customer_id)
+    : Collection {
+        return $this->customerRepository->getProducts($customer_id);
+    }
+
     public function updateCustomerSeller(CustomerSeller $customerSeller, array $data)
     : CustomerSeller {
         return $this->updateSellerHandler->handle($customerSeller, $data);
@@ -72,5 +79,10 @@ final readonly class CustomerService
     public function deleteSeller(CustomerSeller $seller)
     : int {
         return $this->customerRepository->deleteSeller($seller);
+    }
+
+    public function storeCustomerProducts(Customer $customer, array $data)
+    : Collection {
+        return $this->createProductHandler->handle($customer, $data);
     }
 }

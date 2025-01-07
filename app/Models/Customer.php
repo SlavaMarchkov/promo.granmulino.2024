@@ -9,6 +9,7 @@ use App\Traits\Models\HasFilter;
 use App\Traits\Models\HasPreviousNext;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
@@ -73,5 +74,19 @@ class Customer extends Model
     : HasMany
     {
         return $this->hasMany(CustomerSeller::class);
+    }
+
+    public function products()
+    : BelongsToMany
+    {
+        return $this->belongsToMany(
+            Product::class,
+            'customer_product',
+            'product_id',
+            'customer_id',
+        )
+            ->using(CustomerProduct::class)
+            ->withPivot('customer_price', 'is_listed')
+            ->withTimestamps();
     }
 }
