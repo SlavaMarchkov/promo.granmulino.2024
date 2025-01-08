@@ -25,8 +25,9 @@
                     <TheInput
                         class="text-center"
                         v-model="state.form.customerPrice"
+                        @input="state.form.isListed = false"
                     />
-                    <span class="input-group-text">00.00</span>
+                    <span class="input-group-text">00,00</span>
                 </div>
             </div>
             <div class="col-md-4">

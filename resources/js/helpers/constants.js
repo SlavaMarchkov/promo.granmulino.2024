@@ -296,3 +296,4 @@ export const FOUR_WEEKS_AHEAD = new Date(new Date().getTime() + 12096e5 * 2);
 export const PRODUCT_IMG_PATH = '/assets/img/products/';
 export const NO_PRODUCT_IMG = '/assets/img/no-image.png';
 export const ALLOWED_FILE_TYPES = ['gif', 'jpeg', 'jpg', 'png'];
+export const VAT_RATE = 1.2;

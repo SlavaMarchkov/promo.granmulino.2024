@@ -21,8 +21,45 @@
                     </div>
                 </div>
                 <hr>
+                <div class="row mb-3">
+                    <div class="mb-2 d-flex justify-content-between align-items-center">
+                        <h6 class="mb-0"><span class="fw-bold text-primary">Шаг 1.</span> Расчёт стоимости доставки 1 кг продукции:</h6>
+                        <h5 class="text-secondary fw-bold mb-0">{{ formatNumberWithFractions(transportRatePerKilo) }} руб.</h5>
+                    </div>
+                    <div class="col-md-6 col-sm-12">
+                        <TheLabel
+                            for="transport_rate"
+                        >Стоимость доставки, вкл. НДС:&nbsp;&nbsp;<span class="fw-bold text-primary fs-5">
+                            {{ formatNumber(state.transportRate) }}&nbsp;руб.
+                        </span>
+                        </TheLabel>
+                        <InputRange
+                            id="transport_rate"
+                            v-model="state.transportRate"
+                            :max="200000"
+                            :min="20000"
+                            :step="1000"
+                        />
+                    </div>
+                    <div class="col-md-6 col-sm-12">
+                        <TheLabel
+                            for="order_weight"
+                        >Вес заказа:&nbsp;&nbsp;<span class="fw-bold text-primary fs-5">
+                            {{ formatNumber(state.orderWeight) }}&nbsp;кг
+                        </span>
+                        </TheLabel>
+                        <InputRange
+                            id="order_weight"
+                            v-model="state.orderWeight"
+                            :max="25000"
+                            :min="5000"
+                            :step="500"
+                        />
+                    </div>
+                </div>
+                <hr>
                 <div class="d-flex justify-content-between align-items-center">
-                    <span>Ассортимент для промо-акции</span>
+                    <h6 class="mb-0"><span class="fw-bold text-primary">Шаг 2.</span> Ассортимент для промо-акции:</h6>
                     <TheButton
                         @click="modals.addModalPopUp = true; state.form = initialFormData(); state.products = [];"
                         class="btn-success"
@@ -188,14 +225,15 @@
 <script setup>
 import { computed, onMounted, reactive, watch } from 'vue';
 import { useHttpService } from '@/use/useHttpService.js';
-import { formatNumber, processInputValue } from '@/helpers/formatters.js';
+import { formatNumber, formatNumberWithFractions, processInputValue } from '@/helpers/formatters.js';
 import TheModal from '@/components/TheModal.vue';
 import TheButton from '@/components/core/TheButton.vue';
 import TheLabel from '@/components/form/TheLabel.vue';
 import TheInput from '@/components/form/TheInput.vue';
-import { MANAGER_URLS } from '@/helpers/constants.js';
+import { MANAGER_URLS, VAT_RATE } from '@/helpers/constants.js';
 import DiscountProductCard from '@/pages/Promo/DiscountProductCard.vue';
 import { useCalculations } from '@/use/useCalculations.js';
+import InputRange from '@/components/form/InputRange.vue';
 
 const { get } = useHttpService();
 const { calcDifferencePercentage, calcBudget } = useCalculations();
@@ -232,6 +270,8 @@ const initialFormData = () => ({
 });
 
 const state = reactive({
+    transportRate: 50000,
+    orderWeight: 15000,
     categories: [],
     products: [],
     addedProducts: [],
@@ -346,6 +386,10 @@ const totalBudgetPlan = computed(() => {
    return state.addedProducts.reduce((acc, pr) => {
        return acc + parseInt(pr.budgetPlan);
    }, 0);
+});
+
+const transportRatePerKilo = computed(() => {
+    return (state.transportRate / VAT_RATE) / state.orderWeight;
 });
 
 watch(() => state.form.salesBefore,
