@@ -251,6 +251,7 @@
                 <template #default>
                     <TheDiscount
                         :title="currentPromoType.title"
+                        :customer-id="+state.promo.customerId"
                         :customer-name="state.customerName"
                         :retailer-name="state.retailerName"
                         @add-products-to-promo="addProductHandler"
@@ -421,14 +422,7 @@ const getChannels = async (promoType) => {
 };
 
 const getCustomers = async () => {
-    const { data } = await get(MANAGER_URLS.CUSTOMER, {
-        params: {
-            region: true,
-            city: true,
-            user: true,
-            retailers: true,
-        },
-    });
+    const { data } = await get(MANAGER_URLS.CUSTOMER);
     state.customers = data.customers;
 };
 

@@ -31,9 +31,11 @@ final class CustomerController extends ApiController
 
         $customers = Cache::remember(self::CACHE_KEY, now()->addHour(), function () {
             return $this->customerService->getCustomers([
-                'user_id' => auth()->id(),
-                'city'    => true,
-                'region'  => true,
+                'user_id'   => auth()->id(),
+                'city'      => true,
+                'region'    => true,
+                'user'      => true,
+                'retailers' => true,
             ]);
         });
 

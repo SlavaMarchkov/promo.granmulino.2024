@@ -28,7 +28,13 @@ final class CustomerProductController extends ApiController
     : JsonResponse {
         $this->authorize('viewAny', [CustomerProduct::class, $customer]);
 
-        $products = $this->customerService->getCustomerProducts($customer->id);
+        $products = $this->customerService->getCustomerProducts(
+            $customer->id,
+            [
+                'category' => true,
+                'product'  => true,
+            ],
+        );
 
         return $this->successResponse(
             new CustomerProductCollection($products),
@@ -42,7 +48,7 @@ final class CustomerProductController extends ApiController
         $this->authorize('create', [
             CustomerProduct::class,
             $request->get('0')['customer_id'],
-            $customer->id
+            $customer->id,
         ]);
 
         $products = $request->validated();
