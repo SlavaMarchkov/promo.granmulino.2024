@@ -30,10 +30,7 @@ final class CustomerProductController extends ApiController
 
         $products = $this->customerService->getCustomerProducts(
             $customer->id,
-            [
-                'category' => true,
-                'product'  => true,
-            ],
+            [...request()->all()],
         );
 
         return $this->successResponse(

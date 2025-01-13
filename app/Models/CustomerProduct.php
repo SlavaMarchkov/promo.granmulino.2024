@@ -14,8 +14,7 @@ class CustomerProduct extends Pivot
 {
     use HasFilter;
 
-    private const OFFICE_EXPENSES    = 0.075;
-    private const MARKETING_EXPENSES = 0.05;
+    private const VAT_RATE = 1.10;
 
     protected $table        = 'customer_product';
     public    $incrementing = true;
@@ -54,30 +53,23 @@ class CustomerProduct extends Pivot
         return $this->belongsTo(Product::class);
     }
 
-    public function grossProfit()
+    public function productInitialPrice()
     : Attribute
     {
         return new Attribute(
             get: function () {
-                $product_price = Product::query()->where('id', $this->product_id)->value('price');
-                return round(($this->customer_price - $product_price), 2);
+                return Product::query()->where('id', $this->product_id)->value('price');
             },
         );
     }
 
-    public function officeExpenses()
+    public function customerPriceNoVAT()
     : Attribute
     {
         return new Attribute(
-            get: fn() => round(($this->customer_price * self::OFFICE_EXPENSES), 2),
-        );
-    }
-
-    public function marketingExpenses()
-    : Attribute
-    {
-        return new Attribute(
-            get: fn() => round(($this->customer_price * self::MARKETING_EXPENSES), 2),
+            get: function () {
+                return $this->customer_price / self::VAT_RATE;
+            },
         );
     }
 }

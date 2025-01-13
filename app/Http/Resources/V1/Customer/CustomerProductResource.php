@@ -17,12 +17,11 @@ class CustomerProductResource extends JsonResource
     public function toArray(Request $request)
     : array {
         return [
-            'customerPrice'     => $this->customer_price,
-            'grossProfit'       => $this->gross_profit,
-            'officeExpenses'    => $this->office_expenses,
-            'marketingExpenses' => $this->marketing_expenses,
-            'isListed'          => $this->is_listed,
-            'updatedAt'         => $this->updated_at->format('d.m.Y в H:i:s'),
+            'customerPrice'       => $this->customer_price,
+            'customerPriceNoVAT'  => $this->customer_price_no_v_a_t,
+            'productInitialPrice' => $this->product_initial_price,
+            'isListed'            => $this->is_listed,
+            'updatedAt'           => $this->updated_at->format('d.m.Y в H:i:s'),
 
             'customerId'    => $this->customer_id,
             'productId'     => $this->product_id,

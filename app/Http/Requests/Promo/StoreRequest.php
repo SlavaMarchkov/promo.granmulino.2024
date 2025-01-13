@@ -118,3 +118,42 @@ final class StoreRequest extends FormRequest
         }
     }
 }
+
+/*
+
+"promo_type" => "DISCOUNT"
+  "promo_for_retail" => "true"
+  "discount" => "30"
+  "user_id" => "1"
+  "channel_id" => "1"
+  "customer_id" => "46"
+  "retailer_id" => "3"
+  "region_id" => "6"
+  "city_id" => "3"
+  "start_date" => "2025-01-13"
+  "end_date" => "2025-01-24"
+  "comments" => "sdsdsdds"
+  "total_sales_before" => "280"
+  "total_sales_plan" => "500"
+  "total_budget_plan" => "4053"
+  "products" => array:2 [
+    0 => array:15 [
+      "category_id" => "2"
+      "product_id" => "28"
+      "category_name" => "Granmulino Стандарт"
+      "product_name" => "Перья, 400 г"
+      "sales_before" => "200"
+      "sales_plan" => "400"
+      "surplus_plan" => "100"
+      "budget_plan" => "3215"
+      "compensation" => "8.036363636363632"
+      "profit_per_unit" => "4.818939393939394"
+      "discount" => "20"
+      "promo_price" => "32.14545454545455"
+      "profit_per_product" => "1927.5757575757577"
+      "net_profit" => "15"
+      "revenue_plan" => "12858"
+    ]
+
+ *
+ * */

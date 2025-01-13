@@ -297,3 +297,5 @@ export const PRODUCT_IMG_PATH = '/assets/img/products/';
 export const NO_PRODUCT_IMG = '/assets/img/no-image.png';
 export const ALLOWED_FILE_TYPES = ['gif', 'jpeg', 'jpg', 'png'];
 export const VAT_RATE = 1.2;
+export const OFFICE_EXPENSES    = 0.075;
+export const MARKETING_EXPENSES = 0.05;

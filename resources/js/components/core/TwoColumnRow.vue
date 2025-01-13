@@ -1,5 +1,5 @@
 <template>
-    <div class="row mb-2">
+    <div class="row mb-1">
         <div class="col-6 text-accent"><span v-html="props.title"></span></div>
         <div class="col-6 fw-bold">
             <slot/>
