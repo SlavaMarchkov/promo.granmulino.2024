@@ -3,9 +3,13 @@
         <div class="card">
             <div class="card-header bg-success text-white">{{ props.title }}</div>
             <div class="card-body mt-3">
-                <div class="d-flex justify-content-between align-items-center">
+                <div class="mb-1 d-flex justify-content-between align-items-center">
                     <h4 class="mb-0">Итоговый бюджет на промо-акцию:</h4>
-                    <h4 class="text-primary fw-bold mb-0">{{ isNaN(totalBudgetPlan) ? '0' : formatNumber(totalBudgetPlan) }} руб.</h4>
+                    <h4 class="text-primary fw-bold mb-0">{{ formatNumber(totalBudgetPlan) }} руб.</h4>
+                </div>
+                <div class="d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">Плановая прибыль на промо-акцию:</h4>
+                    <h4 class="text-primary fw-bold mb-0">{{ formatNumber(totalPromoProfitPlan) }} руб.</h4>
                 </div>
                 <hr>
                 <div class="row">
@@ -36,9 +40,9 @@
                         <InputRange
                             id="transport_rate"
                             v-model="state.transportRate"
-                            :max="200000"
-                            :min="20000"
-                            :step="1000"
+                            :max="200_000"
+                            :min="0"
+                            :step="1_000"
                         />
                     </div>
                     <div class="col-md-6 col-sm-12">
@@ -51,8 +55,8 @@
                         <InputRange
                             id="order_weight"
                             v-model="state.orderWeight"
-                            :max="25000"
-                            :min="5000"
+                            :max="25_000"
+                            :min="5_000"
                             :step="500"
                         />
                     </div>
@@ -73,6 +77,7 @@
                         :key="product.id"
                         :index="index"
                         :product="product"
+                        :transport-rate-per-kilo="transportRatePerKilo"
                         @remove-product="removeProduct"
                     />
                 </div>
@@ -375,7 +380,7 @@
                         <div class="input-group">
                             <TheInput
                                 id="net_profit_standard"
-                                :model-value="formatNumber(state.form.netProfit)"
+                                :model-value="!isNaN(state.form.netProfit) ? formatNumber(state.form.netProfit) : 0"
                                 :class="['text-center fw-bold', netProfitClass]"
                                 readonly="readonly"
                                 :tabindex="-1"
@@ -409,7 +414,15 @@ import TheModal from '@/components/TheModal.vue';
 import TheButton from '@/components/core/TheButton.vue';
 import TheLabel from '@/components/form/TheLabel.vue';
 import TheInput from '@/components/form/TheInput.vue';
-import { MANAGER_URLS, MARKETING_EXPENSES, OFFICE_EXPENSES, VAT_RATE } from '@/helpers/constants.js';
+import {
+    INITIAL_DISCOUNT,
+    INITIAL_ORDER_WEIGHT,
+    INITIAL_TRANSPORT_RATE,
+    MANAGER_URLS,
+    MARKETING_EXPENSES,
+    OFFICE_EXPENSES,
+    VAT_RATE,
+} from '@/helpers/constants.js';
 import DiscountProductCard from '@/pages/Promo/DiscountProductCard.vue';
 import { useCalculations } from '@/use/useCalculations.js';
 import InputRange from '@/components/form/InputRange.vue';
@@ -469,8 +482,8 @@ const initialProductData = () => ({
 });
 
 const state = reactive({
-    transportRate: 50000,
-    orderWeight: 15000,
+    transportRate: INITIAL_TRANSPORT_RATE,
+    orderWeight: INITIAL_ORDER_WEIGHT,
     categories: [],
     products: [],
     addedProducts: [],
@@ -500,7 +513,7 @@ const displayOneProduct = () => {
     const catIdx = state.categories.findIndex(c => +c.id === +state.form.categoryId);
     state.product = state.categories[catIdx].products.find(p => p.id === +state.form.productId);
 
-    state.form.discount = 20;
+    state.form.discount = INITIAL_DISCOUNT;
     state.form.salesBefore = 0;
     state.form.salesPlan = 0;
 
@@ -518,6 +531,8 @@ const addProduct = () => {
         productId: state.form.productId,
         categoryName: getCategoryName(),
         productName: getProductName(),
+        productWeight: state.product.weight,
+        productPrice: state.product.initialPrice,
         salesBefore: state.form.salesBefore,
         salesPlan: state.form.salesPlan,
         surplusPlan: state.form.surplusPlan,
@@ -536,6 +551,7 @@ const addProduct = () => {
         totalSalesBefore.value,
         totalSalesPlan.value,
         totalBudgetPlan.value,
+        totalPromoProfitPlan.value,
     );
     state.products = [];
     modals.addModalPopUp = false;
@@ -549,6 +565,7 @@ const removeProduct = (index) => {
         totalSalesBefore.value,
         totalSalesPlan.value,
         totalBudgetPlan.value,
+        totalPromoProfitPlan.value,
     );
 };
 
@@ -590,19 +607,25 @@ const isFormValid = computed(() => {
 
 const totalSalesBefore = computed(() => {
     return state.addedProducts.reduce((acc, pr) => {
-        return acc + parseInt(pr.salesBefore);
+        return Math.round(acc + pr.salesBefore);
     }, 0);
 });
 
 const totalSalesPlan = computed(() => {
     return state.addedProducts.reduce((acc, pr) => {
-        return acc + parseInt(pr.salesPlan);
+        return Math.round(acc + pr.salesPlan);
     }, 0);
 });
 
 const totalBudgetPlan = computed(() => {
    return state.addedProducts.reduce((acc, pr) => {
-       return acc + parseInt(pr.budgetPlan);
+       return Math.round(acc + pr.budgetPlan);
+   }, 0);
+});
+
+const totalPromoProfitPlan = computed(() => {
+   return state.addedProducts.reduce((acc, pr) => {
+       return Math.round(acc + pr.profitPerProduct);
    }, 0);
 });
 
@@ -637,6 +660,10 @@ watch(
     async (newValue) => {
         if ( newValue !== 0 ) {
             state.categories = [];
+            state.transportRate = INITIAL_TRANSPORT_RATE;
+            state.orderWeight = INITIAL_ORDER_WEIGHT;
+            state.addedProducts = [];
+            state.addedProductsIds = [];
             await fetchCustomerProducts(newValue);
         }
     },
@@ -694,7 +721,6 @@ const fetchCustomerProducts = async (customerId) => {
                         price: item.customerPrice,
                         priceNoVAT: item.customerPriceNoVAT,
                         initialPrice: item.productInitialPrice,
-                        marketingExpenses: item.marketingExpenses,
                     }],
                 });
             } else {
@@ -707,7 +733,6 @@ const fetchCustomerProducts = async (customerId) => {
                         price: item.customerPrice,
                         priceNoVAT: item.customerPriceNoVAT,
                         initialPrice: item.productInitialPrice,
-                        marketingExpenses: item.marketingExpenses,
                     }
                 ];
                 state.categories[idx].products = arrayHandlers.sortArrayByStringColumn(state.categories[idx].products, 'name');
@@ -719,6 +744,7 @@ const fetchCustomerProducts = async (customerId) => {
 const calcProfitPerUnit = () => {
     state.form.profitPerUnit = calcGrossProfit.value - calcTransportRatePerUnit.value - calcOfficeExpenses.value - calcMarketingExpenses.value;
 };
+
 const calcPromoPrice = (discountPercent) => {
     const discount = 1 - discountPercent / 100;
     state.form.promoPrice = state.product.priceNoVAT * discount;

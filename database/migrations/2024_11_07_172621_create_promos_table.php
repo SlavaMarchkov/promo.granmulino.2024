@@ -33,7 +33,6 @@ return new class extends Migration {
                 TypeEnum::IN_OUT->value,
             ])->nullable()->default(null);
 
-            $table->unsignedTinyInteger('discount')->nullable();
             $table->foreignId('user_id')->nullable();
             $table->foreignId('region_id')->nullable();
             $table->foreignId('city_id')->nullable();
@@ -43,7 +42,6 @@ return new class extends Migration {
             $table->date('start_date')->nullable();
             $table->date('end_date')->nullable();
             $table->longText('comments')->nullable();
-            $table->decimal('transport_rate', 10, 0)->nullable();
 
             $table->decimal('total_sales_before', 10, 2)->default(0.00);
             $table->decimal('total_sales_plan', 10, 2)->default(0.00);
@@ -51,7 +49,8 @@ return new class extends Migration {
             $table->decimal('total_sales_after', 10, 2)->default(0.00);
             $table->decimal('total_budget_plan', 10, 2)->default(0.00);
             $table->decimal('total_budget_actual', 10, 2)->default(0.00);
-            $table->decimal('total_promo_profit', 10, 2)->default(0.00);
+            $table->decimal('total_promo_profit_plan', 10, 2)->default(0.00);
+            $table->decimal('total_promo_profit_actual', 10, 2)->default(0.00);
             $table->decimal('total_mark', 3, 2)->default(0.00);
 
             $table->timestamps();
@@ -61,19 +60,27 @@ return new class extends Migration {
             $table->id();
 
             $table->foreignId('promo_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('category_id')->nullable();
-            $table->foreignId('product_id')->nullable();
+            $table->foreignId('category_id');
+            $table->foreignId('product_id');
 
-            $table->decimal('sales_before', 10, 0)->default(0);
-            $table->decimal('sales_plan', 10, 0)->default(0);
-            $table->decimal('sales_after', 10, 0)->default(0);
-            $table->decimal('sales_on_time', 10, 0)->default(0);
-            $table->decimal('compensation', 5, 2)->default(0.00);
+            $table->unsignedSmallInteger('discount');
+            $table->unsignedSmallInteger('net_profit');
 
-            $table->decimal('budget_plan', 10, 0)->default(0);
-            $table->decimal('budget_actual', 10, 0)->default(0);
+            $table->decimal('promo_price', 5, 2)->default(0.00);
+            $table->decimal('sales_before', 10, 2)->default(0.00);
+            $table->decimal('sales_plan', 10, 2)->default(0.00);
+            $table->decimal('surplus_plan', 5, 2)->default(0.00)->comment('План прироста в процентах');
+            $table->decimal('surplus_actual', 5, 2)->default(0.00)->comment('Факт прироста в процентах');
+            $table->decimal('sales_after', 10, 2)->default(0);
+            $table->decimal('sales_on_time', 10, 2)->default(0);
+            $table->decimal('compensation', 5, 2)->default(0.00)->comment('Компенсация в руб.');
+
+            $table->decimal('revenue_plan', 10, 2)->default(0.00);
+            $table->decimal('revenue_actual', 10, 2)->default(0.00);
+            $table->decimal('budget_plan', 10, 2)->default(0.00);
+            $table->decimal('budget_actual', 10, 2)->default(0.00);
             $table->decimal('profit_per_unit', 10, 2)->default(0.00);
-            $table->decimal('promo_profit', 10, 0)->default(0);
+            $table->decimal('profit_per_product', 10, 2)->default(0.00);
 
             $table->timestamps();
         });
@@ -91,7 +98,7 @@ return new class extends Migration {
             $table->decimal('sales_before', 10, 2)->default(0.00);
             $table->decimal('sales_plan', 10, 2)->default(0.00);
             $table->decimal('sales_after', 10, 2)->default(0.00);
-            $table->decimal('surplus_plan', 4, 0)->default(0);
+            $table->decimal('surplus_plan', 5, 2)->default(0);
             $table->unsignedSmallInteger('compensation_plan')->default(0);
             $table->unsignedSmallInteger('compensation_actual')->default(0);
 

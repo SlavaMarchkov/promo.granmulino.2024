@@ -17,7 +17,7 @@ export function useCalculations() {
     const calcBudget = (valueA, valueB) => {
         const numA = convertInputStringToNumber(valueA);
         const numB = convertInputStringToNumber(valueB);
-        return parseInt((numA * numB).toFixed(0));
+        return parseInt((numA * numB).toFixed(2));
     };
 
     const calcSalesSurplus = (valueA, valueB) => {

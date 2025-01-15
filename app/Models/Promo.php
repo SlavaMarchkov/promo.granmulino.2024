@@ -21,7 +21,6 @@ class Promo extends Model
     protected $fillable = [
         'status',
         'promo_type',
-        'discount',
         'user_id',
         'region_id',
         'city_id',
@@ -31,14 +30,14 @@ class Promo extends Model
         'start_date',
         'end_date',
         'comments',
-        'transport_rate',
         'total_sales_before',
         'total_sales_plan',
         'total_sales_on_time',
         'total_sales_after',
         'total_budget_plan',
         'total_budget_actual',
-        'total_promo_profit',
+        'total_promo_profit_plan',
+        'total_promo_profit_actual',
         'total_mark',
     ];
 

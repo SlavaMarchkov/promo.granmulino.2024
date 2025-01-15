@@ -6,7 +6,7 @@
                 <div class="card-body mt-3">
                     <Alert/>
                     <div class="row g-3">
-                        <div class="col-md-6">
+                        <div class="col-md-12">
                             <TheLabel for="promo_type" required>Вид промо-акции</TheLabel>
                             <select
                                 v-model="state.promo.promoType"
@@ -21,24 +21,6 @@
                                 >{{ promo.title }}
                                 </option>
                             </select>
-                        </div>
-                        <div class="col-md-6">
-                            <TheLabel
-                                for="discount"
-                                :required="currentPromoType.type === 'DISCOUNT'"
-                            >Величина скидки</TheLabel>
-                            <div class="input-group">
-                                <TheInput
-                                    id="discount"
-                                    v-model="state.promo.discount"
-                                    type="number"
-                                    min="5"
-                                    step="1"
-                                    max="50"
-                                    :disabled="currentPromoType.type !== 'DISCOUNT'"
-                                />
-                                <span class="input-group-text">%</span>
-                            </div>
                         </div>
                         <div class="col-md-6">
                             <TheLabel for="user_id">Менеджер</TheLabel>
@@ -377,7 +359,6 @@ const RetailersBoost = defineAsyncComponent({
 const initialFormData = () => ({
     promoType: '',
     promoForRetail: false,
-    discount: null,
     userId: authUser.id,
     channelId: '',
     customerId: '',
@@ -390,6 +371,7 @@ const initialFormData = () => ({
     totalSalesBefore: 0,
     totalSalesPlan: 0,
     totalBudgetPlan: 0,
+    totalPromoProfitPlan: 0,
     products: [],
     sellers: [],
 });
@@ -434,7 +416,6 @@ watch(
 
         state.promo.promoForRetail = currentPromoType.isForRetail;
 
-        state.promo.discount = null;
         state.promo.channelId = '';
         state.promo.customerId = '';
         state.promo.retailerId = '';
@@ -481,11 +462,18 @@ watch(
     },
 );
 
-const addProductHandler = (products, salesBefore, salesPlan, budgetPlan) => {
+const addProductHandler = (
+    products,
+    salesBefore,
+    salesPlan,
+    budgetPlan,
+    promoProfitPlan,
+) => {
     state.promo.products = products;
     state.promo.totalSalesBefore = salesBefore;
     state.promo.totalSalesPlan = salesPlan;
     state.promo.totalBudgetPlan = budgetPlan;
+    state.promo.totalPromoProfitPlan = promoProfitPlan;
 };
 
 const addSellersHandler = (sellers, salesBefore, salesPlan, budgetPlan) => {

@@ -16,7 +16,7 @@
             <TwoColumnRow title="Прирост">{{ formatNumber(props.product.surplusPlan) }}&#8239;%</TwoColumnRow>
             <TwoColumnRow title="Бюджет">{{ formatNumber(props.product.budgetPlan) }} руб.</TwoColumnRow>
             <TwoColumnRow title="Прибыль на шт.">{{ formatNumberWithFractions(props.product.profitPerUnit) }} руб.</TwoColumnRow>
-            <TwoColumnRow title="Прибыль, план">{{ formatNumberWithFractions(props.product.profitPerProduct) }} руб.</TwoColumnRow>
+            <TwoColumnRow title="Прибыль, план">{{ formatNumber(props.product.profitPerProduct) }} руб.</TwoColumnRow>
             <TwoColumnRow title="Норматив ЧП"><span :class="netProfitClass">&nbsp;&nbsp;{{ formatNumber(props.product.netProfit) }}&#8239;%&nbsp;&nbsp;</span></TwoColumnRow>
             <TwoColumnRow title="Выручка">{{ formatNumber(props.product.revenuePlan) }} руб.</TwoColumnRow>
         </template>
@@ -31,11 +31,12 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
-import { formatNumber, formatNumberWithFractions } from '@/helpers/formatters.js';
+import { computed, watch } from 'vue';
+import { convertInputStringToNumber, formatNumber, formatNumberWithFractions } from '@/helpers/formatters.js';
 import TheButton from '@/components/core/TheButton.vue';
 import TheCard from '@/components/core/TheCard.vue';
 import TwoColumnRow from '@/components/core/TwoColumnRow.vue';
+import { MARKETING_EXPENSES, OFFICE_EXPENSES } from '@/helpers/constants.js';
 
 const props = defineProps({
     index: {
@@ -45,6 +46,10 @@ const props = defineProps({
     product: {
         type: Object,
         required: true,
+    },
+    transportRatePerKilo: {
+        type: Number,
+        default: 0,
     },
 });
 
@@ -61,4 +66,23 @@ const netProfitClass = computed(() => {
         ? 'bg-success-light text-success'
         : 'bg-danger-light text-danger';
 });
+
+watch(
+    () => props.transportRatePerKilo,
+    (newValue) => {
+        const transportRatePerUnit = calcTransportRatePerUnit(newValue);
+        props.product.profitPerUnit =
+            (props.product.promoPrice - props.product.productPrice)
+            - transportRatePerUnit
+            - (props.product.promoPrice * OFFICE_EXPENSES)
+            - (props.product.promoPrice * MARKETING_EXPENSES)
+        ;
+        props.product.netProfit = Math.round((props.product.profitPerUnit / props.product.promoPrice) * 100);
+        props.product.profitPerProduct = convertInputStringToNumber(props.product.salesPlan) * props.product.profitPerUnit;
+    },
+);
+
+const calcTransportRatePerUnit = (rate) => {
+    return rate * (props.product.productWeight / 1000);
+};
 </script>
