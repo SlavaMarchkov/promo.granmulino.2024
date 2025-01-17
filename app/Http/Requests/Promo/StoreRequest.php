@@ -5,7 +5,6 @@ declare(strict_types=1);
 // 08.11.2024 at 00:26:21
 namespace App\Http\Requests\Promo;
 
-use App\Enums\Promo\TypeEnum;
 use App\Models\Customer;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -22,21 +21,13 @@ final class StoreRequest extends FormRequest
     : array
     {
         return [
-            'promo_type'  => ['required'],
-            'discount'    => [
-                'nullable',
-                'numeric',
-                'min:5',
-                Rule::requiredIf(function () {
-                    return $this->request->get('promo_type') == TypeEnum::DISCOUNT->value;
-                }),
-            ],
-            'user_id'     => ['required', 'exists:users,id'],
-            'channel_id'  => ['required', 'exists:channels,id'],
-            'region_id'   => ['required', 'exists:regions,id'],
-            'city_id'     => ['required', 'exists:cities,id'],
-            'customer_id' => ['required', 'exists:customers,id'],
-            'retailer_id' => [
+            'promo_type'     => ['required'],
+            'user_id'        => ['required', 'exists:users,id'],
+            'channel_id'     => ['required', 'exists:channels,id'],
+            'region_id'      => ['required', 'exists:regions,id'],
+            'city_id'        => ['required', 'exists:cities,id'],
+            'customer_id'    => ['required', 'exists:customers,id'],
+            'retailer_id'    => [
                 'nullable',
                 Rule::requiredIf(function () {
                     return Customer::query()
@@ -47,30 +38,43 @@ final class StoreRequest extends FormRequest
                 }),
                 'exists:retailers,id',
             ],
-            'start_date'  => ['required', 'date_format:Y-m-d', 'date'],
-            'end_date'    => ['required', 'date_format:Y-m-d', 'date', 'after:start_date'],
-            'comments'    => ['nullable', 'string'],
-            'transport_rate'    => ['nullable', 'numeric'],
+            'start_date'     => ['required', 'date_format:Y-m-d', 'date'],
+            'end_date'       => ['required', 'date_format:Y-m-d', 'date', 'after:start_date'],
+            'comments'       => ['nullable', 'string'],
 
-            'total_sales_before' => ['required', 'numeric'],
-            'total_sales_plan'   => ['required', 'numeric'],
-            'total_sales_after' => ['nullable', 'numeric'],
-            'total_budget_plan'  => ['required', 'numeric'],
+            'total_sales_before'      => ['required', 'numeric'],
+            'total_sales_plan'        => ['required', 'numeric'],
+            'total_sales_after'       => ['nullable', 'numeric'],
+            'total_budget_plan'       => ['required', 'numeric'],
+            'total_promo_profit_plan' => ['nullable', 'numeric'],
 
-            'products' => [
+            'products'                      => [
                 'nullable',
                 'array',
                 Rule::requiredIf(function () {
                     return to_boolean($this->request->get('promo_for_retail')) == true;
                 }),
             ],
-            'sellers'  => [
+            'sellers'                       => [
                 'nullable',
                 'array',
                 Rule::requiredIf(function () {
                     return to_boolean($this->request->get('promo_for_retail')) == false;
                 }),
             ],
+            'products.*.category_id'        => ['required', 'integer'],
+            'products.*.product_id'         => ['required', 'integer'],
+            'products.*.sales_before'       => ['nullable', 'numeric'],
+            'products.*.sales_plan'         => ['required', 'numeric'],
+            'products.*.surplus_plan'       => ['required', 'numeric'],
+            'products.*.budget_plan'        => ['required', 'numeric'],
+            'products.*.compensation'       => ['required', 'numeric'],
+            'products.*.profit_per_unit'    => ['required', 'numeric'],
+            'products.*.discount'           => ['required', 'numeric'],
+            'products.*.promo_price'        => ['required', 'numeric'],
+            'products.*.profit_per_product' => ['required', 'numeric'],
+            'products.*.net_profit'         => ['required', 'numeric', 'integer'],
+            'products.*.revenue_plan'       => ['required', 'numeric', 'integer'],
         ];
     }
 
@@ -79,7 +83,6 @@ final class StoreRequest extends FormRequest
     {
         return [
             'promo_type'  => 'Вид промо-акции',
-            'discount'    => 'Величина скидки',
             'user_id'     => 'Менеджер',
             'channel_id'  => 'Канал продаж',
             'region_id'   => 'Регион',

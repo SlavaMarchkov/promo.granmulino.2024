@@ -9,6 +9,7 @@ use App\Models\Customer;
 use App\Models\CustomerProduct;
 use App\Models\CustomerSeller;
 use App\Services\Customers\Filters\CustomerFilter;
+use App\Services\Customers\Filters\CustomerProductFilter;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Log;
@@ -102,10 +103,21 @@ final readonly class EloquentCustomerRepository implements CustomerRepositoryInt
         return $sellersSql->get();
     }
 
-    public function getProducts(int $customer_id)
+    /**
+     * @throws BindingResolutionException
+     */
+    public function getProducts(int $customer_id, array $params = [])
     : Collection {
-        $productsSql = CustomerProduct::query()->where('customer_id', $customer_id);
-        return $productsSql->get();
+        try {
+            $filter = app()->make(CustomerProductFilter::class, ['params' => $params]);
+            $productsSql = CustomerProduct::query()
+                ->where('customer_id', $customer_id)
+                ->filter($filter);
+            return $productsSql->get();
+        } catch (BindingResolutionException $e) {
+            Log::error('Error in CustomerProductFilter: ' . $e->getMessage());
+            throw new BindingResolutionException($e->getMessage());
+        }
     }
 
     public function createProductsFromArray(Customer $customer, array $data)

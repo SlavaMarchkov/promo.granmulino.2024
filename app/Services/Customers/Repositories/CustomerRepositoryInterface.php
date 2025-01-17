@@ -35,7 +35,7 @@ interface CustomerRepositoryInterface
     public function getSellers(int $customer_id)
     : Collection;
 
-    public function getProducts(int $customer_id)
+    public function getProducts(int $customer_id, array $params = [])
     : Collection;
 
     public function createSellerFromArray(array $data)

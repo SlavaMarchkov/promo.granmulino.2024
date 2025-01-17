@@ -12,6 +12,9 @@ class PromoProduct extends Model
     protected $table = 'promo_products';
 
     protected $fillable = [
+        'discount',
+        'net_profit',
+        'promo_price',
         'promo_id',
         'category_id',
         'product_id',
@@ -23,7 +26,11 @@ class PromoProduct extends Model
         'budget_plan',
         'budget_actual',
         'profit_per_unit',
-        'promo_profit',
+        'profit_per_product',
+        'surplus_plan',
+        'surplus_actual',
+        'revenue_plan',
+        'revenue_actual',
     ];
 
     public function promo()

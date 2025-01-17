@@ -19,15 +19,24 @@ class PromoProductResource extends JsonResource
             'categoryName' => $this->whenLoaded('category', fn() => $this->category->name),
             'productName'  => $this->whenLoaded('product', fn() => $this->product->name),
 
-            'salesBefore'   => $this->sales_before,
-            'salesPlan'     => $this->sales_plan,
-            'salesOnTime'   => $this->sales_on_time,
-            'salesAfter' => $this->sales_after,
-            'compensation'  => $this->compensation,
-            'budgetPlan'    => $this->budget_plan,
-            'budgetActual'  => $this->budget_actual,
-            'profitPerUnit' => $this->profit_per_unit,
-            'promoProfit'   => $this->promo_profit,
+            'salesBefore'      => $this->sales_before,
+            'salesPlan'        => $this->sales_plan,
+            'salesOnTime'      => $this->sales_on_time,
+            'salesAfter'       => $this->sales_after,
+            'compensation'     => $this->compensation,
+            'budgetPlan'       => $this->budget_plan,
+            'budgetActual'     => $this->budget_actual,
+            'profitPerUnit'    => $this->profit_per_unit,
+            'profitPerProduct' => $this->profit_per_product,
+
+            'discount'   => $this->discount,
+            'netProfit'  => $this->net_profit,
+            'promoPrice' => $this->promo_price,
+
+            'surplusPlan'   => $this->surplus_plan,
+            'surplusActual' => $this->surplus_actual,
+            'revenuePlan'   => $this->revenue_plan,
+            'revenueActual' => $this->revenue_actual,
         ];
     }
 }

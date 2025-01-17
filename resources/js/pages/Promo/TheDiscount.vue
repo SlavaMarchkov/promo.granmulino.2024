@@ -3,9 +3,13 @@
         <div class="card">
             <div class="card-header bg-success text-white">{{ props.title }}</div>
             <div class="card-body mt-3">
-                <div class="d-flex justify-content-between align-items-center">
+                <div class="mb-1 d-flex justify-content-between align-items-center">
                     <h4 class="mb-0">Итоговый бюджет на промо-акцию:</h4>
-                    <h4 class="text-primary fw-bold mb-0">{{ isNaN(totalBudgetPlan) ? '0' : formatNumber(totalBudgetPlan) }} руб.</h4>
+                    <h4 class="text-primary fw-bold mb-0">{{ formatNumber(totalBudgetPlan) }} руб.</h4>
+                </div>
+                <div class="d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">Плановая прибыль на промо-акцию:</h4>
+                    <h4 class="text-primary fw-bold mb-0">{{ formatNumber(totalPromoProfitPlan) }} руб.</h4>
                 </div>
                 <hr>
                 <div class="row">
@@ -24,7 +28,7 @@
                 <div class="row mb-3">
                     <div class="mb-2 d-flex justify-content-between align-items-center">
                         <h6 class="mb-0"><span class="fw-bold text-primary">Шаг 1.</span> Расчёт стоимости доставки 1 кг продукции:</h6>
-                        <h5 class="text-secondary fw-bold mb-0">{{ formatNumberWithFractions(transportRatePerKilo) }} руб.</h5>
+                        <h5 class="text-secondary fw-bold mb-0">{{ formatNumberWithFractions(transportRatePerKilo) }} руб/кг</h5>
                     </div>
                     <div class="col-md-6 col-sm-12">
                         <TheLabel
@@ -36,9 +40,9 @@
                         <InputRange
                             id="transport_rate"
                             v-model="state.transportRate"
-                            :max="200000"
-                            :min="20000"
-                            :step="1000"
+                            :max="200_000"
+                            :min="0"
+                            :step="1_000"
                         />
                     </div>
                     <div class="col-md-6 col-sm-12">
@@ -51,8 +55,8 @@
                         <InputRange
                             id="order_weight"
                             v-model="state.orderWeight"
-                            :max="25000"
-                            :min="5000"
+                            :max="25_000"
+                            :min="5_000"
                             :step="500"
                         />
                     </div>
@@ -61,17 +65,19 @@
                 <div class="d-flex justify-content-between align-items-center">
                     <h6 class="mb-0"><span class="fw-bold text-primary">Шаг 2.</span> Ассортимент для промо-акции:</h6>
                     <TheButton
-                        @click="modals.addModalPopUp = true; state.form = initialFormData(); state.products = [];"
+                        @click="modals.addModalPopUp = true; state.form = initialFormData(); state.products = []; state.product = initialProductData();"
                         class="btn-success"
+                        :disabled="state.categories.length === 0"
                     >Добавить</TheButton>
                 </div>
                 <hr>
-                <div v-if="state.addedProducts.length > 0" class="row row-cols-xl-3 row-cols-lg-3 row-cols-md-2 row-cols-sm-2 row-cols-1 g-3">
+                <div v-if="state.addedProducts.length > 0" class="row row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-2 row-cols-1 g-3">
                     <DiscountProductCard
                         v-for="(product, index) in state.addedProducts"
                         :key="product.id"
                         :index="index"
                         :product="product"
+                        :transport-rate-per-kilo="transportRatePerKilo"
                         @remove-product="removeProduct"
                     />
                 </div>
@@ -87,7 +93,7 @@
                 Добавление ассортимента для промо-акции
             </template>
             <template #body>
-                <div class="row g-3">
+                <div class="row g-3 mb-3">
                     <div class="col-md-6">
                         <TheLabel for="category_id" required>Группа товара</TheLabel>
                         <select
@@ -109,10 +115,11 @@
                         <TheLabel for="product_id" required>Ассортимент</TheLabel>
                         <select
                             v-model="state.form.productId"
+                            @change="displayOneProduct"
                             id="product_id"
                             class="form-select"
                         >
-                            <option disabled selected value="">-- Выберите SKU для промо-акции --</option>
+                            <option disabled selected value="">-- Выберите акционный продукт --</option>
                             <option
                                 v-for="product in state.products"
                                 :key="product.id"
@@ -121,16 +128,203 @@
                             </option>
                         </select>
                     </div>
+                </div>
+                <div class="row g-3 mb-0">
+                    <div class="col-12">
+                        <TheLabel
+                            for="discount"
+                            class="mb-0"
+                        >Скидка:&nbsp;&nbsp;<span class="fw-bold text-primary fs-5">
+                            {{ state.form.discount }}&#8239;%
+                        </span>
+                        </TheLabel>
+                        <InputRange
+                            id="discount"
+                            v-model="state.form.discount"
+                            :min="0"
+                            :max="50"
+                            :step="1"
+                            :disabled="!state.form.productId"
+                        />
+                    </div>
+                </div>
+                <p class="mb-2 fs-6 text-primary text-end"><span
+                    class="border-bottom border-primary"
+                    style="cursor: pointer;"
+                    @click="displayCalcRef = !displayCalcRef"
+                >{{ displayCalcRef ? 'Скрыть расчёт' : 'Показать расчёт'  }}</span></p>
+                <div v-show="displayCalcRef === true">
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <TheLabel for="product_price">Цена прайса дистрибьютора</TheLabel>
+                            <div class="input-group">
+                                <TheInput
+                                    id="product_price"
+                                    :model-value="formatNumberWithFractions(state.product.price)"
+                                    class="text-center bg-warning-light"
+                                    :tabindex="-1"
+                                />
+                                <span class="input-group-text">руб.</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <TheLabel for="product_price_no_vat">Цена прайса дистрибьютора без НДС</TheLabel>
+                            <div class="input-group">
+                                <TheInput
+                                    id="product_price_no_vat"
+                                    :model-value="formatNumberWithFractions(state.product.priceNoVAT)"
+                                    class="text-center bg-warning-light"
+                                    :tabindex="-1"
+                                />
+                                <span class="input-group-text">руб.</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-4">
+                            <TheLabel for="customer_price">Акционная цена</TheLabel>
+                            <div class="input-group">
+                                <TheInput
+                                    id="customer_price"
+                                    :model-value="formatNumberWithFractions(state.form.promoPrice)"
+                                    class="text-center bg-warning-light"
+                                    readonly="readonly"
+                                    :tabindex="-1"
+                                />
+                                <span class="input-group-text">&#8381;</span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <TheLabel for="gross_profit">Валовая прибыль (без НДС)</TheLabel>
+                            <div class="input-group">
+                                <TheInput
+                                    id="gross_profit"
+                                    :model-value="formatNumberWithFractions(calcGrossProfit)"
+                                    class="text-center bg-warning-light"
+                                    readonly="readonly"
+                                    :tabindex="-1"
+                                />
+                                <span class="input-group-text">&#8381;</span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <TheLabel for="transport_rate_per_unit">Транспорт, руб/шт.</TheLabel>
+                            <div class="input-group">
+                                <TheInput
+                                    id="transport_rate_per_unit"
+                                    :model-value="formatNumberWithFractions(calcTransportRatePerUnit)"
+                                    class="text-center bg-warning-light"
+                                    readonly="readonly"
+                                    :tabindex="-1"
+                                />
+                                <span class="input-group-text">&#8381;</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-4">
+                            <TheLabel for="office_expenses">Офис, руб/шт.</TheLabel>
+                            <div class="input-group">
+                                <TheInput
+                                    id="office_expenses"
+                                    :model-value="formatNumberWithFractions(calcOfficeExpenses)"
+                                    class="text-center bg-warning-light"
+                                    readonly="readonly"
+                                    aria-describedby="office_expenses_help"
+                                    :tabindex="-1"
+                                />
+                                <span class="input-group-text">&#8381;</span>
+                            </div>
+                            <div id="office_expenses_help" class="form-text">акционная цена * 7.5%</div>
+                        </div>
+                        <div class="col-md-4">
+                            <TheLabel for="marketing_expenses">Маркетинг, руб/шт.</TheLabel>
+                            <div class="input-group">
+                                <TheInput
+                                    id="marketing_expenses"
+                                    :model-value="formatNumberWithFractions(calcMarketingExpenses)"
+                                    class="text-center bg-warning-light"
+                                    readonly="readonly"
+                                    aria-describedby="marketing_expenses_help"
+                                    :tabindex="-1"
+                                />
+                                <span class="input-group-text">&#8381;</span>
+                            </div>
+                            <div id="marketing_expenses_help" class="form-text">акционная цена * 5%</div>
+                        </div>
+                        <div class="col-md-4">
+                            <TheLabel for="profit_per_product">Прибыль на {{ formatNumber(state.form.salesPlan) }} шт.</TheLabel>
+                            <div class="input-group">
+                                <TheInput
+                                    id="profit_per_product"
+                                    :model-value="formatNumberWithFractions(state.form.profitPerProduct)"
+                                    class="text-center bg-warning-light"
+                                    readonly="readonly"
+                                    :tabindex="-1"
+                                />
+                                <span class="input-group-text">&#8381;</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <div class="row g-3 mb-3">
+                    <div class="col-md-4">
+                        <TheLabel for="profit_per_unit">Прибыль на 1 шт.</TheLabel>
+                        <div class="input-group">
+                            <TheInput
+                                id="profit_per_unit"
+                                :model-value="formatNumberWithFractions(state.form.profitPerUnit)"
+                                class="text-center bg-warning-light"
+                                readonly="readonly"
+                                aria-describedby="profit_per_unit_help"
+                                :tabindex="-1"
+                            />
+                            <span class="input-group-text">руб.</span>
+                        </div>
+                        <div id="profit_per_unit_help" class="form-text">рассчитывается автоматически</div>
+                    </div>
+                    <div class="col-md-4">
+                        <TheLabel for="compensation">Компенсация на 1 шт.</TheLabel>
+                        <div class="input-group">
+                            <TheInput
+                                id="compensation"
+                                :model-value="formatNumberWithFractions(state.form.compensation)"
+                                class="text-center bg-warning-light"
+                                readonly="readonly"
+                                aria-describedby="compensation_help"
+                                :tabindex="-1"
+                            />
+                            <span class="input-group-text">руб.</span>
+                        </div>
+                        <div id="compensation_help" class="form-text">разница между прайсом и акц. ценой</div>
+                    </div>
+                    <div class="col-md-4">
+                        <TheLabel for="budget_plan">Бюджет</TheLabel>
+                        <div class="input-group">
+                            <TheInput
+                                id="budget_plan"
+                                :model-value="formatNumber(state.form.budgetPlan)"
+                                class="text-center fw-bold"
+                                disabled="disabled"
+                                aria-describedby="budget_plan_help"
+                            />
+                            <span class="input-group-text">руб.</span>
+                        </div>
+                        <div id="budget_plan_help" class="form-text">компенсация * план продаж</div>
+                    </div>
+                </div>
+                <div class="row g-3 mb-3">
                     <div class="col-md-4">
                         <TheLabel for="sales_before" required>Продажи "До акции"</TheLabel>
                         <div class="input-group">
                             <TheInput
                                 id="sales_before"
                                 v-model="state.form.salesBefore"
-                                type="text"
-                                class="text-end"
+                                class="text-center"
                                 aria-describedby="sales_before_help"
                                 @blur="processInputValue($event.target.value, 'sales_before')"
+                                :disabled="!state.form.productId"
                             />
                             <span class="input-group-text">шт.</span>
                         </div>
@@ -142,21 +336,22 @@
                             <TheInput
                                 id="sales_plan"
                                 v-model="state.form.salesPlan"
-                                type="text"
-                                class="text-end"
+                                class="text-center"
+                                aria-describedby="sales_plan_help"
                                 @blur="processInputValue($event.target.value, 'sales_plan')"
+                                :disabled="!state.form.productId"
                             />
                             <span class="input-group-text">шт.</span>
                         </div>
+                        <div id="sales_plan_help" class="form-text">обязательно к заполнению</div>
                     </div>
                     <div class="col-md-4">
-                        <TheLabel for="surplus_plan" required>План прироста</TheLabel>
+                        <TheLabel for="surplus_plan">План прироста</TheLabel>
                         <div class="input-group">
                             <TheInput
                                 id="surplus_plan"
-                                v-model="state.form.surplusPlan"
-                                type="text"
-                                class="text-end fw-bold"
+                                :model-value="formatNumber(state.form.surplusPlan)"
+                                class="text-center fw-bold"
                                 disabled="disabled"
                                 aria-describedby="surplus_plan_help"
                             />
@@ -164,50 +359,34 @@
                         </div>
                         <div id="surplus_plan_help" class="form-text">рассчитывается автоматически</div>
                     </div>
-                    <div class="col-md-4">
-                        <TheLabel for="profit_per_unit" required>Прибыль на 1 шт.</TheLabel>
+                </div>
+                <hr>
+                <div class="row g-3">
+                    <div class="col-md-4 offset-md-2">
+                        <TheLabel for="revenue_plan">Выручка</TheLabel>
                         <div class="input-group">
                             <TheInput
-                                id="profit_per_unit"
-                                v-model="state.form.profitPerUnit"
-                                type="number"
-                                min="0"
-                                step="0.01"
-                                aria-describedby="profit_per_unit_help"
+                                id="revenue_plan"
+                                :model-value="formatNumber(state.form.revenuePlan)"
+                                class="text-center bg-warning-light"
+                                readonly="readonly"
+                                :tabindex="-1"
                             />
                             <span class="input-group-text">руб.</span>
                         </div>
-                        <div id="profit_per_unit_help" class="form-text">берётся из P&L</div>
                     </div>
                     <div class="col-md-4">
-                        <TheLabel for="compensation" required>Компенсация на 1 шт.</TheLabel>
+                        <TheLabel for="net_profit_standard">Норматив чистой прибыли</TheLabel>
                         <div class="input-group">
                             <TheInput
-                                id="compensation"
-                                v-model="state.form.compensation"
-                                type="number"
-                                min="0"
-                                step="0.01"
-                                aria-describedby="compensation_help"
+                                id="net_profit_standard"
+                                :model-value="!isNaN(state.form.netProfit) ? formatNumber(state.form.netProfit) : 0"
+                                :class="['text-center fw-bold', netProfitClass]"
+                                readonly="readonly"
+                                :tabindex="-1"
                             />
-                            <span class="input-group-text">руб.</span>
+                            <span class="input-group-text">%</span>
                         </div>
-                        <div id="compensation_help" class="form-text">если компенсации нет, введите 0</div>
-                    </div>
-                    <div class="col-md-4">
-                        <TheLabel for="budget_plan" required>Бюджет</TheLabel>
-                        <div class="input-group">
-                            <TheInput
-                                id="budget_plan"
-                                v-model="state.form.budgetPlan"
-                                class="text-end fw-bold"
-                                type="text"
-                                disabled="disabled"
-                                aria-describedby="budget_plan_help"
-                            />
-                            <span class="input-group-text">руб.</span>
-                        </div>
-                        <div id="budget_plan_help" class="form-text">компенсация * план продаж</div>
                     </div>
                 </div>
             </template>
@@ -223,26 +402,45 @@
 </template>
 
 <script setup>
-import { computed, onMounted, reactive, watch } from 'vue';
+import { computed, reactive, ref, watch } from 'vue';
 import { useHttpService } from '@/use/useHttpService.js';
-import { formatNumber, formatNumberWithFractions, processInputValue } from '@/helpers/formatters.js';
+import {
+    convertInputStringToNumber,
+    formatNumber,
+    formatNumberWithFractions,
+    processInputValue,
+} from '@/helpers/formatters.js';
 import TheModal from '@/components/TheModal.vue';
 import TheButton from '@/components/core/TheButton.vue';
 import TheLabel from '@/components/form/TheLabel.vue';
 import TheInput from '@/components/form/TheInput.vue';
-import { MANAGER_URLS, VAT_RATE } from '@/helpers/constants.js';
+import {
+    INITIAL_DISCOUNT,
+    INITIAL_ORDER_WEIGHT,
+    INITIAL_TRANSPORT_RATE,
+    MANAGER_URLS,
+    MARKETING_EXPENSES,
+    OFFICE_EXPENSES,
+    VAT_RATE,
+} from '@/helpers/constants.js';
 import DiscountProductCard from '@/pages/Promo/DiscountProductCard.vue';
 import { useCalculations } from '@/use/useCalculations.js';
 import InputRange from '@/components/form/InputRange.vue';
+import { useArrayHandlers } from '@/use/useArrayHandlers.js';
 
 const { get } = useHttpService();
 const { calcDifferencePercentage, calcBudget } = useCalculations();
+const arrayHandlers = useArrayHandlers();
 
 const props = defineProps({
     title: {
         type: String,
         required: true,
         default: 'Title is required',
+    },
+    customerId: {
+        type: Number,
+        default: 0,
     },
     customerName: {
         type: String,
@@ -261,36 +459,44 @@ const emit = defineEmits([
 const initialFormData = () => ({
     categoryId: '',
     productId: '',
-    salesBefore: '',
-    salesPlan: '',
+    discount: 0,
+    promoPrice: 0,
+    salesBefore: 0,
+    salesPlan: 0,
     surplusPlan: 0,
-    profitPerUnit: '',
-    compensation: '',
+    profitPerUnit: 0,
+    profitPerProduct: 0,
+    compensation: 0,
     budgetPlan: 0,
+    netProfit: 0,
+    revenuePlan: 0,
+});
+
+const initialProductData = () => ({
+    id: '',
+    name: '',
+    weight: 0,
+    price: 0, // отпускная цена дистрибьютора из БД customer_product
+    priceNoVAT: 0, // price / 1.1
+    initialPrice: 0, // себестоимость из БД products
 });
 
 const state = reactive({
-    transportRate: 50000,
-    orderWeight: 15000,
+    transportRate: INITIAL_TRANSPORT_RATE,
+    orderWeight: INITIAL_ORDER_WEIGHT,
     categories: [],
     products: [],
     addedProducts: [],
     addedProductsIds: [],
     form: initialFormData(),
+    product: initialProductData(),
 });
 
 const modals = reactive({
     addModalPopUp: false,
 });
 
-onMounted(async () => {
-    await getCategories();
-});
-
-const getCategories = async () => {
-    const { data } = await get(MANAGER_URLS.CATEGORY);
-    state.categories = data.categories;
-};
+const displayCalcRef = ref(true);
 
 const displayProducts = () => {
     state.categories.map(category => {
@@ -301,18 +507,43 @@ const displayProducts = () => {
     state.products = state.products.filter(pr => !state.addedProductsIds.includes(pr.id));
 };
 
+const displayOneProduct = () => {
+    state.product = initialProductData();
+
+    const catIdx = state.categories.findIndex(c => +c.id === +state.form.categoryId);
+    state.product = state.categories[catIdx].products.find(p => p.id === +state.form.productId);
+
+    state.form.discount = INITIAL_DISCOUNT;
+    state.form.salesBefore = 0;
+    state.form.salesPlan = 0;
+
+    calcPromoPrice(state.form.discount);
+    calcProfitPerUnit();
+    calcProfitPerProduct();
+    calcRevenue();
+    calcNetProfit();
+    calcCompensation();
+};
+
 const addProduct = () => {
     state.addedProducts.push({
         categoryId: state.form.categoryId,
         productId: state.form.productId,
         categoryName: getCategoryName(),
         productName: getProductName(),
+        productWeight: state.product.weight,
+        productPrice: state.product.initialPrice,
         salesBefore: state.form.salesBefore,
         salesPlan: state.form.salesPlan,
         surplusPlan: state.form.surplusPlan,
         budgetPlan: state.form.budgetPlan,
         compensation: state.form.compensation,
         profitPerUnit: state.form.profitPerUnit,
+        discount: state.form.discount,
+        promoPrice: state.form.promoPrice,
+        profitPerProduct: state.form.profitPerProduct,
+        netProfit: state.form.netProfit,
+        revenuePlan: state.form.revenuePlan,
     });
     state.addedProductsIds.push(+state.form.productId);
     emit('addProductsToPromo',
@@ -320,6 +551,7 @@ const addProduct = () => {
         totalSalesBefore.value,
         totalSalesPlan.value,
         totalBudgetPlan.value,
+        totalPromoProfitPlan.value,
     );
     state.products = [];
     modals.addModalPopUp = false;
@@ -333,6 +565,7 @@ const removeProduct = (index) => {
         totalSalesBefore.value,
         totalSalesPlan.value,
         totalBudgetPlan.value,
+        totalPromoProfitPlan.value,
     );
 };
 
@@ -354,7 +587,9 @@ const isFormValid = computed(() => {
         'salesBefore',
         'surplusPlan',
         'compensation',
-        'budgetPlan'
+        'budgetPlan',
+        'profitPerUnit',
+        'netProfit',
     ];
 
     for (let [key, value] of Object.entries(state.form)) {
@@ -372,19 +607,25 @@ const isFormValid = computed(() => {
 
 const totalSalesBefore = computed(() => {
     return state.addedProducts.reduce((acc, pr) => {
-        return acc + parseInt(pr.salesBefore);
+        return Math.round(acc + pr.salesBefore);
     }, 0);
 });
 
 const totalSalesPlan = computed(() => {
     return state.addedProducts.reduce((acc, pr) => {
-        return acc + parseInt(pr.salesPlan);
+        return Math.round(acc + pr.salesPlan);
     }, 0);
 });
 
 const totalBudgetPlan = computed(() => {
    return state.addedProducts.reduce((acc, pr) => {
-       return acc + parseInt(pr.budgetPlan);
+       return Math.round(acc + pr.budgetPlan);
+   }, 0);
+});
+
+const totalPromoProfitPlan = computed(() => {
+   return state.addedProducts.reduce((acc, pr) => {
+       return Math.round(acc + pr.profitPerProduct);
    }, 0);
 });
 
@@ -392,32 +633,144 @@ const transportRatePerKilo = computed(() => {
     return (state.transportRate / VAT_RATE) / state.orderWeight;
 });
 
+const calcTransportRatePerUnit = computed(() => {
+    return transportRatePerKilo.value * (state.product.weight / 1000);
+});
+
+const calcOfficeExpenses = computed(() => {
+    return state.form.promoPrice * OFFICE_EXPENSES;
+});
+
+const calcMarketingExpenses = computed(() => {
+    return state.form.promoPrice * MARKETING_EXPENSES;
+});
+
+const calcGrossProfit = computed(() => {
+    return state.form.promoPrice - state.product.initialPrice;
+});
+
+const netProfitClass = computed(() => {
+    return state.form.netProfit >= 20
+        ? 'bg-success-light text-success'
+        : 'bg-danger-light text-danger';
+});
+
+watch(
+    () => props.customerId,
+    async (newValue) => {
+        if ( newValue !== 0 ) {
+            state.categories = [];
+            state.transportRate = INITIAL_TRANSPORT_RATE;
+            state.orderWeight = INITIAL_ORDER_WEIGHT;
+            state.addedProducts = [];
+            state.addedProductsIds = [];
+            await fetchCustomerProducts(newValue);
+        }
+    },
+);
+
+watch(() => state.form.discount,
+    (newValue) => {
+        calcPromoPrice(newValue);
+        calcProfitPerUnit();
+        calcProfitPerProduct();
+        calcRevenue();
+        calcNetProfit();
+        calcCompensation();
+    },
+);
+
 watch(() => state.form.salesBefore,
     () => calcSurplusPlan(),
 );
 
 watch(() => state.form.salesPlan,
     () => {
+        calcProfitPerProduct();
         calcSurplusPlan();
         calcBudgetPlan();
-    }
+        calcRevenue();
+    },
 );
 
 watch(() => state.form.compensation,
     () => {
         calcBudgetPlan();
-    }
+    },
 );
 
+const fetchCustomerProducts = async (customerId) => {
+    const { status, data } = await get(`${ MANAGER_URLS.CUSTOMER }/${ customerId }${ MANAGER_URLS.PRODUCT }`, {
+        params: {
+            category: true,
+            product: true,
+            is_listed: true,
+        },
+    });
+    if ( status === 'success' ) {
+        data.products.map(item => {
+            const idx = state.categories.findIndex(c => c.id === item.categoryId);
+            if ( idx === -1 ) {
+                state.categories.push({
+                    id: item.categoryId,
+                    name: item.categoryName,
+                    products: [{
+                        id: item.productId,
+                        name: item.productName,
+                        weight: item.productWeight,
+                        price: item.customerPrice,
+                        priceNoVAT: item.customerPriceNoVAT,
+                        initialPrice: item.productInitialPrice,
+                    }],
+                });
+            } else {
+                state.categories[idx].products = [
+                    ...state.categories[idx].products,
+                    {
+                        id: item.productId,
+                        name: item.productName,
+                        weight: item.productWeight,
+                        price: item.customerPrice,
+                        priceNoVAT: item.customerPriceNoVAT,
+                        initialPrice: item.productInitialPrice,
+                    }
+                ];
+                state.categories[idx].products = arrayHandlers.sortArrayByStringColumn(state.categories[idx].products, 'name');
+            }
+        });
+    }
+};
+
+const calcProfitPerUnit = () => {
+    state.form.profitPerUnit = calcGrossProfit.value - calcTransportRatePerUnit.value - calcOfficeExpenses.value - calcMarketingExpenses.value;
+};
+
+const calcPromoPrice = (discountPercent) => {
+    const discount = 1 - discountPercent / 100;
+    state.form.promoPrice = state.product.priceNoVAT * discount;
+};
+
+const calcRevenue = () => {
+    state.form.revenuePlan = Math.round(state.form.salesPlan * state.form.promoPrice);
+};
+
+const calcNetProfit = () => {
+    state.form.netProfit = Math.round((state.form.profitPerUnit / state.form.promoPrice) * 100);
+};
+
+const calcProfitPerProduct = () => {
+    state.form.profitPerProduct = convertInputStringToNumber(state.form.salesPlan) * state.form.profitPerUnit;
+};
+
+const calcCompensation = () => {
+    state.form.compensation = state.product.priceNoVAT - state.form.promoPrice;
+};
+
 function calcSurplusPlan() {
-    const result = calcDifferencePercentage(
-        state.form.salesBefore.toString(),
-        state.form.salesPlan.toString());
-    state.form.surplusPlan = !isNaN(result) ? result : 0;
+    state.form.surplusPlan = calcDifferencePercentage(state.form.salesBefore, state.form.salesPlan);
 }
 
 function calcBudgetPlan() {
-    const result = calcBudget(state.form.salesPlan, state.form.compensation);
-    state.form.budgetPlan = !isNaN(result) ? result : 0;
+    state.form.budgetPlan = calcBudget(state.form.salesPlan, state.form.compensation);
 }
 </script>

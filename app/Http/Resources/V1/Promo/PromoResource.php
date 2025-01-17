@@ -15,11 +15,12 @@ class PromoResource extends JsonResource
     public function toArray(Request $request)
     : array {
         return [
-            'id'                => $this->id,
-            'status'            => $this->status,
+            'id' => $this->id,
+
+            'status'      => $this->status,
             'statusColor' => $this->status?->backgroundColor(),
             'statusLabel' => $this->status?->label(),
-            'discount'          => $this->discount,
+
             'totalBudgetPlan'   => $this->total_budget_plan,
             'totalBudgetActual' => $this->total_budget_actual,
             'totalMark'         => $this->total_mark,

@@ -49,6 +49,7 @@ final class PromoController extends ApiController
         $this->authorize('create', Promo::class);
 
         $data = $request->validated();
+
         $promo = $this->promoService->storePromo($data);
 
         return $this->successResponse(

@@ -61,9 +61,9 @@ final readonly class CustomerService
         return $this->customerRepository->getSellers($customer_id);
     }
 
-    public function getCustomerProducts(int $customer_id)
+    public function getCustomerProducts(int $customer_id, array $params = [])
     : Collection {
-        return $this->customerRepository->getProducts($customer_id);
+        return $this->customerRepository->getProducts($customer_id, $params);
     }
 
     public function updateCustomerSeller(CustomerSeller $customerSeller, array $data)
