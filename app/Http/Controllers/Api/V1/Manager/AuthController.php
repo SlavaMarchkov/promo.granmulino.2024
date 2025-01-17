@@ -12,8 +12,9 @@ use App\Jobs\LoginManagerJob;
 use App\Jobs\LogoutManagerJob;
 use App\Models\Role;
 use App\Models\User;
+use Illuminate\Auth\Events\Attempting;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\Response;
 
 final class AuthController extends ApiController
@@ -23,27 +24,20 @@ final class AuthController extends ApiController
     {
         $credentials = $request->validated();
 
-        if (Auth::attempt([
-            'email'     => $credentials['email'],
-            'password'  => $credentials['password'],
-            'is_active' => true,
-            'is_admin'  => false,
-        ],
-        )) {
-            $user = User::query()
-                ->where('email', $credentials['email'])
-                ->where('is_admin', false)
-                ->where('role_id', $role->getRoleId(RoleEnum::MANAGER->getName()))
-                ->first();
+        event(new Attempting('manager', $credentials, false));
 
+        $user = User::query()
+            ->where('email', $credentials['email'])
+            ->where('is_admin', false)
+            ->where('role_id', $role->getRoleId(RoleEnum::MANAGER->getName()))
+            ->first();
+
+        if ($user) {
             $role = $user->role->slug; // "MANAGER"
-
             $user->tokens()->delete();
-
             $token = $user
                 ->createToken("Token for $role: $user->full_name")
                 ->plainTextToken;
-
             $user->update([
                 'logged_in_at' => now(),
             ]);
@@ -76,6 +70,8 @@ final class AuthController extends ApiController
     {
         $user = auth()->user();
         $user->tokens()->delete();
+
+        DB::delete('delete from sessions where user_id = ?', [$user->id]);
 
         LogoutManagerJob::dispatch($user);
 

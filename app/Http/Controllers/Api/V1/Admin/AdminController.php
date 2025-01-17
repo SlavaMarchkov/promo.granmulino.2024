@@ -1,5 +1,5 @@
 <?php
-
+/*
 declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\V1\Admin;
@@ -54,4 +54,4 @@ final class AdminController extends Controller
 
         return response()->json();
     }
-}
+}*/

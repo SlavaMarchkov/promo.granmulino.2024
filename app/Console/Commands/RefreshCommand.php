@@ -19,6 +19,8 @@ class RefreshCommand extends Command
             return self::FAILURE;
         }
 
+        $this->call('make:notifications-table');
+
         $this->call('migrate:fresh', [
             '--seed' => true,
         ]);
