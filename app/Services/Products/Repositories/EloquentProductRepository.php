@@ -6,64 +6,77 @@ declare(strict_types=1);
 namespace App\Services\Products\Repositories;
 
 use App\Models\Product;
-use Illuminate\Database\Eloquent\Builder;
+use App\Services\Products\Filters\Category;
+use App\Services\Products\Filters\Id;
+use App\Services\Products\Filters\IsActive;
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pipeline\Pipeline;
+use Illuminate\Support\Facades\DB;
 
 final class EloquentProductRepository implements ProductRepositoryInterface
 {
 
+    /**
+     * @throws BindingResolutionException
+     */
     public function find(Product $product, array $params = [])
-    : ?Product
-    {
-        $productSql = Product::query()->where('id', $product->id);
-        $this->applyFilters($productSql, $params);
-        return $productSql->first();
+    : ?Product {
+        request()->merge(['id' => $product->id, ...$params]);
+        $product = app()->make(Pipeline::class)
+            ->send(Product::query())
+            ->through([
+                Id::class,
+                IsActive::class,
+                Category::class,
+            ])
+            ->thenReturn();
+        return $product->first();
     }
 
+    /**
+     * @throws BindingResolutionException
+     */
     public function get(array $params = [])
-    : Collection
-    {
-        $productsSql = Product::query();
-        $this->applyFilters($productsSql, $params);
-        return $productsSql->get();
+    : Collection {
+        request()->merge($params);
+        $products = app()->make(Pipeline::class)
+            ->send(Product::query())
+            ->through([
+                IsActive::class,
+                Category::class,
+            ])
+            ->thenReturn();
+        return $products->get();
     }
 
     public function createFromArray(array $data)
-    : Product
-    {
+    : Product {
         return Product::query()->create($data);
     }
 
     public function updateFromArray(Product $product, array $data)
-    : Product
-    {
+    : Product {
         $product->update($data);
         return $product;
     }
 
     public function delete(Product $product)
-    : int
-    {
-        // TODO: связать с продуктами в брифе ПА
-        return 1;
-        /*$cities_count = $product->
+    : int {
+        $customers_count = DB::scalar(
+            '
+select count(*)
+    as customers_count
+from customer_product
+where product_id = ?
+',
+            [$product->id],
+        );
 
-        if ($cities_count == 0) {
-            $region->delete();
+        if ($customers_count == 0) {
+            $product->delete();
         }
 
-        return $cities_count;*/
-    }
-
-    private function applyFilters(Builder $qb, array $params)
-    : void
-    {
-        $qb->when(
-            isset($params['is_active']) && to_boolean($params['is_active']),
-            fn(Builder $query) => $query->where('is_active', true),
-        )->when(
-            isset($params['category']) && to_boolean($params['category']),
-            fn(Builder $query) => $query->with('category'),
-        );
+        return $customers_count;
     }
 }

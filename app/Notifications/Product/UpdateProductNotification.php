@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-// 17.01.2025 at 19:52:00
-namespace App\Notifications;
+// 18.01.2025 at 21:07:10
+namespace App\Notifications\Product;
 
 use Exception;
 use Illuminate\Bus\Queueable;
@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Log;
 use NotificationChannels\Telegram\TelegramChannel;
 use NotificationChannels\Telegram\TelegramMessage;
 
-class SignInAttemptTelegramNotification extends Notification implements ShouldQueue
+class UpdateProductNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
@@ -36,10 +36,10 @@ class SignInAttemptTelegramNotification extends Notification implements ShouldQu
             return TelegramMessage::create()
                 ->to(config('notifications.telegram_admin_id'))
                 ->content(
-                    'AUTH :: Попытка входа в систему' . "\n" .
-                    'Guard: ' . $this->data['guard'] . "\n" .
-                    'Email: ' . $this->data['email'] . "\n" .
-                    'Пароль: ' . $this->data['password'],
+                    'ADMIN :: Обновление продукта' . "\n" .
+                    'Продукт: ' . $this->data['name'] . "\n" .
+                    'Группа товара: ' . $this->data['category'] . "\n" .
+                    'Цена: ' . $this->data['price'],
                 );
         } catch (Exception $exception) {
             Log::error($exception);

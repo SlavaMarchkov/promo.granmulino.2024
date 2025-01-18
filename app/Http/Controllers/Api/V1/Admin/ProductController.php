@@ -30,7 +30,11 @@ final class ProductController extends ApiController
         Cache::forget(self::CACHE_KEY);
 
         $products = Cache::remember(self::CACHE_KEY, now()->addDay(), function () {
-            return $this->productService->getProducts([...request()->all()]);
+            return $this->productService->getProducts([
+                'category'  => true,
+                'is_active' => false,
+                ...request()->all(),
+            ]);
         });
 
         return $this->successResponse(
@@ -63,7 +67,10 @@ final class ProductController extends ApiController
     : JsonResponse {
         $product = $this->productService->findProduct(
             $product,
-            [...request()->all()],
+            [
+                'category' => true,
+                ...request()->all(),
+            ],
         );
 
         return $this->successResponse(

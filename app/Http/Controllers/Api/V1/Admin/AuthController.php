@@ -40,13 +40,18 @@ final class AuthController extends ApiController
 
         if ($admin) {
             $role = $admin->role->slug;
+
             $admin->tokens()->delete();
+            $request->session()->regenerate();
+
             $token = $admin
                 ->createToken("Token for $role: $admin->display_name", ['*'], now()->addHours(24))
                 ->plainTextToken;
+
             $admin->update([
                 'logged_in_at' => now(),
             ]);
+
             event(new Login('admin', $admin, false));
 
             return $this->successResponse(
@@ -75,8 +80,10 @@ final class AuthController extends ApiController
     {
         $admin = auth()->user();
         $admin->tokens()->delete();
+        request()->session()->invalidate();
+//        request()->session()->regenerateToken();
 
-        DB::delete('delete from sessions where user_id = ?', [$admin->id]);
+//        DB::delete('delete from sessions where user_id = ?', [$admin->id]);
 
         event(new Logout('admin', $admin));
 

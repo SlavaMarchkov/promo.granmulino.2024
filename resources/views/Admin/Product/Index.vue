@@ -412,12 +412,7 @@ onMounted(async () => {
 });
 
 const getProducts = async () => {
-    const { data } = await get(ADMIN_URLS.PRODUCT, {
-        params: {
-            'category': true,
-            'is_active': false,
-        },
-    });
+    const { data } = await get(ADMIN_URLS.PRODUCT);
     state.products = data.products;
 };
 

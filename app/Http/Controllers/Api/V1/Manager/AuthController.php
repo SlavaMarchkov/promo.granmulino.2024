@@ -14,7 +14,6 @@ use App\Models\Role;
 use App\Models\User;
 use Illuminate\Auth\Events\Attempting;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\Response;
 
 final class AuthController extends ApiController
@@ -34,10 +33,14 @@ final class AuthController extends ApiController
 
         if ($user) {
             $role = $user->role->slug; // "MANAGER"
+
             $user->tokens()->delete();
+            $request->session()->regenerate();
+
             $token = $user
                 ->createToken("Token for $role: $user->full_name")
                 ->plainTextToken;
+
             $user->update([
                 'logged_in_at' => now(),
             ]);
@@ -70,8 +73,9 @@ final class AuthController extends ApiController
     {
         $user = auth()->user();
         $user->tokens()->delete();
+        request()->session()->invalidate();
 
-        DB::delete('delete from sessions where user_id = ?', [$user->id]);
+//        DB::delete('delete from sessions where user_id = ?', [$user->id]);
 
         LogoutManagerJob::dispatch($user);
 

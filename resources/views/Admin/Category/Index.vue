@@ -167,7 +167,7 @@
     <Modal
         id="viewModalPopUp"
         :close-func="closeViewModal"
-        :custom-classes="['modal-dialog-scrollable']"
+        :custom-classes="['modal-dialog-scrollable', 'modal-lg']"
     >
         <template #title>
             Просмотр группы товаров <b>{{ state.category.name }}</b>

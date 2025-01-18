@@ -115,11 +115,7 @@ onMounted(async () => {
 });
 
 const fetchDetails = async (id) => {
-    const response = await get(`${ADMIN_URLS.PRODUCT}/${id}`, {
-        params: {
-            category: true,
-        },
-    });
+    const response = await get(`${ADMIN_URLS.PRODUCT}/${id}`);
     if ( response.status === 'success' ) item.value = response.data;
 };
 
