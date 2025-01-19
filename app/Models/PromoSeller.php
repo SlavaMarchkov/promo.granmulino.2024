@@ -19,10 +19,10 @@ class PromoSeller extends Model
         'is_supervisor',
         'sales_before',
         'sales_plan',
-        'surplus_plan',
         'sales_after',
-        'compensation_plan',
-        'compensation_actual',
+        'surplus_plan',
+        'surplus_actual',
+        'compensation',
         'budget_plan',
         'budget_actual',
     ];

@@ -11,7 +11,7 @@
             with-footer
         >
             <template #header>
-                <h3 class="mb-0">{{ promo.promoCode }}{{ promo.discount !== null ? `-${promo.discount}` : '' }}</h3>
+                <h3 class="mb-0">{{ promo.promoCode }}</h3>
                 <h4 class="mb-0"><span :class="[ 'badge', promo.statusColor ]">{{ promo.statusLabel }}</span></h4>
             </template>
             <template #body>

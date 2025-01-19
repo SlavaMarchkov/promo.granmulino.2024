@@ -177,7 +177,8 @@ final class EloquentPromoRepository implements PromoRepositoryInterface
                 ->withSum('promo_products', 'sales_on_time')
                 ->withSum('promo_products', 'budget_plan')
                 ->withSum('promo_products', 'budget_actual')
-                ->withSum('promo_products', 'promo_profit')
+                ->withSum('promo_products', 'profit_per_product_plan')
+                ->withSum('promo_products', 'profit_per_product_actual')
                 ->first();
 
             $promo->update([
@@ -186,7 +187,8 @@ final class EloquentPromoRepository implements PromoRepositoryInterface
                 'total_sales_on_time' => $promo_with_sum->promo_products_sum_sales_on_time,
                 'total_budget_plan'   => $promo_with_sum->promo_products_sum_budget_plan,
                 'total_budget_actual' => $promo_with_sum->promo_products_sum_budget_actual,
-                'total_promo_profit'  => $promo_with_sum->promo_products_sum_promo_profit,
+                'total_promo_profit_plan'  => $promo_with_sum->promo_products_sum_profit_per_product_plan,
+                'total_promo_profit_actual'  => $promo_with_sum->promo_products_sum_profit_per_product_actual,
             ]);
 
             DB::commit();
@@ -197,17 +199,17 @@ final class EloquentPromoRepository implements PromoRepositoryInterface
                 'total_sales_on_time',
                 'total_budget_plan',
                 'total_budget_actual',
-                'total_promo_profit',
+                'total_promo_profit_plan',
+                'total_promo_profit_actual',
             ]);
 
             $array['product'] = $promoProduct->only([
                 'id',
-                'sales_before',
-                'sales_plan',
                 'sales_on_time',
-                'budget_plan',
                 'budget_actual',
-                'promo_profit',
+                'surplus_actual',
+                'profit_per_product_actual',
+                'revenue_actual',
             ]);
 
             return $array;

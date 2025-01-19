@@ -16,7 +16,7 @@
             <TwoColumnRow title="Прирост">{{ formatNumber(props.product.surplusPlan) }}&#8239;%</TwoColumnRow>
             <TwoColumnRow title="Бюджет">{{ formatNumber(props.product.budgetPlan) }} руб.</TwoColumnRow>
             <TwoColumnRow title="Прибыль на шт.">{{ formatNumberWithFractions(props.product.profitPerUnit) }} руб.</TwoColumnRow>
-            <TwoColumnRow title="Прибыль, план">{{ formatNumber(props.product.profitPerProduct) }} руб.</TwoColumnRow>
+            <TwoColumnRow title="Прибыль, план">{{ formatNumberWithFractions(props.product.profitPerProductPlan) }} руб.</TwoColumnRow>
             <TwoColumnRow title="Норматив ЧП"><span :class="netProfitClass">&nbsp;&nbsp;{{ formatNumber(props.product.netProfit) }}&#8239;%&nbsp;&nbsp;</span></TwoColumnRow>
             <TwoColumnRow title="Выручка">{{ formatNumber(props.product.revenuePlan) }} руб.</TwoColumnRow>
         </template>
@@ -78,7 +78,7 @@ watch(
             - (props.product.promoPrice * MARKETING_EXPENSES)
         ;
         props.product.netProfit = Math.round((props.product.profitPerUnit / props.product.promoPrice) * 100);
-        props.product.profitPerProduct = convertInputStringToNumber(props.product.salesPlan) * props.product.profitPerUnit;
+        props.product.profitPerProductPlan = convertInputStringToNumber(props.product.salesPlan) * props.product.profitPerUnit;
     },
 );
 

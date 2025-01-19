@@ -111,179 +111,278 @@
         v-if="modals.editModalPopUp"
         v-model="modals.editModalPopUp"
         id="editModalPopUp"
-        :custom-classes="['modal-xl']"
+        :custom-classes="['modal-lg']"
     >
         <template #title>
             <h4 class="mb-0">Редактирование акционного продукта</h4>
         </template>
         <template #body>
-            <h5>Группа товара: <span class="fw-bold text-primary">{{ product.categoryName }}</span></h5>
-            <h5>Продукт: <span class="fw-bold text-primary">{{ product.productName }}</span></h5>
-            <hr>
+            <div class="row">
+                <div class="col-md-6">
+                    <table class="table table-sm border-bottom">
+                        <tbody>
+                        <tr>
+                            <td class="text-secondary">Группа товара</td>
+                            <th scope="col" class="text-end">{{ props.product.categoryName }}</th>
+                        </tr>
+                        <tr>
+                            <td class="text-secondary">Продукт</td>
+                            <th scope="col" class="text-end">{{ props.product.productName }}</th>
+                        </tr>
+                        <tr>
+                            <td class="text-secondary">Акционная цена</td>
+                            <th scope="col" class="text-end">{{ formatNumberWithFractions(props.product.promoPrice) }} руб.</th>
+                        </tr>
+                        <tr>
+                            <td class="text-secondary">Скидка</td>
+                            <th scope="col" class="text-end">{{ props.product.discount }}&#8239;%</th>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-md-6">
+                    <table class="table table-sm border-bottom">
+                        <tbody>
+                        <tr>
+                            <td class="text-secondary">Продажи "До акции"</td>
+                            <th scope="col" class="text-end">{{ formatNumber(props.product.salesBefore) }} шт.</th>
+                        </tr>
+                        <tr>
+                            <td class="text-secondary">План прироста</td>
+                            <th scope="col" class="text-end">{{ formatNumber(props.product.surplusPlan) }}&#8239;%</th>
+                        </tr>
+                        <tr>
+                            <td class="text-secondary">Компенсация на 1 шт.</td>
+                            <th scope="col" class="text-end">{{ formatNumberWithFractions(props.product.compensation) }} руб.</th>
+                        </tr>
+                        <tr>
+                            <td class="text-secondary">Прибыль на 1 шт.</td>
+                            <th scope="col" class="text-end">{{ formatNumberWithFractions(props.product.profitPerUnit) }} руб.</th>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
             <Alert/>
             <div class="row mb-3 g-3">
-                <div class="col-md-2">
-                    <TheLabel for="sales_before">Продажи "До акции"</TheLabel>
-                    <div class="input-group">
-                        <TheInput
-                            id="sales_before"
-                            v-model="state.form.salesBefore"
-                            type="text"
-                            class="text-end bg-warning-light"
-                            @blur="processInputValue($event.target.value, 'sales_before')"
-                        />
-                        <span class="input-group-text">шт.</span>
-                    </div>
-                </div>
-                <div class="col-md-2">
-                    <TheLabel for="sales_plan">План продаж</TheLabel>
+                <div class="col-md-3">
+                    <TheLabel for="sales_plan">Продажи, план</TheLabel>
                     <div class="input-group">
                         <TheInput
                             id="sales_plan"
-                            v-model="state.form.salesPlan"
-                            type="text"
+                            :model-value="formatNumber(props.product.salesPlan)"
                             class="text-end bg-warning-light"
-                            @blur="processInputValue($event.target.value, 'sales_plan')"
+                            readonly="readonly"
+                            :tabindex="-1"
                         />
                         <span class="input-group-text">шт.</span>
                     </div>
                 </div>
-                <div class="col-md-2">
-                    <TheLabel for="surplus_plan">План прироста</TheLabel>
-                    <div class="input-group">
-                        <TheInput
-                            id="surplus_plan"
-                            type="text"
-                            :model-value="calcSurplusPlan"
-                            class="text-end bg-warning-light"
-                            readonly="readonly"
-                        />
-                        <span class="input-group-text">%</span>
-                    </div>
-                </div>
-                <div class="col-md-2">
-                    <TheLabel for="sales_on_time" required>Продажи "Во время"</TheLabel>
+                <div class="col-md-3">
+                    <TheLabel for="sales_on_time" required>Продажи, факт</TheLabel>
                     <div class="input-group">
                         <TheInput
                             id="sales_on_time"
                             v-model="state.form.salesOnTime"
-                            type="text"
                             class="text-end"
                             @blur="processInputValue($event.target.value, 'sales_on_time')"
                         />
                         <span class="input-group-text">шт.</span>
                     </div>
                 </div>
-                <div class="col-md-2">
-                    <TheLabel for="surplus_actual">Факт прироста</TheLabel>
+                <div class="col-md-3">
+                    <TheLabel for="sales_diff">Продажи, факт - план</TheLabel>
                     <div class="input-group">
                         <TheInput
-                            id="surplus_actual"
-                            type="text"
-                            :model-value="calcSurplusActual"
-                            class="text-end bg-warning-light"
+                            id="sales_diff"
+                            :model-value="formatNumber(calcSalesDiff)"
+                            :class="['text-end fw-bold', calcDiffClassInverse(calcSalesDiff)]"
                             readonly="readonly"
+                            :tabindex="-1"
+                        />
+                        <span class="input-group-text">шт.</span>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <TheLabel for="sales_diff_percent">Продажи, отклонение</TheLabel>
+                    <div class="input-group">
+                        <TheInput
+                            id="sales_diff_percent"
+                            :model-value="formatNumber(calcSalesDiffPercent)"
+                            :class="['text-end fw-bold', calcDiffClassInverse(calcSalesDiffPercent)]"
+                            readonly="readonly"
+                            :tabindex="-1"
                         />
                         <span class="input-group-text">%</span>
                     </div>
                 </div>
-                <div class="col-md-2">
-                    <TheLabel for="surplus_diff">Отклонение</TheLabel>
+            </div>
+            <div class="row mb-3 g-3">
+                <div class="col-md-3">
+                    <TheLabel for="budget_plan">Бюджет, план</TheLabel>
                     <div class="input-group">
                         <TheInput
-                            id="surplus_diff"
-                            type="text"
-                            :model-value="calcSurplusDiff"
-                            class="text-end fw-bold"
-                            :class="calcSurplusDiffClass"
+                            id="budget_plan"
+                            :model-value="formatNumberWithFractions(props.product.budgetPlan)"
+                            class="text-end bg-warning-light"
                             readonly="readonly"
+                            :tabindex="-1"
+                        /> <!--@blur="processInputValue($event.target.value, 'budget_plan')"-->
+                        <span class="input-group-text">руб.</span>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <TheLabel for="budget_actual">Бюджет, факт</TheLabel>
+                    <div class="input-group">
+                        <TheInput
+                            id="budget_actual"
+                            :model-value="formatNumberWithFractions(state.form.budgetActual)"
+                            class="text-end bg-warning-light"
+                            readonly="readonly"
+                            :tabindex="-1"
+                        />
+                        <span class="input-group-text">руб.</span>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <TheLabel for="budget_diff">Бюджет, факт - план</TheLabel>
+                    <div class="input-group">
+                        <TheInput
+                            id="budget_diff"
+                            :model-value="formatNumberWithFractions(calcBudgetDiff)"
+                            :class="['text-end fw-bold', calcDiffClass(calcBudgetDiff)]"
+                            readonly="readonly"
+                            :tabindex="-1"
+                        />
+                        <span class="input-group-text">руб.</span>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <TheLabel for="budget_diff_percent">Бюджет, отклонение</TheLabel>
+                    <div class="input-group">
+                        <TheInput
+                            id="budget_diff_percent"
+                            :model-value="formatNumber(calcBudgetDiffPercent)"
+                            :class="['text-end fw-bold', calcDiffClass(calcBudgetDiffPercent)]"
+                            readonly="readonly"
+                            :tabindex="-1"
+                        />
+                        <span class="input-group-text">%</span>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-3 g-3">
+                <div class="col-md-3">
+                    <TheLabel for="profit_per_product_plan">Прибыль, план</TheLabel>
+                    <div class="input-group">
+                        <TheInput
+                            id="profit_per_product_plan"
+                            :model-value="formatNumberWithFractions(props.product.profitPerProductPlan)"
+                            class="text-end bg-warning-light"
+                            readonly="readonly"
+                            :tabindex="-1"
+                        />
+                        <span class="input-group-text">руб.</span>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <TheLabel for="profit_per_product_actual">Прибыль, факт</TheLabel>
+                    <div class="input-group">
+                        <TheInput
+                            id="profit_per_product_actual"
+                            :model-value="formatNumberWithFractions(state.form.profitPerProductActual)"
+                            class="text-end bg-warning-light"
+                            readonly="readonly"
+                            :tabindex="-1"
+                        />
+                        <span class="input-group-text">руб.</span>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <TheLabel for="profit_per_product_diff">Прибыль, факт - план</TheLabel>
+                    <div class="input-group">
+                        <TheInput
+                            id="profit_per_product_diff"
+                            :model-value="formatNumberWithFractions(calcProfitPerProductDiff)"
+                            :class="['text-end fw-bold', calcDiffClassInverse(calcProfitPerProductDiff)]"
+                            readonly="readonly"
+                            :tabindex="-1"
+                        />
+                        <span class="input-group-text">руб.</span>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <TheLabel for="profit_per_product_diff_percent">Прибыль, отклонение</TheLabel>
+                    <div class="input-group">
+                        <TheInput
+                            id="profit_per_product_diff_percent"
+                            :model-value="formatNumber(calcProfitPerProductDiffPercent)"
+                            :class="['text-end fw-bold', calcDiffClassInverse(calcProfitPerProductDiffPercent)]"
+                            readonly="readonly"
+                            :tabindex="-1"
                         />
                         <span class="input-group-text">%</span>
                     </div>
                 </div>
             </div>
             <div class="row g-3">
-                <div class="col-md-2">
-                    <TheLabel for="budget_plan">Бюджет, план</TheLabel>
+                <div class="col-md-3">
+                    <TheLabel for="revenue_plan">Выручка, план</TheLabel>
                     <div class="input-group">
                         <TheInput
-                            id="budget_plan"
-                            v-model="state.form.budgetPlan"
-                            type="text"
-                            class="text-end bg-warning-light"
-                            @blur="processInputValue($event.target.value, 'budget_plan')"
-                        />
-                        <span class="input-group-text">руб.</span>
-                    </div>
-                </div>
-                <div class="col-md-2">
-                    <TheLabel for="budget_actual">Бюджет, факт</TheLabel>
-                    <div class="input-group">
-                        <TheInput
-                            id="budget_actual"
-                            type="text"
-                            v-model="state.form.budgetActual"
+                            id="revenue_plan"
+                            :model-value="formatNumberWithFractions(props.product.revenuePlan)"
                             class="text-end bg-warning-light"
                             readonly="readonly"
+                            :tabindex="-1"
                         />
                         <span class="input-group-text">руб.</span>
                     </div>
                 </div>
-                <div class="col-md-2">
-                    <TheLabel for="budget_diff">Бюджет, факт - план</TheLabel>
+                <div class="col-md-3">
+                    <TheLabel for="revenue_actual">Выручка, факт</TheLabel>
                     <div class="input-group">
                         <TheInput
-                            id="budget_diff"
-                            type="text"
-                            v-model="state.form.budgetDiff"
-                            class="text-end fw-bold"
-                            :class="calcBudgetDiffClass"
+                            id="revenue_actual"
+                            :model-value="formatNumberWithFractions(state.form.revenueActual)"
+                            class="text-end bg-warning-light"
                             readonly="readonly"
+                            :tabindex="-1"
                         />
                         <span class="input-group-text">руб.</span>
                     </div>
                 </div>
-                <div class="col-md-2">
-                    <TheLabel for="compensation">Компенсация на 1 шт.</TheLabel>
+                <div class="col-md-3">
+                    <TheLabel for="revenue_diff">Выручка, факт - план</TheLabel>
                     <div class="input-group">
                         <TheInput
-                            id="compensation"
-                            v-model="state.form.compensation"
-                            type="text"
-                            class="text-end bg-warning-light"
+                            id="revenue_diff"
+                            :model-value="formatNumberWithFractions(calcRevenueDiff)"
+                            :class="['text-end fw-bold', calcDiffClassInverse(calcRevenueDiff)]"
+                            readonly="readonly"
+                            :tabindex="-1"
                         />
                         <span class="input-group-text">руб.</span>
                     </div>
                 </div>
-                <div class="col-md-2">
-                    <TheLabel for="profit_per_unit" required>Прибыль на 1 шт.</TheLabel>
+                <div class="col-md-3">
+                    <TheLabel for="revenue_diff_percent">Выручка, отклонение</TheLabel>
                     <div class="input-group">
                         <TheInput
-                            id="profit_per_unit"
-                            v-model="state.form.profitPerUnit"
-                            type="text"
-                            class="text-end bg-warning-light"
+                            id="revenue_diff_percent"
+                            :model-value="formatNumber(calcRevenueDiffPercent)"
+                            :class="['text-end fw-bold', calcDiffClassInverse(calcRevenueDiffPercent)]"
+                            readonly="readonly"
+                            :tabindex="-1"
                         />
-                        <span class="input-group-text">руб.</span>
-                    </div>
-                </div>
-                <div class="col-md-2">
-                    <TheLabel for="total_profit" required>Прибыль на SKU</TheLabel>
-                    <div class="input-group">
-                        <TheInput
-                            id="total_profit"
-                            v-model="state.form.promoProfit"
-                            type="text"
-                            class="text-end bg-warning-light"
-                        />
-                        <span class="input-group-text">руб.</span>
+                        <span class="input-group-text">%</span>
                     </div>
                 </div>
             </div>
         </template>
         <template #footer>
             <TheButton
-                :disabled="spinnerStore.isButtonDisabled"
+                :disabled="spinnerStore.isButtonDisabled || isNaN(convertInputStringToNumber(state.form.salesOnTime))"
                 :loading="spinnerStore.isButtonDisabled"
                 type="button"
                 class="btn-warning w-25"
@@ -294,7 +393,7 @@
 </template>
 
 <script setup>
-import { computed, reactive } from 'vue';
+import { computed, reactive, watch } from 'vue';
 import TheButton from '@/components/core/TheButton.vue';
 import TheModal from '@/components/TheModal.vue';
 import TheLabel from '@/components/form/TheLabel.vue';
@@ -306,10 +405,16 @@ import { useAlertStore } from '@/stores/alerts.js';
 import { useHttpService } from '@/use/useHttpService.js';
 import { useSpinnerStore } from '@/stores/spinners.js';
 import { useConvertCase } from '@/use/useConvertCase.js';
-import { convertInputStringToNumber, formatNumber, isNumberNegative, processInputValue } from '@/helpers/formatters.js';
+import {
+    convertInputStringToNumber,
+    formatNumber,
+    formatNumberWithFractions,
+    isNumberNegative,
+    processInputValue,
+} from '@/helpers/formatters.js';
 import { MANAGER_URLS } from '@/helpers/constants.js';
 
-const { calcDifferencePercentage, calcBudget } = useCalculations();
+const { calcDifferencePercentage, calcBudget, calcDifference } = useCalculations();
 const alertStore = useAlertStore();
 const spinnerStore = useSpinnerStore();
 const { makeConvertibleObject, toCamel } = useConvertCase();
@@ -338,17 +443,22 @@ const modals = reactive({
     editModalPopUp: false,
 });
 
+// TODO: delete commented lines
 const initialFormData = () => ({
-    id: props.product.id.toString(),
-    salesBefore: formatNumber(props.product.salesBefore),
-    salesPlan: formatNumber(props.product.salesPlan),
+    id: props.product.id,
+    // salesBefore: props.product.salesBefore,
+    // salesPlan: props.product.salesPlan,
     salesOnTime: formatNumber(props.product.salesOnTime),
-    profitPerUnit: props.product.profitPerUnit,
-    compensation: props.product.compensation,
-    budgetPlan: formatNumber(props.product.budgetPlan),
-    budgetActual: formatNumber(props.product.budgetActual),
-    budgetDiff: '',
-    promoProfit: '',
+    // surplusPlan: props.product.surplusPlan,
+    surplusActual: props.product.surplusActual,
+    // budgetPlan: props.product.budgetPlan,
+    budgetActual: props.product.budgetActual,
+    // compensation: props.product.compensation,
+    // profitPerUnit: props.product.profitPerUnit,
+    // profitPerProductPlan: props.product.profitPerProductPlan,
+    profitPerProductActual: props.product.profitPerProductActual,
+    // revenuePlan: props.product.revenuePlan,
+    revenueActual: props.product.revenueActual,
 });
 
 const state = reactive({
@@ -363,7 +473,7 @@ const handleBtnClick = () => {
 
 const saveChangesHandler = async () => {
     const updatedProduct = processObjectEntries();
-    const response = await update(`${MANAGER_URLS.PROMO}/${props.promoId}${MANAGER_URLS.PRODUCT}/${updatedProduct.id}`, updatedProduct);
+    const response = await update(`${ MANAGER_URLS.PROMO }/${ props.promoId }${ MANAGER_URLS.PRODUCT }/${ updatedProduct.id }`, updatedProduct);
     if ( response && response.status === 'success' ) {
         const data = makeConvertibleObject(JSON.parse(response.data), toCamel);
         emit('updateProductItem', data);
@@ -377,77 +487,81 @@ const processObjectEntries = () => {
     return obj;
 };
 
-const calcSurplusPlan = computed(() => {
-    const result = calcDifferencePercentage(state.form.salesBefore, state.form.salesPlan);
-    if ( !isNaN(result) ) {
-        return formatNumber(result);
-    }
-});
+watch(() => state.form.salesOnTime,
+    (newValue) => {
+        const salesOnTime = convertInputStringToNumber(newValue);
+        if ( !isNaN(salesOnTime) ) {
+            calcSurplusActual(salesOnTime);
+            calcBudgetActual(salesOnTime);
+            calcProfitActual(salesOnTime);
+            calcRevenueActual(salesOnTime);
+        }
+    },
+);
 
-const calcSurplusActual = computed(() => {
-    const result = calcDifferencePercentage(state.form.salesBefore, state.form.salesOnTime);
-    if ( !isNaN(result) ) {
-        calcBudgetActual();
-        return formatNumber(result);
-    }
-});
-
-const calcSurplusDiff = computed(() => {
-    let result = 0;
-    const planStr = calcSurplusPlan.value;
-    const actualStr = calcSurplusActual.value;
-    let planNum, actualNum;
-
-    if ( planStr !== undefined && actualStr !== undefined ) {
-        planNum = isNumberNegative(planStr)
-            ? -1 * convertInputStringToNumber(planStr)
-            : convertInputStringToNumber(planStr);
-
-        actualNum = isNumberNegative(actualStr)
-            ? -1 * convertInputStringToNumber(actualStr)
-            : convertInputStringToNumber(actualStr);
-
-        result = actualNum - planNum;
-    }
-
-    return formatNumber(result);
-});
-
-const calcSurplusDiffClass = computed(() => {
-    return isNumberNegative(calcSurplusDiff.value)
-        ? 'bg-danger-subtle text-danger'
-        : calcSurplusDiff.value.toString() === '0'
-            ? 'bg-warning-subtle text-black'
-            : 'bg-success-subtle text-success';
-});
-
-const calcBudgetActual = () => {
-    state.form.budgetActual = formatNumber(calcBudget(state.form.salesOnTime, state.form.compensation));
-    calcBudgetDiff();
-    calcPromoProfit();
+const calcSurplusActual = (salesOnTime) => {
+    state.form.surplusActual = calcDifferencePercentage(props.product.salesBefore, salesOnTime);
 };
 
-const calcBudgetDiff = () => {
-    const planNum = convertInputStringToNumber(state.form.budgetPlan);
-    const actualNum = convertInputStringToNumber(state.form.budgetActual);
-    state.form.budgetDiff = formatNumber(actualNum - planNum);
+const calcBudgetActual = (salesOnTime) => {
+    state.form.budgetActual = calcBudget(salesOnTime, props.product.compensation);
 };
 
-const calcPromoProfit = () => {
-    const salesOnTimeNum = convertInputStringToNumber(state.form.salesOnTime);
-    state.form.promoProfit = formatNumber(state.form.profitPerUnit * salesOnTimeNum);
+const calcProfitActual = (salesOnTime) => {
+    state.form.profitPerProductActual = props.product.profitPerUnit * salesOnTime;
 };
 
-const calcBudgetDiffClass = computed(() => {
-    if ( state.form.budgetDiff ) {
-        const budgetDiffNum = convertInputStringToNumber(state.form.budgetDiff);
-        return isNumberNegative(state.form.budgetDiff)
-            ? 'bg-success-subtle text-success'
-            : budgetDiffNum === 0
-                ? 'bg-warning-subtle text-black'
-                : 'bg-danger-subtle text-danger';
-    } else {
-        return 'bg-warning-subtle text-black';
-    }
+const calcRevenueActual = (salesOnTime) => {
+    state.form.revenueActual = Math.round(salesOnTime * props.product.promoPrice);
+};
+
+const calcSalesDiff = computed(() => {
+    const salesOnTime = convertInputStringToNumber(state.form.salesOnTime);
+    return !isNaN(salesOnTime) ? calcDifference(props.product.salesPlan, salesOnTime) : calcDifference(props.product.salesPlan, 0);
 });
+
+const calcBudgetDiff = computed(() => {
+    return calcDifference(props.product.budgetPlan, state.form.budgetActual);
+});
+
+const calcProfitPerProductDiff = computed(() => {
+    return calcDifference(props.product.profitPerProductPlan, state.form.profitPerProductActual);
+});
+
+const calcRevenueDiff = computed(() => {
+    return calcDifference(props.product.revenuePlan, state.form.revenueActual);
+});
+
+const calcSalesDiffPercent = computed(() => {
+    const salesOnTime = convertInputStringToNumber(state.form.salesOnTime);
+    return !isNaN(salesOnTime) ? calcDifferencePercentage(props.product.salesPlan, salesOnTime) : calcDifferencePercentage(props.product.salesPlan, 0);
+});
+
+const calcBudgetDiffPercent = computed(() => {
+    return calcDifferencePercentage(props.product.budgetPlan, state.form.budgetActual);
+});
+
+const calcProfitPerProductDiffPercent = computed(() => {
+    return calcDifferencePercentage(props.product.profitPerProductPlan, state.form.profitPerProductActual);
+});
+
+const calcRevenueDiffPercent = computed(() => {
+    return calcDifferencePercentage(props.product.revenuePlan, state.form.revenueActual);
+});
+
+const calcDiffClass = (value) => {
+    return isNumberNegative(value)
+        ? 'bg-sales-success text-success'
+        : value === 0
+            ? 'bg-secondary-subtle text-black'
+            : 'bg-sales-fail text-danger';
+};
+
+const calcDiffClassInverse = (value) => {
+    return isNumberNegative(value)
+        ? 'bg-sales-fail text-danger'
+        : value === 0
+            ? 'bg-secondary-subtle text-black'
+            : 'bg-sales-success text-success';
+};
 </script>

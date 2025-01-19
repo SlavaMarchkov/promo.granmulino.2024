@@ -257,7 +257,7 @@
                             <div class="input-group">
                                 <TheInput
                                     id="profit_per_product"
-                                    :model-value="formatNumberWithFractions(state.form.profitPerProduct)"
+                                    :model-value="formatNumberWithFractions(state.form.profitPerProductPlan)"
                                     class="text-center bg-warning-light"
                                     readonly="readonly"
                                     :tabindex="-1"
@@ -465,7 +465,7 @@ const initialFormData = () => ({
     salesPlan: 0,
     surplusPlan: 0,
     profitPerUnit: 0,
-    profitPerProduct: 0,
+    profitPerProductPlan: 0,
     compensation: 0,
     budgetPlan: 0,
     netProfit: 0,
@@ -541,7 +541,7 @@ const addProduct = () => {
         profitPerUnit: state.form.profitPerUnit,
         discount: state.form.discount,
         promoPrice: state.form.promoPrice,
-        profitPerProduct: state.form.profitPerProduct,
+        profitPerProductPlan: state.form.profitPerProductPlan,
         netProfit: state.form.netProfit,
         revenuePlan: state.form.revenuePlan,
     });
@@ -607,25 +607,25 @@ const isFormValid = computed(() => {
 
 const totalSalesBefore = computed(() => {
     return state.addedProducts.reduce((acc, pr) => {
-        return Math.round(acc + pr.salesBefore);
+        return Math.round(acc + convertInputStringToNumber(pr.salesBefore));
     }, 0);
 });
 
 const totalSalesPlan = computed(() => {
     return state.addedProducts.reduce((acc, pr) => {
-        return Math.round(acc + pr.salesPlan);
+        return Math.round(acc + convertInputStringToNumber(pr.salesPlan));
     }, 0);
 });
 
 const totalBudgetPlan = computed(() => {
    return state.addedProducts.reduce((acc, pr) => {
-       return Math.round(acc + pr.budgetPlan);
+       return Math.round(acc + convertInputStringToNumber(pr.budgetPlan));
    }, 0);
 });
 
 const totalPromoProfitPlan = computed(() => {
    return state.addedProducts.reduce((acc, pr) => {
-       return Math.round(acc + pr.profitPerProduct);
+       return Math.round(acc + convertInputStringToNumber(pr.profitPerProductPlan));
    }, 0);
 });
 
@@ -751,7 +751,7 @@ const calcPromoPrice = (discountPercent) => {
 };
 
 const calcRevenue = () => {
-    state.form.revenuePlan = Math.round(state.form.salesPlan * state.form.promoPrice);
+    state.form.revenuePlan = Math.round(convertInputStringToNumber(state.form.salesPlan) * state.form.promoPrice);
 };
 
 const calcNetProfit = () => {
@@ -759,7 +759,7 @@ const calcNetProfit = () => {
 };
 
 const calcProfitPerProduct = () => {
-    state.form.profitPerProduct = convertInputStringToNumber(state.form.salesPlan) * state.form.profitPerUnit;
+    state.form.profitPerProductPlan = convertInputStringToNumber(state.form.salesPlan) * state.form.profitPerUnit;
 };
 
 const calcCompensation = () => {

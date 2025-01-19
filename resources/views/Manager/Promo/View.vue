@@ -9,7 +9,7 @@
             <div class="col-12">
                 <div class="card">
                     <div class="card-header bg-light d-flex justify-content-between align-items-center">
-                        <h3 class="mb-0">{{ promo.promoCode }}{{ promo.discount !== null ? `-${promo.discount}` : '' }}&nbsp;<span
+                        <h3 class="mb-0">{{ promo.promoCode }}&nbsp;<span
                             class="text-secondary fs-5">|&nbsp;{{ promo.channelName }}</span></h3>
                         <h4 class="mb-0"><span :class="[ 'badge', promo.statusColor ]">{{ promo.statusLabel }}</span></h4>
                         <h2 class="mb-0"><span :class="[ 'badge', promoMarkBgColor ]">{{ promo.totalMark }}</span></h2>

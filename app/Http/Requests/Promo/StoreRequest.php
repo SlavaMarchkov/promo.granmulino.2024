@@ -21,13 +21,13 @@ final class StoreRequest extends FormRequest
     : array
     {
         return [
-            'promo_type'     => ['required'],
-            'user_id'        => ['required', 'exists:users,id'],
-            'channel_id'     => ['required', 'exists:channels,id'],
-            'region_id'      => ['required', 'exists:regions,id'],
-            'city_id'        => ['required', 'exists:cities,id'],
-            'customer_id'    => ['required', 'exists:customers,id'],
-            'retailer_id'    => [
+            'promo_type'  => ['required'],
+            'user_id'     => ['required', 'exists:users,id'],
+            'channel_id'  => ['required', 'exists:channels,id'],
+            'region_id'   => ['required', 'exists:regions,id'],
+            'city_id'     => ['required', 'exists:cities,id'],
+            'customer_id' => ['required', 'exists:customers,id'],
+            'retailer_id' => [
                 'nullable',
                 Rule::requiredIf(function () {
                     return Customer::query()
@@ -38,9 +38,9 @@ final class StoreRequest extends FormRequest
                 }),
                 'exists:retailers,id',
             ],
-            'start_date'     => ['required', 'date_format:Y-m-d', 'date'],
-            'end_date'       => ['required', 'date_format:Y-m-d', 'date', 'after:start_date'],
-            'comments'       => ['nullable', 'string'],
+            'start_date'  => ['required', 'date_format:Y-m-d', 'date'],
+            'end_date'    => ['required', 'date_format:Y-m-d', 'date', 'after:start_date'],
+            'comments'    => ['nullable', 'string'],
 
             'total_sales_before'      => ['required', 'numeric'],
             'total_sales_plan'        => ['required', 'numeric'],
@@ -48,33 +48,33 @@ final class StoreRequest extends FormRequest
             'total_budget_plan'       => ['required', 'numeric'],
             'total_promo_profit_plan' => ['nullable', 'numeric'],
 
-            'products'                      => [
+            'products'                           => [
                 'nullable',
                 'array',
                 Rule::requiredIf(function () {
                     return to_boolean($this->request->get('promo_for_retail')) == true;
                 }),
             ],
-            'sellers'                       => [
+            'sellers'                            => [
                 'nullable',
                 'array',
                 Rule::requiredIf(function () {
                     return to_boolean($this->request->get('promo_for_retail')) == false;
                 }),
             ],
-            'products.*.category_id'        => ['required', 'integer'],
-            'products.*.product_id'         => ['required', 'integer'],
-            'products.*.sales_before'       => ['nullable', 'numeric'],
-            'products.*.sales_plan'         => ['required', 'numeric'],
-            'products.*.surplus_plan'       => ['required', 'numeric'],
-            'products.*.budget_plan'        => ['required', 'numeric'],
-            'products.*.compensation'       => ['required', 'numeric'],
-            'products.*.profit_per_unit'    => ['required', 'numeric'],
-            'products.*.discount'           => ['required', 'numeric'],
-            'products.*.promo_price'        => ['required', 'numeric'],
-            'products.*.profit_per_product' => ['required', 'numeric'],
-            'products.*.net_profit'         => ['required', 'numeric', 'integer'],
-            'products.*.revenue_plan'       => ['required', 'numeric', 'integer'],
+            'products.*.category_id'             => ['required', 'integer'],
+            'products.*.product_id'              => ['required', 'integer'],
+            'products.*.discount'                => ['required', 'numeric', 'integer'],
+            'products.*.promo_price'             => ['required', 'numeric'],
+            'products.*.sales_before'            => ['nullable', 'numeric'],
+            'products.*.sales_plan'              => ['required', 'numeric'],
+            'products.*.surplus_plan'            => ['required', 'numeric'],
+            'products.*.budget_plan'             => ['required', 'numeric'],
+            'products.*.compensation'            => ['required', 'numeric'],
+            'products.*.profit_per_unit'         => ['required', 'numeric'],
+            'products.*.profit_per_product_plan' => ['required', 'numeric'],
+            'products.*.net_profit'              => ['required', 'numeric', 'integer'],
+            'products.*.revenue_plan'            => ['required', 'numeric', 'integer'],
         ];
     }
 
