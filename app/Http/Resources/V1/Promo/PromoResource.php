@@ -16,6 +16,7 @@ class PromoResource extends JsonResource
     : array {
         return [
             'id' => $this->id,
+            'userId' => $this->user_id,
 
             'status'      => $this->status,
             'statusColor' => $this->status?->backgroundColor(),

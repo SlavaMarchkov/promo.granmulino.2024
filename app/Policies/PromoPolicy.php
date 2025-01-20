@@ -14,6 +14,14 @@ class PromoPolicy
 {
     use HandlesAuthorization;
 
+    public function before(User $user)
+    : true|null {
+        if ($user->isAdmin()) {
+            return true;
+        }
+        return null;
+    }
+
     public function viewAny(User $user)
     : bool {
         return $user->isManager();

@@ -72,8 +72,10 @@ export const ADMIN_URLS = {
     CITY: '/admin/cities',
     CUSTOMER: '/admin/customers',
     PRODUCT: '/admin/products',
+    PROMO: '/admin/promos',
     REGION: '/admin/regions',
     RETAILER: '/admin/retailers',
+    SALES: '/admin/sales',
     USER: '/admin/users',
 };
 
@@ -84,8 +86,9 @@ export const MANAGER_URLS = {
     MARK: '/marks',
     PRODUCT: '/products',
     PROMO: '/promos',
-    SELLER: '/sellers',
     RETAILER: '/retailers',
+    SALES: '/sales',
+    SELLER: '/sellers',
     USER: '/users',
 };
 
@@ -177,6 +180,13 @@ export const MANAGER_MENU_ITEMS = [
         icon: 'bi bi-speedometer',
     },
     {
+        isCollapsible: false,
+        id: 'sales',
+        route: 'Manager.Sales.Index',
+        title: 'Мои продажи',
+        icon: 'bi bi-cash-coin',
+    },
+    {
         isCollapsible: true,
         id: 'promo',
         title: 'Промо-акции',
@@ -200,11 +210,11 @@ export const MANAGER_MENU_ITEMS = [
         items: [
             {
                 route: 'Manager.Customer.Index',
-                title: 'Контрагенты',
+                title: 'Мои контрагенты',
             },
             {
                 route: 'Manager.Retailer.Index',
-                title: 'Торговые сети',
+                title: 'Мои торговые сети',
             },
         ],
     },
@@ -231,10 +241,24 @@ export const ADMIN_MENU_ITEMS = [
         icon: 'bi bi-speedometer',
     },
     {
+        isCollapsible: false,
+        id: 'promo',
+        route: 'Promo.Index',
+        title: 'Промо-акции',
+        icon: 'bi bi-megaphone-fill',
+    },
+    {
+        isCollapsible: false,
+        id: 'sales',
+        route: 'Sales.Index',
+        title: 'Продажи',
+        icon: 'bi bi-cash-stack',
+    },
+    {
         isCollapsible: true,
         id: 'reports',
         title: 'Отчёты',
-        icon: 'bi bi-server',
+        icon: 'bi bi-graph-down',
         items: [
             {
                 route: 'Report.Index',
@@ -285,6 +309,13 @@ export const ADMIN_MENU_ITEMS = [
                 title: 'Пользователи',
             },
         ],
+    },
+    {
+        isCollapsible: false,
+        id: 'notifications',
+        route: 'Notification.Index',
+        title: 'Уведомления',
+        icon: 'bi bi-bell-fill',
     },
 ];
 

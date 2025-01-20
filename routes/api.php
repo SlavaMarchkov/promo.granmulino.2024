@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\V1\Admin\CategoryController as AdminCategoryControl
 use App\Http\Controllers\Api\V1\Admin\CityController as AdminCityController;
 use App\Http\Controllers\Api\V1\Admin\CustomerController as AdminCustomerController;
 use App\Http\Controllers\Api\V1\Admin\ProductController as AdminProductController;
+use App\Http\Controllers\Api\V1\Admin\PromoController as AdminPromoController;
 use App\Http\Controllers\Api\V1\Admin\RegionController as AdminRegionController;
 use App\Http\Controllers\Api\V1\Admin\RetailerController as AdminRetailerController;
 use App\Http\Controllers\Api\V1\Admin\UserController as AdminUserController;
@@ -41,6 +42,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
             'regions'    => AdminRegionController::class,
             'cities'     => AdminCityController::class,
             'categories' => AdminCategoryController::class,
+            'promos'     => AdminPromoController::class,
             'products'   => AdminProductController::class,
             'customers'  => AdminCustomerController::class,
             'retailers'  => AdminRetailerController::class,

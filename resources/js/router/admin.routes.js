@@ -21,35 +21,19 @@ export default {
             },
         },
         {
-            path: 'users',
-            name: 'User.Index',
-            component: () => import('../../views/Admin/User/Index.vue'),
+            path: 'categories',
+            name: 'Category.Index',
+            component: () => import('../../views/Admin/Category/Index.vue'),
             meta: {
-                title: 'Пользователи',
+                title: 'Группы товаров',
             },
         },
         {
-            path: 'users/:id',
-            name: 'User.View',
-            component: () => import('../../views/Admin/User/View.vue'),
+            path: 'categories/:id',
+            name: 'Category.View',
+            component: () => import('../../views/Admin/Category/View.vue'),
             meta: {
-                title: 'Просмотр пользователя',
-            },
-        },
-        {
-            path: 'regions',
-            name: 'Region.Index',
-            component: () => import('../../views/Admin/Region/Index.vue'),
-            meta: {
-                title: 'Регионы',
-            },
-        },
-        {
-            path: 'regions/:id',
-            name: 'Region.View',
-            component: () => import('../../views/Admin/Region/View.vue'),
-            meta: {
-                title: 'Просмотр региона',
+                title: 'Просмотр группы товаров',
             },
         },
         {
@@ -69,22 +53,6 @@ export default {
             },
         },
         {
-            path: 'categories',
-            name: 'Category.Index',
-            component: () => import('../../views/Admin/Category/Index.vue'),
-            meta: {
-                title: 'Группы товаров',
-            },
-        },
-        {
-            path: 'categories/:id',
-            name: 'Category.View',
-            component: () => import('../../views/Admin/Category/View.vue'),
-            meta: {
-                title: 'Просмотр группы товаров',
-            },
-        },
-        {
             path: 'customers',
             name: 'Customer.Index',
             component: () => import('../../views/Admin/Customer/Index.vue'),
@@ -98,6 +66,14 @@ export default {
             component: () => import('../../views/Admin/Customer/View.vue'),
             meta: {
                 title: 'Просмотр контрагента',
+            },
+        },
+        {
+            path: 'notifications',
+            name: 'Notification.Index',
+            component: () => import('../../views/Admin/Notification/Index.vue'),
+            meta: {
+                title: 'Уведомления',
             },
         },
         {
@@ -117,9 +93,41 @@ export default {
             },
         },
         {
+            path: 'promo',
+            name: 'Promo.Index',
+            component: () => import('../../views/Admin/Promo/Index.vue'),
+            meta: {
+                title: 'Промо-акции',
+            },
+        },
+        {
+            path: 'promos/:id',
+            name: 'Promo.View',
+            component: () => import('../../views/Admin/Promo/View.vue'),
+            meta: {
+                title: 'Просмотр промо-акции',
+            },
+        },
+        {
+            path: 'regions',
+            name: 'Region.Index',
+            component: () => import('../../views/Admin/Region/Index.vue'),
+            meta: {
+                title: 'Регионы',
+            },
+        },
+        {
+            path: 'regions/:id',
+            name: 'Region.View',
+            component: () => import('../../views/Admin/Region/View.vue'),
+            meta: {
+                title: 'Просмотр региона',
+            },
+        },
+        {
             path: 'reports',
             name: 'Report.Index',
-            component: () => import('../../views/Admin/Report.vue'),
+            component: () => import('../../views/Admin/Report/Index.vue'),
             meta: {
                 title: 'Генератор отчётов',
             },
@@ -138,6 +146,30 @@ export default {
             component: () => import('../../views/Admin/Retailer/View.vue'),
             meta: {
                 title: 'Просмотр торговой сети',
+            },
+        },
+        {
+            path: 'sales',
+            name: 'Sales.Index',
+            component: () => import('../../views/Admin/Sales/Index.vue'),
+            meta: {
+                title: 'Продажи',
+            },
+        },
+        {
+            path: 'users',
+            name: 'User.Index',
+            component: () => import('../../views/Admin/User/Index.vue'),
+            meta: {
+                title: 'Пользователи',
+            },
+        },
+        {
+            path: 'users/:id',
+            name: 'User.View',
+            component: () => import('../../views/Admin/User/View.vue'),
+            meta: {
+                title: 'Просмотр пользователя',
             },
         },
     ],

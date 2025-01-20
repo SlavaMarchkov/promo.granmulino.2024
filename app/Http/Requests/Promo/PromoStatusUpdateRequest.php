@@ -5,10 +5,7 @@ declare(strict_types=1);
 // 08.11.2024 at 00:26:21
 namespace App\Http\Requests\Promo;
 
-use App\Enums\Promo\TypeEnum;
-use App\Models\Customer;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 final class PromoStatusUpdateRequest extends FormRequest
 {
@@ -18,7 +15,7 @@ final class PromoStatusUpdateRequest extends FormRequest
         return auth()->user()->isAdmin();
     }
 
-    public function rules()
+    /*public function rules()
     : array
     {
         return [
@@ -115,5 +112,5 @@ final class PromoStatusUpdateRequest extends FormRequest
                 }, $sellers),
             ]);
         }
-    }
+    }*/
 }

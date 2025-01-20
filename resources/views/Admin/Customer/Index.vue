@@ -1,15 +1,17 @@
 <template>
     <div class="row mb-4">
-        <div class="col-12">
+        <div class="col-6">
+            <h3 class="mb-0">{{ $route.meta.title }}</h3>
+        </div>
+        <div v-show="isSuperAdmin" class="col-6 text-end">
             <TheButton
-                v-show="isSuperAdmin"
-                @click="createCustomerInit"
                 class="btn-primary"
+                @click="createCustomerInit"
             >Новый контрагент
             </TheButton>
         </div>
     </div>
-    <div class="row mb-2">
+    <div class="row mb-4">
         <div class="col-12">
             <TheFilter
                 @reset-filter="clearSearch"

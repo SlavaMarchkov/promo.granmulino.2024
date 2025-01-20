@@ -29,22 +29,6 @@ export default {
             },
         },
         {
-            path: 'retailers',
-            name: 'Manager.Retailer.Index',
-            component: () => import('../../views/Manager/Retailer/Index.vue'),
-            meta: {
-                title: 'Мои торговые сети',
-            },
-        },
-        {
-            path: 'retailers/:id',
-            name: 'Manager.Retailer.View',
-            component: () => import('../../views/Manager/Retailer/View.vue'),
-            meta: {
-                title: 'Просмотр торговой сети',
-            },
-        },
-        {
             path: 'profile',
             name: 'Manager.Profile.Index',
             component: () => import('../../views/Manager/Profile/Index.vue'),
@@ -74,6 +58,30 @@ export default {
             component: () => import('../../views/Manager/Promo/Create.vue'),
             meta: {
                 title: 'Новая промо-акция',
+            },
+        },
+        {
+            path: 'retailers',
+            name: 'Manager.Retailer.Index',
+            component: () => import('../../views/Manager/Retailer/Index.vue'),
+            meta: {
+                title: 'Мои торговые сети',
+            },
+        },
+        {
+            path: 'retailers/:id',
+            name: 'Manager.Retailer.View',
+            component: () => import('../../views/Manager/Retailer/View.vue'),
+            meta: {
+                title: 'Просмотр торговой сети',
+            },
+        },
+        {
+            path: 'sales',
+            name: 'Manager.Sales.Index',
+            component: () => import('../../views/Manager/Sales/Index.vue'),
+            meta: {
+                title: 'Мои продажи',
             },
         },
     ],
