@@ -41,10 +41,10 @@
                                 v-if="promo.promoType === 'DISCOUNT'"
                                 :total-budget-plan="promo.totalBudgetPlan"
                                 :total-budget-actual="promo.totalBudgetActual"
-                                :total-sales-before="promo.totalSalesBefore"
                                 :total-sales-on-time="promo.totalSalesOnTime"
                                 :total-sales-plan="promo.totalSalesPlan"
-                                :total-promo-profit="promo.totalPromoProfit"
+                                :total-promo-profit-plan="promo.totalPromoProfitPlan"
+                                :total-promo-profit-actual="promo.totalPromoProfitActual"
                             ></ProductCards>
                             <SalesCards
                                 v-if="promo.promoType === 'SALES_PEOPLE_BOOST'"

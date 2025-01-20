@@ -1,4 +1,4 @@
-import { convertInputStringToNumber } from '@/helpers/formatters.js';
+import { convertInputStringToNumber, isNumberNegative } from '@/helpers/formatters.js';
 
 export function useCalculations() {
     const calcPercentage = (valueA, valueB) => {
@@ -32,11 +32,31 @@ export function useCalculations() {
         return parseInt((numA + (numA * numB) / 100).toFixed(2));
     };
 
+    const calcDiffClass = (value) => {
+        return isNumberNegative(value) ? 'bg-sales-success text-success' : value === 0 ? 'bg-secondary-subtle text-black' : 'bg-sales-fail text-danger';
+    };
+
+    const calcDiffClassInverse = (value) => {
+        return isNumberNegative(value) ? 'bg-sales-fail text-danger' : value === 0 ? 'bg-secondary-subtle text-black' : 'bg-sales-success text-success';
+    };
+
+    const calcDiffPercentColor = (value) => {
+        return isNumberNegative(value) ? 'text-success' : value === 0 ? 'text-secondary' : 'text-danger';
+    };
+
+    const calcDiffPercentColorInverse = (value) => {
+        return isNumberNegative(value) ? 'text-danger' : value === 0 ? 'text-secondary' : 'text-success';
+    };
+
     return {
         calcPercentage,
         calcDifferencePercentage,
         calcBudget,
         calcSalesSurplus,
         calcDifference,
+        calcDiffClass,
+        calcDiffClassInverse,
+        calcDiffPercentColor,
+        calcDiffPercentColorInverse,
     };
 }

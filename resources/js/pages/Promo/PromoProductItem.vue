@@ -1,10 +1,12 @@
 <template>
-    <TheCard :header-classes="['bg-secondary-subtle py-2']">
+    <TheCard :header-classes="['bg-pale py-2']">
         <template #header>
-            <h5 class="mb-0">{{ props.index + 1 }}. {{ product.categoryName }}&nbsp;<span
-                class="text-primary fw-bold">|&nbsp;{{ product.productName }}</span></h5>
+            <h5 class="mb-0">{{ props.index + 1 }}. {{ props.product.categoryName }}&nbsp;<span
+                class="text-primary fw-bold">|&nbsp;{{ props.product.productName }}</span></h5>
+            <h4 class="mb-0"><span class="badge bg-secondary" v-html="formatAsPercent(props.product.discount)"></span></h4>
             <TheButton
                 class="btn-warning"
+                style="width: 20%;"
                 @click="handleBtnClick"
             >Редактировать
             </TheButton>
@@ -15,6 +17,12 @@
                     <TheCard class="info-card revenue-card">
                         <template #header>
                             <h5 class="mb-0 card-title p-0">Бюджет</h5>
+                            <h5 :class="[ 'mb-0 fw-bold', calcDiffPercentColor(calcBudgetDiffPercent) ]">
+                                <span
+                                    :class="['bi', calcBudgetDiffPercent === 0 ? '' : calcBudgetDiffPercent > 0 ? 'bi-arrow-up' : 'bi-arrow-down' ]"
+                                    v-html="formatAsPercent(calcBudgetDiffPercent)"
+                                ></span>
+                            </h5>
                         </template>
                         <template #body>
                             <div class="d-flex align-items-center">
@@ -23,10 +31,11 @@
                                     <i class="bi bi-currency-dollar"></i>
                                 </div>
                                 <div class="ps-3">
-                                    <h6>{{ formatNumber(product.budgetActual) }} &#8381;</h6>
-                                    <span class="text-success small pt-1 fw-bold">{{
-                                            formatNumber(product.budgetPlan)
-                                        }} &#8381;</span><span
+                                    <h6 v-html="formatAsRUB(props.product.budgetActual)"></h6>
+                                    <span
+                                        class="text-success small pt-1 fw-bold"
+                                        v-html="formatAsRUB(props.product.budgetPlan)"
+                                    ></span><span
                                     class="text-muted small pt-2 ps-1"> | план</span>
                                 </div>
                             </div>
@@ -36,11 +45,13 @@
                 <div class="col-3">
                     <TheCard class="info-card sales-card">
                         <template #header>
-                            <h5 class="mb-0 card-title p-0">Продажи "До"</h5>
-                            <!--    TODO                        <h5 :class="['mb-0 fw-bold', calcSurplusTextColor]"><i
-                                                            :class="['bi', calcSurplus >= 0 ? 'bi-arrow-up' : 'bi-arrow-down' ]"></i>&nbsp;{{
-                                                                calcSurplus
-                                                            }}&#8239;%</h5>-->
+                            <h5 class="mb-0 card-title p-0">Продажи</h5>
+                            <h5 :class="[ 'mb-0 fw-bold', calcDiffPercentColorInverse(calcSalesDiffPercent) ]">
+                                <span
+                                    :class="['bi', calcSalesDiffPercent === 0 ? '' : calcSalesDiffPercent > 0 ? 'bi-arrow-up' : 'bi-arrow-down' ]"
+                                    v-html="formatAsPercent(calcSalesDiffPercent)"
+                                ></span>
+                            </h5>
                         </template>
                         <template #body>
                             <div class="d-flex align-items-center">
@@ -49,10 +60,11 @@
                                     <i class="bi bi-cart"></i>
                                 </div>
                                 <div class="ps-3">
-                                    <h6>{{ formatNumber(product.salesOnTime) }} шт.</h6>
-                                    <span class="text-success small pt-1 fw-bold">{{
-                                            formatNumber(product.salesPlan)
-                                        }} шт.</span> <span
+                                    <h6 v-html=formatAsItems(props.product.salesOnTime)></h6>
+                                    <span
+                                        class="text-success small pt-1 fw-bold"
+                                        v-html="formatAsItems(props.product.salesPlan)"
+                                    ></span> <span
                                     class="text-muted small pt-2 ps-1"> | план</span>
                                 </div>
                             </div>
@@ -62,23 +74,20 @@
                 <div class="col-3">
                     <TheCard class="info-card sales-card">
                         <template #header>
-                            <h5 class="mb-0 card-title p-0">Продажи "Во время"</h5>
-                            <!--                            <h5 :class="['mb-0 fw-bold', calcSurplusTextColor]"><i
-                                                            :class="['bi', calcSurplus >= 0 ? 'bi-arrow-up' : 'bi-arrow-down' ]"></i>&nbsp;{{
-                                                                calcSurplus
-                                                            }}&#8239;%</h5>-->
+                            <h5 class="mb-0 card-title p-0">Прибыль</h5>
                         </template>
                         <template #body>
                             <div class="d-flex align-items-center">
                                 <div
                                     class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                                    <i class="bi bi-cart"></i>
+                                    <i class="bi bi-currency-exchange"></i>
                                 </div>
                                 <div class="ps-3">
-                                    <h6>{{ formatNumber(product.salesOnTime) }} шт.</h6>
-                                    <span class="text-success small pt-1 fw-bold">{{
-                                            formatNumber(product.salesPlan)
-                                        }} шт.</span> <span
+                                    <h6 v-html="formatAsRUB(props.product.profitPerProductActual)"></h6>
+                                    <span
+                                        class="text-success small pt-1 fw-bold"
+                                        v-html="formatAsRUB(props.product.profitPerProductPlan)"
+                                    ></span><span
                                     class="text-muted small pt-2 ps-1"> | план</span>
                                 </div>
                             </div>
@@ -88,7 +97,7 @@
                 <div class="col-3">
                     <TheCard class="info-card profit-card">
                         <template #header>
-                            <h5 class="mb-0 card-title p-0">Прибыль на SKU</h5>
+                            <h5 class="mb-0 card-title p-0">Выручка</h5>
                         </template>
                         <template #body>
                             <div class="d-flex align-items-center">
@@ -97,7 +106,12 @@
                                     <i class="bi bi-cash-stack"></i>
                                 </div>
                                 <div class="ps-3">
-                                    <h6>{{ formatNumber(product.promoProfit) }} &#8381;</h6>
+                                    <h6 v-html="formatAsRUB(props.product.revenueActual)"></h6>
+                                    <span
+                                        class="text-success small pt-1 fw-bold"
+                                        v-html="formatAsRUB(props.product.revenuePlan)"
+                                    ></span><span
+                                    class="text-muted small pt-2 ps-1"> | план</span>
                                 </div>
                             </div>
                         </template>
@@ -407,14 +421,24 @@ import { useSpinnerStore } from '@/stores/spinners.js';
 import { useConvertCase } from '@/use/useConvertCase.js';
 import {
     convertInputStringToNumber,
+    formatAsItems,
+    formatAsPercent,
+    formatAsRUB,
     formatNumber,
     formatNumberWithFractions,
-    isNumberNegative,
     processInputValue,
 } from '@/helpers/formatters.js';
 import { MANAGER_URLS } from '@/helpers/constants.js';
 
-const { calcDifferencePercentage, calcBudget, calcDifference } = useCalculations();
+const {
+    calcDifferencePercentage,
+    calcBudget,
+    calcDifference,
+    calcDiffClass,
+    calcDiffClassInverse,
+    calcDiffPercentColor,
+    calcDiffPercentColorInverse,
+} = useCalculations();
 const alertStore = useAlertStore();
 const spinnerStore = useSpinnerStore();
 const { makeConvertibleObject, toCamel } = useConvertCase();
@@ -548,20 +572,4 @@ const calcProfitPerProductDiffPercent = computed(() => {
 const calcRevenueDiffPercent = computed(() => {
     return calcDifferencePercentage(props.product.revenuePlan, state.form.revenueActual);
 });
-
-const calcDiffClass = (value) => {
-    return isNumberNegative(value)
-        ? 'bg-sales-success text-success'
-        : value === 0
-            ? 'bg-secondary-subtle text-black'
-            : 'bg-sales-fail text-danger';
-};
-
-const calcDiffClassInverse = (value) => {
-    return isNumberNegative(value)
-        ? 'bg-sales-fail text-danger'
-        : value === 0
-            ? 'bg-secondary-subtle text-black'
-            : 'bg-sales-success text-success';
-};
 </script>

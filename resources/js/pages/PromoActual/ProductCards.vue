@@ -1,12 +1,14 @@
 <template>
-    <div class="col-4">
+    <div class="col-md-4">
         <TheCard class="info-card revenue-card">
             <template #header>
                 <h5 class="mb-0 card-title p-0">Бюджет</h5>
-                <h5 :class="['mb-0 fw-bold', calcBudgetDiffTextColor]"><i
-                    :class="['bi', calcBudgetDiff === '0' ? '' : calcBudgetDiff >= 0 ? 'bi-arrow-up' : 'bi-arrow-down' ]"></i>&nbsp;{{
-                        calcBudgetDiff
-                    }}&#8239;%</h5>
+                <h5 :class="[ 'mb-0 fw-bold', calcDiffPercentColor(calcBudgetDiffPercent) ]">
+                    <span
+                        :class="['bi', calcBudgetDiffPercent === 0 ? '' : calcBudgetDiffPercent > 0 ? 'bi-arrow-up' : 'bi-arrow-down' ]"
+                        v-html="formatAsPercent(calcBudgetDiffPercent)"
+                    ></span>
+                </h5>
             </template>
             <template #body>
                 <div class="d-flex align-items-center">
@@ -15,24 +17,27 @@
                         <i class="bi bi-currency-dollar"></i>
                     </div>
                     <div class="ps-3">
-                        <h6>{{ formatNumber(totalBudgetActual) }} &#8381;</h6>
-                        <span class="text-success small pt-1 fw-bold">{{
-                                formatNumber(totalBudgetPlan)
-                            }} &#8381;</span><span
+                        <h6 v-html="formatAsRUB(props.totalBudgetActual)"></h6>
+                        <span
+                            class="text-success small pt-1 fw-bold"
+                            v-html="formatAsRUB(props.totalBudgetPlan)"
+                        ></span><span
                         class="text-muted small pt-2 ps-1"> | план</span>
                     </div>
                 </div>
             </template>
         </TheCard>
     </div>
-    <div class="col-4">
+    <div class="col-md-4">
         <TheCard class="info-card sales-card">
             <template #header>
                 <h5 class="mb-0 card-title p-0">Продажи</h5>
-                <h5 :class="['mb-0 fw-bold', calcSurplusTextColor]"><i
-                    :class="['bi', calcSurplus === '0' ? '' : calcSurplus >= 0 ? 'bi-arrow-up' : 'bi-arrow-down' ]"></i>&nbsp;{{
-                        calcSurplus
-                    }}&#8239;%</h5>
+                <h5 :class="[ 'mb-0 fw-bold', calcDiffPercentColorInverse(calcSalesDiffPercent) ]">
+                    <span
+                        :class="['bi', calcSalesDiffPercent === 0 ? '' : calcSalesDiffPercent > 0 ? 'bi-arrow-up' : 'bi-arrow-down' ]"
+                        v-html="formatAsPercent(calcSalesDiffPercent)"
+                    ></span>
+                </h5>
             </template>
             <template #body>
                 <div class="d-flex align-items-center">
@@ -41,20 +46,27 @@
                         <i class="bi bi-cart"></i>
                     </div>
                     <div class="ps-3">
-                        <h6>{{ formatNumber(totalSalesOnTime) }} шт.</h6>
-                        <span class="text-success small pt-1 fw-bold">{{
-                                formatNumber(totalSalesPlan)
-                            }} шт.</span> <span
+                        <h6 v-html=formatAsItems(props.totalSalesOnTime)></h6>
+                        <span
+                            class="text-success small pt-1 fw-bold"
+                            v-html="formatAsItems(props.totalSalesPlan)"
+                        ></span> <span
                         class="text-muted small pt-2 ps-1"> | план</span>
                     </div>
                 </div>
             </template>
         </TheCard>
     </div>
-    <div class="col-4">
+    <div class="col-md-4">
         <TheCard class="info-card profit-card">
             <template #header>
                 <h5 class="mb-0 card-title p-0">Общая прибыль</h5>
+                <h5 :class="[ 'mb-0 fw-bold', calcDiffPercentColorInverse(calcPromoProfitDiffPercent) ]">
+                    <span
+                        :class="['bi', calcPromoProfitDiffPercent === 0 ? '' : calcPromoProfitDiffPercent > 0 ? 'bi-arrow-up' : 'bi-arrow-down' ]"
+                        v-html="formatAsPercent(calcPromoProfitDiffPercent)"
+                    ></span>
+                </h5>
             </template>
             <template #body>
                 <div class="d-flex align-items-center">
@@ -63,7 +75,12 @@
                         <i class="bi bi-cash-stack"></i>
                     </div>
                     <div class="ps-3">
-                        <h6>{{ formatNumber(totalPromoProfit) }} &#8381;</h6>
+                        <h6 v-html=formatAsRUB(props.totalPromoProfitActual)></h6>
+                        <span
+                            class="text-success small pt-1 fw-bold"
+                            v-html="formatAsRUB(props.totalPromoProfitPlan)"
+                        ></span> <span
+                        class="text-muted small pt-2 ps-1"> | план</span>
                     </div>
                 </div>
             </template>
@@ -74,10 +91,14 @@
 <script setup>
 import { computed } from 'vue';
 import TheCard from '@/components/core/TheCard.vue';
-import { formatNumber, isNumberNegative } from '@/helpers/formatters.js';
+import { formatAsItems, formatAsPercent, formatAsRUB } from '@/helpers/formatters.js';
 import { useCalculations } from '@/use/useCalculations.js';
 
-const { calcDifferencePercentage } = useCalculations();
+const {
+    calcDifferencePercentage,
+    calcDiffPercentColor,
+    calcDiffPercentColorInverse,
+} = useCalculations();
 
 const props = defineProps({
     totalBudgetPlan: {
@@ -85,10 +106,6 @@ const props = defineProps({
         default: '0',
     },
     totalBudgetActual: {
-        type: String,
-        default: '0',
-    },
-    totalSalesBefore: {
         type: String,
         default: '0',
     },
@@ -100,45 +117,25 @@ const props = defineProps({
         type: String,
         default: '0',
     },
-    totalPromoProfit: {
+    totalPromoProfitPlan: {
+        type: String,
+        default: '0',
+    },
+    totalPromoProfitActual: {
         type: String,
         default: '0',
     },
 });
 
-const calcSurplus = computed(() => {
-    const result = calcDifferencePercentage(
-        props.totalSalesPlan,
-        props.totalSalesOnTime,
-    );
-    if ( !isNaN(result) ) {
-        return formatNumber(result);
-    }
+const calcBudgetDiffPercent = computed(() => {
+    return calcDifferencePercentage(props.totalBudgetPlan, props.totalBudgetActual);
 });
 
-const calcBudgetDiff = computed(() => {
-    const result = calcDifferencePercentage(
-        props.totalBudgetPlan,
-        props.totalBudgetActual,
-    );
-    if ( !isNaN(result) ) {
-        return formatNumber(result);
-    }
+const calcSalesDiffPercent = computed(() => {
+    return calcDifferencePercentage(props.totalSalesPlan, props.totalSalesOnTime);
 });
 
-const calcSurplusTextColor = computed(() => {
-    return isNumberNegative(calcSurplus.value)
-        ? 'text-danger'
-        : calcSurplus.value === '0'
-            ? 'text-secondary'
-            : 'text-success';
-});
-
-const calcBudgetDiffTextColor = computed(() => {
-    return !isNumberNegative(calcBudgetDiff.value)
-        ? 'text-danger'
-        : calcBudgetDiff.value === '0'
-            ? 'text-secondary'
-            : 'text-success';
+const calcPromoProfitDiffPercent = computed(() => {
+    return calcDifferencePercentage(props.totalPromoProfitPlan, props.totalPromoProfitActual);
 });
 </script>
