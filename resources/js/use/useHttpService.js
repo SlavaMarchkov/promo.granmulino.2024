@@ -61,10 +61,41 @@ export function useHttpService() {
             });
     };
 
+    const print = (url) => {
+        return http.get(url, {
+            responseType: 'blob',
+        }).then((response) => {
+            const blob = new Blob([response.data], { type: 'application/pdf' });
+            const url = window.URL.createObjectURL(blob);
+            window.open(url, '_blank');
+        }).catch((error) => {
+            alertStore.error(error, true);
+            return false;
+        });
+    };
+
+    const download = (url, filename = 'export.pdf') => {
+        return http.get(url, {
+            responseType: 'blob',
+        }).then((response) => {
+            const a = document.createElement('a');
+            a.href = window.URL.createObjectURL(response.data);
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+        }).catch((error) => {
+            alertStore.error(error, true);
+            return false;
+        });
+    };
+
     return {
         get,
         post,
         update,
         destroy,
+        print,
+        download,
     };
 }

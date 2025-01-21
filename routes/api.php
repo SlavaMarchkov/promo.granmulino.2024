@@ -38,6 +38,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
             ->withoutMiddleware(['auth:sanctum', 'admin']);
         Route::post('logout', [AdminAuthController::class, 'logout'])
             ->name('logout');
+        Route::get('promos/{promo}/print', [AdminPromoController::class, 'print']);
         Route::apiResources([
             'regions'    => AdminRegionController::class,
             'cities'     => AdminCityController::class,

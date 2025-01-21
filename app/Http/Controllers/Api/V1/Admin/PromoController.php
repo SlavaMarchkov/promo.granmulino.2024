@@ -11,6 +11,7 @@ use App\Http\Resources\V1\Promo\PromoCollection;
 use App\Http\Resources\V1\Promo\PromoFullResource;
 use App\Models\Promo;
 use App\Services\Promos\PromoService;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
 
@@ -72,5 +73,24 @@ final class PromoController extends ApiController
             'success',
             __('crud.promos.updated'),
         );
+    }
+
+    public function print(Promo $promo)
+    {
+        $promo = $this->promoService->findPromo($promo, [
+            'customer'       => true,
+            'retailer'       => true,
+            'city'           => true,
+            'channel'        => true,
+            'mark'           => true,
+            'promo_products' => true,
+            'promo_sellers'  => true,
+        ])->toArray();
+
+        $pdf = PDF::loadView('Admin.pdf.promo', [
+            'promo' => $promo,
+        ])->setPaper('a4', 'portrait');
+
+        return $pdf->download('export.pdf');
     }
 }
