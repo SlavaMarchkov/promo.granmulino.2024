@@ -1,0 +1,1 @@
+import{o as n,c,f as t,X as l}from"./app-LDVDDXIB.js";const a={class:"row mb-1"},r={class:"col-6 text-accent"},i=["innerHTML"],_={class:"col-6 fw-bold"},m={__name:"TwoColumnRow",props:{title:{type:String,default:"title"}},setup(e){const o=e;return(s,d)=>(n(),c("div",a,[t("div",r,[t("span",{innerHTML:o.title},null,8,i)]),t("div",_,[l(s.$slots,"default")])]))}};export{m as _};
