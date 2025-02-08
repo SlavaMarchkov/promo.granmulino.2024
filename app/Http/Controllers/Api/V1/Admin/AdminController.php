@@ -1,57 +1,81 @@
 <?php
-/*
+
 declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\V1\Admin;
 
-use App\Http\Controllers\Controller;
-use App\Models\Admin;
-use Illuminate\Http\Request;
+use App\Http\Controllers\ApiController;
+use App\Http\Requests\Admin\StoreUpdateRequest;
+use App\Http\Resources\V1\User\UserCollection;
+use App\Http\Resources\V1\User\UserResource;
+use App\Services\Users\UserService;
+use Illuminate\Http\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 
-final class AdminController extends Controller
+final class AdminController extends ApiController
 {
+    public function __construct(
+        private readonly UserService $userService,
+    ) {}
+
     public function index()
+    : JsonResponse
     {
-        return Admin::all();
-    }
-
-    public function store(Request $request)
-    {
-        $data = $request->validate([
-            'email'     => ['required', 'email', 'max:254'],
-            'password'  => ['required'],
-            'name'      => ['required'],
-            'is_active' => ['boolean'],
-            'abilities' => ['required'],
+        $admins = $this->userService->getUsers([
+            'is_admin'  => true,
         ]);
 
-        return Admin::create($data);
+        return $this->successResponse(
+            new UserCollection($admins),
+            'success',
+            __('crud.admins.all'),
+        );
     }
 
-    public function show(Admin $admin)
+    public function store(StoreUpdateRequest $request)
+    : JsonResponse
     {
-        return $admin;
+        $data = $request->validated();
+        $admin = $this->userService->storeUser($data);
+
+        return $this->successResponse(
+            new UserResource($admin),
+            'success',
+            __('crud.admins.created'),
+            Response::HTTP_CREATED,
+        );
     }
 
-    public function update(Request $request, Admin $admin)
+    public function update(int $user_id, StoreUpdateRequest $request)
+    : JsonResponse
     {
-        $data = $request->validate([
-            'email'     => ['required', 'email', 'max:254'],
-            'password'  => ['required'],
-            'name'      => ['required'],
-            'is_active' => ['boolean'],
-            'abilities' => ['required'],
-        ]);
+        $data = $request->validated();
+        $admin = $this->userService->findUserById($user_id);
+        $admin = $this->userService->updateUser($admin, $data);
 
-        $admin->update($data);
-
-        return $admin;
+        return $this->successResponse(
+            new UserResource($admin),
+            'success',
+            __('crud.admins.updated'),
+        );
     }
 
-    public function destroy(Admin $admin)
+    public function destroy(int $user_id)
+    : JsonResponse
     {
-        $admin->delete();
+        $admin = $this->userService->findUserById($user_id);
+        $result = $this->userService->deleteUser($admin);
 
-        return response()->json();
+        return ($result == 0)
+            ? $this->successResponse(
+                new UserResource($admin),
+                'success',
+                __('crud.admins.deleted'),
+            )
+            : $this->errorResponse(
+                Response::HTTP_OK,
+                'error',
+                __('crud.admins.not_deleted'),
+            );
     }
-}*/
+}

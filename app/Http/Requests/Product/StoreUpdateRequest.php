@@ -34,7 +34,7 @@ final class StoreUpdateRequest extends FormRequest
             ],
             'is_active'   => ['required', new BooleanRule()],
             'image'       => ['nullable', 'string'],
-            'category_id' => ['required', 'nullable', 'exists:categories,id'],
+            'category_id' => ['required', 'exists:categories,id'],
         ];
     }
 

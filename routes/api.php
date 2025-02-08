@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\V1\Admin\AdminController;
 use App\Http\Controllers\Api\V1\Admin\AuthController as AdminAuthController;
 use App\Http\Controllers\Api\V1\Admin\CategoryController as AdminCategoryController;
 use App\Http\Controllers\Api\V1\Admin\CityController as AdminCityController;
@@ -40,14 +41,15 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
             ->name('logout');
         Route::get('promos/{promo}/print', [AdminPromoController::class, 'print']);
         Route::apiResources([
-            'regions'    => AdminRegionController::class,
-            'cities'     => AdminCityController::class,
-            'categories' => AdminCategoryController::class,
-            'promos'     => AdminPromoController::class,
-            'products'   => AdminProductController::class,
-            'customers'  => AdminCustomerController::class,
-            'retailers'  => AdminRetailerController::class,
-            'users'      => AdminUserController::class,
+            'administrators' => AdminController::class,
+            'cities'         => AdminCityController::class,
+            'categories'     => AdminCategoryController::class,
+            'customers'      => AdminCustomerController::class,
+            'products'       => AdminProductController::class,
+            'promos'         => AdminPromoController::class,
+            'regions'        => AdminRegionController::class,
+            'retailers'      => AdminRetailerController::class,
+            'users'          => AdminUserController::class,
         ]);
     });
     Route::group([

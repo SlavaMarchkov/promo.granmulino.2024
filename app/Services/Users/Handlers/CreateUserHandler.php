@@ -15,18 +15,21 @@ final readonly class CreateUserHandler
 {
     public function __construct(
         private UserRepositoryInterface $userRepository,
-        private Role                    $role,
-    )
-    {
+        private Role $role,
+    ) {
     }
 
     public function handle(array $data)
-    : User
-    {
+    : User {
         $data['last_name'] = process_name($data['last_name']);
         $data['first_name'] = process_name($data['first_name']);
         $data['middle_name'] = process_name($data['middle_name']);
-        $data['role_id'] = $this->role->getRoleId(RoleEnum::MANAGER->getName());
+
+        if ($data['is_admin']) {
+            $data['display_name'] = $data['last_name'] . ' ' . $data['first_name'] . ' (админ)';
+        } else {
+            $data['role_id'] = $this->role->getRoleId(RoleEnum::MANAGER->getName());
+        }
 
         return $this->userRepository->createFromArray($data);
     }

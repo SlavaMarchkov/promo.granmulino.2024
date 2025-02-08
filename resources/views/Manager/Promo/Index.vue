@@ -1,4 +1,31 @@
 <template>
+    <div class="row mb-4">
+        <div class="col-12">
+            <h3 class="mb-1">{{ $route.meta.title }}</h3>
+        </div>
+    </div>
+    <div class="row mb-4">
+        <div class="col-12">
+            <TheFilter
+                @reset-filter="clearSearch"
+            >
+                <div class="col-md-4 mb-2">
+                    <SelectGroup
+                        v-model="searchBy.userId"
+                        :chooseFrom="'-- Выберите статус --'"
+                    >Статус
+                    </SelectGroup>
+                </div>
+                <div class="col-md-4 mb-2">
+                    <SelectGroup
+                        v-model="searchBy.userId"
+                        :chooseFrom="'-- Выберите тип акции --'"
+                    >Тип акции
+                    </SelectGroup>
+                </div>
+            </TheFilter>
+        </div>
+    </div>
     <div
         v-if="state.promos.length > 0"
         class="row row-cols-xl-3 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-3"
@@ -53,10 +80,14 @@ import { onMounted, reactive } from 'vue';
 import { useSpinnerStore } from '@/stores/spinners.js';
 import { MANAGER_URLS } from '@/helpers/constants.js';
 import { useHttpService } from '@/use/useHttpService.js';
+import { useArrayHandlers } from '@/use/useArrayHandlers.js';
 import TheCard from '@/components/core/TheCard.vue';
 import { formatNumber } from '@/helpers/formatters.js';
 import TwoColumnRow from '@/components/core/TwoColumnRow.vue';
+import TheFilter from '@/components/core/TheFilter.vue';
+import SelectGroup from '@/components/form/SelectGroup.vue';
 
+const arrayHandlers = useArrayHandlers();
 const spinnerStore = useSpinnerStore();
 const { get } = useHttpService();
 
@@ -71,5 +102,14 @@ onMounted(async () => {
 const getPromos = async () => {
     const { data } = await get(MANAGER_URLS.PROMO);
     state.promos = data.promos;
+};
+
+const searchBy = reactive({
+    userId: '',
+});
+
+const clearSearch = () => {
+    arrayHandlers.resetSearchKeys(searchBy);
+    arrayHandlers.resetSortKeys();
 };
 </script>

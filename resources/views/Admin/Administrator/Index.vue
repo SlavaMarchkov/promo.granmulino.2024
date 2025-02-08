@@ -1,13 +1,14 @@
 <template>
     <div class="row mb-4">
-        <div class="col-12">
-            <button
-                class="btn btn-primary"
-                type="button"
-                @click="createUserInit"
-            >
-                Новый пользователь
-            </button>
+        <div class="col-6">
+            <h3 class="mb-1">{{ $route.meta.title }}</h3>
+        </div>
+        <div v-show="isSuperAdmin" class="col-6 text-end">
+            <TheButton
+                class="btn-primary"
+                @click="createAdministratorInit"
+            >Новый администратор
+            </TheButton>
         </div>
     </div>
     <div class="row mb-2">
@@ -70,14 +71,7 @@
                                     {{ item.id }}
                                 </th>
                                 <td class="text-start">
-                                    <RouterLink :to="{
-                                        name: 'User.View',
-                                        params: {
-                                            'id': item.id
-                                        }
-                                    }">
-                                        {{ item.lastName }}
-                                    </RouterLink>
+                                    {{ item.lastName }}
                                 </td>
                                 <td class="text-start">
                                     {{ item.firstName }}
@@ -89,6 +83,9 @@
                                     {{ item.email }}
                                 </td>
                                 <td class="text-start">
+                                    {{ item.roleName }}
+                                </td>
+                                <td class="text-start">
                                     {{ item.loggedInAt }}
                                 </td>
                                 <td>
@@ -97,7 +94,7 @@
                                 <TdButton
                                     :id="item.id"
                                     intent="view"
-                                    @runButtonHandler="viewUserInit"
+                                    @runButtonHandler="viewAdministratorInit"
                                 >View
                                 </TdButton>
                                 <template
@@ -106,13 +103,13 @@
                                     <TdButton
                                         :id="item.id"
                                         intent="edit"
-                                        @runButtonHandler="editUserInit"
+                                        @runButtonHandler="editAdministratorInit"
                                     >Edit
                                     </TdButton>
                                     <TdButton
                                         :id="item.id"
                                         intent="delete"
-                                        @runButtonHandler="deleteUser"
+                                        @runButtonHandler="deleteAdministrator"
                                     >Delete
                                     </TdButton>
                                 </template>
@@ -135,8 +132,8 @@
         :custom-classes="['']"
     >
         <template #title>
-            <span v-if="state.isEditing">Редактирование пользователя <b>{{ state.user.fullName }}</b></span>
-            <span v-else>Добавление пользователя</span>
+            <span v-if="state.isEditing">Редактирование администратора <b>{{ state.administrator.fullName }}</b></span>
+            <span v-else>Добавление администратора</span>
         </template>
         <template #body>
             <Alert/>
@@ -145,7 +142,7 @@
                     <TheLabel for="last-name" required>Фамилия</TheLabel>
                     <TheInput
                         id="last-name"
-                        v-model="state.user.lastName"
+                        v-model="state.administrator.lastName"
                         placeholder="Например: Овчинникова"
                         type="text"
                     />
@@ -154,7 +151,7 @@
                     <TheLabel for="first-name" required>Имя</TheLabel>
                     <TheInput
                         id="first-name"
-                        v-model="state.user.firstName"
+                        v-model="state.administrator.firstName"
                         placeholder="Например: Екатерина"
                         type="text"
                     />
@@ -163,7 +160,7 @@
                     <TheLabel for="middle-name">Отчество</TheLabel>
                     <TheInput
                         id="middle-name"
-                        v-model="state.user.middleName"
+                        v-model="state.administrator.middleName"
                         placeholder="Например: Александровна"
                         type="text"
                     />
@@ -172,7 +169,7 @@
                     <TheLabel for="email" required>Email</TheLabel>
                     <TheInput
                         id="email"
-                        v-model="state.user.email"
+                        v-model="state.administrator.email"
                         placeholder="Например: 508@altan.ru"
                         type="email"
                     />
@@ -181,16 +178,28 @@
                     <TheLabel for="password" :required="!state.isEditing">{{ state.isEditing ? 'Пароль (оставьте пустым, если не изменяете пароль)': 'Пароль' }}</TheLabel>
                     <TheInput
                         id="password"
-                        v-model="state.user.password"
+                        v-model="state.administrator.password"
                         type="password"
                     />
+                </div>
+                <div class="col-12">
+                    <TheLabel for="role" required>Роль в системе</TheLabel>
+                    <select id="role" v-model="state.administrator.role" class="form-select">
+                        <option disabled selected value="">-- Выберите роль --</option>
+                        <option
+                            v-for="(role, roleName) in ADMIN_ROLES"
+                            :key="roleName"
+                            :value="roleName"
+                        >{{ role }}
+                        </option>
+                    </select>
                 </div>
                 <div class="col-12">
                     <div class="form-check">
                         <input
                             id="is-active"
-                            v-model="state.user.isActive"
-                            :checked="state.user.isActive"
+                            v-model="state.administrator.isActive"
+                            :checked="state.administrator.isActive"
                             class="form-check-input"
                             type="checkbox"
                         >
@@ -210,7 +219,7 @@
                 :loading="spinnerStore.isButtonDisabled"
                 class="w-25"
                 type="button"
-                @click="saveUser"
+                @click="saveAdministrator"
             >
                 <span v-if="state.isEditing">Сохранить</span>
                 <span v-else>Создать</span>
@@ -224,7 +233,7 @@
         :custom-classes="['']"
     >
         <template #title>
-            Просмотр пользователя <b>{{ state.user.fullName }}</b>
+            Просмотр администратора <b>{{ state.administrator.fullName }}</b>
         </template>
         <template #body>
             <table class="table table-bordered mt-3 align-middle text-wrap"
@@ -232,39 +241,39 @@
                 <tbody>
                 <tr>
                     <th style="width: 35%;">ID</th>
-                    <td>{{ state.user.id }}</td>
+                    <td>{{ state.administrator.id }}</td>
                 </tr>
                 <tr>
                     <th>Фамилия</th>
-                    <td>{{ state.user.lastName }}</td>
+                    <td>{{ state.administrator.lastName }}</td>
                 </tr>
                 <tr>
                     <th>Имя</th>
-                    <td>{{ state.user.firstName }}</td>
+                    <td>{{ state.administrator.firstName }}</td>
                 </tr>
                 <tr>
                     <th>Отчество</th>
-                    <td>{{ state.user.middleName }}</td>
+                    <td>{{ state.administrator.middleName }}</td>
                 </tr>
                 <tr>
                     <th>Системное имя</th>
-                    <td>{{ state.user.fullName }}</td>
+                    <td>{{ state.administrator.displayName }}</td>
                 </tr>
                 <tr>
                     <th>Email</th>
-                    <td>{{ state.user.email }}</td>
+                    <td>{{ state.administrator.email }}</td>
+                </tr>
+                <tr>
+                    <th>Роль</th>
+                    <td>{{ state.administrator.roleName }} - {{ state.administrator.role }}</td>
                 </tr>
                 <tr>
                     <th>Работает?</th>
-                    <td><TheBadge :is-active="state.user.isActive" /></td>
-                </tr>
-                <tr>
-                    <th>Админ?</th>
-                    <td><TheBadge :is-active="state.user.isAdmin" /></td>
+                    <td><TheBadge :is-active="state.administrator.isActive" /></td>
                 </tr>
                 <tr>
                     <th>Последний вход</th>
-                    <td>{{ state.user.loggedInAt }}</td>
+                    <td>{{ state.administrator.loggedInAt }}</td>
                 </tr>
                 </tbody>
             </table>
@@ -293,7 +302,14 @@ import ThSort from '@/components/table/ThSort.vue';
 import TdButton from '@/components/table/TdButton.vue';
 import TheCheckbox from '@/components/form/TheCheckbox.vue';
 import TheBadge from '@/components/core/TheBadge.vue';
-import { ADMIN_URLS, DELETE_TH_FIELD, EDIT_TH_FIELD, ROLES, USER_TH_FIELDS } from '@/helpers/constants.js';
+import {
+    ADMIN_ROLES,
+    ADMIN_TH_FIELDS,
+    ADMIN_URLS,
+    DELETE_TH_FIELD,
+    EDIT_TH_FIELD,
+    ROLES,
+} from '@/helpers/constants.js';
 
 const alertStore = useAlertStore();
 const spinnerStore = useSpinnerStore();
@@ -306,23 +322,25 @@ const isSuperAdmin = computed(() => role === ROLES.SUPER_ADMIN);
 
 const thItems = computed(() => {
     return isSuperAdmin.value
-        ? USER_TH_FIELDS.concat(EDIT_TH_FIELD, DELETE_TH_FIELD)
-        : USER_TH_FIELDS;
+        ? ADMIN_TH_FIELDS.concat(EDIT_TH_FIELD, DELETE_TH_FIELD)
+        : ADMIN_TH_FIELDS;
 });
 
 const initialFormData = () => ({
     firstName: '',
     lastName: '',
     middleName: '',
-    displayName: '',
     email: '',
     password: '',
+    role: '',
+    roleName: '',
     isActive: true,
+    isAdmin: true,
 });
 
 const state = reactive({
-    users: [],
-    user: initialFormData(),
+    administrators: [],
+    administrator: initialFormData(),
     isEditing: false,
 });
 
@@ -339,42 +357,42 @@ let viewModalPopUp = null;
 
 function resetState() {
     state.isEditing = false;
-    state.user = initialFormData();
+    state.administrator = initialFormData();
     if ( document.activeElement ) {
         document.activeElement.blur();
     }
 }
 
 onMounted(async () => {
-    await getUsers();
+    await getAdministrators();
     modalPopUp = new bootstrap.Modal(document.getElementById('modalPopUp'));
     modalPopUp._element.addEventListener('hide.bs.modal', resetState);
 });
 
-const getUsers = async () => {
-    const { data } = await get(ADMIN_URLS.USER);
-    state.users = data.users;
+const getAdministrators = async () => {
+    const { data } = await get(ADMIN_URLS.ADMIN);
+    state.administrators = data.users;
 };
 
-const getOneUser = (id) => state.users.find(user => user.id === id);
+const getOneAdministrator = (id) => state.administrators.find(admin => admin.id === id);
 
-const createUserInit = () => {
+const createAdministratorInit = () => {
     alertStore.clear();
     state.isEditing = false;
-    state.user = initialFormData();
+    state.administrator = initialFormData();
     modalPopUp.show();
 };
 
-const editUserInit = (id) => {
+const editAdministratorInit = (id) => {
     alertStore.clear();
     state.isEditing = true;
-    state.user = getOneUser(id);
+    state.administrator = getOneAdministrator(id);
     modalPopUp.show();
 };
 
-const viewUserInit = (id) => {
+const viewAdministratorInit = (id) => {
     viewModalPopUp = new bootstrap.Modal(document.getElementById('viewModalPopUp'));
-    state.user = getOneUser(id);
+    state.administrator = getOneAdministrator(id);
     viewModalPopUp.show();
     viewModalPopUp._element.addEventListener('hide.bs.modal', resetState);
 };
@@ -394,38 +412,41 @@ const clearSearch = () => {
     arrayHandlers.resetSortKeys();
 };
 
-const saveUser = async () => {
+const saveAdministrator = async () => {
     if ( state.isEditing ) {
-        const response = await update(`${ ADMIN_URLS.USER }/${ state.user.id }`, state.user);
+        const response = await update(`${ ADMIN_URLS.ADMIN }/${ state.administrator.id }`, state.administrator);
         if ( response && response.status === 'success' ) {
+            const updatedAdministrator = response.data;
+            const idx = state.administrators.findIndex(admin => admin.id === updatedAdministrator.id);
+            state.administrators[idx] = updatedAdministrator;
             alertStore.clear();
             modalPopUp.hide();
-            await getUsers();
         }
     } else {
-        const response = await post(ADMIN_URLS.USER, state.user);
+        const response = await post(ADMIN_URLS.ADMIN, state.administrator);
         if ( response && response.status === 'success' ) {
             alertStore.clear();
-            state.user = initialFormData();
+            state.administrator = initialFormData();
             modalPopUp.hide();
+            state.administrators.push(response.data);
             arrayHandlers.resetSearchKeys(searchBy);
             arrayHandlers.resetSortKeys('id', false);
-            await getUsers();
         }
     }
 };
 
-const deleteUser = async (id) => {
-    if ( confirm('Точно удалить пользователя? Уверены?') ) {
-        const response = await destroy(`${ ADMIN_URLS.USER }/${ id }`);
+const deleteAdministrator = async (id) => {
+    if ( confirm('Точно удалить администратора? Уверены?') ) {
+        const response = await destroy(`${ ADMIN_URLS.ADMIN }/${ id }`);
         if ( response && response.status === 'success' ) {
-            await getUsers();
+            const idx = state.administrators.findIndex(admin => admin.id === id);
+            state.administrators.splice(idx, 1);
         }
     }
 };
 
 const sortedItems = computed(() => {
-    return arrayHandlers.sortArray(state.users);
+    return arrayHandlers.sortArray(state.administrators);
 });
 
 const filteredItems = computed(() => {

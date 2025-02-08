@@ -1,7 +1,7 @@
 <template>
     <div class="row mb-4">
         <div class="col-6">
-            <h3 class="mb-0">{{ $route.meta.title }}</h3>
+            <h3 class="mb-1">{{ $route.meta.title }}</h3>
         </div>
         <div v-show="isSuperAdmin" class="col-6 text-end">
             <TheButton
@@ -393,9 +393,11 @@ const saveCity = async () => {
     if ( state.isEditing ) {
         const response = await update(`${ ADMIN_URLS.CITY }/${ state.city.id }`, state.city);
         if ( response && response.status === 'success' ) {
+            const updatedCity = response.data;
+            const idx = state.cities.findIndex(c => c.id === updatedCity.id);
+            state.cities[idx] = updatedCity;
             alertStore.clear();
             modalPopUp.hide();
-            await getCities();
         }
     } else {
         const response = await post(ADMIN_URLS.CITY, state.city);
@@ -403,9 +405,9 @@ const saveCity = async () => {
             alertStore.clear();
             state.city = initialFormData();
             modalPopUp.hide();
+            state.cities.push(response.data);
             arrayHandlers.resetSearchKeys(searchBy);
             arrayHandlers.resetSortKeys('id', false);
-            await getCities();
         }
     }
 };
@@ -414,7 +416,8 @@ const deleteCity = async (id) => {
     if ( confirm('Точно удалить город? Уверены?') ) {
         const response = await destroy(`${ ADMIN_URLS.CITY }/${ id }`);
         if ( response && response.status === 'success' ) {
-            await getCities();
+            const idx = state.cities.findIndex(c => c.id === id);
+            state.cities.splice(idx, 1);
         }
     }
 };

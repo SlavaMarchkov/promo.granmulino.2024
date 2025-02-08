@@ -1,7 +1,7 @@
 <template>
     <div class="row mb-4">
         <div class="col-6">
-            <h3 class="mb-0">{{ $route.meta.title }}</h3>
+            <h3 class="mb-1">{{ $route.meta.title }}</h3>
         </div>
         <div v-show="isSuperAdmin" class="col-6 text-end">
             <TheButton
@@ -409,7 +409,7 @@ const getOneCustomer = (id) => state.customers.find(customer => customer.id === 
 const getRegions = async () => {
     const { data } = await get(ADMIN_URLS.REGION, {
         params: {
-            cities: false,
+            cities: true,
         },
     });
     state.regions = data.regions;
@@ -474,9 +474,11 @@ const saveCustomer = async () => {
     if ( state.isEditing ) {
         const response = await update(`${ ADMIN_URLS.CUSTOMER }/${ state.customer.id }`, state.customer);
         if ( response && response.status === 'success' ) {
+            const updatedCustomer = response.data;
+            const idx = state.customers.findIndex(c => c.id === updatedCustomer.id);
+            state.customers[idx] = updatedCustomer;
             alertStore.clear();
             modalPopUp.hide();
-            await getCustomers();
         }
     } else {
         const response = await post(ADMIN_URLS.CUSTOMER, state.customer);
@@ -484,9 +486,9 @@ const saveCustomer = async () => {
             alertStore.clear();
             state.customer = initialFormData();
             modalPopUp.hide();
+            state.customers.push(response.data);
             arrayHandlers.resetSearchKeys(searchBy);
             arrayHandlers.resetSortKeys('id', false);
-            await getCustomers();
         }
     }
 };
@@ -495,7 +497,8 @@ const deleteCustomer = async (id) => {
     if ( confirm('Точно удалить контрагента? Уверены?') ) {
         const response = await destroy(`${ ADMIN_URLS.CUSTOMER }/${ id }`);
         if ( response && response.status === 'success' ) {
-            await getCustomers();
+            const idx = state.customers.findIndex(c => c.id === id);
+            state.customers.splice(idx, 1);
         }
     }
 };

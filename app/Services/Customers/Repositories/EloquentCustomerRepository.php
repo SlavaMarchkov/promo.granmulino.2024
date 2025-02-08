@@ -12,6 +12,7 @@ use App\Services\Customers\Filters\CustomerFilter;
 use App\Services\Customers\Filters\CustomerProductFilter;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 final readonly class EloquentCustomerRepository implements CustomerRepositoryInterface
@@ -73,15 +74,14 @@ final readonly class EloquentCustomerRepository implements CustomerRepositoryInt
 
     public function delete(Customer $customer)
     : int {
-        // TODO: Проверить, есть ли привязанный менеджер и брифы
-        return 1;
-        /*$users_count = $customer->user->count();
+        $user_id = (int) $customer->user->id;
+        $promo_count = DB::scalar('select count(*) as count from promos where customer_id = ?', [$customer->id]);
 
-        if ($users_count == 0) {
+        if ($user_id === 0 && $promo_count === 0) {
             $customer->delete();
         }
 
-        return $users_count;*/
+        return $user_id + $promo_count;
     }
 
     public function deleteSeller(CustomerSeller $seller)

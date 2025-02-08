@@ -72,10 +72,6 @@
         <Alert v-else class="mt-3"/>
     </template>
     <hr>
-    <TheButton
-        @click="print"
-        class="btn-secondary"
-    >Print</TheButton>
     <RouterLink
         :to="{ name: 'Product.Index' }"
         class="btn btn-secondary my-2"
@@ -138,10 +134,5 @@ const navigateToPreviousItem = () => {
 
 const navigateToNextItem = () => {
     router.push({ name: 'Product.View', params: { id: item.value.next } });
-};
-
-const print = () => {
-    window.print();
-    router.push('/').catch(() => {});
 };
 </script>

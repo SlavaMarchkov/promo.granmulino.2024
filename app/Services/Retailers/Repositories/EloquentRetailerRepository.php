@@ -10,6 +10,7 @@ use App\Models\Retailer;
 use App\Models\User;
 use App\Services\Retailers\Filters\RetailerFilter;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\DB;
 
 final class EloquentRetailerRepository implements RetailerRepositoryInterface
 {
@@ -45,14 +46,12 @@ final class EloquentRetailerRepository implements RetailerRepositoryInterface
 
     public function delete(Retailer $retailer)
     : int {
-        // TODO: Проверить наличие брифов и др. зависимостей
-        return 1;
-        /*$customers_count = $retailer->customer->count();
+        $promo_count = DB::scalar('select count(*) as count from promos where retailer_id = ?', [$retailer->id]);
 
-        if ($customers_count == 0) {
+        if ($promo_count === 0) {
             $retailer->delete();
         }
 
-        return $customers_count;*/
+        return $promo_count;
     }
 }

@@ -10,25 +10,9 @@ use App\Models\Product;
 
 final class ProductObserver
 {
-    public function created(Product $product)
-    : void {
-
-    }
 
     public function updated(Product $product)
     : void {
         event(new UpdatedEvent($product));
-    }
-
-    public function saved(Product $product)
-    : void {
-    }
-
-    public function deleted(Product $product)
-    : void {
-    }
-
-    public function retrieved(Product $product)
-    : void {
     }
 }

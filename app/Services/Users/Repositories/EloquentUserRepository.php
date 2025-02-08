@@ -7,8 +7,11 @@ namespace App\Services\Users\Repositories;
 
 
 use App\Models\User;
-use Illuminate\Database\Eloquent\Builder;
+use App\Services\Users\Filters\IsActive;
+use App\Services\Users\Filters\IsAdmin;
+use App\Services\Users\Filters\RoleId;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pipeline\Pipeline;
 
 final class EloquentUserRepository implements UserRepositoryInterface
 {
@@ -18,12 +21,25 @@ final class EloquentUserRepository implements UserRepositoryInterface
         return User::query()->where('id', $user->id)->first();
     }
 
+    public function findById(int $user_id)
+    : ?User
+    {
+        return User::query()->where('id', $user_id)->first();
+    }
+
     public function get(array $params = [])
     : Collection
     {
-        $usersSql = User::query();
-        $this->applyFilters($usersSql, $params);
-        return $usersSql->get();
+        request()->merge($params);
+        $users = app()->make(Pipeline::class)
+            ->send(User::query())
+            ->through([
+                IsActive::class,
+                IsAdmin::class,
+                RoleId::class,
+            ])
+            ->thenReturn();
+        return $users->get();
     }
 
     public function createFromArray(array $data)
@@ -49,13 +65,5 @@ final class EloquentUserRepository implements UserRepositoryInterface
         }
 
         return $customers_count;
-    }
-
-    private function applyFilters(Builder $qb, array $params)
-    : void
-    {
-        $qb->when($params['is_active'] == true, fn($qb) => $qb->where('is_active', true))
-            ->when($params['is_admin'] == true, fn($qb) => $qb->where('is_admin', true))
-            ->where('role_id', $params['role_id']);
     }
 }

@@ -6,9 +6,9 @@ declare(strict_types=1);
 namespace App\Services\Products\Repositories;
 
 use App\Models\Product;
-use App\Services\Products\Filters\Category;
-use App\Services\Products\Filters\Id;
 use App\Services\Products\Filters\IsActive;
+use App\Services\Products\Filters\IsAdmin;
+use App\Services\Products\Filters\RoleId;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pipeline\Pipeline;
@@ -26,9 +26,9 @@ final class EloquentProductRepository implements ProductRepositoryInterface
         $product = app()->make(Pipeline::class)
             ->send(Product::query())
             ->through([
-                Id::class,
+                IsAdmin::class,
                 IsActive::class,
-                Category::class,
+                RoleId::class,
             ])
             ->thenReturn();
         return $product->first();
@@ -44,7 +44,7 @@ final class EloquentProductRepository implements ProductRepositoryInterface
             ->send(Product::query())
             ->through([
                 IsActive::class,
-                Category::class,
+                RoleId::class,
             ])
             ->thenReturn();
         return $products->get();
@@ -64,12 +64,11 @@ final class EloquentProductRepository implements ProductRepositoryInterface
     public function delete(Product $product)
     : int {
         $customers_count = DB::scalar(
-            '
-select count(*)
-    as customers_count
-from customer_product
-where product_id = ?
-',
+            'select count(*)
+                    as customers_count
+                    from customer_product
+                    where product_id = ?
+            ',
             [$product->id],
         );
 

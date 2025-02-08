@@ -1,4 +1,9 @@
 <template>
+    <div class="row mb-4">
+        <div class="col-12">
+            <h3 class="mb-1">{{ $route.meta.title }}</h3>
+        </div>
+    </div>
     <div v-if="spinnerStore.isLoading" class="row">
         <div class="col-12">
             <h4 class="my-4"><TheSpinner /></h4>

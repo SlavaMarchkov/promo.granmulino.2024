@@ -15,8 +15,6 @@ class RetailerFullResource extends RetailerResource
         return [
             ...parent::toArray($request),
 
-            'description' => $this->description ?? '',
-
             'next' => $this->findNext($this->id),
             'prev' => $this->findPrevious($this->id),
         ];

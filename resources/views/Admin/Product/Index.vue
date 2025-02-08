@@ -1,7 +1,7 @@
 <template>
     <div class="row mb-4">
         <div class="col-6">
-            <h3 class="mb-0">{{ $route.meta.title }}</h3>
+            <h3 class="mb-1">{{ $route.meta.title }}</h3>
         </div>
         <div v-show="isSuperAdmin" class="col-6 text-end">
             <TheButton
@@ -187,7 +187,7 @@
                     />
                 </div>
                 <div v-if="isPriceAdmin" class="col-6">
-                    <TheLabel for="price" required>Отпускная цена, руб.</TheLabel>
+                    <TheLabel for="price" required>Себестоимость, руб.</TheLabel>
                     <TheInput
                         id="price"
                         v-model="state.product.price"
@@ -509,9 +509,9 @@ const createProduct = async () => {
         alertStore.clear();
         state.product = initialFormData();
         modalPopUp.hide();
+        state.products.push(response.data);
         arrayHandlers.resetSearchKeys(searchBy);
         arrayHandlers.resetSortKeys('id', false);
-        await getProducts();
     }
 };
 
@@ -530,8 +530,10 @@ const updateProduct = async () => {
     if ( response && response.status === 'success' ) {
         alertStore.clear();
         state.product = initialFormData();
+        const updatedProduct = response.data;
+        const idx = state.products.findIndex(pr => pr.id === updatedProduct.id);
+        state.products[idx] = updatedProduct;
         modalPopUp.hide();
-        await getProducts();
     }
 };
 
@@ -539,7 +541,8 @@ const deleteProduct = async (id) => {
     if ( confirm('Точно удалить продукт? Уверены?') ) {
         const { status } = await destroy(`${ ADMIN_URLS.PRODUCT }/${ id }`);
         if ( status === 'success' ) {
-            await getProducts();
+            const idx = state.products.findIndex(pr => pr.id === id);
+            state.products.splice(idx, 1);
         }
     }
 };

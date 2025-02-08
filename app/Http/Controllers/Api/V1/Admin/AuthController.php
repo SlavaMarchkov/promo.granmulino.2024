@@ -18,6 +18,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 final class AuthController extends ApiController
 {
+
     public function login(LoginRequest $request)
     : JsonResponse {
         $credentials = $request->validated();
@@ -41,7 +42,7 @@ final class AuthController extends ApiController
         if ($admin) {
             $role = $admin->role->slug;
 
-            $admin->tokens()->delete();
+            //$admin->tokens()->delete();
             $request->session()->regenerate();
 
             $token = $admin
@@ -79,7 +80,7 @@ final class AuthController extends ApiController
     : JsonResponse
     {
         $admin = auth()->user();
-        $admin->tokens()->delete();
+        $admin->tokens()->delete();// TODO
         request()->session()->invalidate();
 //        request()->session()->regenerateToken();
 

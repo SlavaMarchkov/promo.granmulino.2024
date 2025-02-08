@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Services\Users\Handlers\CreateUserHandler;
 use App\Services\Users\Repositories\UserRepositoryInterface;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\DB;
 
 final readonly class UserService
 {
@@ -24,6 +25,12 @@ final readonly class UserService
     : ?User
     {
         return $this->userRepository->find($user);
+    }
+
+    public function findUserById(int $user_id)
+    : ?User
+    {
+        return $this->userRepository->findById($user_id);
     }
 
     public function getUsers(array $params)
@@ -41,15 +48,27 @@ final readonly class UserService
     public function updateUser(User $user, array $data)
     : User
     {
-        // do some logic
-        // TODO - проверить на is_active. Если передано false, то удалить user_id из таблицы personal_tokens
-        // см. документацию по revoke tokens
+        if ($data['is_active'] === false) {
+            $this->clearTokensAndSessions($user);
+        }
+
         return $this->userRepository->updateFromArray($user, $data);
     }
 
     public function deleteUser(User $user)
     : int
     {
+        $this->clearTokensAndSessions($user);
         return $this->userRepository->delete($user);
+    }
+
+    /**
+     * @param User $user
+     * @return void
+     */
+    private function clearTokensAndSessions(User $user)
+    : void {
+        $user->tokens()->delete();
+        DB::delete('delete from sessions where user_id = ?', [$user->id]);
     }
 }

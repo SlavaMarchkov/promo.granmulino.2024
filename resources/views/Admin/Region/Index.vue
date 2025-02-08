@@ -1,7 +1,7 @@
 <template>
     <div class="row mb-4">
         <div class="col-6">
-            <h3 class="mb-0">{{ $route.meta.title }}</h3>
+            <h3 class="mb-1">{{ $route.meta.title }}</h3>
         </div>
         <div v-show="isSuperAdmin" class="col-6 text-end">
             <TheButton
@@ -315,9 +315,11 @@ const saveRegion = async () => {
     if ( state.isEditing ) {
         const response = await update(`${ ADMIN_URLS.REGION }/${ state.region.id }`, state.region);
         if ( response && response.status === 'success' ) {
+            const updatedRegion = response.data;
+            const idx = state.regions.findIndex(r => r.id === updatedRegion.id);
+            state.regions[idx] = updatedRegion;
             alertStore.clear();
             modalPopUp.hide();
-            await getRegions();
         }
     } else {
         const response = await post(ADMIN_URLS.REGION, state.region);
@@ -325,9 +327,9 @@ const saveRegion = async () => {
             alertStore.clear();
             state.region = initialFormData();
             modalPopUp.hide();
+            state.regions.push(response.data);
             arrayHandlers.resetSearchKeys(searchBy);
             arrayHandlers.resetSortKeys('id', false);
-            await getRegions();
         }
     }
 };
@@ -336,7 +338,8 @@ const deleteRegion = async (id) => {
     if ( confirm('Точно удалить регион? Уверены?') ) {
         const response = await destroy(`${ ADMIN_URLS.REGION }/${ id }`);
         if ( response && response.status === 'success' ) {
-            await getRegions();
+            const idx = state.regions.findIndex(r => r.id === id);
+            state.regions.splice(idx, 1);
         }
     }
 };

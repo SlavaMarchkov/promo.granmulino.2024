@@ -1,7 +1,7 @@
 <template>
     <div class="row mb-4">
         <div class="col-12">
-            <h3 class="mb-0">{{ $route.meta.title }}</h3>
+            <h3 class="mb-1">{{ $route.meta.title }}</h3>
         </div>
     </div>
     <div class="row mb-4">

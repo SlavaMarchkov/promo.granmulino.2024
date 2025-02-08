@@ -1,7 +1,7 @@
 <template>
     <div class="row mb-4">
         <div class="col-6">
-            <h3 class="mb-0">{{ $route.meta.title }}</h3>
+            <h3 class="mb-1">{{ $route.meta.title }}</h3>
         </div>
         <div v-show="isSuperAdmin" class="col-6 text-end">
             <TheButton
@@ -427,9 +427,11 @@ const saveRetailer = async () => {
     if ( state.isEditing ) {
         const response = await update(`${ ADMIN_URLS.RETAILER }/${ state.retailer.id }`, state.retailer);
         if ( response && response.status === 'success' ) {
+            const updatedRetailer = response.data;
+            const idx = state.retailers.findIndex(r => r.id === updatedRetailer.id);
+            state.retailers[idx] = updatedRetailer;
             alertStore.clear();
             modalPopUp.hide();
-            await getRetailers();
         }
     } else {
         const response = await post(ADMIN_URLS.RETAILER, state.retailer);
@@ -437,9 +439,9 @@ const saveRetailer = async () => {
             alertStore.clear();
             state.retailer = initialFormData();
             modalPopUp.hide();
+            state.retailers.push(response.data);
             arrayHandlers.resetSearchKeys(searchBy);
             arrayHandlers.resetSortKeys('id', false);
-            await getRetailers();
         }
     }
 };
@@ -448,7 +450,8 @@ const deleteRetailer = async (id) => {
     if ( confirm('Точно удалить торговую сеть? Уверены?') ) {
         const response = await destroy(`${ ADMIN_URLS.RETAILER }/${ id }`);
         if ( response && response.status === 'success' ) {
-            await getRetailers();
+            const idx = state.retailers.findIndex(r => r.id === id);
+            state.retailers.splice(idx, 1);
         }
     }
 };

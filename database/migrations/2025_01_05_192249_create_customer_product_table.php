@@ -16,8 +16,8 @@ return new class extends Migration {
         Schema::create('customer_product', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignIdFor(Customer::class)->constrained('customers');
-            $table->foreignIdFor(Product::class)->constrained('products');
+            $table->foreignIdFor(Customer::class)->constrained('customers')->cascadeOnDelete();
+            $table->foreignIdFor(Product::class)->constrained('products')->cascadeOnDelete();
             $table->foreignId('category_id');
             $table->decimal('customer_price', 5, 2)
                 ->nullable()

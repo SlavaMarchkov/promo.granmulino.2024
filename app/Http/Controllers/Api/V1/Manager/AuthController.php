@@ -18,6 +18,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 final class AuthController extends ApiController
 {
+
     public function login(LoginRequest $request, Role $role)
     : JsonResponse
     {
@@ -34,7 +35,6 @@ final class AuthController extends ApiController
         if ($user) {
             $role = $user->role->slug; // "MANAGER"
 
-            $user->tokens()->delete();
             $request->session()->regenerate();
 
             $token = $user
@@ -72,10 +72,8 @@ final class AuthController extends ApiController
     : JsonResponse
     {
         $user = auth()->user();
-        $user->tokens()->delete();
+        $user->tokens()->delete();// TODO
         request()->session()->invalidate();
-
-//        DB::delete('delete from sessions where user_id = ?', [$user->id]);
 
         LogoutManagerJob::dispatch($user);
 

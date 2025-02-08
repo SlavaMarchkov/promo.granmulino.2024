@@ -28,9 +28,7 @@ final class CategoryController extends ApiController
     public function index()
     : JsonResponse
     {
-        Cache::forget(self::CACHE_KEY);
-
-        $categories = Cache::remember(self::CACHE_KEY, now()->addDay(), function () {
+        $categories = Cache::remember(self::CACHE_KEY, now()->addMinutes(5), function () {
             return $this->categoryService->getCategories(
                 [...request()->all()],
                 true,

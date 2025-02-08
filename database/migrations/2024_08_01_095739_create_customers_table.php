@@ -31,7 +31,8 @@ return new class extends Migration {
 
             $table->foreignIdFor(Customer::class)
                 ->constrained()
-                ->cascadeOnUpdate();
+                ->cascadeOnUpdate()
+                ->cascadeOnDelete();
 
             $table->string('address', 255)->nullable();
             $table->string('phone', 255)->nullable();

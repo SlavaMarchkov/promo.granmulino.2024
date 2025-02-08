@@ -15,8 +15,6 @@ class CustomerFullResource extends CustomerResource
         return [
             ...parent::toArray($request),
 
-            'description' => $this->description ?? '',
-
             'sellers' => CustomerSellerResource::collection($this->whenLoaded('customer_sellers')),
 
             'next' => $this->findNext($this->id),

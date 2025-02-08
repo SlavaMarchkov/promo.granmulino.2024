@@ -1,13 +1,14 @@
 <template>
     <div class="row mb-4">
-        <div class="col-12">
-            <button
-                class="btn btn-primary"
-                type="button"
+        <div class="col-6">
+            <h3 class="mb-1">{{ $route.meta.title }}</h3>
+        </div>
+        <div v-show="isSuperAdmin" class="col-6 text-end">
+            <TheButton
+                class="btn-primary"
                 @click="createUserInit"
-            >
-                Новый пользователь
-            </button>
+            >Новый пользователь
+            </TheButton>
         </div>
     </div>
     <div class="row mb-2">
@@ -305,7 +306,7 @@ const role = authStore.getUser.role;
 const isSuperAdmin = computed(() => role === ROLES.SUPER_ADMIN);
 
 const thItems = computed(() => {
-    return isSuperAdmin
+    return isSuperAdmin.value
         ? USER_TH_FIELDS.concat(EDIT_TH_FIELD, DELETE_TH_FIELD)
         : USER_TH_FIELDS;
 });
@@ -398,9 +399,11 @@ const saveUser = async () => {
     if ( state.isEditing ) {
         const response = await update(`${ ADMIN_URLS.USER }/${ state.user.id }`, state.user);
         if ( response && response.status === 'success' ) {
+            const updatedUser = response.data;
+            const idx = state.users.findIndex(u => u.id === updatedUser.id);
+            state.users[idx] = updatedUser;
             alertStore.clear();
             modalPopUp.hide();
-            await getUsers();
         }
     } else {
         const response = await post(ADMIN_URLS.USER, state.user);
@@ -408,9 +411,9 @@ const saveUser = async () => {
             alertStore.clear();
             state.user = initialFormData();
             modalPopUp.hide();
+            state.users.push(response.data);
             arrayHandlers.resetSearchKeys(searchBy);
             arrayHandlers.resetSortKeys('id', false);
-            await getUsers();
         }
     }
 };
@@ -419,7 +422,8 @@ const deleteUser = async (id) => {
     if ( confirm('Точно удалить пользователя? Уверены?') ) {
         const response = await destroy(`${ ADMIN_URLS.USER }/${ id }`);
         if ( response && response.status === 'success' ) {
-            await getUsers();
+            const idx = state.users.findIndex(u => u.id === id);
+            state.users.splice(idx, 1);
         }
     }
 };

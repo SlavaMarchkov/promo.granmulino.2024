@@ -27,9 +27,7 @@ final class ProductController extends ApiController
     public function index()
     : JsonResponse
     {
-        Cache::forget(self::CACHE_KEY);
-
-        $products = Cache::remember(self::CACHE_KEY, now()->addDay(), function () {
+        $products = Cache::remember(self::CACHE_KEY, now()->addMinutes(5), function () {
             return $this->productService->getProducts([
                 'category'  => true,
                 'is_active' => false,
@@ -48,7 +46,7 @@ final class ProductController extends ApiController
     : JsonResponse {
         $data = $request->validated();
 
-        if ($data['image']) {
+        if (str_starts_with($data['image'], 'data:image')) {
             $data['image'] = upload_image($data['image']);
         }
 
@@ -56,7 +54,7 @@ final class ProductController extends ApiController
         $product = $this->productService->storeProduct($data);
 
         return $this->successResponse(
-            new ProductResource($product),
+            new ProductResource($product->load('category')),
             'success',
             __('crud.products.created'),
             Response::HTTP_CREATED,

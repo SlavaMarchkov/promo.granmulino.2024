@@ -67,7 +67,14 @@ export const ROLES = {
     MANAGER: 'MANAGER',
 };
 
+export const ADMIN_ROLES = {
+    SUPER_ADMIN: 'Супер-Администратор',
+    PRICE_ADMIN: 'Прайс-Администратор',
+    ADMIN: 'Администратор',
+};
+
 export const ADMIN_URLS = {
+    ADMIN: '/admin/administrators',
     CATEGORY: '/admin/categories',
     CITY: '/admin/cities',
     CUSTOMER: '/admin/customers',
@@ -102,6 +109,18 @@ export const DELETE_TH_FIELD = [
 
 export const PRICE_TH_FIELD = [
     { column: 'price', label: 'Себестоимость, руб.', sortable: true, is_num: true },
+];
+
+export const ADMIN_TH_FIELDS = [
+    { column: 'id', label: 'ID', sortable: true, is_num: true, width: 6 },
+    { column: 'lastName', label: 'Фамилия', sortable: true, is_num: false },
+    { column: 'firstName', label: 'Имя', sortable: true, is_num: false },
+    { column: 'middleName', label: 'Отчество', sortable: true, is_num: false },
+    { column: 'email', label: 'Email', sortable: true, is_num: false },
+    { column: 'roleName', label: 'Роль', sortable: true, is_num: false },
+    { column: 'loggedInAt', label: 'Последний вход', sortable: true, is_num: false },
+    { column: 'isActive', label: 'Работает?', sortable: true, is_num: true, width: 8 },
+    { column: 'view', label: 'Просмотр', sortable: false, is_num: false, width: 8 },
 ];
 
 export const RETAILER_TH_FIELDS = [
@@ -307,6 +326,10 @@ export const ADMIN_MENU_ITEMS = [
             {
                 route: 'User.Index',
                 title: 'Пользователи',
+            },
+            {
+                route: 'Administrator.Index',
+                title: 'Администраторы',
             },
         ],
     },

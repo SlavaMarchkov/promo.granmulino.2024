@@ -21,7 +21,7 @@ final class UpdateListener
             'id'       => $event->product->getAttribute('id'),
             'name'     => $event->product->getAttribute('name'),
             'category' => $event->product->category->name,
-            'price'    => $event->product->getChanges()['price'],
+            'price'    => $event->product->getChanges()['price'] ?? 'not changed',
         ];
         info('Product ID={id}, name={name} was changed.', $data);
         Notification::route('telegram', config('notifications.telegram_admin_id'))

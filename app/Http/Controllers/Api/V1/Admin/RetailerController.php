@@ -30,7 +30,7 @@ final class RetailerController extends ApiController
     {
         Cache::forget(self::CACHE_KEY);
 
-        $retailers = Cache::remember(self::CACHE_KEY, now()->addDay(), function () {
+        $retailers = Cache::remember(self::CACHE_KEY, now()->addMinutes(5), function () {
             return $this->retailerService->getRetailers([...request()->all()]);
         });
 

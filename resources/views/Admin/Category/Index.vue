@@ -1,7 +1,7 @@
 <template>
     <div class="row mb-4">
         <div class="col-6">
-            <h3 class="mb-0">{{ $route.meta.title }}</h3>
+            <h3 class="mb-1">{{ $route.meta.title }}</h3>
         </div>
         <div v-show="isSuperAdmin" class="col-6 text-end">
             <TheButton
@@ -186,7 +186,7 @@
                         <th>ID</th>
                         <th class="text-start">Формат</th>
                         <th>Вес, г</th>
-                        <th v-if="role === ROLES['PRICE_ADMIN']">Цена, руб.</th>
+                        <th v-if="role === ROLES['PRICE_ADMIN']">Себестоимость, руб.</th>
                         <th>В продаже?</th>
                     </tr>
                     </thead>
@@ -337,9 +337,11 @@ const saveCategory = async () => {
     if ( state.isEditing ) {
         const response = await update(`${ ADMIN_URLS.CATEGORY }/${ state.category.id }`, state.category);
         if ( response && response.status === 'success' ) {
+            const updatedCategory = response.data;
+            const idx = state.categories.findIndex(category => category.id === updatedCategory.id);
+            state.categories[idx] = updatedCategory;
             alertStore.clear();
             modalPopUp.hide();
-            await getCategories();
         }
     } else {
         const response = await post(ADMIN_URLS.CATEGORY, state.category);
@@ -347,9 +349,9 @@ const saveCategory = async () => {
             alertStore.clear();
             state.category = initialFormData();
             modalPopUp.hide();
+            state.categories.push(response.data);
             arrayHandlers.resetSearchKeys(searchBy);
             arrayHandlers.resetSortKeys('id', false);
-            await getCategories();
         }
     }
 };
@@ -358,7 +360,8 @@ const deleteCategory = async (id) => {
     if ( confirm('Точно удалить группу товаров? Уверены?') ) {
         const { status } = await destroy(`${ ADMIN_URLS.CATEGORY }/${ id }`);
         if ( status === 'success' ) {
-            await getCategories();
+            const idx = state.categories.findIndex(category => category.id === id);
+            state.categories.splice(idx, 1);
         }
     }
 };

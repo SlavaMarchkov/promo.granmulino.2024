@@ -13,6 +13,9 @@ interface UserRepositoryInterface
     public function find(User $user)
     : ?User;
 
+    public function findById(int $user_id)
+    : ?User;
+
     public function get(array $params = [])
     : Collection;
 

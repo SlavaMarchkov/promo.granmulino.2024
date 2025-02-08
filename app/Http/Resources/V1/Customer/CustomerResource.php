@@ -21,17 +21,19 @@ class CustomerResource extends JsonResource
             'id'       => $this->id,
             'name'     => $this->name,
             'isActive' => $this->is_active,
+            'description' => $this->description ?? '',
 
             'user'      => new UserResource($this->whenLoaded('user')),
             'region'    => new RegionResource($this->whenLoaded('region')),
             'city'      => new CityResource($this->whenLoaded('city')),
             'retailers' => RetailerResource::collection($this->whenLoaded('retailers')),
 
-            'userId'   => $this->whenLoaded('user', fn() => $this->user->id),
+            'userId'     => $this->whenLoaded('user', fn() => $this->user->id),
             'userName'   => $this->whenLoaded('user', fn() => $this->user->full_name),
-            'regionId' => $this->whenLoaded('region', fn() => $this->region->id),
+            'regionId'   => $this->whenLoaded('region', fn() => $this->region->id),
             'regionName' => $this->whenLoaded('region', fn() => $this->region->name),
             'regionCode' => $this->whenLoaded('region', fn() => $this->region->code),
+            'cityId'     => $this->whenLoaded('city', fn() => $this->city->id),
             'cityName'   => $this->whenLoaded('city', fn() => $this->city->name),
         ];
     }

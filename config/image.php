@@ -38,5 +38,7 @@ return [
         'autoOrientation' => true,
         'decodeAnimation' => true,
         'blendingColor' => 'ffffff',
-    ]
+    ],
+
+    'no_image' => 'no-image.png',
 ];
