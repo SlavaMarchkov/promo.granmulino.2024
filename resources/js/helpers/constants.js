@@ -23,40 +23,90 @@ export const RETAILER_TYPES = [
 
 export const PROMO_TYPES = [
     {
+        id: 'DISCOUNT',
+        promoLabel: 'Скидка в цене',
+        promoCode: 'ЖЦ',
         isForRetail: true,
-        type: 'DISCOUNT',
-        title: 'Скидка в цене',
-        code: 'ЖЦ',
     },
     {
+        id: 'SALES_PEOPLE_BOOST',
+        promoLabel: 'Мотивация торгового персонала',
+        promoCode: 'МТП',
         isForRetail: false,
-        type: 'SALES_PEOPLE_BOOST',
-        title: 'Мотивация торгового персонала',
-        code: 'МТП',
     },
     {
+        id: 'GIFT_FOR_PURCHASE',
+        promoLabel: 'Подарок за покупку',
+        promoCode: 'ПП',
         isForRetail: true,
-        type: 'GIFT_FOR_PURCHASE',
-        title: 'Подарок за покупку',
-        code: 'ПП',
     },
     {
+        id: 'RETAILERS_BOOST',
+        promoLabel: 'Мотивация розничных точек',
+        promoCode: 'МРТ',
         isForRetail: false,
-        type: 'RETAILERS_BOOST',
-        title: 'Мотивация розничных точек',
-        code: 'МРТ',
     },
     {
+        id: 'COVERAGE_INCREASE',
+        promoLabel: 'Увеличение покрытия',
+        promoCode: 'УП',
         isForRetail: false,
-        type: 'COVERAGE_INCREASE',
-        title: 'Увеличение покрытия',
-        code: 'УП',
     },
     {
+        id: 'IN_OUT',
+        promoLabel: 'Временный ввод в матрицу сети In-Out',
+        promoCode: 'IN-OUT',
         isForRetail: true,
-        type: 'IN_OUT',
-        title: 'Временный ввод в матрицу сети In-Out',
-        code: 'IN-OUT',
+    },
+];
+
+export const PROMO_STATUSES = [
+    {
+        id: 'ON_APPROVAL',
+        name: 'На согласовании'
+    },
+    {
+        id: 'IN_PROCESS',
+        name: 'В работе'
+    },
+    {
+        id: 'WAITING_FOR_REPORT',
+        name: 'В ожидании отчета'
+    },
+    {
+        id: 'DONE',
+        name: 'Завершенные'
+    },
+    {
+        id: 'DECLINED',
+        name: 'Отклоненные'
+    },
+];
+
+export const QUARTERS = [
+    {
+        id: 'q1',
+        period: 'I квартал'
+    },
+    {
+        id: 'q2',
+        period: 'II квартал'
+    },
+    {
+        id: 'q3',
+        period: 'III квартал'
+    },
+    {
+        id: 'q4',
+        period: 'IV квартал'
+    },
+    {
+        id: 'hy1',
+        period: '1-е полугодие'
+    },
+    {
+        id: 'hy2',
+        period: '2-е полугодие'
     },
 ];
 

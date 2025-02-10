@@ -12,6 +12,18 @@ export default {
         this.token = token;
     },
 
+    setYears(years) {
+        this.years = Array.from(JSON.parse(years)).map(year => ({
+            id: year,
+            year: year.toString(),
+        }));
+    },
+
+    async loadPromoYears() {
+        const { data } = await http.get('/promos/getPromoYears');
+        this.setYears(data.data);
+    },
+
     async loadUser(token, isAdmin) {
         if ( token ) {
             this.setToken(token);

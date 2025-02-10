@@ -4,11 +4,14 @@
         class="list-group-item list-group-item-action promo-item"
     >
         <div class="d-flex w-100 align-items-center">
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <h5 class="mb-1">{{ props.promo.customerName }} | {{ props.promo.retailerName }}</h5>
                 <small>{{ props.promo.startDate }} - {{ props.promo.endDate }}</small>
             </div>
-            <div class="col-md-3 text-center">
+            <div class="col-md-2 text-center">
+                {{ props.promo.userName }}
+            </div>
+            <div class="col-md-2 text-center">
                 <h5 class="mb-0">
                     <span :class="['badge', props.promo.statusColor]">{{ props.promo.statusLabel }}</span>
                 </h5>

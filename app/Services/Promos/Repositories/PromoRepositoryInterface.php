@@ -35,4 +35,7 @@ interface PromoRepositoryInterface
 
     public function updatePromoFromArray(Promo $promo, array $data)
     : Promo;
+
+    public function getYears()
+    : array;
 }

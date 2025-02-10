@@ -68,7 +68,7 @@ class CustomerProduct extends Pivot
     {
         return new Attribute(
             get: function () {
-                return $this->customer_price / self::VAT_RATE;
+                return round(($this->customer_price / self::VAT_RATE), 2);
             },
         );
     }

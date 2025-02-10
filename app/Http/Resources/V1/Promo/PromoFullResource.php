@@ -20,6 +20,7 @@ class PromoFullResource extends PromoResource
             'channelName' => $this->whenLoaded('channel', fn() => $this->channel->name),
             'regionCode'  => $this->whenLoaded('customer', fn() => $this->customer->region->code),
             'cityName'    => $this->whenLoaded('city', fn() => $this->city->name),
+            'userName'    => $this->whenLoaded('user', fn() => $this->user->full_name),
 
             'comments' => $this->comments,
 

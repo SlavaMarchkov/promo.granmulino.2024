@@ -742,12 +742,12 @@ const fetchCustomerProducts = async (customerId) => {
 };
 
 const calcProfitPerUnit = () => {
-    state.form.profitPerUnit = calcGrossProfit.value - calcTransportRatePerUnit.value - calcOfficeExpenses.value - calcMarketingExpenses.value;
+    state.form.profitPerUnit = parseFloat((calcGrossProfit.value - calcTransportRatePerUnit.value - calcOfficeExpenses.value - calcMarketingExpenses.value).toFixed(2));
 };
 
 const calcPromoPrice = (discountPercent) => {
     const discount = 1 - discountPercent / 100;
-    state.form.promoPrice = state.product.priceNoVAT * discount;
+    state.form.promoPrice = parseFloat((state.product.priceNoVAT * discount).toFixed(2));
 };
 
 const calcRevenue = () => {
@@ -759,11 +759,11 @@ const calcNetProfit = () => {
 };
 
 const calcProfitPerProduct = () => {
-    state.form.profitPerProductPlan = convertInputStringToNumber(state.form.salesPlan) * state.form.profitPerUnit;
+    state.form.profitPerProductPlan = parseFloat((convertInputStringToNumber(state.form.salesPlan) * state.form.profitPerUnit).toFixed(2));
 };
 
 const calcCompensation = () => {
-    state.form.compensation = state.product.priceNoVAT - state.form.promoPrice;
+    state.form.compensation = parseFloat((state.product.priceNoVAT - state.form.promoPrice).toFixed(2));
 };
 
 function calcSurplusPlan() {

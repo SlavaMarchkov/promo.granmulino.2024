@@ -23,6 +23,7 @@ use App\Services\Promos\Filters\PromoProducts;
 use App\Services\Promos\Filters\PromoSellers;
 use App\Services\Promos\Filters\Retailer;
 use App\Services\Promos\Filters\User;
+use App\Services\Promos\Filters\UserId;
 use Exception;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Database\Eloquent\Collection;
@@ -41,9 +42,10 @@ final class EloquentPromoRepository implements PromoRepositoryInterface
         $promos = app()->make(Pipeline::class)
             ->send(Promo::query())
             ->through([
-                User::class,
+                UserId::class,
                 Customer::class,
                 Retailer::class,
+                User::class,
             ])
             ->thenReturn();
         return $promos->get();
@@ -58,13 +60,14 @@ final class EloquentPromoRepository implements PromoRepositoryInterface
         $promo = app()->make(Pipeline::class)
             ->send(Promo::query())
             ->through([
-                User::class,
+                UserId::class,
                 Id::class,
                 Customer::class,
                 Retailer::class,
                 City::class,
                 Channel::class,
                 Mark::class,
+                User::class,
                 PromoSellers::class,
                 PromoProducts::class,
             ])
@@ -287,5 +290,16 @@ final class EloquentPromoRepository implements PromoRepositoryInterface
             ])
             ->thenReturn();
         return $promo_sellers->get();
+    }
+
+    public function getYears()
+    : array
+    {
+        $years = Promo::select([DB::raw('extract(year FROM start_date) AS year')])
+            ->distinct()
+            ->pluck('year')
+            ->toArray();
+
+        return range(min($years), max($years));
     }
 }

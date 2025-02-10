@@ -71,6 +71,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::get('cities', [CityController::class, 'index'])->name('cities');
         Route::get('channels', [ChannelController::class, 'index'])->name('channels');
         Route::put('promos/{promo}/marks/{mark}', [PromoMarkController::class, 'update'])->name('promos.marks.update');
+        Route::get('promos/getPromoYears', [PromoController::class, 'getPromoYears'])->name('promos.getPromoYears');
 
         Route::apiResources([
             'promos'             => PromoController::class,

@@ -64,4 +64,10 @@ final readonly class PromoService
     : Promo {
         return $this->promoRepository->updatePromoFromArray($promo, $data);
     }
+
+    public function getPromoYears()
+    : array
+    {
+        return $this->promoRepository->getYears();
+    }
 }

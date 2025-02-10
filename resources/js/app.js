@@ -25,4 +25,5 @@ const isAdmin = localStorage.getItem('user')
 authStore.loadUser(localStorage.getItem('token'), isAdmin)
     .then(() => {
         app.mount('#app');
-    });
+    })
+    .then(() => authStore.loadPromoYears());

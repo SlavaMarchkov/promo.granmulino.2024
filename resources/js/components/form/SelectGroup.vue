@@ -4,6 +4,7 @@
         <select
             :value="modelValue"
             class="form-select"
+            :disabled="props.disabled"
             @change="handleChange"
         >
             <option disabled selected value="">{{ chooseFrom }}</option>
@@ -37,6 +38,10 @@ const props = defineProps({
     selectedOption: {
         type: String,
         default: 'name',
+    },
+    disabled: {
+        type: Boolean,
+        default: false,
     },
 });
 

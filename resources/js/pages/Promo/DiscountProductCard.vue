@@ -71,14 +71,9 @@ watch(
     () => props.transportRatePerKilo,
     (newValue) => {
         const transportRatePerUnit = calcTransportRatePerUnit(newValue);
-        props.product.profitPerUnit =
-            (props.product.promoPrice - props.product.productPrice)
-            - transportRatePerUnit
-            - (props.product.promoPrice * OFFICE_EXPENSES)
-            - (props.product.promoPrice * MARKETING_EXPENSES)
-        ;
+        props.product.profitPerUnit = parseFloat(((props.product.promoPrice - props.product.productPrice) - transportRatePerUnit - (props.product.promoPrice * OFFICE_EXPENSES) - (props.product.promoPrice * MARKETING_EXPENSES)).toFixed(2));
         props.product.netProfit = Math.round((props.product.profitPerUnit / props.product.promoPrice) * 100);
-        props.product.profitPerProductPlan = convertInputStringToNumber(props.product.salesPlan) * props.product.profitPerUnit;
+        props.product.profitPerProductPlan = parseFloat((convertInputStringToNumber(props.product.salesPlan) * props.product.profitPerUnit).toFixed(2));
     },
 );
 

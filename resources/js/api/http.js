@@ -93,15 +93,17 @@ http.interceptors.request.use(
 const toastHandler = (response) => {
     if ( response.data.status ) {
         const message = response.data.message;
-        switch ( response.data.status ) {
-            case 'success':
-                $toast.success(message);
-                break;
-            case 'error':
-                $toast.error(message);
-                break;
-            default:
-                $toast.warning(message);
+        if (message) {
+            switch ( response.data.status ) {
+                case 'success':
+                    $toast.success(message);
+                    break;
+                case 'error':
+                    $toast.error(message);
+                    break;
+                default:
+                    $toast.warning(message);
+            }
         }
     }
 };

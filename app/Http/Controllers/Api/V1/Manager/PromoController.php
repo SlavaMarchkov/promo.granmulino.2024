@@ -94,4 +94,13 @@ final class PromoController extends ApiController
             __('crud.promos.updated'),
         );
     }
+
+    public function getPromoYears()
+    {
+        $years = $this->promoService->getPromoYears();
+
+        return $this->successResponse(
+            json_encode($years),
+        );
+    }
 }

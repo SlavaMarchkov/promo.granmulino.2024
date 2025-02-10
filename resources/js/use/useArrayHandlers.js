@@ -27,9 +27,13 @@ export function useArrayHandlers() {
         let tempArr = arr.slice();
 
         for (const key in obj) {
+            // если поисковый ключ начинается с is, например isActive,
+            // то фильтруем по true/false
             if (key.startsWith('is') && obj[key] === true) {
                 tempArr = tempArr.filter(item => item[key] === true);
             } else if (!key.startsWith('is') && obj[key] !== '') {
+                // если поисковый ключ заканчивается на Id, например userId, promoId,
+                // то фильтруем по id = userId, id = promoId и т.д.
                 if (key.endsWith('Id')) {
                     tempArr = tempArr.filter(item => {
                         if ( obj[key] === 'null' ) {
@@ -38,6 +42,8 @@ export function useArrayHandlers() {
                         return item[key] === parseInt(obj[key], 10);
                     });
                 } else if (key === 'type') {
+                    // если поисковый ключ равен type,
+                    // то это фильтр по радио-кнопкам
                     tempArr = tempArr.filter(item => item[key] === obj[key]);
                 } else {
                     tempArr = tempArr.filter(item => {

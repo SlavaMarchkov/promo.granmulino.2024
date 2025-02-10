@@ -11,8 +11,8 @@ final class User
 {
     public function handle(Builder $builder, Closure $next)
     {
-        if (request()->has('user_id')) {
-            $builder->where('user_id', (int)request('user_id'));
+        if (request()->has('user') && to_boolean(request('user'))) {
+            $builder->with('user');
         }
 
         return $next($builder);

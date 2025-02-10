@@ -4,7 +4,7 @@ export function useCalculations() {
     const calcPercentage = (valueA, valueB) => {
         const numA = convertInputStringToNumber(valueA);
         const numB = convertInputStringToNumber(valueB);
-        return numA === 0 ? 0 : ((numB / numA) * 100).toFixed(2);
+        return numA === 0 ? 0 : parseFloat(((numB / numA) * 100).toFixed(2));
     };
 
     const calcDifference = (valueA, valueB) => {

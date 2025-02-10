@@ -17,6 +17,7 @@ class PromoResource extends JsonResource
         return [
             'id' => $this->id,
             'userId' => $this->user_id,
+            'userName'    => $this->whenLoaded('user', fn() => $this->user->full_name),
 
             'status'      => $this->status,
             'statusColor' => $this->status?->backgroundColor(),
@@ -36,6 +37,7 @@ class PromoResource extends JsonResource
 
             'startDate' => $this->start_date->format('d.m.Y'),
             'endDate'   => $this->end_date->format('d.m.Y'),
+            'year' => $this->start_date->format('Y'),
 
             'mark' => new PromoMarkResource($this->whenLoaded('mark')),
         ];

@@ -32,6 +32,7 @@ final class PromoController extends ApiController
         $promos = $this->promoService->getPromos([
             'customer' => true,
             'retailer' => true,
+            'user'     => true,
         ]);
 
         return $this->successResponse(
@@ -51,6 +52,7 @@ final class PromoController extends ApiController
             'city'           => true,
             'channel'        => true,
             'mark'           => true,
+            'user'           => true,
             'promo_products' => false,
             'promo_sellers'  => false,
         ]);

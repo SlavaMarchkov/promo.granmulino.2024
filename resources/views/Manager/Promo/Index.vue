@@ -11,15 +11,18 @@
             >
                 <div class="col-md-4 mb-2">
                     <SelectGroup
-                        v-model="searchBy.userId"
+                        v-model="searchBy.status"
                         :chooseFrom="'-- Выберите статус --'"
+                        :items="PROMO_STATUSES"
                     >Статус
                     </SelectGroup>
                 </div>
                 <div class="col-md-4 mb-2">
                     <SelectGroup
-                        v-model="searchBy.userId"
+                        v-model="searchBy.promoType"
                         :chooseFrom="'-- Выберите тип акции --'"
+                        :items="PROMO_TYPES"
+                        selectedOption="promoLabel"
                     >Тип акции
                     </SelectGroup>
                 </div>
@@ -27,18 +30,18 @@
         </div>
     </div>
     <div
-        v-if="state.promos.length > 0"
+        v-if="filteredItems.length > 0"
         class="row row-cols-xl-3 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-3"
     >
         <TheCard
-            v-for="promo in state.promos"
+            v-for="promo in filteredItems"
             :key="promo.id"
             :header-classes="['bg-light']"
             :body-classes="['pb-2']"
             with-footer
         >
             <template #header>
-                <h3 class="mb-0">{{ promo.promoCode }}</h3>
+                <h3 class="mb-0">{{ promo.promoCode }}<span class="text-secondary fs-5">&nbsp;#{{ promo.id }}</span></h3>
                 <h4 class="mb-0"><span :class="[ 'badge', promo.statusColor ]">{{ promo.statusLabel }}</span></h4>
             </template>
             <template #body>
@@ -70,15 +73,15 @@
     </div>
     <div class="row my-4">
         <div class="col-12">
-            <p>Всего записей: <span class="fw-bold">{{ state.promos.length }}</span></p>
+            <p>Всего записей: <span class="fw-bold">{{ filteredItems.length }}</span></p>
         </div>
     </div>
 </template>
 
 <script setup>
-import { onMounted, reactive } from 'vue';
+import { computed, onMounted, reactive } from 'vue';
 import { useSpinnerStore } from '@/stores/spinners.js';
-import { MANAGER_URLS } from '@/helpers/constants.js';
+import { MANAGER_URLS, PROMO_STATUSES, PROMO_TYPES } from '@/helpers/constants.js';
 import { useHttpService } from '@/use/useHttpService.js';
 import { useArrayHandlers } from '@/use/useArrayHandlers.js';
 import TheCard from '@/components/core/TheCard.vue';
@@ -105,11 +108,20 @@ const getPromos = async () => {
 };
 
 const searchBy = reactive({
-    userId: '',
+    status: '',
+    promoType: '',
 });
 
 const clearSearch = () => {
     arrayHandlers.resetSearchKeys(searchBy);
     arrayHandlers.resetSortKeys();
 };
+
+const sortedItems = computed(() => {
+    return arrayHandlers.sortArray(state.promos);
+});
+
+const filteredItems = computed(() => {
+    return arrayHandlers.filterArray(sortedItems.value, searchBy);
+});
 </script>

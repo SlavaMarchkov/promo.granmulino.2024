@@ -1,15 +1,20 @@
 <template>
     <TheCard :header-classes="['bg-pale py-2']">
         <template #header>
-            <h5 class="mb-0">{{ props.index + 1 }}. {{ props.product.categoryName }}&nbsp;<span
-                class="text-primary fw-bold">|&nbsp;{{ props.product.productName }}</span></h5>
-            <h4 class="mb-0"><span class="badge bg-secondary" v-html="formatAsPercent(props.product.discount)"></span></h4>
-            <TheButton
-                class="btn-warning"
-                style="width: 20%;"
-                @click="handleBtnClick"
-            >Редактировать
-            </TheButton>
+            <div class="col-md-4">
+                <h5 class="mb-0">{{ props.index + 1 }}. {{ props.product.categoryName }}&nbsp;<span
+                    class="text-primary fw-bold">|&nbsp;{{ props.product.productName }}</span></h5>
+            </div>
+            <div class="col-md-4 text-center">
+                <h4 class="mb-0"><span class="badge bg-secondary" v-html="formatAsPercent(props.product.discount)"></span></h4>
+            </div>
+            <div class="col-md-4 text-end">
+                <TheButton
+                    class="btn-warning w-50"
+                    @click="handleBtnClick"
+                >Редактировать
+                </TheButton>
+            </div>
         </template>
         <template #body>
             <div class="row">
