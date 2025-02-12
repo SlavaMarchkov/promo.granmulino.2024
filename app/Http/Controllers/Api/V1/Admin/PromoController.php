@@ -9,6 +9,7 @@ use App\Http\Controllers\ApiController;
 use App\Http\Requests\Promo\PromoStatusUpdateRequest;
 use App\Http\Resources\V1\Promo\PromoCollection;
 use App\Http\Resources\V1\Promo\PromoFullResource;
+use App\Http\Resources\V1\Promo\PromoResource;
 use App\Models\Promo;
 use App\Services\Promos\PromoService;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -67,13 +68,12 @@ final class PromoController extends ApiController
     public function update(PromoStatusUpdateRequest $request, Promo $promo)
     : JsonResponse {
         $data = $request->validated();
-
-        $promo = $this->promoService->updatePromo($promo, $data);
+        $promo = $this->promoService->updatePromoStatus($promo, $data);
 
         return $this->successResponse(
-            new PromoFullResource($promo),
+            new PromoResource($promo),
             'success',
-            __('crud.promos.updated'),
+            __('crud.promos.status_updated'),
         );
     }
 

@@ -47,6 +47,16 @@ enum StatusEnum: string
         }, []);
     }
 
+    public static function keys()
+    : string
+    {
+        $arr = array_map(function (StatusEnum $item) {
+            return $item->name;
+        }, self::cases());
+
+        return collect($arr)->implode(',');
+    }
+
     /**
      * @return string
      */

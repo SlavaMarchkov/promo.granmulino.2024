@@ -45,7 +45,7 @@ const baseBodyClasses = [
 ];
 
 const baseFooterClasses = [
-    'card-footer',
+    'card-footer d-flex justify-content-between align-items-center',
 ];
 
 const headerClasses = computed(() => {

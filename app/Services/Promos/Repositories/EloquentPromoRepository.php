@@ -123,6 +123,14 @@ final class EloquentPromoRepository implements PromoRepositoryInterface
         }
     }
 
+    public function updatePromoStatus(Promo $promo, array $data)
+    : Promo {
+        $promo->update([
+            'status' => $data['status']
+        ]);
+        return $promo;
+    }
+
     /**
      * @throws Exception
      */

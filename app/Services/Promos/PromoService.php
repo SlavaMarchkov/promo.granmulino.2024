@@ -70,4 +70,9 @@ final readonly class PromoService
     {
         return $this->promoRepository->getYears();
     }
+
+    public function updatePromoStatus(Promo $promo, array $data)
+    : Promo {
+        return $this->promoRepository->updatePromoStatus($promo, $data);
+    }
 }

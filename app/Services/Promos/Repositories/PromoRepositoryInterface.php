@@ -38,4 +38,7 @@ interface PromoRepositoryInterface
 
     public function getYears()
     : array;
+
+    public function updatePromoStatus(Promo $promo, array $data)
+    : Promo;
 }

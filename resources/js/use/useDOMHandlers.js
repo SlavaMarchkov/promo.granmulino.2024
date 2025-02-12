@@ -28,7 +28,7 @@ export function useDOMHandlers() {
     };
 
     const collapse = (element) => {
-        const collapseElementList = document.querySelectorAll('.collapse');
+        const collapseElementList = document.querySelectorAll('.nav-content.collapse');
         collapseElementList.forEach(el => {
             const collapsedElement = el.previousElementSibling;
             if ( el.id === element ) {

@@ -395,6 +395,7 @@ export const ADMIN_MENU_ITEMS = [
 export const OPEN_WEATHER_BASE_URL = 'https://api.openweathermap.org/geo/1.0/direct';
 export const OPEN_WEATHER_API_KEY = import.meta.env.VITE_OPEN_WEATHER_API_KEY;
 export const DEFAULT_SURPLUS_PERCENT = 30;
+export const NET_PROFIT_THRESHOLD = 20;
 export const TWO_WEEKS_AHEAD = new Date(new Date().getTime() + 12096e5);
 export const FOUR_WEEKS_AHEAD = new Date(new Date().getTime() + 12096e5 * 2);
 export const PRODUCT_IMG_PATH = '/assets/img/products/';

@@ -1,4 +1,5 @@
 import { convertInputStringToNumber, isNumberNegative } from '@/helpers/formatters.js';
+import { NET_PROFIT_THRESHOLD } from '@/helpers/constants.js';
 
 export function useCalculations() {
     const calcPercentage = (valueA, valueB) => {
@@ -48,6 +49,19 @@ export function useCalculations() {
         return isNumberNegative(value) ? 'text-danger' : value === 0 ? 'text-secondary' : 'text-success';
     };
 
+    const netProfitClass = (value) => {
+        return value >= NET_PROFIT_THRESHOLD
+            ? 'bg-success-light text-success'
+            : 'bg-danger-light text-danger';
+    };
+
+    const promoMarkClass = (value) => {
+        return value > 0 && value <= 3
+            ? 'bg-danger'
+            : value > 3 && value <= 5
+                ? 'bg-success' : 'bg-secondary';
+    };
+
     return {
         calcPercentage,
         calcDifferencePercentage,
@@ -58,5 +72,7 @@ export function useCalculations() {
         calcDiffClassInverse,
         calcDiffPercentColor,
         calcDiffPercentColorInverse,
+        netProfitClass,
+        promoMarkClass,
     };
 }

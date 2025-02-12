@@ -9,7 +9,9 @@
             <div class="col-12">
                 <TheCard with-footer>
                     <template #header>
-                        <h5 class="mb-0 card-title p-0">Заголовок</h5>
+                        <h4 class="mb-0"><span :class="[ 'badge', promo.statusColor ]">{{ promo.statusLabel }}</span></h4>
+                        <h3 class="mb-0">{{ promo.promoCode }}&nbsp;|&nbsp;<span class="text-secondary fs-5">{{ promo.promoLabel }}&nbsp;|&nbsp;{{ promo.startDate }} - {{ promo.endDate }}</span></h3>
+                        <h3 class="mb-0"><span :class="[ 'badge', promoMarkClass(promo.totalMark) ]">{{ promo.totalMark }}</span></h3>
                     </template>
                     <template #body>
                         <div class="row">
@@ -18,55 +20,61 @@
                                     <thead>
                                     <tr>
                                         <th scope="col">#</th>
-                                        <th scope="col">Name</th>
-                                        <th scope="col">Position</th>
-                                        <th scope="col">Age</th>
-                                        <th scope="col">Start Date</th>
+                                        <th scope="col">Параметр</th>
+                                        <th scope="col">Значение</th>
                                     </tr>
                                     </thead>
                                     <tbody>
                                     <tr>
-                                        <th scope="row">1</th>
-                                        <td>Brandon Jacob</td>
-                                        <td>Designer</td>
-                                        <td>28</td>
-                                        <td>2016-05-25</td>
+                                        <th scope="row" class="text-center">1</th>
+                                        <td>Менеджер</td>
+                                        <td>{{ promo.userName }}</td>
                                     </tr>
                                     <tr>
-                                        <th scope="row">2</th>
-                                        <td>Bridie Kessler</td>
-                                        <td>Developer</td>
-                                        <td>35</td>
-                                        <td>2014-12-05</td>
+                                        <th scope="row" class="text-center">2</th>
+                                        <td>Контрагент</td>
+                                        <td>{{ promo.customerName }} | г. {{ promo.cityName }} | {{ promo.regionCode }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row" class="text-center">3</th>
+                                        <td>Канал продаж</td>
+                                        <td>{{ promo.channelName }} | {{ promo.retailerName }}</td>
                                     </tr>
                                     </tbody>
                                 </table>
                             </div>
                             <div class="col-md-6">
-                                <table class="table table-striped">
+                                <table class="table table-striped text-end">
                                     <thead>
                                     <tr>
-                                        <th scope="col">#</th>
-                                        <th scope="col">Name</th>
-                                        <th scope="col">Position</th>
-                                        <th scope="col">Age</th>
-                                        <th scope="col">Start Date</th>
+                                        <th scope="col" class="text-center">#</th>
+                                        <th scope="col" class="text-start">Параметр</th>
+                                        <th scope="col">План</th>
+                                        <th scope="col">Факт</th>
+                                        <th scope="col" class="text-center">Отклонение, %</th>
                                     </tr>
                                     </thead>
                                     <tbody>
                                     <tr>
-                                        <th scope="row">1</th>
-                                        <td>Brandon Jacob</td>
-                                        <td>Designer</td>
-                                        <td>28</td>
-                                        <td>2016-05-25</td>
+                                        <th scope="row" class="text-center">4</th>
+                                        <td class="text-start">Общий бюджет, руб.</td>
+                                        <td>{{ formatNumber(promo.totalBudgetPlan) }}</td>
+                                        <td>{{ formatNumber(promo.totalBudgetActual) }}</td>
+                                        <td :class="['text-center fw-bold', calcDiffPercentColor(calcBudgetDiffPercent)]" v-html="formatAsPercent(calcBudgetDiffPercent)"></td>
                                     </tr>
                                     <tr>
-                                        <th scope="row">2</th>
-                                        <td>Bridie Kessler</td>
-                                        <td>Developer</td>
-                                        <td>35</td>
-                                        <td>2014-12-05</td>
+                                        <th scope="row" class="text-center">5</th>
+                                        <td class="text-start">Общие продажи, шт.</td>
+                                        <td>{{ formatNumber(promo.totalSalesPlan) }}</td>
+                                        <td>{{ formatNumber(promo.totalSalesOnTime) }}</td>
+                                        <td :class="['text-center fw-bold', calcDiffPercentColorInverse(calcSalesDiffPercent)]" v-html="formatAsPercent(calcSalesDiffPercent)"></td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row" class="text-center">6</th>
+                                        <td class="text-start">Общая прибыль, руб.</td>
+                                        <td>{{ formatNumber(promo.totalPromoProfitPlan) }}</td>
+                                        <td>{{ formatNumber(promo.totalPromoProfitActual) }}</td>
+                                        <td :class="['text-center fw-bold', calcDiffPercentColorInverse(calcPromoProfitDiffPercent)]" v-html="formatAsPercent(calcPromoProfitDiffPercent)"></td>
                                     </tr>
                                     </tbody>
                                 </table>
@@ -88,7 +96,9 @@
                                     <div id="collapsePromoComments" aria-labelledby="promoComments"
                                          class="accordion-collapse collapse" data-bs-parent="#promoDetails">
                                         <div class="accordion-body">
-                                            {{ promo.comments }}
+                                            <div class="bd-callout bd-callout-warning mb-0">
+                                                <p class="mb-0">{{ promo.comments }}</p>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -106,7 +116,30 @@
                                     <div id="collapsePromoMark" aria-labelledby="promoMark"
                                          class="accordion-collapse collapse" data-bs-parent="#promoDetails">
                                         <div class="accordion-body">
-                                            Вывод оценок
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <p class="mb-0">Цель промо-акции: <span class="fw-bold fs-5">{{ formatNumberWithFractions(promo.mark.goals) }}</span></p>
+                                                    <TheProgressBar
+                                                        class="mb-2"
+                                                        :now="promo.mark.goals"
+                                                    />
+                                                    <p class="mb-0">Продажи: <span class="fw-bold fs-5">{{ formatNumberWithFractions(promo.mark.sales) }}</span></p>
+                                                    <TheProgressBar
+                                                        class="mb-2"
+                                                        :now="promo.mark.sales"
+                                                    />
+                                                    <p class="mb-0">Участие персонала: <span class="fw-bold fs-5">{{ formatNumberWithFractions(promo.mark.staff) }}</span></p>
+                                                    <TheProgressBar
+                                                        :now="promo.mark.staff"
+                                                    />
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <h5>Выводы по промо-акции</h5>
+                                                    <div class="bd-callout bd-callout-warning mb-0">
+                                                        <p class="mb-0">{{ promo.mark.comments }}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -124,14 +157,20 @@
                                     <div id="collapsePromoProducts" aria-labelledby="promoProducts"
                                          class="accordion-collapse collapse show" data-bs-parent="#promoDetails">
                                         <div class="accordion-body">
-                                            <table class="table table-striped">
+                                            <table class="table table-striped text-center align-middle">
                                                 <thead>
                                                 <tr>
                                                     <th scope="col">#</th>
-                                                    <th scope="col">Name</th>
-                                                    <th scope="col">Position</th>
-                                                    <th scope="col">Age</th>
-                                                    <th scope="col">Start Date</th>
+                                                    <th scope="col" class="text-start">Продукт</th>
+                                                    <th scope="col">Скидка, %</th>
+                                                    <th scope="col">ЧП, %</th>
+                                                    <th scope="col">Продажи, шт.</th>
+                                                    <th scope="col">Бюджет, руб.</th>
+                                                    <th scope="col">Компенсация</th>
+                                                    <th scope="col">Прибыль, руб/шт</th>
+                                                    <th scope="col">Прирост, %</th>
+                                                    <th scope="col">Выручка, руб.</th>
+                                                    <th scope="col">Отклонение</th>
                                                 </tr>
                                                 </thead>
                                                 <tbody>
@@ -143,6 +182,11 @@
                                                 />
                                                 </tbody>
                                             </table>
+                                            <div class="text-muted" style="font-size: small;">
+                                                <p class="mb-0">Примечания к таблице:</p>
+                                                <p class="mb-0">1. Верхняя цифра в строке таблицы - это плановое значение, нижняя - фактическое значние.</p>
+                                                <p class="mb-0">2. Отклонение - это разница в % между продажами "Во время" и планом продаж.</p>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -155,6 +199,23 @@
                             @click.prevent="exportToPDF"
                         >Экспорт в PDF
                         </TheButton>
+                        <div>
+                            <div class="input-group">
+                                <select v-model="promo.status" class="form-select">
+                                    <option disabled selected value="">-- Выберите статус --</option>
+                                    <option
+                                        v-for="status in PROMO_STATUSES"
+                                        :key="status.id"
+                                        :value="status.id"
+                                    >{{ status.name }}
+                                    </option>
+                                </select>
+                                <TheButton
+                                    @click="changePromoStatus"
+                                    class="d-inline btn-primary"
+                                >Обновить статус</TheButton>
+                            </div>
+                        </div>
                     </template>
                 </TheCard>
             </div>
@@ -175,18 +236,22 @@ import { computed, onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useHttpService } from '@/use/useHttpService.js';
 import { useArrayHandlers } from '@/use/useArrayHandlers.js';
+import { useCalculations } from '@/use/useCalculations.js';
 import { useSpinnerStore } from '@/stores/spinners.js';
-import { ADMIN_URLS, MANAGER_URLS } from '@/helpers/constants.js';
+import { ADMIN_URLS, MANAGER_URLS, PROMO_STATUSES } from '@/helpers/constants.js';
 import TheSpinner from '@/components/core/TheSpinner.vue';
 import Alert from '@/components/Alert.vue';
 import TheCard from '@/components/core/TheCard.vue';
 import AdminPromoProductItem from '@/pages/PromoActual/AdminPromoProductItem.vue';
 import TheButton from '@/components/core/TheButton.vue';
+import { formatAsPercent, formatNumber, formatNumberWithFractions } from '@/helpers/formatters.js';
+import TheProgressBar from '@/components/core/TheProgressBar.vue';
 
 const route = useRoute();
 const router = useRouter();
 const spinnerStore = useSpinnerStore();
 const arrayHandlers = useArrayHandlers();
+const { promoMarkClass, calcDifferencePercentage, calcDiffPercentColor, calcDiffPercentColorInverse } = useCalculations();
 const { get, print, download, update } = useHttpService();
 const promoId = +route.params.id;
 
@@ -235,68 +300,27 @@ const exportToPDF = async () => {
     await download(`${ ADMIN_URLS.PROMO }/${ promoId }/print`, `promo_${ promoId }_export.pdf`);
 };
 
+const changePromoStatus = async () => {
+    const updatedPromo = {
+        status: promo.value.status,
+    };
+    const response = await update(`${ ADMIN_URLS.PROMO }/${ promoId }`, updatedPromo);
+    if ( response && response.status === 'success' ) {
+        promo.value.status = response.data.status;
+        promo.value.statusColor = response.data.statusColor;
+        promo.value.statusLabel = response.data.statusLabel;
+    }
+};
 
-/**
- "id": 1,
- "userId": 1,
- "status": "ON_APPROVAL",
- "statusColor": "bg-warning",
- "statusLabel": "На согласовании",
- "totalBudgetPlan": "4051.00",
- "totalBudgetActual": "4892.00",
- "totalMark": "3.27",
- "promoType": "DISCOUNT",
- "promoLabel": "Скидка в цене",
- "promoBgColor": "bg-warning",
- "promoCode": "ЖЦ",
- "customerName": "Прайд-А, ООО",
- "retailerName": "Аникс",
- "startDate": "01.02.2025",
- "endDate": "28.02.2025",
- "mark": {
- "id": 1,
- "promo_id": 1,
- "goals": "3.40",
- "sales": "2.20",
- "staff": "4.20",
- "comments": "Мы создали кое-что особенное — товары, вдохновленные славянскими мифами и нашим крипто-будущим! Ваши криптоактивы будут под защитой настоящей магии"
- },
- "channelName": "Сеть",
- "regionCode": "СФО",
- "cityName": "Бийск",
- "comments": "Функция СРЗНАЧ возвращает среднее арифметическое аргументов. С ее помощью на уроке мы посчитали среднюю выручку.",
- "totalSalesBefore": "150.00",
- "totalSalesPlan": "500.00",
- "totalSalesOnTime": "600.00",
- "totalSalesAfter": "0.00",
- "totalPromoProfitPlan": "2738.47",
- "totalPromoProfitActual": "3550.00",
- "createdAt": "2025-01-19T07:25:13.000000Z",
- "updatedAt": "2025-01-20T07:14:10.000000Z"
+const calcBudgetDiffPercent = computed(() => {
+    return calcDifferencePercentage(promo.value.totalBudgetPlan, promo.value.totalBudgetActual);
+});
 
- ****************************
- *
- "id": 1,
- "promoId": 1,
- "categoryName": "Granmulino Стандарт",
- "productName": "Перья, 400 г",
- "salesBefore": "100",
- "salesPlan": "400",
- "salesOnTime": "400",
- "salesAfter": "0",
- "compensation": "8.04",
- "budgetPlan": "3214.00",
- "budgetActual": "3216.00",
- "profitPerUnit": "4.82",
- "profitPerProductPlan": "1927.58",
- "profitPerProductActual": "1928.00",
- "discount": 20,
- "netProfit": 15,
- "promoPrice": "32.15",
- "surplusPlan": "300.00",
- "surplusActual": "300.00",
- "revenuePlan": "12858.00",
- "revenueActual": "12860.00"
- *
- * */
+const calcSalesDiffPercent = computed(() => {
+    return calcDifferencePercentage(promo.value.totalSalesPlan, promo.value.totalSalesOnTime);
+});
+
+const calcPromoProfitDiffPercent = computed(() => {
+    return calcDifferencePercentage(promo.value.totalPromoProfitPlan, promo.value.totalPromoProfitActual);
+});
 </script>

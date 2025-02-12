@@ -267,7 +267,7 @@ const preparePromoSellersForUpdate = (promoObj, sellersArr) => {
     updatedPromo.promo = promoObj;
     updatedPromo.sellers = sellersArr;
 };
-
+// TODO: replace for calculations
 const promoMarkBgColor = computed(() => {
     return promo.value.totalMark > 0 && promo.value.totalMark <= 3
         ? 'bg-danger'
