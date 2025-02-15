@@ -34,7 +34,7 @@ export const PROMO_TYPES = [
         promoCode: 'МТП',
         isForRetail: false,
     },
-    {
+    /*{
         id: 'GIFT_FOR_PURCHASE',
         promoLabel: 'Подарок за покупку',
         promoCode: 'ПП',
@@ -57,56 +57,56 @@ export const PROMO_TYPES = [
         promoLabel: 'Временный ввод в матрицу сети In-Out',
         promoCode: 'IN-OUT',
         isForRetail: true,
-    },
+    },*/
 ];
 
 export const PROMO_STATUSES = [
     {
         id: 'ON_APPROVAL',
-        name: 'На согласовании'
+        name: 'На согласовании',
     },
     {
         id: 'IN_PROCESS',
-        name: 'В работе'
+        name: 'В работе',
     },
     {
         id: 'WAITING_FOR_REPORT',
-        name: 'В ожидании отчета'
+        name: 'В ожидании отчета',
     },
     {
         id: 'DONE',
-        name: 'Завершенные'
+        name: 'Завершенные',
     },
     {
         id: 'DECLINED',
-        name: 'Отклоненные'
+        name: 'Отклоненные',
     },
 ];
 
 export const QUARTERS = [
     {
         id: 'q1',
-        period: 'I квартал'
+        period: 'I квартал',
     },
     {
         id: 'q2',
-        period: 'II квартал'
+        period: 'II квартал',
     },
     {
         id: 'q3',
-        period: 'III квартал'
+        period: 'III квартал',
     },
     {
         id: 'q4',
-        period: 'IV квартал'
+        period: 'IV квартал',
     },
     {
         id: 'hy1',
-        period: '1-е полугодие'
+        period: '1-е полугодие',
     },
     {
         id: 'hy2',
-        period: '2-е полугодие'
+        period: '2-е полугодие',
     },
 ];
 
@@ -394,16 +394,22 @@ export const ADMIN_MENU_ITEMS = [
 
 export const OPEN_WEATHER_BASE_URL = 'https://api.openweathermap.org/geo/1.0/direct';
 export const OPEN_WEATHER_API_KEY = import.meta.env.VITE_OPEN_WEATHER_API_KEY;
-export const DEFAULT_SURPLUS_PERCENT = 30;
-export const NET_PROFIT_THRESHOLD = 20;
 export const TWO_WEEKS_AHEAD = new Date(new Date().getTime() + 12096e5);
 export const FOUR_WEEKS_AHEAD = new Date(new Date().getTime() + 12096e5 * 2);
 export const PRODUCT_IMG_PATH = '/assets/img/products/';
 export const NO_PRODUCT_IMG = '/assets/img/no-image.png';
 export const ALLOWED_FILE_TYPES = ['gif', 'jpeg', 'jpg', 'png'];
 export const VAT_RATE = 1.2;
-export const INITIAL_DISCOUNT = 20; // начальная скидка (%)
-export const INITIAL_TRANSPORT_RATE = 100_000; // начальная транспортная ставка (руб.)
-export const INITIAL_ORDER_WEIGHT = 16_000; // начальный вес заказа (кг)
-export const OFFICE_EXPENSES    = 0.075;
-export const MARKETING_EXPENSES = 0.05;
+export const INITIALS = {
+    MOTIVATION_FOR_SUPERVISORS: 5, // процент мотивации для супервайзеров
+    MOTIVATION_FOR_SELLERS: 10, // процент мотивации для торговых представителей
+    SURPLUS_PERCENT: 30, // дефолтный процент увеличения продаж для планов торговым представителям
+    NET_PROFIT_THRESHOLD: 20, // порог в процентах для расчета норматива чистой прибыли
+
+
+// INITIAL_DISCOUNT: 20, // начальная скидка (%)
+// INITIAL_TRANSPORT_RATE: 100_000, // начальная транспортная ставка (руб.)
+// INITIAL_ORDER_WEIGHT: 16_000, // начальный вес заказа (кг)
+// OFFICE_EXPENSES: 0.075, // расходы на офис 7.5%
+// MARKETING_EXPENSES: 0.05, // расходы на маркетинг 5%
+};

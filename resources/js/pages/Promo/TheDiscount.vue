@@ -381,7 +381,7 @@
                             <TheInput
                                 id="net_profit_standard"
                                 :model-value="!isNaN(state.form.netProfit) ? formatNumber(state.form.netProfit) : 0"
-                                :class="['text-center fw-bold', netProfitClass]"
+                                :class="['text-center fw-bold', netProfitClass(state.form.netProfit)]"
                                 readonly="readonly"
                                 :tabindex="-1"
                             />
@@ -429,7 +429,7 @@ import InputRange from '@/components/form/InputRange.vue';
 import { useArrayHandlers } from '@/use/useArrayHandlers.js';
 
 const { get } = useHttpService();
-const { calcDifferencePercentage, calcBudget } = useCalculations();
+const { calcDifferencePercentage, calcBudget, netProfitClass } = useCalculations();
 const arrayHandlers = useArrayHandlers();
 
 const props = defineProps({
@@ -647,12 +647,6 @@ const calcMarketingExpenses = computed(() => {
 
 const calcGrossProfit = computed(() => {
     return state.form.promoPrice - state.product.initialPrice;
-});
-
-const netProfitClass = computed(() => {
-    return state.form.netProfit >= 20
-        ? 'bg-success-light text-success'
-        : 'bg-danger-light text-danger';
 });
 
 watch(

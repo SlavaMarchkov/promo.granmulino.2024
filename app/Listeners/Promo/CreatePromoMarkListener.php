@@ -10,6 +10,12 @@ use App\Models\PromoMark;
 
 final class CreatePromoMarkListener
 {
+    /**
+     * При создании промо-акции создает запись в таблице оценок промо-акции
+     *
+     * @param CreatedEvent $event
+     * @return void
+     */
     public function handle(CreatedEvent $event)
     : void {
         PromoMark::query()->create([

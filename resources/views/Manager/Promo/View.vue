@@ -14,10 +14,9 @@
             <div class="col-12">
                 <div class="card">
                     <div class="card-header bg-light d-flex justify-content-between align-items-center">
-                        <h3 class="mb-0">{{ promo.promoCode }}&nbsp;<span
-                            class="text-secondary fs-5">|&nbsp;{{ promo.channelName }}</span></h3>
                         <h4 class="mb-0"><span :class="[ 'badge', promo.statusColor ]">{{ promo.statusLabel }}</span></h4>
-                        <h2 class="mb-0"><span :class="[ 'badge', promoMarkBgColor ]">{{ promo.totalMark }}</span></h2>
+                        <h3 class="mb-0">{{ promo.promoCode }}&nbsp;#{{ promo.id }}&nbsp;|&nbsp;<span class="text-secondary fs-5">{{ promo.channelName }}</span></h3>
+                        <h2 class="mb-0"><span :class="[ 'badge', promoMarkClass(promo.totalMark) ]">{{ promo.totalMark }}</span></h2>
                     </div>
                     <div class="card-body mt-2 g-3">
                         <div class="row mb-2">
@@ -163,6 +162,7 @@ import { computed, onMounted, reactive, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useHttpService } from '@/use/useHttpService.js';
 import { useArrayHandlers } from '@/use/useArrayHandlers.js';
+import { useCalculations } from '@/use/useCalculations.js';
 import { useSpinnerStore } from '@/stores/spinners.js';
 import { MANAGER_URLS } from '@/helpers/constants.js';
 import Alert from '@/components/Alert.vue';
@@ -179,6 +179,7 @@ const route = useRoute();
 const router = useRouter();
 const spinnerStore = useSpinnerStore();
 const arrayHandlers = useArrayHandlers();
+const { promoMarkClass } = useCalculations();
 const { get, update } = useHttpService();
 const promoId = +route.params.id;
 
@@ -267,11 +268,4 @@ const preparePromoSellersForUpdate = (promoObj, sellersArr) => {
     updatedPromo.promo = promoObj;
     updatedPromo.sellers = sellersArr;
 };
-// TODO: replace for calculations
-const promoMarkBgColor = computed(() => {
-    return promo.value.totalMark > 0 && promo.value.totalMark <= 3
-        ? 'bg-danger'
-        : promo.value.totalMark > 3 && promo.value.totalMark <= 5
-            ? 'bg-success' : 'bg-secondary';
-});
 </script>

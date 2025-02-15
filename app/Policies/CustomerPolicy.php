@@ -13,10 +13,10 @@ class CustomerPolicy
 {
     use HandlesAuthorization;
 
-    public function viewAny()
+    public function viewAny(User $user)
     : bool
     {
-        return true;
+        return auth()->check() && auth()->user()->isManager();
     }
 
     public function view(User $user, Customer $customer)
@@ -27,35 +27,11 @@ class CustomerPolicy
             && $customer->user_id == $user->id;
     }
 
-    public function create(User $user)
-    : bool
-    {
-        return true;
-    }
-
     public function update(User $user, Customer $customer)
     : bool
     {
         return auth()->check()
             && auth()->user()->isManager()
             && $customer->user_id == $user->id;
-    }
-
-    public function delete(User $user, Customer $customer)
-    : bool
-    {
-        return true;
-    }
-
-    public function restore(User $user, Customer $customer)
-    : bool
-    {
-        return true;
-    }
-
-    public function forceDelete(User $user, Customer $customer)
-    : bool
-    {
-        return true;
     }
 }

@@ -17,7 +17,7 @@
             <TwoColumnRow title="Бюджет">{{ formatNumber(props.product.budgetPlan) }} руб.</TwoColumnRow>
             <TwoColumnRow title="Прибыль на шт.">{{ formatNumberWithFractions(props.product.profitPerUnit) }} руб.</TwoColumnRow>
             <TwoColumnRow title="Прибыль, план">{{ formatNumberWithFractions(props.product.profitPerProductPlan) }} руб.</TwoColumnRow>
-            <TwoColumnRow title="Норматив ЧП"><span :class="netProfitClass">&nbsp;&nbsp;{{ formatNumber(props.product.netProfit) }}&#8239;%&nbsp;&nbsp;</span></TwoColumnRow>
+            <TwoColumnRow title="Норматив ЧП"><span :class="netProfitClass(props.product.netProfit)">&nbsp;&nbsp;{{ formatNumber(props.product.netProfit) }}&#8239;%&nbsp;&nbsp;</span></TwoColumnRow>
             <TwoColumnRow title="Выручка">{{ formatNumber(props.product.revenuePlan) }} руб.</TwoColumnRow>
         </template>
         <template #footer>
@@ -31,12 +31,15 @@
 </template>
 
 <script setup>
-import { computed, watch } from 'vue';
+import { watch } from 'vue';
 import { convertInputStringToNumber, formatNumber, formatNumberWithFractions } from '@/helpers/formatters.js';
+import { useCalculations } from '@/use/useCalculations.js';
 import TheButton from '@/components/core/TheButton.vue';
 import TheCard from '@/components/core/TheCard.vue';
 import TwoColumnRow from '@/components/core/TwoColumnRow.vue';
 import { MARKETING_EXPENSES, OFFICE_EXPENSES } from '@/helpers/constants.js';
+
+const { netProfitClass } = useCalculations();
 
 const props = defineProps({
     index: {
@@ -60,12 +63,6 @@ const emit = defineEmits([
 const removeProduct = () => {
     emit('removeProduct', props.index);
 };
-
-const netProfitClass = computed(() => {
-    return props.product.netProfit >= 20
-        ? 'bg-success-light text-success'
-        : 'bg-danger-light text-danger';
-});
 
 watch(
     () => props.transportRatePerKilo,

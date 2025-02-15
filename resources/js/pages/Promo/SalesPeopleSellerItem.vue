@@ -26,7 +26,7 @@
                         'text-end',
                         { 'border-danger': !props.seller.supervisorId }
                     ]"
-                    :model-value="DEFAULT_SURPLUS_PERCENT"
+                    :model-value="INITIALS.SURPLUS_PERCENT"
                     @input="onSurplusPlanChange($event, index)"
                     maxlength="3"
                     readonly="readonly"
@@ -56,7 +56,7 @@
 
 <script setup>
 import { watch } from 'vue';
-import { DEFAULT_SURPLUS_PERCENT } from '@/helpers/constants.js';
+import { INITIALS } from '@/helpers/constants.js';
 import TheButton from '@/components/core/TheButton.vue';
 import TheInput from '@/components/form/TheInput.vue';
 import { convertInputStringToNumber, formatNumber, formatNumberWithFractions } from '@/helpers/formatters.js';
@@ -80,8 +80,8 @@ const emit = defineEmits([
 ]);
 
 watch(
-    () => props.seller.compensationPlan,
-    (newValue) => onCompensationPlanChange(newValue, props.index),
+    () => props.seller.compensation,
+    (newValue) => onCompensationChange(newValue, props.index),
 );
 
 const onSalesBeforeChange = (evt, index) => {
@@ -122,11 +122,11 @@ const onSalesBeforeChange = (evt, index) => {
         salesPlanEl.removeAttribute('tabindex');
     } else {
         surplusPlan = surplusPlanEl.value === ''
-            ? DEFAULT_SURPLUS_PERCENT
+            ? INITIALS.SURPLUS_PERCENT
             : convertInputStringToNumber(surplusPlanEl.value);
 
         salesPlan = calcSalesSurplus(salesBefore, surplusPlan);
-        budgetPlan = calcBudgetPlan(salesPlan, props.seller.compensationPlan);
+        budgetPlan = calcBudgetPlan(salesPlan, props.seller.compensation);
 
         salesBeforeEl.value = formatNumber(salesBefore);
         salesPlanEl.value = formatNumberWithFractions(salesPlan);
@@ -163,7 +163,7 @@ const onSurplusPlanChange = (evt, index) => {
     }
 
     salesPlan = +(salesBefore + (salesBefore * surplusPlan) / 100).toFixed(2);
-    budgetPlan = calcBudgetPlan(salesPlan, props.seller.compensationPlan);
+    budgetPlan = calcBudgetPlan(salesPlan, props.seller.compensation);
 
     surplusPlanEl.value = formatNumber(surplusPlan);
     salesPlanEl.value = formatNumberWithFractions(salesPlan);
@@ -191,7 +191,7 @@ const onSalesPlanChange = (evt, index) => {
         salesPlan = 0;
         salesPlanEl.value = salesPlan;
     } else {
-        budgetPlan = calcBudgetPlan(salesPlan, props.seller.compensationPlan);
+        budgetPlan = calcBudgetPlan(salesPlan, props.seller.compensation);
         salesPlan = +(salesPlan).toFixed(2);
         salesPlanEl.value = formatNumber(salesPlan);
     }
@@ -204,7 +204,7 @@ const onSalesPlanChange = (evt, index) => {
     emit('addSeller', sellerObj);
 };
 
-const onCompensationPlanChange = (compensationPlan, index) => {
+const onCompensationChange = (compensation, index) => {
     const sellerObj = props.seller;
 
     const salesBeforeEl = document.getElementById(`${index}_salesBefore`);
@@ -214,7 +214,7 @@ const onCompensationPlanChange = (compensationPlan, index) => {
     const salesBefore = convertInputStringToNumber(salesBeforeEl.value);
     const surplusPlan = convertInputStringToNumber(surplusPlanEl.value);
     const salesPlan = salesPlanEl.value === '' ? 0 : convertInputStringToNumber(salesPlanEl.value);
-    const budgetPlan = calcBudgetPlan(salesPlan, compensationPlan);
+    const budgetPlan = calcBudgetPlan(salesPlan, compensation);
 
     sellerObj.sellerId = sellerObj.id;
     sellerObj.salesBefore = salesBefore;
@@ -225,8 +225,8 @@ const onCompensationPlanChange = (compensationPlan, index) => {
     emit('addSeller', sellerObj);
 };
 
-const calcBudgetPlan = (salesPlan, compensationPlan) => {
-    const boostSellerQuotient = convertInputStringToNumber(compensationPlan.toString());
+const calcBudgetPlan = (salesPlan, compensation) => {
+    const boostSellerQuotient = convertInputStringToNumber(compensation.toString());
     return +(salesPlan * boostSellerQuotient / 100).toFixed(2);
 };
 

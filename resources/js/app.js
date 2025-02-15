@@ -26,4 +26,6 @@ authStore.loadUser(localStorage.getItem('token'), isAdmin)
     .then(() => {
         app.mount('#app');
     })
-    .then(() => authStore.loadPromoYears());
+    .then(() => {
+        if (isAdmin) authStore.loadPromoYears().then(r => r);
+    });

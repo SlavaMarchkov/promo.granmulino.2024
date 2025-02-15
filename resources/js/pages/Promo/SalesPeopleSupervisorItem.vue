@@ -79,8 +79,8 @@ const state = reactive({
 });
 
 watch(
-    () => props.supervisor.compensationPlan,
-    (newValue) => onCompensationPlanChange(newValue),
+    () => props.supervisor.compensation,
+    (newValue) => onCompensationChange(newValue),
 );
 
 const addSeller = (seller) => {
@@ -105,18 +105,18 @@ const addSeller = (seller) => {
     supervisorObj.sellerId = supervisorObj.id;
     supervisorObj.salesBefore = salesBefore.value;
     supervisorObj.salesPlan = salesPlan.value;
-    supervisorObj.budgetPlan = calcBudgetPlan(salesPlan.value, props.supervisor.compensationPlan);
+    supervisorObj.budgetPlan = calcBudgetPlan(salesPlan.value, props.supervisor.compensation);
 
     emit('addToCheckedSellers', supervisorObj);
 };
 
-const onCompensationPlanChange = (compensationPlan) => {
+const onCompensationChange = (compensation) => {
     const salesBeforeEl = document.getElementById(`${props.index}_SV_salesBefore`);
     const salesPlanEl = document.getElementById(`${props.index}_SV_salesPlan`);
 
     const salesBefore = convertInputStringToNumber(salesBeforeEl.value);
     const salesPlan = salesPlanEl.value === '' ? 0 : convertInputStringToNumber(salesPlanEl.value);
-    const budgetPlan = calcBudgetPlan(salesPlan, compensationPlan);
+    const budgetPlan = calcBudgetPlan(salesPlan, compensation);
 
     const supervisorObj = props.supervisor;
 
@@ -141,8 +141,8 @@ const salesPlan = computed(() => {
     }, 0);
 });
 
-const calcBudgetPlan = (salesPlan, compensationPlan) => {
-    const boostSupervisorQuotient = convertInputStringToNumber(compensationPlan.toString());
+const calcBudgetPlan = (salesPlan, compensation) => {
+    const boostSupervisorQuotient = convertInputStringToNumber(compensation.toString());
     return +(salesPlan * boostSupervisorQuotient / 100).toFixed(2);
 };
 </script>

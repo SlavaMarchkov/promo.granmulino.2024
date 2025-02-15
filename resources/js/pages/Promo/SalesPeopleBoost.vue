@@ -131,7 +131,7 @@
 import { computed, reactive, watch } from 'vue';
 import { useHttpService } from '@/use/useHttpService.js';
 import { useArrayHandlers } from '@/use/useArrayHandlers.js';
-import { MANAGER_URLS } from '@/helpers/constants.js';
+import { INITIALS, MANAGER_URLS } from '@/helpers/constants.js';
 import SalesPeopleSupervisorItem from '@/pages/Promo/SalesPeopleSupervisorItem.vue';
 import { formatNumber, formatNumberWithFractions } from '@/helpers/formatters.js';
 import SalesPeopleSellerItem from '@/pages/Promo/SalesPeopleSellerItem.vue';
@@ -148,8 +148,7 @@ const initialFormData = () => ({
     salesPlan: 0,
     surplusPlan: 0,
     budgetPlan: 0,
-    budgetActual: 0,
-    compensationPlan: 0,
+    compensation: 0,
 });
 
 const props = defineProps({
@@ -173,8 +172,8 @@ const emit = defineEmits([
 ]);
 
 const state = reactive({
-    motivationForSupervisors: 5,
-    motivationForSellers: 10,
+    motivationForSupervisors: INITIALS.MOTIVATION_FOR_SUPERVISORS,
+    motivationForSellers: INITIALS.MOTIVATION_FOR_SELLERS,
     sellers: [],
     checkedSellers: [],
     form: initialFormData(),
@@ -183,8 +182,8 @@ const state = reactive({
 watch(
     () => props.customerId,
     async (newValue) => {
-        state.motivationForSupervisors = 5;
-        state.motivationForSellers = 10;
+        state.motivationForSupervisors = INITIALS.MOTIVATION_FOR_SUPERVISORS;
+        state.motivationForSellers = INITIALS.MOTIVATION_FOR_SELLERS;
         state.sellers = [];
         state.checkedSellers = [];
         state.form = initialFormData();
@@ -208,7 +207,7 @@ const supervisors = computed(() => {
         .map(item => ({
             ...item,
             ...state.form,
-            compensationPlan: state.motivationForSupervisors,
+            compensation: state.motivationForSupervisors,
         }));
 });
 
@@ -219,7 +218,7 @@ const sellers = computed(() => {
         .map(item => ({
             ...item,
             ...state.form,
-            compensationPlan: state.motivationForSellers,
+            compensation: state.motivationForSellers,
         }));
 });
 

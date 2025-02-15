@@ -40,6 +40,7 @@ class PromoPolicy
 
     public function update(User $user, Promo $promo)
     : bool {
+        // TODO - проверить обновление промо в разных статусах
         return $user->isAdmin()
             || ($user->isManager()
                 && $promo->user_id === $user->id

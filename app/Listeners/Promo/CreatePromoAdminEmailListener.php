@@ -18,6 +18,7 @@ final class CreatePromoAdminEmailListener implements ShouldQueue
             'id'   => $event->promo->id,
             'type' => $event->promo->promo_type,
         ]);
-        Mail::to(config('mail.to.admin'))->send(new PromoCreatedMail($event->promo));
+        Mail::to(config('mail.to.admin'), 'Some name')
+            ->send(new PromoCreatedMail($event->promo));
     }
 }

@@ -6,6 +6,7 @@ declare(strict_types=1);
 namespace App\Http\Requests\Promo;
 
 use App\Models\Customer;
+use App\Rules\BooleanRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -48,20 +49,21 @@ final class StoreRequest extends FormRequest
             'total_budget_plan'       => ['required', 'numeric'],
             'total_promo_profit_plan' => ['nullable', 'numeric'],
 
-            'products'                           => [
+            'products' => [
                 'nullable',
                 'array',
                 Rule::requiredIf(function () {
                     return to_boolean($this->request->get('promo_for_retail')) == true;
                 }),
             ],
-            'sellers'                            => [
+            'sellers'  => [
                 'nullable',
                 'array',
                 Rule::requiredIf(function () {
                     return to_boolean($this->request->get('promo_for_retail')) == false;
                 }),
             ],
+
             'products.*.category_id'             => ['required', 'integer'],
             'products.*.product_id'              => ['required', 'integer'],
             'products.*.discount'                => ['required', 'numeric', 'integer'],
@@ -75,6 +77,16 @@ final class StoreRequest extends FormRequest
             'products.*.profit_per_product_plan' => ['required', 'numeric'],
             'products.*.net_profit'              => ['required', 'numeric', 'integer'],
             'products.*.revenue_plan'            => ['required', 'numeric', 'integer'],
+
+            'sellers.*.is_supervisor' => ['required', new BooleanRule()],
+            'sellers.*.seller_id'     => ['required', 'numeric'],
+            'sellers.*.customer_id'   => ['required', 'numeric'],
+            'sellers.*.supervisor_id' => ['required_if:sellers.*.is_supervisor,false', 'numeric'],
+            'sellers.*.sales_before'  => ['required', 'numeric'],
+            'sellers.*.sales_plan'    => ['required', 'numeric'],
+            'sellers.*.surplus_plan'  => ['required', 'numeric'],
+            'sellers.*.budget_plan'   => ['required', 'numeric'],
+            'sellers.*.compensation'  => ['required', 'numeric'],
         ];
     }
 

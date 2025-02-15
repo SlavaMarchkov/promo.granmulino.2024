@@ -7,7 +7,6 @@ namespace App\Models;
 
 use App\Enums\Promo\StatusEnum;
 use App\Enums\Promo\TypeEnum;
-use App\Events\Promo\CreatedEvent;
 use App\Observers\PromoObserver;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Model;
@@ -47,23 +46,6 @@ class Promo extends Model
         'start_date' => 'date',
         'end_date'   => 'date',
     ];
-
-    protected static function booted()
-    : void
-    {
-        self::created(function (Promo $promo) {
-            event(new CreatedEvent($promo));
-        });
-
-        // TODO: перенести в Observers
-        self::updated(function (Promo $promo) {
-//            if ($promo->wasChanged()) {
-                // TODO: создать event(new UpdatedEvent($promo));
-//                dump($promo->getOriginal());
-//                dump($promo->getAttributes());
-//            }
-        });
-    }
 
     public function user()
     : HasOne

@@ -1,5 +1,5 @@
 import { convertInputStringToNumber, isNumberNegative } from '@/helpers/formatters.js';
-import { NET_PROFIT_THRESHOLD } from '@/helpers/constants.js';
+import { INITIALS } from '@/helpers/constants.js';
 
 export function useCalculations() {
     const calcPercentage = (valueA, valueB) => {
@@ -50,7 +50,7 @@ export function useCalculations() {
     };
 
     const netProfitClass = (value) => {
-        return value >= NET_PROFIT_THRESHOLD
+        return value >= INITIALS.NET_PROFIT_THRESHOLD
             ? 'bg-success-light text-success'
             : 'bg-danger-light text-danger';
     };

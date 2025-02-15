@@ -27,6 +27,7 @@ final class CustomerController extends ApiController
     public function index()
     : JsonResponse
     {
+        $this->authorize('viewAny', Customer::class);
         Cache::forget(self::CACHE_KEY); // TODO: delete
 
         $customers = Cache::remember(self::CACHE_KEY, now()->addHour(), function () {
@@ -55,7 +56,7 @@ final class CustomerController extends ApiController
             'city'             => true,
             'region'           => true,
             'retailers'        => true,
-            'customer_sellers' => false,
+            ...request()->all(),
         ]);
 
         return $this->successResponse(

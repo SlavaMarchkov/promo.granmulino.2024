@@ -1,6 +1,6 @@
 <template>
     <TheLabel for="sellerName" required>Новый торговый представитель или супервайзер</TheLabel>
-    <div class="row g-2">
+    <div class="row gx-2">
         <div class="col-md-5">
             <TheInput
                 id="sellerName"

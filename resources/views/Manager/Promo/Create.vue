@@ -22,8 +22,8 @@
                                 <option
                                     v-for="promo in PROMO_TYPES"
                                     :key="promo.id"
-                                    :value="promo.type"
-                                >{{ promo.title }}
+                                    :value="promo.id"
+                                >{{ promo.promoLabel }}
                                 </option>
                             </select>
                         </div>
@@ -39,13 +39,13 @@
                         <div class="col-md-6">
                             <TheLabel
                                 for="channel_id"
-                                :required="currentPromoType.type !== ''"
+                                :required="currentPromoType.id !== ''"
                             >Канал продаж</TheLabel>
                             <select
                                 v-model="state.promo.channelId"
                                 id="channel_id"
                                 class="form-select"
-                                :disabled="currentPromoType.type === ''"
+                                :disabled="currentPromoType.id === ''"
                             >
                                 <option disabled selected value="">- Выберите канал продаж -</option>
                                 <option
@@ -59,13 +59,13 @@
                         <div class="col-md-6">
                             <TheLabel
                                 for="customer_id"
-                                :required="currentPromoType.type !== ''"
+                                :required="currentPromoType.id !== ''"
                             >Дистрибутор</TheLabel>
                             <select
                                 v-model="state.promo.customerId"
                                 id="customer_id"
                                 class="form-select"
-                                :disabled="currentPromoType.type === ''"
+                                :disabled="currentPromoType.id === ''"
                             >
                                 <option disabled selected value="">- Выберите дистрибутора -</option>
                                 <option
@@ -183,7 +183,7 @@
                         <div class="col-md-6">
                             <TheLabel
                                 for="sellers"
-                                :required="currentPromoType.type === 'SALES_PEOPLE_BOOST'"
+                                :required="currentPromoType.id === 'SALES_PEOPLE_BOOST'"
                             >Команда ТП</TheLabel>
                             <div class="input-group">
                                 <input
@@ -192,10 +192,10 @@
                                     class="form-control"
                                     value="Команда добавлена?"
                                     aria-describedby="sellers_help"
-                                    :disabled="currentPromoType.type !== 'SALES_PEOPLE_BOOST'"
+                                    :disabled="currentPromoType.id !== 'SALES_PEOPLE_BOOST'"
                                     readonly
                                 >
-                                <template v-if="currentPromoType.type === 'SALES_PEOPLE_BOOST'">
+                                <template v-if="currentPromoType.id === 'SALES_PEOPLE_BOOST'">
                                     <span
                                         v-if="state.promo.sellers.length > 0"
                                         class="input-group-text border-success bg-success text-white px-4"
@@ -234,10 +234,10 @@
             </div>
         </div>
         <div class="col-lg-7">
-            <Suspense v-if="currentPromoType.type === 'DISCOUNT'">
+            <Suspense v-if="currentPromoType.id === 'DISCOUNT'">
                 <template #default>
                     <TheDiscount
-                        :title="currentPromoType.title"
+                        :title="currentPromoType.promoLabel"
                         :customer-id="+state.promo.customerId"
                         :customer-name="state.customerName"
                         :retailer-name="state.retailerName"
@@ -248,10 +248,10 @@
                     <p>Loading...</p>
                 </template>
             </Suspense>
-            <Suspense v-if="currentPromoType.type === 'SALES_PEOPLE_BOOST'">
+            <Suspense v-if="currentPromoType.id === 'SALES_PEOPLE_BOOST'">
                 <template #default>
                     <SalesPeopleBoost
-                        :title="currentPromoType.title"
+                        :title="currentPromoType.promoLabel"
                         :customer-id="state.promo.customerId"
                         :customer-name="state.customerName"
                         @add-sellers-to-promo="addSellersHandler"
@@ -261,20 +261,20 @@
                     <p>Loading...</p>
                 </template>
             </Suspense>
-            <Suspense v-if="currentPromoType.type === 'GIFT_FOR_PURCHASE'">
+            <Suspense v-if="currentPromoType.id === 'GIFT_FOR_PURCHASE'">
                 <template #default>
                     <GiftForPurchase
-                        :title="currentPromoType.title"
+                        :title="currentPromoType.promoLabel"
                     />
                 </template>
                 <template #fallback>
                     <p>Loading...</p>
                 </template>
             </Suspense>
-            <Suspense v-if="currentPromoType.type === 'RETAILERS_BOOST'">
+            <Suspense v-if="currentPromoType.id === 'RETAILERS_BOOST'">
                 <template #default>
                     <RetailersBoost
-                        :title="currentPromoType.title"
+                        :title="currentPromoType.promoLabel"
                     />
                 </template>
                 <template #fallback>
@@ -283,15 +283,15 @@
             </Suspense>
             <component
                 :is="CoverageIncrease"
-                v-if="currentPromoType.type === 'COVERAGE_INCREASE'"
-                :title="currentPromoType.title"
+                v-if="currentPromoType.id === 'COVERAGE_INCREASE'"
+                :title="currentPromoType.promoLabel"
             ></component>
             <component
                 :is="TheInOut"
-                v-if="currentPromoType.type === 'IN_OUT'"
-                :title="currentPromoType.title"
+                v-if="currentPromoType.id === 'IN_OUT'"
+                :title="currentPromoType.promoLabel"
             ></component>
-            <div v-if="currentPromoType.type === ''" class="alert alert-warning  alert-dismissible fade show" role="alert">
+            <div v-if="currentPromoType.id === ''" class="alert alert-warning  alert-dismissible fade show" role="alert">
                 <h4 class="alert-heading">Детали промо-акции</h4>
                 <p>Здесь будут выведены поля для ввода ассортимента, команды торговых представителей и др. в зависимости от выбранного вида промо-акции.</p>
                 <hr>
@@ -393,9 +393,9 @@ const state = reactive({
 
 let currentPromoType = reactive({
     isForRetail: false,
-    type: '',
-    title: '',
-    code: '',
+    id: '',
+    promoLabel: '',
+    promoCode: '',
 });
 
 onMounted(async () => {
@@ -416,8 +416,8 @@ const getCustomers = async () => {
 watch(
     () => state.promo.promoType,
     async (newValue) => {
-        const promoType = newValue;
-        currentPromoType = PROMO_TYPES.find(pt => pt.type === promoType);
+        const promoType = newValue; // DISCOUNT
+        currentPromoType = PROMO_TYPES.find(pt => pt.id === promoType);
 
         state.promo.promoForRetail = currentPromoType.isForRetail;
 
@@ -489,8 +489,8 @@ const addSellersHandler = (sellers, salesBefore, salesPlan, budgetPlan) => {
 };
 
 const isFormValid = () => {
-    return (currentPromoType.type === 'DISCOUNT' && state.promo.products.length > 0)
-        || (currentPromoType.type === 'SALES_PEOPLE_BOOST' && state.promo.sellers.length > 0);
+    return (currentPromoType.id === 'DISCOUNT' && state.promo.products.length > 0)
+        || (currentPromoType.id === 'SALES_PEOPLE_BOOST' && state.promo.sellers.length > 0);
 };
 
 const savePromo = async () => {
