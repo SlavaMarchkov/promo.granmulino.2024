@@ -10,10 +10,13 @@ use App\Http\Resources\V1\Promo\PromoProductResource;
 use App\Models\Promo;
 use App\Models\PromoProduct;
 use App\Services\Promos\PromoService;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
 
 final class PromoProductController extends ApiController
 {
+    use AuthorizesRequests;
+
     public function __construct(
         private readonly PromoService $promoService,
     ) {
@@ -38,6 +41,8 @@ final class PromoProductController extends ApiController
 
     public function update(int $promo_id, PromoProduct $product, PromoProductUpdateRequest $request)
     : JsonResponse {
+        $this->authorize('update', $product);
+
         $data = $request->validated();
         $array = $this->promoService->updatePromoProduct($promo_id, $product, $data);
 
