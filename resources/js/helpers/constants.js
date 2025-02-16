@@ -399,17 +399,16 @@ export const FOUR_WEEKS_AHEAD = new Date(new Date().getTime() + 12096e5 * 2);
 export const PRODUCT_IMG_PATH = '/assets/img/products/';
 export const NO_PRODUCT_IMG = '/assets/img/no-image.png';
 export const ALLOWED_FILE_TYPES = ['gif', 'jpeg', 'jpg', 'png'];
-export const VAT_RATE = 1.2;
 export const INITIALS = {
     MOTIVATION_FOR_SUPERVISORS: 5, // процент мотивации для супервайзеров
     MOTIVATION_FOR_SELLERS: 10, // процент мотивации для торговых представителей
     SURPLUS_PERCENT: 30, // дефолтный процент увеличения продаж для планов торговым представителям
     NET_PROFIT_THRESHOLD: 20, // порог в процентах для расчета норматива чистой прибыли
     MOTIVATION_THRESHOLD: 90, // порог в процентах для начисления мотивации (если не достигнут, то мотивация не начисляется)
-
-// INITIAL_DISCOUNT: 20, // начальная скидка (%)
-// INITIAL_TRANSPORT_RATE: 100_000, // начальная транспортная ставка (руб.)
-// INITIAL_ORDER_WEIGHT: 16_000, // начальный вес заказа (кг)
-// OFFICE_EXPENSES: 0.075, // расходы на офис 7.5%
-// MARKETING_EXPENSES: 0.05, // расходы на маркетинг 5%
+    BASE_DISCOUNT: 20, // начальная скидка (%)
+    BASE_TRANSPORT_RATE: 100_000, // начальная транспортная ставка (руб.)
+    BASE_ORDER_WEIGHT: 16_000, // начальный вес заказа (кг)
+    OFFICE_EXPENSES: 0.075, // расходы на офис 7.5%
+    MARKETING_EXPENSES: 0.05, // расходы на маркетинг 5%
+    VAT_RATE: 1.2, // НДС в размере 20% для расчета логистики
 };

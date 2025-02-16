@@ -1,7 +1,7 @@
 <template>
     <div class="row mb-4">
         <div class="col-3">
-            <TheLabel for="promo_goals">Цель промо-акции: <span class="fw-bold fs-5">{{ props.mark.goals }}</span>
+            <TheLabel for="promo_goals">Цель промо-акции: <span class="fw-bold fs-5">{{ formatNumberWithFractions(props.mark.goals) }}</span>
             </TheLabel>
             <InputRange
                 id="promo_goals"
@@ -9,14 +9,14 @@
             />
         </div>
         <div class="col-3">
-            <TheLabel for="promo_sales">Продажи: <span class="fw-bold fs-5">{{ props.mark.sales }}</span></TheLabel>
+            <TheLabel for="promo_sales">Продажи: <span class="fw-bold fs-5">{{ formatNumberWithFractions(props.mark.sales) }}</span></TheLabel>
             <InputRange
                 id="promo_sales"
                 v-model="props.mark.sales"
             />
         </div>
         <div class="col-3">
-            <TheLabel for="promo_staff">Участие персонала: <span class="fw-bold fs-5">{{ props.mark.staff }}</span>
+            <TheLabel for="promo_staff">Участие персонала: <span class="fw-bold fs-5">{{ formatNumberWithFractions(props.mark.staff) }}</span>
             </TheLabel>
             <InputRange
                 id="promo_staff"
@@ -27,8 +27,9 @@
             <TheLabel for="total_promo_mark">Средняя оценка</TheLabel>
             <TheInput
                 id="total_promo_mark"
-                :model-value="calcTotalPromoMark"
+                :model-value="formatNumberWithFractions(calcTotalPromoMark)"
                 class="text-center w-50 mx-auto fw-bold"
+                readonly="readonly"
             />
         </div>
     </div>
@@ -48,6 +49,8 @@
         <div class="col-6 align-content-center">
             <TheButton
                 class="btn-primary"
+                :style="props.promoStatus !== 'WAITING_FOR_REPORT' ? 'cursor: not-allowed;' : ''"
+                :disabled="props.promoStatus !== 'WAITING_FOR_REPORT'"
                 @click="saveChanges"
             >Сохранить оценку и выводы
             </TheButton>
@@ -62,12 +65,17 @@ import TheLabel from '@/components/form/TheLabel.vue';
 import TheInput from '@/components/form/TheInput.vue';
 import { useArrayHandlers } from '@/use/useArrayHandlers.js';
 import InputRange from '@/components/form/InputRange.vue';
+import { formatNumberWithFractions } from '@/helpers/formatters.js';
 
 const { getAverageOfArray } = useArrayHandlers();
 
 const props = defineProps({
     mark: {
         type: Object,
+        required: true,
+    },
+    promoStatus: {
+        type: String,
         required: true,
     },
 });

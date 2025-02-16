@@ -37,7 +37,7 @@ import { useCalculations } from '@/use/useCalculations.js';
 import TheButton from '@/components/core/TheButton.vue';
 import TheCard from '@/components/core/TheCard.vue';
 import TwoColumnRow from '@/components/core/TwoColumnRow.vue';
-import { MARKETING_EXPENSES, OFFICE_EXPENSES } from '@/helpers/constants.js';
+import { INITIALS } from '@/helpers/constants.js';
 
 const { netProfitClass } = useCalculations();
 
@@ -68,7 +68,11 @@ watch(
     () => props.transportRatePerKilo,
     (newValue) => {
         const transportRatePerUnit = calcTransportRatePerUnit(newValue);
-        props.product.profitPerUnit = parseFloat(((props.product.promoPrice - props.product.productPrice) - transportRatePerUnit - (props.product.promoPrice * OFFICE_EXPENSES) - (props.product.promoPrice * MARKETING_EXPENSES)).toFixed(2));
+        props.product.profitPerUnit = parseFloat((
+            (props.product.promoPrice - props.product.productPrice)
+            - transportRatePerUnit - (props.product.promoPrice * INITIALS.OFFICE_EXPENSES)
+            - (props.product.promoPrice * INITIALS.MARKETING_EXPENSES)
+        ).toFixed(2));
         props.product.netProfit = Math.round((props.product.profitPerUnit / props.product.promoPrice) * 100);
         props.product.profitPerProductPlan = parseFloat((convertInputStringToNumber(props.product.salesPlan) * props.product.profitPerUnit).toFixed(2));
     },

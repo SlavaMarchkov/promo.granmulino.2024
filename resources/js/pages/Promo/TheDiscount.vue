@@ -414,15 +414,7 @@ import TheModal from '@/components/TheModal.vue';
 import TheButton from '@/components/core/TheButton.vue';
 import TheLabel from '@/components/form/TheLabel.vue';
 import TheInput from '@/components/form/TheInput.vue';
-import {
-    INITIAL_DISCOUNT,
-    INITIAL_ORDER_WEIGHT,
-    INITIAL_TRANSPORT_RATE,
-    MANAGER_URLS,
-    MARKETING_EXPENSES,
-    OFFICE_EXPENSES,
-    VAT_RATE,
-} from '@/helpers/constants.js';
+import { INITIALS, MANAGER_URLS } from '@/helpers/constants.js';
 import DiscountProductCard from '@/pages/Promo/DiscountProductCard.vue';
 import { useCalculations } from '@/use/useCalculations.js';
 import InputRange from '@/components/form/InputRange.vue';
@@ -482,8 +474,8 @@ const initialProductData = () => ({
 });
 
 const state = reactive({
-    transportRate: INITIAL_TRANSPORT_RATE,
-    orderWeight: INITIAL_ORDER_WEIGHT,
+    transportRate: INITIALS.BASE_TRANSPORT_RATE,
+    orderWeight: INITIALS.BASE_ORDER_WEIGHT,
     categories: [],
     products: [],
     addedProducts: [],
@@ -513,7 +505,7 @@ const displayOneProduct = () => {
     const catIdx = state.categories.findIndex(c => +c.id === +state.form.categoryId);
     state.product = state.categories[catIdx].products.find(p => p.id === +state.form.productId);
 
-    state.form.discount = INITIAL_DISCOUNT;
+    state.form.discount = INITIALS.BASE_DISCOUNT;
     state.form.salesBefore = 0;
     state.form.salesPlan = 0;
 
@@ -630,7 +622,7 @@ const totalPromoProfitPlan = computed(() => {
 });
 
 const transportRatePerKilo = computed(() => {
-    return (state.transportRate / VAT_RATE) / state.orderWeight;
+    return (state.transportRate / INITIALS.VAT_RATE) / state.orderWeight;
 });
 
 const calcTransportRatePerUnit = computed(() => {
@@ -638,11 +630,11 @@ const calcTransportRatePerUnit = computed(() => {
 });
 
 const calcOfficeExpenses = computed(() => {
-    return state.form.promoPrice * OFFICE_EXPENSES;
+    return state.form.promoPrice * INITIALS.OFFICE_EXPENSES;
 });
 
 const calcMarketingExpenses = computed(() => {
-    return state.form.promoPrice * MARKETING_EXPENSES;
+    return state.form.promoPrice * INITIALS.MARKETING_EXPENSES;
 });
 
 const calcGrossProfit = computed(() => {
@@ -654,8 +646,8 @@ watch(
     async (newValue) => {
         if ( newValue !== 0 ) {
             state.categories = [];
-            state.transportRate = INITIAL_TRANSPORT_RATE;
-            state.orderWeight = INITIAL_ORDER_WEIGHT;
+            state.transportRate = INITIALS.BASE_TRANSPORT_RATE;
+            state.orderWeight = INITIALS.BASE_ORDER_WEIGHT;
             state.addedProducts = [];
             state.addedProductsIds = [];
             await fetchCustomerProducts(newValue);

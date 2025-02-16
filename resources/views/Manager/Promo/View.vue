@@ -16,7 +16,7 @@
                     <div class="card-header bg-light d-flex justify-content-between align-items-center">
                         <h4 class="mb-0"><span :class="[ 'badge', promo.statusColor ]">{{ promo.statusLabel }}</span></h4>
                         <h3 class="mb-0">{{ promo.promoCode }}&nbsp;#{{ promo.id }}&nbsp;|&nbsp;<span class="text-secondary fs-5">{{ promo.channelName }}</span></h3>
-                        <h2 class="mb-0"><span :class="[ 'badge', promoMarkClass(promo.totalMark) ]">{{ promo.totalMark }}</span></h2>
+                        <h2 class="mb-0"><span :class="[ 'badge', promoMarkClass(promo.totalMark) ]">{{ formatNumberWithFractions(promo.totalMark) }}</span></h2>
                     </div>
                     <div class="card-body mt-2 g-3">
                         <div class="row mb-2">
@@ -97,6 +97,7 @@
                                         <Alert />
                                         <PromoMark
                                             :mark="promo.mark"
+                                            :promo-status="promo.status"
                                             @update-promo-mark="updatePromoMark"
                                         />
                                     </div>
@@ -174,6 +175,7 @@ import ProductCards from '@/pages/PromoActual/ProductCards.vue';
 import SalesCards from '@/pages/PromoActual/SalesCards.vue';
 import SalesPeopleBoost from '@/pages/PromoActual/SalesPeopleBoost.vue';
 import TheButton from '@/components/core/TheButton.vue';
+import { formatNumberWithFractions } from '@/helpers/formatters.js';
 
 const route = useRoute();
 const router = useRouter();
