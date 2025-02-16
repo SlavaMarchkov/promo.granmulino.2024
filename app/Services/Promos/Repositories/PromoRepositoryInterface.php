@@ -30,10 +30,10 @@ interface PromoRepositoryInterface
     public function updatePromoProductFromArray(int $promo_id, PromoProduct $promoProduct, array $data)
     : array;
 
-    public function updatePromoMarkFromArray(int $promo_id, PromoMark $promoMark, array $data)
-    : ?Promo;
+    public function updatePromoSellersFromArray(Promo $promo, array $data)
+    : Promo;
 
-    public function updatePromoFromArray(Promo $promo, array $data)
+    public function updatePromoMarkFromArray(int $promo_id, PromoMark $promoMark, array $data)
     : Promo;
 
     public function getYears()

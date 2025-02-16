@@ -7,7 +7,7 @@ namespace App\Http\Requests\Promo;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-final class PromoDataUpdateRequest extends FormRequest
+final class PromoSellersUpdateRequest extends FormRequest
 {
     public function authorize()
     : bool
@@ -26,6 +26,7 @@ final class PromoDataUpdateRequest extends FormRequest
             'sellers'                 => ['array'],
             'sellers.*.seller_id'     => ['required', 'numeric'],
             'sellers.*.sales_after'   => ['required', 'numeric'],
+            'sellers.*.sales_before'  => ['required', 'numeric'],
             'sellers.*.budget_actual' => ['required', 'numeric'],
         ];
     }
@@ -53,6 +54,7 @@ final class PromoDataUpdateRequest extends FormRequest
                 return [
                     'seller_id'     => $seller['seller_id'],
                     'sales_after'   => convert_string_to_number($seller['sales_after']),
+                    'sales_before'  => convert_string_to_number($seller['sales_before']),
                     'budget_actual' => convert_string_to_number($seller['budget_actual']),
                 ];
             }, $sellers),

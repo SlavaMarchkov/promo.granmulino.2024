@@ -10,7 +10,6 @@ const $toast = useToast({
 const http = Axios.create({
     baseURL: import.meta.env.VITE_API_URL,
     timeout: 60_000,
-    withCredentials: true,
     responseType: 'json',
     headers: {
         'Accept': 'application/json',
@@ -65,7 +64,7 @@ const responseErrorHandler = (err) => {
             error.message = 'Ошибка 404. Запрашиваемый ресурс не найден.';
             break;
         case 403:
-            error.message = 'Доступ к этому ресурсу закрыт.';
+            error.message = 'Доступ к этому ресурсу закрыт либо у вас недостаточно прав.';
             break;
         case 401:
             error.message = 'Пароль или email введены неверно.';

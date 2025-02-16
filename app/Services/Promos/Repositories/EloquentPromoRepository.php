@@ -30,6 +30,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Throwable;
 
 final class EloquentPromoRepository implements PromoRepositoryInterface
 {
@@ -76,7 +77,7 @@ final class EloquentPromoRepository implements PromoRepositoryInterface
     }
 
     /**
-     * @throws Exception
+     * @throws Exception|Throwable
      */
     public function createFromArray(array $data)
     : Promo {
@@ -126,15 +127,15 @@ final class EloquentPromoRepository implements PromoRepositoryInterface
     public function updatePromoStatus(Promo $promo, array $data)
     : Promo {
         $promo->update([
-            'status' => $data['status']
+            'status' => $data['status'],
         ]);
         return $promo;
     }
 
     /**
-     * @throws Exception
+     * @throws Exception|Throwable
      */
-    public function updatePromoFromArray(Promo $promo, array $data)
+    public function updatePromoSellersFromArray(Promo $promo, array $data)
     : Promo {
         $promo_data = $data['promo'];
         $sellers = $data['sellers'] ?? [];
@@ -153,6 +154,7 @@ final class EloquentPromoRepository implements PromoRepositoryInterface
                 $promo_seller->update([
                     'sales_after' => $seller['sales_after'],
                     'budget_actual' => $seller['budget_actual'],
+                    'surplus_actual' => $this->calcSalesSurplus($seller['sales_before'], $seller['sales_after']),
                 ]);
             }
 
@@ -161,7 +163,7 @@ final class EloquentPromoRepository implements PromoRepositoryInterface
             return $promo;
         } catch (Exception $exception) {
             DB::rollBack();
-            Log::error('Error updating marks for the Promo with ID={id}. Error: {error}', [
+            Log::error('Error updating sellers for the Promo with ID={id}. Error: {error}', [
                 'id'    => $promo->id,
                 'error' => $exception->getMessage(),
             ]);
@@ -170,7 +172,7 @@ final class EloquentPromoRepository implements PromoRepositoryInterface
     }
 
     /**
-     * @throws Exception
+     * @throws Exception|Throwable
      */
     public function updatePromoProductFromArray(int $promo_id, PromoProduct $promoProduct, array $data)
     : array {
@@ -226,7 +228,7 @@ final class EloquentPromoRepository implements PromoRepositoryInterface
             return $array;
         } catch (Exception $exception) {
             DB::rollBack();
-            Log::error('Error updating the Promo with ID={id}. Error: {error}', [
+            Log::error('Error updating products for the Promo with ID={id}. Error: {error}', [
                 'id'    => $promo_id,
                 'error' => $exception->getMessage(),
             ]);
@@ -235,10 +237,10 @@ final class EloquentPromoRepository implements PromoRepositoryInterface
     }
 
     /**
-     * @throws Exception
+     * @throws Exception|Throwable
      */
     public function updatePromoMarkFromArray(int $promo_id, PromoMark $promoMark, array $data)
-    : ?Promo {
+    : Promo {
         try {
             $promo = Promo::query()->where('id', $promo_id)->first();
 
@@ -309,5 +311,14 @@ final class EloquentPromoRepository implements PromoRepositoryInterface
             ->toArray();
 
         return range(min($years), max($years));
+    }
+
+    private function calcSalesSurplus(int|string $valueA, int|string $valueB)
+    : float {
+        $numA = (int)$valueA;
+        $numB = (int)$valueB;
+
+        $difference = $numB - $numA;
+        return $numA === 0 ? 0 : round((($difference / $numA) * 100), 2);
     }
 }

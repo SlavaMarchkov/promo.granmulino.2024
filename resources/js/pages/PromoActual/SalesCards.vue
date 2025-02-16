@@ -118,8 +118,8 @@ const calcPlanSurplus = computed(() => {
 
 const calcAfterSurplus = computed(() => {
     const result = calcDifferencePercentage(
-        props.totalSalesAfter,
         props.totalSalesPlan,
+        props.totalSalesAfter,
     );
     if ( !isNaN(result) ) {
         return formatNumber(result);

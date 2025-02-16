@@ -21,6 +21,7 @@ final class PromoObserver
 
     public function updated(Promo $promo)
     : void {
+        // dd($promo);
         //if ($promo->wasChanged()) {}
 //                dump($promo->getOriginal());
 //                dump($promo->getAttributes());

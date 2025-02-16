@@ -61,6 +61,10 @@
                     class="btn btn-outline-primary"
                 >Подробнее
                 </RouterLink>
+                <div class="text-end text-muted" style="font-size: small;">
+                    Создано: {{ promo.createdAt }} <br>
+                    Обновлено: {{ promo.updatedAt }}
+                </div>
             </template>
         </TheCard>
     </div>

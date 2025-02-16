@@ -54,7 +54,7 @@
                     <div class="col-md-3 col-sm-6">
                         <TheInput
                             class="fw-bold border-primary text-end"
-                            :model-value="state.supervisor.compensationPlan"
+                            :model-value="state.supervisor.compensation"
                             readonly
                             :tabindex="-1"
                         />
@@ -131,8 +131,7 @@ const initialFormData = () => ({
     salesPlan: formatNumber(props.supervisor.salesPlan),
     salesAfter: formatNumber(props.supervisor.salesAfter),
     surplusPlan: props.supervisor.surplusPlan,
-    compensationPlan: props.supervisor.compensationPlan,
-    compensationActual: props.supervisor.compensationActual,
+    compensation: props.supervisor.compensation,
     budgetPlan: formatNumberWithFractions(props.supervisor.budgetPlan),
     budgetActual: formatNumberWithFractions(props.supervisor.budgetActual),
 });
@@ -156,7 +155,7 @@ const updateSeller = (seller) => {
 const calcSalesAfter = () => {
     return sellers.value.reduce((acc, seller) => {
         if ( state.supervisor.sellerId === seller.supervisorId ) {
-            const salesAfter = convertInputStringToNumber(seller.salesAfter.toString());
+            const salesAfter = convertInputStringToNumber(seller.salesAfter);
             acc += salesAfter;
         }
         return acc;
@@ -173,7 +172,7 @@ const calcSalesDiff = computed(() => {
 });
 
 const calcBudgetActual = () => {
-    const boostSupervisorQuotient = convertInputStringToNumber(state.supervisor.compensationPlan.toString());
+    const boostSupervisorQuotient = convertInputStringToNumber(state.supervisor.compensation);
     const salesAfter = convertInputStringToNumber(state.supervisor.salesAfter);
     return (salesAfter * boostSupervisorQuotient / 100).toFixed(2);
 };

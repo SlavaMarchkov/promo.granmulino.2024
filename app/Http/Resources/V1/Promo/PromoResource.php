@@ -40,6 +40,9 @@ class PromoResource extends JsonResource
             'year' => $this->start_date->format('Y'),
 
             'mark' => new PromoMarkResource($this->whenLoaded('mark')),
+
+            'createdAt' => $this->created_at->format('d.m.Y в H:i'),
+            'updatedAt' => $this->updated_at->format('d.m.Y в H:i'),
         ];
     }
 }

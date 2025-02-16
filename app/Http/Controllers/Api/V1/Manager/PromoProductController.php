@@ -52,8 +52,4 @@ final class PromoProductController extends ApiController
             __('crud.products.updated'),
         );
     }
-
-    public function destroy(PromoProduct $promoProduct)
-    {
-    }
 }

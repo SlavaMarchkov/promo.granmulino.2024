@@ -67,7 +67,7 @@
                                 'text-end',
                                 { 'border-warning': !props.seller.supervisorId }
                             ]"
-                            :model-value="state.seller.compensationPlan"
+                            :model-value="state.seller.compensation"
                             readonly
                             :tabindex="-1"
                         />
@@ -111,6 +111,7 @@ import {
     processInputValue,
 } from '@/helpers/formatters.js';
 import { useCalculations } from '@/use/useCalculations.js';
+import { INITIALS } from '@/helpers/constants.js';
 
 const { calcPercentage } = useCalculations();
 
@@ -143,8 +144,7 @@ const initialFormData = () => ({
     salesBefore: formatNumber(props.seller.salesBefore),
     salesPlan: formatNumber(props.seller.salesPlan),
     salesAfter: formatNumber(props.seller.salesAfter),
-    compensationPlan: props.seller.compensationPlan,
-    compensationActual: props.seller.compensationActual,
+    compensation: props.seller.compensation,
     budgetPlan: formatNumberWithFractions(props.seller.budgetPlan),
     budgetActual: formatNumberWithFractions(props.seller.budgetActual),
 });
@@ -175,15 +175,15 @@ const calcSalesDiff = computed(() => {
 
 const calcSalesAfterClass = computed(() => {
     const diff = convertInputStringToNumber(calcSalesDiff.value);
-    return diff < 90
+    return diff < INITIALS.MOTIVATION_THRESHOLD
         ? 'border-danger bg-sales-fail text-danger'
         : 'border-success bg-sales-success text-black';
 });
 
 const calcBudgetActual = computed(() => {
-    const boostSellerQuotient = convertInputStringToNumber(state.seller.compensationPlan.toString());
-    const salesAfter = convertInputStringToNumber(state.seller.salesAfter.toString());
-    const result = convertInputStringToNumber(calcSalesDiff.value) < 90
+    const boostSellerQuotient = convertInputStringToNumber(state.seller.compensation);
+    const salesAfter = convertInputStringToNumber(state.seller.salesAfter);
+    const result = convertInputStringToNumber(calcSalesDiff.value) < INITIALS.MOTIVATION_THRESHOLD
         ? 0 : (salesAfter * boostSellerQuotient / 100).toFixed(2);
     state.seller.budgetActual = result;
     return formatNumberWithFractions(result);

@@ -5,6 +5,7 @@ declare(strict_types=1);
 // 04.12.2024 at 22:00:46
 namespace App\Policies;
 
+use App\Enums\Promo\StatusEnum;
 use App\Models\Promo;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
@@ -38,21 +39,15 @@ class PromoPolicy
 
     public function update(User $user, Promo $promo)
     : bool {
-        return $user->isManager() && $promo->user_id === $user->id;
+        return $user->isManager()
+            && $promo->user_id === $user->id
+            && $promo->status === StatusEnum::WAITING_FOR_REPORT;
     }
 
     public function delete(User $user, Promo $promo)
     : bool {
-        return $user->isAdmin();
-    }
-
-    public function restore(User $user, Promo $promo)
-    : bool {
-        return $user->isAdmin();
-    }
-
-    public function forceDelete(User $user, Promo $promo)
-    : bool {
-        return $user->isAdmin();
+        return $user->isManager()
+            && $promo->user_id === $user->id
+            && $promo->status === StatusEnum::ON_APPROVAL;
     }
 }

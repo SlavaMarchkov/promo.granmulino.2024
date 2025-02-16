@@ -6,6 +6,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api\V1\Manager;
 
 use App\Http\Controllers\ApiController;
+use App\Http\Requests\Promo\PromoSellersUpdateRequest;
 use App\Http\Requests\Promo\StoreRequest;
 use App\Http\Resources\V1\Promo\PromoCollection;
 use App\Http\Resources\V1\Promo\PromoFullResource;
@@ -81,22 +82,19 @@ final class PromoController extends ApiController
         );
     }
 
-    /*
-     * TODO delete
-     * public function update(PromoDataUpdateRequest $request, Promo $promo)
+    public function update(PromoSellersUpdateRequest $request, Promo $promo)
     : JsonResponse {
-        dd('here1111');
         $this->authorize('update', $promo);
 
         $data = $request->validated();
-        $promo = $this->promoService->updatePromo($promo, $data);
+        $promo = $this->promoService->updatePromoSellers($promo, $data);
 
         return $this->successResponse(
             new PromoFullResource($promo),
             'success',
             __('crud.promos.updated'),
         );
-    }*/
+    }
 
     public function getPromoYears()
     {

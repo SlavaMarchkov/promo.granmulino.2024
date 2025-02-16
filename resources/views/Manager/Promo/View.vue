@@ -128,7 +128,7 @@
                     <template #header>
                         <h4 class="mb-0">Мотивация команды ТП</h4>
                         <TheButton
-                            @click="updatePromo"
+                            @click="updatePromoSellers"
                             class="btn-success"
                             style="width: 15%;"
                             :disabled="spinnerStore.isButtonDisabled"
@@ -249,7 +249,7 @@ const updatePromoMark = async (mark) => {
     }
 };
 
-const updatePromo = async () => {
+const updatePromoSellers = async () => {
     const response = await update(`${ MANAGER_URLS.PROMO }/${ promoId }`, updatedPromo);
     if ( response && response.status === 'success' ) {
         promo.value = {
