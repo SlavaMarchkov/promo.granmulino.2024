@@ -21,12 +21,9 @@ final class PromoObserver
 
     public function updated(Promo $promo)
     : void {
-        // dd($promo);
-        //if ($promo->wasChanged()) {}
-//                dump($promo->getOriginal());
-//                dump($promo->getAttributes());
-//            }
-        //event(new UpdatedEvent($promo));
+        if ($promo->wasChanged()) {
+            info('Promo ID={id} was changed.', ['id' => $promo->id]);
+        }
     }
 
     public function saved(Promo $promo)

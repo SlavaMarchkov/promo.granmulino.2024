@@ -45,6 +45,7 @@ final class AuthController extends ApiController
                 'logged_in_at' => now(),
             ]);
 
+            info('User ID={id} just logged in.', ['id' => $user->id, 'user' => $user]);
             LoginManagerJob::dispatch($user);
 
             return $this->successResponse(
@@ -75,6 +76,7 @@ final class AuthController extends ApiController
         $user->tokens()->delete();// TODO
         request()->session()->invalidate();
 
+        info('User ID={id} just logged out.', ['id' => $user->id]);
         LogoutManagerJob::dispatch($user);
 
         return $this->successResponse(
