@@ -24,7 +24,7 @@ interface PromoRepositoryInterface
     public function getProducts(Promo $promo, array $params = [])
     : Collection;
 
-    public function getSellers(int $promo_id)
+    public function getSellers(array $params)
     : Collection;
 
     public function updatePromoProductFromArray(int $promo_id, PromoProduct $promoProduct, array $data)

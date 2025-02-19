@@ -297,7 +297,7 @@ const fetchPromoSellers = async (promoId) => {
 };
 
 const exportToPDF = async () => {
-    await download(`${ ADMIN_URLS.PROMO }/${ promoId }/print`, `promo_${ promoId }_export.pdf`);
+    await print(`${ ADMIN_URLS.PROMO }/${ promoId }/print`, `promo_${ promoId }_export.pdf`);
 };
 
 const changePromoStatus = async () => {

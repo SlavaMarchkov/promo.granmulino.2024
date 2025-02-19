@@ -24,7 +24,7 @@ if (!function_exists('to_boolean')) {
 if (!function_exists('convert_string_to_number')) {
     function convert_string_to_number(mixed $str)
     : array|string|null {
-        $str = (string) $str;
+        $str = (string)$str;
         $str = str_replace(',', '.', $str);
         return preg_replace('/[^0-9.]/', '', $str);
     }
@@ -105,5 +105,21 @@ if (!function_exists('remove_image')) {
         if (file_exists($file)) {
             @unlink($file);
         }
+    }
+}
+
+if (!function_exists('formatNumberRU')) {
+    function formatNumberRU(mixed $value)
+    : string {
+        $num = (float)($value);
+        return $num ? number_format($num, 0, '.', ' ') : '';
+    }
+}
+
+if (!function_exists('formatNumberEN')) {
+    function formatNumberEN(mixed $value)
+    : string {
+        $num = (float)($value);
+        return $num ? number_format($num, 0, '.', ',') : '';
     }
 }

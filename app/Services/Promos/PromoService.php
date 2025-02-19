@@ -47,9 +47,9 @@ final readonly class PromoService
         return $this->promoRepository->getProducts($promo, $params);
     }
 
-    public function getPromoSellers(int $promo_id)
+    public function getPromoSellers(array $params)
     : Collection {
-        return $this->promoRepository->getSellers($promo_id);
+        return $this->promoRepository->getSellers($params);
     }
 
     public function updatePromoProduct(int $promo_id, PromoProduct $promoProduct, array $data)

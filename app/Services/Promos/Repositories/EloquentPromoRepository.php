@@ -15,6 +15,7 @@ use App\Services\Promos\Filters\Category;
 use App\Services\Promos\Filters\Channel;
 use App\Services\Promos\Filters\City;
 use App\Services\Promos\Filters\Customer;
+use App\Services\Promos\Filters\CustomerSeller;
 use App\Services\Promos\Filters\Id;
 use App\Services\Promos\Filters\Mark;
 use App\Services\Promos\Filters\Product;
@@ -290,13 +291,14 @@ final class EloquentPromoRepository implements PromoRepositoryInterface
     /**
      * @throws BindingResolutionException
      */
-    public function getSellers(int $promo_id)
+    public function getSellers(array $params)
     : Collection {
-        request()->merge(['promo_id' => $promo_id]);
+        request()->merge($params);
         $promo_sellers = app()->make(Pipeline::class)
             ->send(PromoSeller::query())
             ->through([
                 PromoId::class,
+                CustomerSeller::class,
             ])
             ->thenReturn();
         return $promo_sellers->get();

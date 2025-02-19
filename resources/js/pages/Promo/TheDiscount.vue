@@ -9,7 +9,7 @@
                 </div>
                 <div class="d-flex justify-content-between align-items-center">
                     <h4 class="mb-0">Плановая прибыль на промо-акцию:</h4>
-                    <h4 class="text-primary fw-bold mb-0">{{ formatNumber(totalPromoProfitPlan) }} руб.</h4>
+                    <h4 :class="['text-primary fw-bold mb-0', promoProfitPlanColor]">{{ formatNumber(totalPromoProfitPlan) }} руб.</h4>
                 </div>
                 <hr>
                 <div class="row">
@@ -253,17 +253,19 @@
                             <div id="marketing_expenses_help" class="form-text">акционная цена * 5%</div>
                         </div>
                         <div class="col-md-4">
-                            <TheLabel for="profit_per_product">Прибыль на {{ formatNumber(state.form.salesPlan) }} шт.</TheLabel>
+                            <TheLabel for="compensation">Компенсация на 1 шт.</TheLabel>
                             <div class="input-group">
                                 <TheInput
-                                    id="profit_per_product"
-                                    :model-value="formatNumberWithFractions(state.form.profitPerProductPlan)"
+                                    id="compensation"
+                                    :model-value="formatNumberWithFractions(state.form.compensation)"
                                     class="text-center bg-warning-light"
                                     readonly="readonly"
+                                    aria-describedby="compensation_help"
                                     :tabindex="-1"
                                 />
-                                <span class="input-group-text">&#8381;</span>
+                                <span class="input-group-text">руб.</span>
                             </div>
+                            <div id="compensation_help" class="form-text">разница между прайсом и акц. ценой</div>
                         </div>
                     </div>
                 </div>
@@ -285,19 +287,17 @@
                         <div id="profit_per_unit_help" class="form-text">рассчитывается автоматически</div>
                     </div>
                     <div class="col-md-4">
-                        <TheLabel for="compensation">Компенсация на 1 шт.</TheLabel>
+                        <TheLabel for="profit_per_product">Прибыль на {{ formatNumber(state.form.salesPlan) }} шт.</TheLabel>
                         <div class="input-group">
                             <TheInput
-                                id="compensation"
-                                :model-value="formatNumberWithFractions(state.form.compensation)"
+                                id="profit_per_product"
+                                :model-value="formatNumber(state.form.profitPerProductPlan)"
                                 class="text-center bg-warning-light"
                                 readonly="readonly"
-                                aria-describedby="compensation_help"
                                 :tabindex="-1"
                             />
-                            <span class="input-group-text">руб.</span>
+                            <span class="input-group-text">&#8381;</span>
                         </div>
-                        <div id="compensation_help" class="form-text">разница между прайсом и акц. ценой</div>
                     </div>
                     <div class="col-md-4">
                         <TheLabel for="budget_plan">Бюджет</TheLabel>
@@ -523,8 +523,12 @@ const addProduct = () => {
         productId: state.form.productId,
         categoryName: getCategoryName(),
         productName: getProductName(),
+
         productWeight: state.product.weight,
         productPrice: state.product.initialPrice,
+        customerPrice: state.product.price,
+        customerPriceNoVat: state.product.priceNoVAT,
+
         salesBefore: state.form.salesBefore,
         salesPlan: state.form.salesPlan,
         surplusPlan: state.form.surplusPlan,
@@ -538,13 +542,7 @@ const addProduct = () => {
         revenuePlan: state.form.revenuePlan,
     });
     state.addedProductsIds.push(+state.form.productId);
-    emit('addProductsToPromo',
-        state.addedProducts,
-        totalSalesBefore.value,
-        totalSalesPlan.value,
-        totalBudgetPlan.value,
-        totalPromoProfitPlan.value,
-    );
+    emit('addProductsToPromo', state.addedProducts);
     state.products = [];
     modals.addModalPopUp = false;
 };
@@ -552,13 +550,7 @@ const addProduct = () => {
 const removeProduct = (index) => {
     state.addedProducts.splice(index, 1);
     state.addedProductsIds.splice(index, 1);
-    emit('addProductsToPromo',
-        state.addedProducts,
-        totalSalesBefore.value,
-        totalSalesPlan.value,
-        totalBudgetPlan.value,
-        totalPromoProfitPlan.value,
-    );
+    emit('addProductsToPromo', state.addedProducts);
 };
 
 const getCategoryName = () => {
@@ -597,28 +589,20 @@ const isFormValid = computed(() => {
     return valid;
 });
 
-const totalSalesBefore = computed(() => {
-    return state.addedProducts.reduce((acc, pr) => {
-        return Math.round(acc + convertInputStringToNumber(pr.salesBefore));
-    }, 0);
-});
-
-const totalSalesPlan = computed(() => {
-    return state.addedProducts.reduce((acc, pr) => {
-        return Math.round(acc + convertInputStringToNumber(pr.salesPlan));
-    }, 0);
-});
-
 const totalBudgetPlan = computed(() => {
    return state.addedProducts.reduce((acc, pr) => {
-       return Math.round(acc + convertInputStringToNumber(pr.budgetPlan));
+       return Math.round(acc + pr.budgetPlan);
    }, 0);
 });
 
 const totalPromoProfitPlan = computed(() => {
    return state.addedProducts.reduce((acc, pr) => {
-       return Math.round(acc + convertInputStringToNumber(pr.profitPerProductPlan));
+       return Math.round(acc + pr.profitPerProductPlan);
    }, 0);
+});
+
+const promoProfitPlanColor = computed(() => {
+   return totalPromoProfitPlan.value >= totalBudgetPlan.value ? 'text-success' : 'text-danger';
 });
 
 const transportRatePerKilo = computed(() => {

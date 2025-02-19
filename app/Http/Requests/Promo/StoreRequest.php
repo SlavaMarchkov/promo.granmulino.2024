@@ -43,12 +43,6 @@ final class StoreRequest extends FormRequest
             'end_date'    => ['required', 'date_format:Y-m-d', 'date', 'after:start_date'],
             'comments'    => ['nullable', 'string'],
 
-            'total_sales_before'      => ['required', 'numeric'],
-            'total_sales_plan'        => ['required', 'numeric'],
-            'total_sales_after'       => ['nullable', 'numeric'],
-            'total_budget_plan'       => ['required', 'numeric'],
-            'total_promo_profit_plan' => ['nullable', 'numeric'],
-
             'products' => [
                 'nullable',
                 'array',
@@ -67,6 +61,8 @@ final class StoreRequest extends FormRequest
             'products.*.category_id'             => ['required', 'integer'],
             'products.*.product_id'              => ['required', 'integer'],
             'products.*.discount'                => ['required', 'numeric', 'integer'],
+//            'products.*.customer_price'          => ['required', 'numeric'],
+//            'products.*.customer_price_no_vat'   => ['required', 'numeric'],
             'products.*.promo_price'             => ['required', 'numeric'],
             'products.*.sales_before'            => ['nullable', 'numeric'],
             'products.*.sales_plan'              => ['required', 'numeric'],

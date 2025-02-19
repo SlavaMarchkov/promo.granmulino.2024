@@ -6,6 +6,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class PromoSeller extends Model
 {
@@ -35,5 +36,11 @@ class PromoSeller extends Model
     : BelongsTo
     {
         return $this->belongsTo(Promo::class);
+    }
+
+    public function customer_seller()
+    : HasOne|PromoSeller
+    {
+        return $this->hasOne(CustomerSeller::class, 'id', 'seller_id');
     }
 }

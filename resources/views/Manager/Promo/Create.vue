@@ -220,6 +220,7 @@
                     </div>
                 </div>
                 <div class="card-footer">
+                    <pre>{{ state.promo }}</pre>
                     <TheButton
                         @click="savePromo"
                         :class="[
@@ -241,7 +242,7 @@
                         :customer-id="+state.promo.customerId"
                         :customer-name="state.customerName"
                         :retailer-name="state.retailerName"
-                        @add-products-to-promo="addProductHandler"
+                        @addProductsToPromo="addProductHandler"
                     />
                 </template>
                 <template #fallback>
@@ -373,10 +374,6 @@ const initialFormData = () => ({
     startDate: '',
     endDate: '',
     comments: '',
-    totalSalesBefore: 0,
-    totalSalesPlan: 0,
-    totalBudgetPlan: 0,
-    totalPromoProfitPlan: 0,
     products: [],
     sellers: [],
 });
@@ -467,26 +464,10 @@ watch(
     },
 );
 
-const addProductHandler = (
-    products,
-    salesBefore,
-    salesPlan,
-    budgetPlan,
-    promoProfitPlan,
-) => {
-    state.promo.products = products;
-    state.promo.totalSalesBefore = salesBefore;
-    state.promo.totalSalesPlan = salesPlan;
-    state.promo.totalBudgetPlan = budgetPlan;
-    state.promo.totalPromoProfitPlan = promoProfitPlan;
-};
+const addProductHandler = (products) => state.promo.products = products;
 
-const addSellersHandler = (sellers, salesBefore, salesPlan, budgetPlan) => {
-    state.promo.sellers = sellers.filter(item => (item.salesBefore !== 0 || item.salesBefore !== null) && item.salesPlan !== 0);
-    state.promo.totalSalesBefore = salesBefore;
-    state.promo.totalSalesPlan = salesPlan;
-    state.promo.totalBudgetPlan = budgetPlan;
-};
+const addSellersHandler = (sellers) => state.promo.sellers = sellers
+    .filter(item => (item.salesBefore !== 0 || item.salesBefore !== null) && item.salesPlan !== 0);
 
 const isFormValid = () => {
     return (currentPromoType.id === 'DISCOUNT' && state.promo.products.length > 0)

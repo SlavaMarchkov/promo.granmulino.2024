@@ -75,6 +75,28 @@
                 <template #header><h4 class="mb-0">Список промо-акций {{ searchBy }}</h4></template>
                 <template #body>
                     <div class="list-group">
+                        <a class="list-group-item list-group-item-action promo-item fw-bold" style="cursor: initial; background-color: #f8f9fa;">
+                            <div class="d-flex w-100 align-items-center">
+                                <div class="col-md-2">
+                                    Дистрибутор | Сеть <br> Даты проведения
+                                </div>
+                                <div class="col-md-3">
+                                    Тип промо-акции
+                                </div>
+                                <div class="col-md-2">
+                                    Бюджет (план-факт)
+                                </div>
+                                <div class="col-md-2">
+                                    Менеджер
+                                </div>
+                                <div class="col-md-2">
+                                    Статус промо-акции
+                                </div>
+                                <div class="col-md-1 text-center">
+                                    Оценка
+                                </div>
+                            </div>
+                        </a>
                         <AdminPromoItem
                             v-for="item in filteredItems"
                             :key="item.id"

@@ -1,126 +1,237 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Details</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Promo #{{ $promo['id'] }}</title>
 
     <style>
+        @page {
+            margin: 4px;
+        }
+
         body {
-            font-family: DejaVu Sans, sans-serif;
-            font-size: 0.7em;
-            padding: 0;
-            margin: 0;
+            font-size: 0.6em;
         }
-        p {
-            margin: 0;
+
+        .page-break {
+            page-break-after: always;
         }
-        table {
-            border-collapse: collapse;
-            width: 100%;
-        }
-        table tr td {
-            border: 1px solid #444;
-            padding: 5px 10px;
-            text-align: left;
-        }
-        table tr th.text-center,
-        table tr td.text-center {
+
+        h3, h4 {
             text-align: center;
         }
-        table tr th {
-            text-align: left;
-            border: 1px solid #444;
-            padding: 5px 10px;
-            background-color: #eeeeee;
+
+        p {
+            margin-bottom: 10px;
         }
-        .badge {
-            display: inline-block;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
+
+        ol li {
+            margin-top: 5px;
+            margin-bottom: 5px;
         }
-        .warning {
-            background-color: #ffc107;
+
+        .intro {
+            margin-bottom: 30px;
         }
-        .danger {
-            background-color: #dc3545;
-        }
-        .success {
-            background-color: #198754;
-        }
-        .secondary {
-            background-color: #6c757d;
+
+        .intro p {
+            text-align: right;
+            font-style: italic;
         }
 
         table {
-            width: 95%;
+            margin: 0 0 15px 0;
+            width: 100%;
             border-collapse: collapse;
-            margin: 50px auto;
+            border-spacing: 0;
         }
 
-        /* Zebra striping */
-        tr:nth-of-type(odd) {
-            background: #eee;
+        table th {
+            padding: 5px;
         }
 
-        th {
-            background: #3498db;
-            color: white;
+        table td {
+            padding: 5px;
+        }
+
+        table.info {
+            width: 50%;
+        }
+
+        table.info tr td {
+            padding: 2px 10px;
+            text-align: left;
+        }
+
+        table.info tr td.title {
             font-weight: bold;
         }
 
-        td,
-        th {
-            padding: 10px;
-            border: 1px solid #ccc;
-            text-align: left;
-            font-size: 18px;
+        table.address td {
+            width: 50%;
+            border: 1px solid #444;
+            padding: 8px;
+            vertical-align: top;
         }
 
+        table.address td p {
+            margin: 0;
+        }
 
+        .list thead,
+        .list tbody {
+            border: 1px solid #3b3b3b;
+            vertical-align: middle;
+            line-height: 1.2;
+        }
+
+        .list thead th {
+            padding: 5px 2px;
+            border: 1px solid #3b3b3b;
+            text-align: center;
+        }
+
+        .list tbody td {
+            padding: 5px 2px;
+            border: 1px solid #3b3b3b;
+            text-align: center;
+        }
+
+        .list tfoot th {
+            padding: 5px 2px;
+            border: none;
+            text-align: right;
+        }
     </style>
 
 </head>
 
 <body>
 
-<div style="width: 95%; margin: 0 auto;">
-    <div style="width: 10%; float:left; margin-right: 20px;">
-        <img src="{{ public_path('assets/images/logo.png') }}" width="100%"  alt="">
-    </div>
-    <div style="width: 50%; float: left;">
-        <h1>All User Details</h1>
-    </div>
-</div>
-
-<table style="position: relative; top: 50px;">
-    <thead>
-    <tr>
-        <th>First Name</th>
-        <th>Last Name</th>
-        <th>Email</th>
-        <th>Date Of Joining</th>
-    </tr>
-    </thead>
+<table class="info">
     <tbody>
-    @foreach ($users as $user)
-        <tr>
-            <td data-column="First Name">{{ $user->first_name }}</td>
-            <td data-column="Last Name">{{ $user->last_name }}</td>
-            <td data-column="Email" style="color: dodgerblue;">
-                {{ $user->email }}
-            </td>
-            <td data-column="Date">
-                {{ date('F j, Y', strtotime($user->create_at)) }}
-            </td>
-        </tr>
-    @endforeach
+    <tr>
+        <td class="title">Название промо-акции</td>
+        <td>{{ $promo['type'] }}</td>
+    </tr>
+    <tr>
+        <td class="title">Дистрибутор</td>
+        <td>{{ $promo['distributor'] }}</td>
+    </tr>
+    <tr>
+        <td class="title">Город</td>
+        <td>{{ $promo['city'] }}</td>
+    </tr>
+    <tr>
+        <td class="title">Канал продаж</td>
+        <td>{{ $promo['channel'] }}</td>
+    </tr>
+    <tr>
+        <td class="title">Начало промо-акции</td>
+        <td>{{ $promo['start_date'] }}</td>
+    </tr>
+    <tr>
+        <td class="title">Окончание промо-акции</td>
+        <td>{{ $promo['end_date'] }}</td>
+    </tr>
+    <tr>
+        <td class="title">Планируемый бюджет</td>
+        <td>{{ $promo['total_budget_plan'] }} руб.</td>
+    </tr>
+    <tr>
+        <td class="title">Планируемая прибыль</td>
+        <td>{{ $promo['total_promo_profit_plan'] }} руб.</td>
+    </tr>
     </tbody>
 </table>
 
-</body>
+@if($products)
+    <table class="list">
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>Наименование</th>
+            <th>Цена во время акции, руб.</th>
+            <th>Скидка, %</th>
+            <th>Норма ЧП, %</th>
+            <th>Продажи ДО, шт.</th>
+            <th>План продаж, шт.</th>
+            <th>План прироста, %</th>
+            <th>Продажи ВО ВРЕМЯ, шт.</th>
+            <th>Бюджет (план), руб.</th>
+            <th>Бюджет (факт), руб.</th>
+        </tr>
+        </thead>
+        @foreach($products as $product)
+            <tr>
+                <td class="number">1</td>
+                <td class="title">{{ $product['name'] }}</td>
+                <td class="value">{{ $product['promo_price'] }}</td>
+                <td class="value">{{ $product['discount'] }}</td>
+                <td class="value">{{ $product['net_profit'] }}</td>
+                <td class="value">{{ $product['sales_before'] }}</td>
+                <td class="value">{{ $product['sales_plan'] }}</td>
+                <td class="value">00</td>
+                <td class="value">{{ $product['sales_on_time'] }}</td>
+                <td class="value">{{ $product['budget_plan'] }}</td>
+                <td class="value">{{ $product['budget_actual'] }}</td>
+            </tr>
+        @endforeach
+    </table>
+@endif
 
+@if($sellers)
+    <table class="list">
+        <thead>
+        <tr>
+            <th style="width: 3%;">#</th>
+            <th>ФИО</th>
+            <th style="width: 10%;">Мотивация, %</th>
+            <th style="width: 10%;">Продажи ДО, шт.</th>
+            <th style="width: 10%;">План продаж, шт.</th>
+            <th style="width: 10%;">Продажи ВО ВРЕМЯ, шт.</th>
+            <th style="width: 10%;">План прироста, %</th>
+            <th style="width: 10%;">Факт прироста, %</th>
+            <th style="width: 10%;">Бюджет (план), руб.</th>
+            <th style="width: 10%;">Бюджет (факт), руб.</th>
+        </tr>
+        </thead>
+        @foreach($sellers as $seller)
+            @if($seller['supervisor'])
+                <tr>
+                    <td>1</td>
+                    <td style="text-align: left;">{{ $seller['supervisor']['name'] }}</td>
+                    <td>{{ $seller['supervisor']['compensation'] }}</td>
+                    <td>{{ $seller['supervisor']['sales_before'] }}</td>
+                    <td>{{ $seller['supervisor']['sales_plan'] }}</td>
+                    <td>{{ $seller['supervisor']['sales_after'] }}</td>
+                    <td>{{ $seller['supervisor']['surplus_plan'] }}</td>
+                    <td>{{ $seller['supervisor']['surplus_actual'] }}</td>
+                    <td>{{ $seller['supervisor']['budget_plan'] }}</td>
+                    <td>{{ $seller['supervisor']['budget_actual'] }}</td>
+                </tr>
+            @endif
+            @if($seller['sellers'])
+                    @foreach($seller['sellers'] as $item)
+                        <tr>
+                            <td>1</td>
+                            <td style="text-align: left;">{{ $item['name'] }}</td>
+                            <td>{{ $item['compensation'] }}</td>
+                            <td>{{ $item['sales_before'] }}</td>
+                            <td>{{ $item['sales_plan'] }}</td>
+                            <td>{{ $item['sales_after'] }}</td>
+                            <td>{{ $item['surplus_plan'] }}</td>
+                            <td>{{ $item['surplus_actual'] }}</td>
+                            <td>{{ $item['budget_plan'] }}</td>
+                            <td>{{ $item['budget_actual'] }}</td>
+                        </tr>
+                    @endforeach
+            @endif
+        @endforeach
+    </table>
+@endif
+
+</body>
 </html>

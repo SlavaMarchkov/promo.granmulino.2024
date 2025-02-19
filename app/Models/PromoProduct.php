@@ -6,6 +6,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class PromoProduct extends Model
 {
@@ -14,6 +15,8 @@ class PromoProduct extends Model
     protected $fillable = [
         'discount',
         'net_profit',
+        'customer_price',
+        'customer_price_no_vat',
         'promo_price',
         'promo_id',
         'category_id',
@@ -47,8 +50,8 @@ class PromoProduct extends Model
     }
 
     public function product()
-    : BelongsTo
+    : HasOne|PromoProduct
     {
-        return $this->belongsTo(Product::class);
+        return $this->hasOne(Product::class, 'id', 'product_id');
     }
 }

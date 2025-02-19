@@ -70,16 +70,17 @@ return new class extends Migration {
             $table->foreignId('product_id');
 
             $table->unsignedSmallInteger('discount')->comment('Величина скидки, %');
-            $table->unsignedSmallInteger('net_profit')->comment('Норматив чистой прибыли, %');
+            $table->smallInteger('net_profit')->comment('Норматив чистой прибыли, %');
 
+            $table->decimal('customer_price', 5, 2)->default(0.00)->comment('Цена прайса дистрибутора, руб.коп.');
+            $table->decimal('customer_price_no_vat', 5, 2)->default(0.00)->comment('Цена прайса дистрибутора без НДС, руб.коп.');
             $table->decimal('promo_price', 5, 2)->default(0.00)->comment('Акционная цена, руб.коп.');
+            $table->decimal('compensation', 5, 2)->default(0.00)->comment('Компенсация (разница между прайсом без НДС и акц. ценой), руб.коп.');
 
             $table->decimal('sales_before', 10, 0)->default(0)->comment('Продажи ДО акции, шт.');
             $table->decimal('sales_plan', 10, 0)->default(0)->comment('План продаж ВО ВРЕМЯ акции, шт.');
             $table->decimal('sales_on_time', 10, 0)->default(0)->comment('Продажи ВО ВРЕМЯ акции, шт.');
             $table->decimal('sales_after', 10, 0)->default(0)->comment('Продажи ПОСЛЕ акции, шт.');
-
-            $table->decimal('compensation', 5, 2)->default(0.00)->comment('Компенсация, руб.коп.');
 
             $table->decimal('surplus_plan', 5, 2)->default(0.00)->comment('План прироста, %');
             $table->decimal('surplus_actual', 5, 2)->default(0.00)->comment('Факт прироста, %');

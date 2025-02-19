@@ -28,8 +28,8 @@ return new class extends Migration {
             $table->boolean('is_active')->default(true);
             $table->boolean('is_direct')->default(false);
 
-            $table->foreignIdFor(Customer::class)->constrained('customers')->nullOnDelete();
-            $table->foreignIdFor(City::class)->constrained('cities')->nullOnDelete();
+            $table->foreignIdFor(Customer::class)->constrained('customers');
+            $table->foreignIdFor(City::class)->constrained('cities');
 
             $table->timestamps();
         });
