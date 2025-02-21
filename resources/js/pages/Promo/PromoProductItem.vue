@@ -403,7 +403,6 @@
             <TheButton
                 :disabled="spinnerStore.isButtonDisabled || isNaN(convertInputStringToNumber(state.form.salesOnTime))"
                 :loading="spinnerStore.isButtonDisabled"
-                type="button"
                 class="btn-warning w-25"
                 @click="saveChangesHandler"
             >Сохранить изменения</TheButton>

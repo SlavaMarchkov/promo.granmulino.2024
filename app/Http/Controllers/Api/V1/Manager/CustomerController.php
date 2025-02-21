@@ -37,6 +37,7 @@ final class CustomerController extends ApiController
                 'region'    => true,
                 'user'      => true,
                 'retailers' => true,
+                ...request()->all(),
             ]);
         });
 

@@ -86,7 +86,13 @@ class Customer extends Model
             'customer_id',
         )
             ->using(CustomerProduct::class)
-            ->withPivot('customer_price', 'is_listed')
+            ->withPivot(['customer_price', 'is_listed'])
             ->withTimestamps();
+    }
+
+    public function sales()
+    {
+        // TODO
+        //return $this->belongsToMany(Sales::class, 'sales', )
     }
 }

@@ -30,6 +30,7 @@ final class CategoryController extends ApiController
                 'category_is_active' => true,
                 'product_is_active'  => true,
                 'products'           => true,
+                ...request()->all(),
             ]);
         });
 

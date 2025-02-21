@@ -24,6 +24,7 @@ use App\Http\Controllers\Api\V1\Manager\PromoProductController;
 use App\Http\Controllers\Api\V1\Manager\PromoSellerController;
 use App\Http\Controllers\Api\V1\Manager\RegionController;
 use App\Http\Controllers\Api\V1\Manager\RetailerController;
+use App\Http\Controllers\Api\V1\Manager\SalesController;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['middleware' => 'auth:sanctum'], function () {
@@ -81,6 +82,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
             'customers.sellers'  => CustomerSellerController::class,
             'promos.products'    => PromoProductController::class,
             'promos.sellers'     => PromoSellerController::class,
+            'sales'              => SalesController::class,
         ]);
     });
 });
