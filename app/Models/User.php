@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -58,10 +60,28 @@ class User extends Authenticatable
         return $this->hasMany(Customer::class);
     }
 
+    public function sales()
+    : HasMany
+    {
+        return $this->hasMany(Sales::class, 'user_id');
+    }
+
     public function retailers()
     : HasManyThrough
     {
         return $this->hasManyThrough(Retailer::class, Customer::class);
+    }
+
+    public function images()
+    : MorphMany
+    {
+        return $this->morphMany(Image::class, 'imageable');
+    }
+
+    public function latestImage()
+    : MorphOne
+    {
+        return $this->morphOne(Image::class, 'imageable')->latestOfMany();
     }
 
     public function fullName()
@@ -85,22 +105,19 @@ class User extends Authenticatable
     }
 
     public function isSuperAdmin(Role $role)
-    : bool
-    {
+    : bool {
         return $this->isAdmin()
             && $this->role_id === $role->superAdminRoleId();
     }
 
     public function isPriceAdmin(Role $role)
-    : bool
-    {
+    : bool {
         return $this->isAdmin()
             && $this->role_id === $role->priceAdminRoleId();
     }
 
     public function isPlainAdmin(Role $role)
-    : bool
-    {
+    : bool {
         return $this->isAdmin()
             && $this->role_id === $role->plainAdminRoleId();
     }

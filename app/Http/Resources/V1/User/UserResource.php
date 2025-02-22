@@ -13,8 +13,7 @@ use Illuminate\Support\Carbon;
 class UserResource extends JsonResource
 {
     public function toArray(Request $request)
-    : array
-    {
+    : array {
         return [
             'id'          => $this->id,
             'lastName'    => $this->last_name,
@@ -28,6 +27,8 @@ class UserResource extends JsonResource
             'roleName'    => $this->role?->name,
             'role'        => $this->role?->slug,
             'loggedInAt'  => Carbon::make($this->logged_in_at)?->diffForHumans(),
+            'images'      => $this->images,
+            'avatar'      => $this->latestImage,
         ];
     }
 }

@@ -91,8 +91,8 @@ class Customer extends Model
     }
 
     public function sales()
+    : HasMany
     {
-        // TODO
-        //return $this->belongsToMany(Sales::class, 'sales', )
+        return $this->hasMany(Sales::class, 'customer_id');
     }
 }
