@@ -6,9 +6,9 @@ declare(strict_types=1);
 namespace App\Services\Products\Repositories;
 
 use App\Models\Product;
+use App\Services\Products\Filters\Category;
+use App\Services\Products\Filters\Id;
 use App\Services\Products\Filters\IsActive;
-use App\Services\Products\Filters\IsAdmin;
-use App\Services\Products\Filters\RoleId;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pipeline\Pipeline;
@@ -26,9 +26,9 @@ final class EloquentProductRepository implements ProductRepositoryInterface
         $product = app()->make(Pipeline::class)
             ->send(Product::query())
             ->through([
-                IsAdmin::class,
+                Id::class,
                 IsActive::class,
-                RoleId::class,
+                Category::class,
             ])
             ->thenReturn();
         return $product->first();
@@ -44,7 +44,7 @@ final class EloquentProductRepository implements ProductRepositoryInterface
             ->send(Product::query())
             ->through([
                 IsActive::class,
-                RoleId::class,
+                Category::class,
             ])
             ->thenReturn();
         return $products->get();

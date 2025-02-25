@@ -340,9 +340,8 @@ import {
     ALLOWED_FILE_TYPES,
     DELETE_TH_FIELD,
     EDIT_TH_FIELD,
-    NO_PRODUCT_IMG,
+    IMAGES,
     PRICE_TH_FIELD,
-    PRODUCT_IMG_PATH,
     PRODUCT_TH_FIELDS,
     ROLES,
 } from '@/helpers/constants.js';
@@ -467,8 +466,8 @@ const clearSearch = () => {
 };
 
 const productImage = computed(() => state.product.image
-    ? `${PRODUCT_IMG_PATH}${state.product.image}`
-    : [NO_PRODUCT_IMG],
+    ? `${ IMAGES.PRODUCT_IMG_PATH }${ state.product.image }`
+    : [ IMAGES.DEFAULT_IMG ],
 );
 
 const handleFileChange = (evt) => {

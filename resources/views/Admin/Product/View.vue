@@ -86,7 +86,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { useHttpService } from '@/use/useHttpService.js';
 import { useSpinnerStore } from '@/stores/spinners.js';
 import Alert from '@/components/Alert.vue';
-import { ADMIN_URLS, NO_PRODUCT_IMG, PRODUCT_IMG_PATH, ROLES } from '@/helpers/constants.js';
+import { ADMIN_URLS, IMAGES, ROLES } from '@/helpers/constants.js';
 import TheSpinner from '@/components/core/TheSpinner.vue';
 import TheButton from '@/components/core/TheButton.vue';
 import { formatNumber } from '@/helpers/formatters.js';
@@ -111,7 +111,7 @@ onMounted(async () => {
 });
 
 const fetchDetails = async (id) => {
-    const response = await get(`${ADMIN_URLS.PRODUCT}/${id}`);
+    const response = await get(`${ ADMIN_URLS.PRODUCT }/${ id }`);
     if ( response.status === 'success' ) item.value = response.data;
 };
 
@@ -126,7 +126,8 @@ const isItemFound = computed(() => {
     return Object.keys(item.value).length !== 0;
 });
 
-const productImage = computed(() => item.value.image ? `${PRODUCT_IMG_PATH}${item.value.image}` : [NO_PRODUCT_IMG]);
+const productImage = computed(() => item.value.image
+    ? `${ IMAGES.PRODUCT_IMG_PATH }${ item.value.image }` : [IMAGES.DEFAULT_IMG]);
 
 const navigateToPreviousItem = () => {
     router.push({ name: 'Product.View', params: { id: item.value.prev } });

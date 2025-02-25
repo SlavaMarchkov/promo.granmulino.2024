@@ -27,6 +27,8 @@ final class ProductController extends ApiController
     public function index()
     : JsonResponse
     {
+        Cache::forget(self::CACHE_KEY);
+
         $products = Cache::remember(self::CACHE_KEY, now()->addMinutes(5), function () {
             return $this->productService->getProducts([
                 'category'  => true,
@@ -42,6 +44,7 @@ final class ProductController extends ApiController
         );
     }
 
+    // TODO - images
     public function store(StoreUpdateRequest $request)
     : JsonResponse {
         $data = $request->validated();
@@ -78,14 +81,15 @@ final class ProductController extends ApiController
         );
     }
 
+    // TODO - images
     public function update(StoreUpdateRequest $request, Product $product)
     : JsonResponse {
         $data = $request->validated();
 
-        if ($data['image'] && $data['image'] !== $product->image) {
+        /*if ($data['image'] && $data['image'] !== $product->image) {
             remove_image($product->image);
             $data['image'] = upload_image($data['image']);
-        }
+        }*/
 
         Cache::forget(self::CACHE_KEY);
         $product = $this->productService->updateProduct($product, $data);
