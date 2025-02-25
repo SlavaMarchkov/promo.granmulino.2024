@@ -21,7 +21,6 @@ class Product extends Model
         'name',
         'weight',
         'price',
-        'image',
         'is_active',
         'category_id',
     ];

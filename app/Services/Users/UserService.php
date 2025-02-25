@@ -6,8 +6,10 @@ declare(strict_types=1);
 namespace App\Services\Users;
 
 
+use App\Models\Image;
 use App\Models\User;
 use App\Services\Users\Handlers\CreateUserHandler;
+use App\Services\Users\Handlers\CreateUserImageHandler;
 use App\Services\Users\Repositories\UserRepositoryInterface;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
@@ -17,6 +19,7 @@ final readonly class UserService
     public function __construct(
         private UserRepositoryInterface $userRepository,
         private CreateUserHandler       $createUserHandler,
+        private CreateUserImageHandler $createUserImageHandler,
     )
     {
     }
@@ -70,5 +73,15 @@ final readonly class UserService
     : void {
         $user->tokens()->delete();
         DB::delete('delete from sessions where user_id = ?', [$user->id]);
+    }
+
+    public function storeUserImage(
+        string $file,
+        string $thumbnail,
+        int $user_id,
+        string $class
+    )
+    : Image {
+        return $this->createUserImageHandler->handle($file, $thumbnail, $user_id, $class);
     }
 }

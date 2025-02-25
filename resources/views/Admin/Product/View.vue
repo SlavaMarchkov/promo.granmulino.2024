@@ -8,53 +8,53 @@
         <div v-if="isItemFound" class="row">
             <div class="col-xl-6">
                 <div class="card">
-                    <div class="card-header bg-primary text-white">
-                        <h3 class="mb-0">{{ item.name }}</h3>
-                    </div>
-                    <div class="card-body py-5">
-                        <table class="table table-bordered align-middle text-wrap"
-                               style="width: 100%;">
-                            <tbody>
-                            <tr>
-                                <th style="width: 30%;">ID</th>
-                                <td>{{ item.id }}</td>
-                            </tr>
-                            <tr>
-                                <th>Название</th>
-                                <td>{{ item.name }}</td>
-                            </tr>
-                            <tr>
-                                <th>Вес, г</th>
-                                <td>{{ formatNumber(item.weight) }}</td>
-                            </tr>
-                            <tr v-if="isPriceAdmin">
-                                <th>Себестоимость, руб.</th>
-                                <td>{{ item.price }}</td>
-                            </tr>
-                            <tr>
-                                <th>Группа товаров</th>
-                                <td>{{ item.categoryName }}</td>
-                            </tr>
-                            <tr>
-                                <th>В продаже?</th>
-                                <td><TheBadge :is-active="item.isActive" /></td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="card-footer">
-                        <TheButton
-                            @click="navigateToPreviousItem"
-                            class="btn-outline-secondary"
-                            :disabled="item.prev === null"
-                        >Пред.</TheButton>
-                        <TheButton
-                            @click="navigateToNextItem"
-                            class="btn-outline-secondary mx-2"
-                            :disabled="item.next === null"
-                        >След.</TheButton>
-                    </div>
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">{{ item.name }}</h3>
                 </div>
+                <div class="card-body py-5">
+                    <table class="table table-bordered align-middle text-wrap"
+                           style="width: 100%;">
+                        <tbody>
+                        <tr>
+                            <th style="width: 30%;">ID</th>
+                            <td>{{ item.id }}</td>
+                        </tr>
+                        <tr>
+                            <th>Название</th>
+                            <td>{{ item.name }}</td>
+                        </tr>
+                        <tr>
+                            <th>Вес, г</th>
+                            <td>{{ formatNumber(item.weight) }}</td>
+                        </tr>
+                        <tr v-if="isPriceAdmin">
+                            <th>Себестоимость, руб.</th>
+                            <td>{{ item.price }}</td>
+                        </tr>
+                        <tr>
+                            <th>Группа товаров</th>
+                            <td>{{ item.categoryName }}</td>
+                        </tr>
+                        <tr>
+                            <th>В продаже?</th>
+                            <td><TheBadge :is-active="item.isActive" /></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card-footer">
+                    <TheButton
+                        @click="navigateToPreviousItem"
+                        class="btn-outline-secondary"
+                        :disabled="item.prev === null"
+                    >Пред.</TheButton>
+                    <TheButton
+                        @click="navigateToNextItem"
+                        class="btn-outline-secondary mx-2"
+                        :disabled="item.next === null"
+                    >След.</TheButton>
+                </div>
+            </div>
             </div>
             <div class="col-xl-6">
                 <div class="card">

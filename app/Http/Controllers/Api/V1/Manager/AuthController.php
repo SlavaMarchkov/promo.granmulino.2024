@@ -66,7 +66,7 @@ final class AuthController extends ApiController
     : UserResource
     {
         $user = auth()->user();
-        return new UserResource($user);
+        return new UserResource($user->load('images'));
     }
 
     public function logout()

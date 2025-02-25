@@ -37,8 +37,17 @@ return [
     'options' => [
         'autoOrientation' => true,
         'decodeAnimation' => true,
-        'blendingColor' => 'ffffff',
+        'blendingColor'   => 'ffffff',
     ],
 
-    'no_image' => 'no-image.png',
+    'no_image'                   => 'no-image.png',
+    'path_to_user_images'        => 'app/public/images/user/',
+    'path_to_user_thumbnails'    => 'app/public/images/user/thumbnails/',
+    'path_to_product_images'     => 'app/public/images/product/',
+    'path_to_product_thumbnails' => 'app/public/images/product/thumbnails/',
+
+    /**
+    * Ширина сжатой картинки в пикселях
+     */
+    'default_width'              => 800,
 ];

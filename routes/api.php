@@ -25,6 +25,7 @@ use App\Http\Controllers\Api\V1\Manager\PromoSellerController;
 use App\Http\Controllers\Api\V1\Manager\RegionController;
 use App\Http\Controllers\Api\V1\Manager\RetailerController;
 use App\Http\Controllers\Api\V1\Manager\SalesController;
+use App\Http\Controllers\Api\V1\Manager\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['middleware' => 'auth:sanctum'], function () {
@@ -71,6 +72,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::get('regions', [RegionController::class, 'index'])->name('regions');
         Route::get('cities', [CityController::class, 'index'])->name('cities');
         Route::get('channels', [ChannelController::class, 'index'])->name('channels');
+        Route::post('users', [UserController::class, 'store'])->name('user.store');
         Route::put('promos/{promo}/marks/{mark}', [PromoMarkController::class, 'update'])->name('promos.marks.update');
         Route::get('promos/getPromoYears', [PromoController::class, 'getPromoYears'])->name('promos.getPromoYears');
 

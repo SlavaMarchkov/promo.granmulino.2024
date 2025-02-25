@@ -33,7 +33,6 @@ final class StoreUpdateRequest extends FormRequest
                 'regex:/\d{1,3}.\d{2}/',
             ],
             'is_active'   => ['required', new BooleanRule()],
-            'image'       => ['nullable', 'string'],
             'category_id' => ['required', 'exists:categories,id'],
         ];
     }
@@ -47,7 +46,6 @@ final class StoreUpdateRequest extends FormRequest
             'price'       => 'Цена',
             'is_active'   => 'В продаже',
             'category_id' => 'Группа товаров',
-            'image'       => 'Картинка',
         ];
     }
 
@@ -64,6 +62,7 @@ final class StoreUpdateRequest extends FormRequest
     protected function prepareForValidation()
     : void
     {
+        // TODO - handle images
         $is_active = $this->input('is_active', true);
         $image = $this->input('image', null);
 

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Resources\V1\Product;
 
 use App\Enums\User\RoleEnum;
+use App\Http\Resources\V1\Image\ImageResource;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -21,7 +22,7 @@ class ProductResource extends JsonResource
             'name'         => $this->name,
             'weight'       => $this->weight,
             'price'        => $this->when($isPriceAdmin, fn() => $this->price),
-            'image'        => $this->image,
+            'images'       => ImageResource::collection($this->whenLoaded('images')),
             'isActive'     => $this->is_active,
             'categoryId'   => $this->whenLoaded('category', fn() => $this->category->id),
             'categoryName' => $this->whenLoaded('category', fn() => $this->category->name),

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Resources\V1\User;
 
+use App\Http\Resources\V1\Image\ImageResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -27,8 +28,8 @@ class UserResource extends JsonResource
             'roleName'    => $this->role?->name,
             'role'        => $this->role?->slug,
             'loggedInAt'  => Carbon::make($this->logged_in_at)?->diffForHumans(),
-            'images'      => $this->images,
-            'avatar'      => $this->latestImage,
+            'images'      => ImageResource::collection($this->whenLoaded('images')),
+            'avatar'      => new ImageResource($this->whenLoaded('latestImage')),
         ];
     }
 }

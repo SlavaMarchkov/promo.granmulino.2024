@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\V1\Admin\PromoController as AdminPromoController;
+use App\Http\Controllers\Api\V1\Manager\UserController;
 use App\Mail\Admin\LoginMail as AdminLoginMail;
 use App\Mail\Admin\LogoutMail as AdminLogoutMail;
 use App\Mail\Manager\LoginMail;
@@ -8,6 +9,7 @@ use App\Mail\Manager\LogoutMail;
 use Illuminate\Support\Facades\Route;
 
 Route::get('promos/{promo}/print', [AdminPromoController::class, 'print']);
+Route::post('image-upload', [UserController::class, 'upload']);
 
 Route::get('mailable/login/user', function () {
     return new LoginMail(auth()->user());

@@ -396,8 +396,6 @@ export const OPEN_WEATHER_BASE_URL = 'https://api.openweathermap.org/geo/1.0/dir
 export const OPEN_WEATHER_API_KEY = import.meta.env.VITE_OPEN_WEATHER_API_KEY;
 export const TWO_WEEKS_AHEAD = new Date(new Date().getTime() + 12096e5);
 export const FOUR_WEEKS_AHEAD = new Date(new Date().getTime() + 12096e5 * 2);
-export const PRODUCT_IMG_PATH = '/assets/img/products/';
-export const NO_PRODUCT_IMG = '/assets/img/no-image.png';
 export const ALLOWED_FILE_TYPES = ['gif', 'jpeg', 'jpg', 'png'];
 export const INITIALS = {
     MOTIVATION_FOR_SUPERVISORS: 5, // процент мотивации для супервайзеров
@@ -411,4 +409,11 @@ export const INITIALS = {
     OFFICE_EXPENSES: 0.075, // расходы на офис 7.5%
     MARKETING_EXPENSES: 0.05, // расходы на маркетинг 5%
     VAT_RATE: 1.2, // НДС в размере 20% для расчета логистики
+};
+export const IMAGES = {
+    USER_IMG_PATH: '/storage/images/user/', // путь к картинкам пользователя
+    USER_IMG_TH_PATH: '/storage/images/user/thumbnails/',
+    PRODUCT_IMG_PATH: '/storage/images/product/', // путь к картинкам продукта
+    PRODUCT_IMG_TH_PATH: '/storage/images/product/thumbnails/',
+    DEFAULT_IMG: '/assets/img/no-image.png', // путь к дефолтной картинке
 };

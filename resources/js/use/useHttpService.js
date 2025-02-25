@@ -24,7 +24,9 @@ export function useHttpService() {
 
     const post = (url, data, config = {}) => {
         spinnerStore.disableButton();
-        const formData = makeConvertibleObject(data, toSnake);
+
+        const formData = data instanceof FormData
+            ? data : makeConvertibleObject(data, toSnake);
 
         return http.post(url, formData, config)
             .then(response => response.data)

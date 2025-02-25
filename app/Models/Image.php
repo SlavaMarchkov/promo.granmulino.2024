@@ -6,15 +6,23 @@ declare(strict_types=1);
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class Image extends Model
 {
     protected $fillable = [
-        'path',
+        'file',
+        'thumbnail',
         'imageable_id',
         'imageable_type',
     ];
+
+    public function images()
+    : MorphMany
+    {
+        return $this->morphMany(Image::class, 'imageable');
+    }
 
     public function imageable()
     : MorphTo
