@@ -1,1 +1,0 @@
-import{o as n,c,f as t,a5 as a}from"./app-CYej1qEa.js";const l={class:"row mb-1"},r={class:"col-6 text-accent"},i=["innerHTML"],_={class:"col-6 fw-bold"},m={__name:"TwoColumnRow",props:{title:{type:String,default:"title"}},setup(e){const o=e;return(s,d)=>(n(),c("div",l,[t("div",r,[t("span",{innerHTML:o.title},null,8,i)]),t("div",_,[a(s.$slots,"default")])]))}};export{m as _};
