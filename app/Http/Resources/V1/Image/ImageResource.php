@@ -18,6 +18,7 @@ class ImageResource extends JsonResource
             'id'        => $this->id,
             'file'      => $this->file,
             'thumbnail' => $this->thumbnail,
+            'isMain'    => $this->is_main,
             //            'size' => $this->path ? Storage::mimeType(storage_path(config('image.path_to_user_thumbnails') . $this->url)) : null,
             //            'name' => str_replace('images/', '', $this->path),
         ];

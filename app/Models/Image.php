@@ -16,6 +16,11 @@ class Image extends Model
         'thumbnail',
         'imageable_id',
         'imageable_type',
+        'is_main',
+    ];
+
+    protected $casts = [
+        'is_main' => 'boolean',
     ];
 
     public function images()
