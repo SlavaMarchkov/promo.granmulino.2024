@@ -31,7 +31,7 @@ final class RetailerController extends ApiController
         return $this->successResponse(
             new RetailerCollection($retailers),
             'success',
-            __('crud.retailers.all'),
+            __(''),
         );
     }
 
@@ -46,7 +46,7 @@ final class RetailerController extends ApiController
         return $this->successResponse(
             new RetailerResource($retailer),
             'success',
-            __('crud.retailers.one'),
+            __(''),
         );
     }
 }

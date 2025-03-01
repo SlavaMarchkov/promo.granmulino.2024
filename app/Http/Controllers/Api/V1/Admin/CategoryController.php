@@ -21,30 +21,34 @@ final class CategoryController extends ApiController
 
     public function __construct(
         private readonly CategoryService $categoryService,
-    )
-    {
+    ) {
     }
 
     public function index()
     : JsonResponse
     {
+        Cache::forget(self::CACHE_KEY);
+
         $categories = Cache::remember(self::CACHE_KEY, now()->addMinutes(5), function () {
-            return $this->categoryService->getCategories(
-                [...request()->all()],
-                true,
+            return $this->categoryService->getCategoriesForAdmin(
+                [
+                    'category_is_active' => false,
+                    'product_is_active'  => true,
+                    'products'           => true,
+                    ...request()->all(),
+                ],
             );
         });
 
         return $this->successResponse(
             new CategoryCollection($categories),
             'success',
-            __('crud.categories.all'),
+            __(''),
         );
     }
 
     public function store(StoreUpdateRequest $request)
-    : JsonResponse
-    {
+    : JsonResponse {
         $data = $request->validated();
         $category = $this->categoryService->storeCategory($data);
 
@@ -57,33 +61,35 @@ final class CategoryController extends ApiController
     }
 
     public function show(Category $category)
-    : JsonResponse
-    {
-        $category = $this->categoryService->findCategory($category);
+    : JsonResponse {
+        $category = $this->categoryService->findCategoryForAdmin($category, [
+            'category_is_active' => true,
+            'product_is_active'  => false,
+            'products'           => true,
+            ...request()->all(),
+        ],);
 
         return $this->successResponse(
             new CategoryFullResource($category),
             'success',
-            __('crud.categories.one'),
+            __(''),
         );
     }
 
     public function update(StoreUpdateRequest $request, Category $category)
-    : JsonResponse
-    {
+    : JsonResponse {
         $data = $request->validated();
         $category = $this->categoryService->updateCategory($category, $data);
 
         return $this->successResponse(
-            new CategoryResource($category),
+            new CategoryResource($category->load('products')),
             'success',
             __('crud.categories.updated'),
         );
     }
 
     public function destroy(Category $category)
-    : JsonResponse
-    {
+    : JsonResponse {
         $result = $this->categoryService->deleteCategory($category);
 
         return ($result == 0)

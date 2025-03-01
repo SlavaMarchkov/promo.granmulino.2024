@@ -100,7 +100,11 @@
                                     {{ formatNumber(item.weight) }}
                                 </td>
                                 <td class="text-start">
-                                    {{ item.categoryName }}
+                                    <RouterLink
+                                        :to="{ name: 'Category.View', params: { id: item.categoryId } }"
+                                    >
+                                        {{ item.categoryName }}
+                                    </RouterLink>
                                 </td>
                                 <td>
                                     <TheBadge :is-active="item.isActive"/>
@@ -407,7 +411,6 @@ function resetState() {
 
 onMounted(async () => {
     await getProducts();
-    await getCategories();
     modalPopUp = new bootstrap.Modal(document.getElementById('modalPopUp'));
     modalPopUp._element.addEventListener('hide.bs.modal', resetState);
 });
@@ -415,19 +418,15 @@ onMounted(async () => {
 const getProducts = async () => {
     const { data } = await get(ADMIN_URLS.PRODUCT);
     state.products = data.products;
+    state.categories = arrayHandlers.getUniqueObjectsFromArray(state.products.map(product => {
+        return {
+            id: product.categoryId,
+            name: product.categoryName,
+        };
+    }));
 };
 
 const getOneProduct = (id) => state.products.find(product => product.id === id);
-
-const getCategories = async () => {
-    const { data } = await get(ADMIN_URLS.CATEGORY, {
-        params: {
-            'products': false,
-            'product_is_active': true,
-        },
-    });
-    state.categories = data.categories;
-};
 
 const createProductInit = () => {
     alertStore.clear();

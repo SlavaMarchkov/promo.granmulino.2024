@@ -22,13 +22,13 @@ final readonly class RegionService
     {
     }
 
-    public function findRegion(Region $region)
+    public function findRegion(Region $region, array $params = [])
     : ?Region
     {
-        return $this->regionRepository->find($region);
+        return $this->regionRepository->find($region, $params);
     }
 
-    public function getRegions(array $params)
+    public function getRegions(array $params = [])
     : Collection
     {
         return $this->regionRepository->get($params);

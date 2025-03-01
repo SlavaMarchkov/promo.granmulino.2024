@@ -40,7 +40,7 @@ final class ProductController extends ApiController
         return $this->successResponse(
             new ProductCollection($products),
             'success',
-            __('crud.products.all'),
+            __(''),
         );
     }
 
@@ -49,9 +49,9 @@ final class ProductController extends ApiController
     : JsonResponse {
         $data = $request->validated();
 
-        if (str_starts_with($data['image'], 'data:image')) {
+        /*if (str_starts_with($data['image'], 'data:image')) {
             $data['image'] = upload_image($data['image']);
-        }
+        }*/
 
         Cache::forget(self::CACHE_KEY);
         $product = $this->productService->storeProduct($data);
@@ -77,7 +77,7 @@ final class ProductController extends ApiController
         return $this->successResponse(
             new ProductFullResource($product),
             'success',
-            __('crud.products.one'),
+            __(''),
         );
     }
 

@@ -34,7 +34,7 @@ final class CustomerSellerController extends ApiController
         return $this->successResponse(
             new CustomerSellerCollection($sellers),
             'success',
-            __('crud.sellers.all'),
+            __(''),
         );
     }
 

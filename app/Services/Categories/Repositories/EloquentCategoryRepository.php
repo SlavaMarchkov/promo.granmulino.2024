@@ -13,15 +13,31 @@ use Illuminate\Database\Eloquent\Collection;
 final class EloquentCategoryRepository implements CategoryRepositoryInterface
 {
 
-    public function find(Category $category)
+    public function find(Category $category, array $params = [])
     : ?Category {
-        return Category::query()->where('id', $category->id)->first();
+        $categorySql = Category::query()->where('id', $category->id);
+        $this->applyFilters($categorySql, $params);
+        return $categorySql->first();
     }
 
-    public function get(array $params = [], bool $isAdmin = false)
+    public function findOneForAdmin(Category $category, array $params = [])
+    : ?Category {
+        $categorySql = Category::query()->where('id', $category->id);
+        $this->applyAdminFilters($categorySql, $params);
+        return $categorySql->first();
+    }
+
+    public function getAll(array $params = [])
     : Collection {
         $categoriesSql = Category::query();
-        $isAdmin ? $this->applyAdminFilters($categoriesSql, $params) : $this->applyFilters($categoriesSql, $params);
+        $this->applyFilters($categoriesSql, $params);
+        return $categoriesSql->get();
+    }
+
+    public function getAllForAdmin(array $params = [])
+    : Collection {
+        $categoriesSql = Category::query();
+        $this->applyAdminFilters($categoriesSql, $params);
         return $categoriesSql->get();
     }
 
@@ -64,7 +80,7 @@ final class EloquentCategoryRepository implements CategoryRepositoryInterface
                 )->withCount([
                     'products' => fn(Builder $query) => $query->when(
                         isset($params['product_is_active']) && to_boolean($params['product_is_active']),
-                        fn($qb) => $qb->where('is_active', true),
+                        fn(Builder $qb) => $qb->where('is_active', true),
                     ),
                 ]),
         );
@@ -83,7 +99,7 @@ final class EloquentCategoryRepository implements CategoryRepositoryInterface
             ->withCount([
                 'products' => fn(Builder $query) => $query->when(
                     isset($params['product_is_active']) && to_boolean($params['product_is_active']),
-                    fn($qb) => $qb->where('is_active', true),
+                    fn(Builder $query) => $query->where('is_active', true),
                 ),
             ]);
     }

@@ -25,7 +25,7 @@ final readonly class CreateUserHandler
         $data['first_name'] = process_name($data['first_name']);
         $data['middle_name'] = process_name($data['middle_name']);
 
-        if ($data['is_admin']) {
+        if (isset($data['is_admin'])) {
             $data['display_name'] = $data['last_name'] . ' ' . $data['first_name'] . ' (админ)';
         } else {
             $data['role_id'] = $this->role->getRoleId(RoleEnum::MANAGER->getName());

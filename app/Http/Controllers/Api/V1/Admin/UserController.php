@@ -8,6 +8,7 @@ use App\Enums\User\RoleEnum;
 use App\Http\Controllers\ApiController;
 use App\Http\Requests\User\StoreUpdateRequest;
 use App\Http\Resources\V1\User\UserCollection;
+use App\Http\Resources\V1\User\UserFullResource;
 use App\Http\Resources\V1\User\UserResource;
 use App\Models\Role;
 use App\Models\User;
@@ -36,7 +37,7 @@ final class UserController extends ApiController
         return $this->successResponse(
             new UserCollection($users),
             'success',
-            __('crud.users.all'),
+            __(''),
         );
     }
 
@@ -60,9 +61,9 @@ final class UserController extends ApiController
         $user = $this->userService->findUser($user);
 
         return $this->successResponse(
-            new UserResource($user),
+            new UserFullResource($user->load(['customers', 'retailers'])),
             'success',
-            __('crud.users.one'),
+            __(''),
         );
     }
 

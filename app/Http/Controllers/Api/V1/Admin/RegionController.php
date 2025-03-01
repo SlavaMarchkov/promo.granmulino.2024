@@ -21,8 +21,8 @@ final class RegionController extends ApiController
 
     public function __construct(
         private readonly RegionService $regionService,
-    )
-    {}
+    ) {
+    }
 
     public function index()
     : JsonResponse
@@ -30,19 +30,23 @@ final class RegionController extends ApiController
         Cache::forget(self::CACHE_KEY);
 
         $regions = Cache::remember(self::CACHE_KEY, now()->addDay(), function () {
-            return $this->regionService->getRegions([...request()->all()]);
+            return $this->regionService->getRegions([
+                'cities'    => true,
+                'customers' => false,
+                'retailers' => false,
+                ...request()->all(),
+            ]);
         });
 
         return $this->successResponse(
             new RegionCollection($regions),
             'success',
-            __('crud.regions.all'),
+            __(''),
         );
     }
 
     public function store(StoreUpdateRequest $request)
-    : JsonResponse
-    {
+    : JsonResponse {
         $data = $request->validated();
         $region = $this->regionService->storeRegion($data);
 
@@ -55,20 +59,22 @@ final class RegionController extends ApiController
     }
 
     public function show(Region $region)
-    : JsonResponse
-    {
-        $region = $this->regionService->findRegion($region);
+    : JsonResponse {
+        $region = $this->regionService->findRegion($region, [
+            'cities'    => true,
+            'customers' => true,
+            ...request()->all(),
+        ]);
 
         return $this->successResponse(
             new RegionFullResource($region),
             'success',
-            __('crud.regions.one'),
+            __(''),
         );
     }
 
     public function update(StoreUpdateRequest $request, Region $region)
-    : JsonResponse
-    {
+    : JsonResponse {
         $data = $request->validated();
         $region = $this->regionService->updateRegion($region, $data);
 
@@ -80,8 +86,7 @@ final class RegionController extends ApiController
     }
 
     public function destroy(Region $region)
-    : JsonResponse
-    {
+    : JsonResponse {
         $result = $this->regionService->deleteRegion($region);
 
         return ($result == 0)

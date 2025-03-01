@@ -1,4 +1,10 @@
 <template>
+    <RouterLink
+        :to="{ name: 'Manager.Customer.Index' }"
+        class="d-inline-block fw-bold py-2"
+    ><i class="bi bi-arrow-bar-left me-2"></i>Обратно на Мои Контрагенты
+    </RouterLink>
+    <hr>
     <div v-if="spinnerStore.isLoading" class="row">
         <div class="col-12">
             <h4 class="my-4"><TheSpinner /></h4>
@@ -97,13 +103,6 @@
         </div>
         <Alert v-else class="mt-3"/>
     </template>
-    <hr>
-    <RouterLink
-        :to="{ name: 'Manager.Customer.Index' }"
-        class="btn btn-secondary my-2"
-        role="button"
-    >Обратно на Мои Контрагенты
-    </RouterLink>
 </template>
 
 <script setup>

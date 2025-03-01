@@ -1,11 +1,13 @@
 <template>
+    <RouterLink
+        :to="{ name: 'Manager.Retailer.Index' }"
+        class="d-inline-block fw-bold py-2"
+    ><i class="bi bi-arrow-bar-left me-2"></i>Обратно на Мои торговые сети
+    </RouterLink>
+    <hr>
     <div v-if="spinnerStore.isLoading" class="row">
         <div class="col-12">
-            <div class="card">
-                <div class="card-body">
-                    <h4 class="my-4">Загрузка...</h4>
-                </div>
-            </div>
+            <h4 class="my-4"><TheSpinner /></h4>
         </div>
     </div>
     <template v-else>
@@ -47,13 +49,6 @@
         </div>
         <Alert v-else class="mt-3"/>
     </template>
-    <hr>
-    <RouterLink
-        :to="{ name: 'Manager.Retailer.Index' }"
-        class="btn btn-secondary my-2"
-        role="button"
-    >Обратно на Мои торговые сети
-    </RouterLink>
 </template>
 
 <script setup>
@@ -67,6 +62,7 @@ import Alert from '@/components/Alert.vue';
 import TheBadge from '@/components/core/TheBadge.vue';
 import TheCard from '@/components/core/TheCard.vue';
 import TwoColumnRow from '@/components/core/TwoColumnRow.vue';
+import TheSpinner from '@/components/core/TheSpinner.vue';
 
 const route = useRoute();
 const router = useRouter();

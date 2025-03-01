@@ -285,13 +285,7 @@ onMounted(async () => {
 });
 
 const getCategories = async () => {
-    const { data } = await get(ADMIN_URLS.CATEGORY, {
-        params: {
-            'category_is_active': false,
-            'product_is_active': true,
-            'products': true,
-        },
-    });
+    const { data } = await get(ADMIN_URLS.CATEGORY);
     state.categories = data.categories;
 };
 
@@ -335,11 +329,17 @@ const clearSearch = () => {
 
 const saveCategory = async () => {
     if ( state.isEditing ) {
-        const response = await update(`${ ADMIN_URLS.CATEGORY }/${ state.category.id }`, state.category);
+        const response = await update(`${ ADMIN_URLS.CATEGORY }/${ state.category.id }`, {
+            name: state.category.name,
+            isActive: state.category.isActive,
+        });
         if ( response && response.status === 'success' ) {
             const updatedCategory = response.data;
             const idx = state.categories.findIndex(category => category.id === updatedCategory.id);
-            state.categories[idx] = updatedCategory;
+            state.categories[idx] = {
+                ...updatedCategory,
+                productsCount: updatedCategory.products.length,
+            };
             alertStore.clear();
             modalPopUp.hide();
         }

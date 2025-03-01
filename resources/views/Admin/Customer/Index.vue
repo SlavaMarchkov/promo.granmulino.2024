@@ -100,10 +100,14 @@
                                     {{ item.userName }}
                                 </td>
                                 <td class="text-start">
-                                    {{ item.regionName }}
+                                    <RouterLink :to="{ name: 'Region.View', params: { id: item.regionId } }">
+                                        {{ item.regionName }}
+                                    </RouterLink>
                                 </td>
                                 <td class="text-start">
-                                    {{ item.cityName }}
+                                    <RouterLink :to="{ name: 'City.View', params: { id: item.cityId } }">
+                                        {{ item.cityName }}
+                                    </RouterLink>
                                 </td>
                                 <td>
                                     <TheBadge :is-active="item.isActive"/>
@@ -303,6 +307,25 @@
                     <th>Активен?</th>
                     <td><TheBadge :is-active="state.customer.isActive" /></td>
                 </tr>
+                <tr>
+                    <th>Торговые сети</th>
+                    <td>
+                        <table class="table table-borderless w-75 mb-0">
+                            <tbody>
+                                <tr
+                                    v-for="retailer in state.customer.retailers"
+                                    :key="retailer.id"
+                                >
+                                    <td>{{ retailer.name }}</td>
+                                    <td><span
+                                        :class="['badge', retailer.typeBgColor]"
+                                        :title="retailer.typeDescription"
+                                    >{{ retailer.label }}</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
                 </tbody>
             </table>
         </template>
@@ -394,13 +417,7 @@ onMounted(async () => {
 });
 
 const getCustomers = async () => {
-    const { data } = await get(ADMIN_URLS.CUSTOMER, {
-        params: {
-            user: true,
-            region: true,
-            city: true,
-        },
-    });
+    const { data } = await get(ADMIN_URLS.CUSTOMER);
     state.customers = data.customers;
 };
 
@@ -451,6 +468,7 @@ const editCustomerInit = (id) => {
 const viewCustomerInit = (id) => {
     viewModalPopUp = new bootstrap.Modal(document.getElementById('viewModalPopUp'));
     state.customer = getOneCustomer(id);
+    state.customer.retailers = arrayHandlers.sortArrayByStringColumn(state.customer.retailers, 'name');
     viewModalPopUp.show();
     viewModalPopUp._element.addEventListener('hide.bs.modal', resetState);
 };

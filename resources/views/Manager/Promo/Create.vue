@@ -220,7 +220,6 @@
                     </div>
                 </div>
                 <div class="card-footer">
-                    <pre>{{ state.promo }}</pre>
                     <TheButton
                         @click="savePromo"
                         :class="[

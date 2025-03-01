@@ -10,10 +10,10 @@ use Illuminate\Database\Eloquent\Collection;
 
 interface CityRepositoryInterface
 {
-    public function find(City $city)
+    public function find(City $city, array $params = [])
     : ?City;
 
-    public function get()
+    public function get(array $params = [])
     : Collection;
 
     public function createFromArray(array $data)

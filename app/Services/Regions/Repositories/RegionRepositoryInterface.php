@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Collection;
 
 interface RegionRepositoryInterface
 {
-    public function find(Region $region)
+    public function find(Region $region, array $params = [])
     : ?Region;
 
     public function get(array $params = [])

@@ -10,10 +10,17 @@ use Illuminate\Database\Eloquent\Collection;
 
 interface CategoryRepositoryInterface
 {
-    public function find(Category $category)
+
+    public function find(Category $category, array $params = [])
     : ?Category;
 
-    public function get(array $params = [], bool $isAdmin = false)
+    public function findOneForAdmin(Category $category, array $params = [])
+    : ?Category;
+
+    public function getAll(array $params = [])
+    : Collection;
+
+    public function getAllForAdmin(array $params = [])
     : Collection;
 
     public function createFromArray(array $data)

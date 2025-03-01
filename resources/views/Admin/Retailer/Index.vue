@@ -377,7 +377,7 @@ const getRetailers = async () => {
 
 const getCustomers = async () => {
     const { data } = await get(ADMIN_URLS.CUSTOMER);
-    state.customers = data.customers;
+    state.customers = arrayHandlers.sortArrayByStringColumn(data.customers, 'name');
 };
 
 const getCities = async () => {

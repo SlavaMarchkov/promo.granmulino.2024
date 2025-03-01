@@ -3,8 +3,6 @@
 declare(strict_types=1);
 
 use App\Enums\Retailer\TypeEnum;
-use App\Models\City;
-use App\Models\Customer;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -28,8 +26,8 @@ return new class extends Migration {
             $table->boolean('is_active')->default(true);
             $table->boolean('is_direct')->default(false);
 
-            $table->foreignIdFor(Customer::class)->constrained('customers');
-            $table->foreignIdFor(City::class)->constrained('cities');
+            $table->foreignId('customer_id')->nullable();
+            $table->foreignId('city_id')->nullable();
 
             $table->timestamps();
         });

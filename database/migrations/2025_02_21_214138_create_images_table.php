@@ -17,7 +17,7 @@ return new class extends Migration {
             $table->string('file');
             $table->string('thumbnail');
             $table->morphs('imageable');
-            $table->boolean('is_main')->default(true);
+            $table->boolean('is_main')->default(false);
 
             $table->timestamps();
         });

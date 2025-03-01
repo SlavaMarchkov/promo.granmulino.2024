@@ -22,13 +22,13 @@ final class StoreUpdateRequest extends FormRequest
     {
         return [
             'name'        => ['required', 'string', 'min:8', 'max:64'],
-            'weight'      => ['required', 'numeric', 'min:0', 'max:10000'],
+            'weight'      => ['required', 'numeric', 'min:0', 'max:50000'],
             'price'       => [
                 Rule::requiredIf(fn() => $this->user()->role->value == RoleEnum::PRICE_ADMIN->getValue()),
                 'nullable',
                 'numeric',
                 'min:0',
-                'max:199.99',
+                'max:999.99',
                 'decimal:2',
                 'regex:/\d{1,3}.\d{2}/',
             ],

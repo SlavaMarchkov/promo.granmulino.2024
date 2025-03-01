@@ -28,6 +28,7 @@ final class CustomerController extends ApiController
     : JsonResponse
     {
         $this->authorize('viewAny', Customer::class);
+
         Cache::forget(self::CACHE_KEY); // TODO: delete
 
         $customers = Cache::remember(self::CACHE_KEY, now()->addHour(), function () {
@@ -44,7 +45,7 @@ final class CustomerController extends ApiController
         return $this->successResponse(
             new CustomerCollection($customers),
             'success',
-            __('crud.customers.all'),
+            __(''),
         );
     }
 
@@ -63,7 +64,7 @@ final class CustomerController extends ApiController
         return $this->successResponse(
             new CustomerFullResource($customer),
             'success',
-            __('crud.customers.one'),
+            __(''),
         );
     }
 }

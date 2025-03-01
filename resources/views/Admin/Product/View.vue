@@ -1,18 +1,19 @@
 <template>
-    <div v-if="spinnerStore.isLoading" class="row">
-        <div class="col-12">
-            <h4 class="my-4"><TheSpinner /></h4>
-        </div>
-    </div>
-    <template v-else>
-        <div v-if="isItemFound" class="row">
-            <div class="col-xl-6">
-                <div class="card">
+    <RouterLink
+        :to="{ name: 'Product.Index' }"
+        class="fw-bold"
+        role="button"
+    ><i class="bi bi-arrow-bar-left me-2"></i>Обратно на Ассортимент
+    </RouterLink>
+    <hr>
+    <div v-if="isItemFound" class="row">
+        <div class="col-xl-6">
+            <div class="card">
                 <div class="card-header bg-primary text-white">
-                    <h3 class="mb-0">{{ item.name }}</h3>
+                    <h5 class="mb-0">{{ item.name }}</h5>
                 </div>
-                <div class="card-body py-5">
-                    <table class="table table-bordered align-middle text-wrap"
+                <div class="card-body pt-3">
+                    <table class="table table-bordered mb-0 align-middle text-wrap"
                            style="width: 100%;">
                         <tbody>
                         <tr>
@@ -33,7 +34,13 @@
                         </tr>
                         <tr>
                             <th>Группа товаров</th>
-                            <td>{{ item.categoryName }}</td>
+                            <td>
+                                <RouterLink
+                                    :to="{ name: 'Category.View', params: { id: item.categoryId } }"
+                                >
+                                    {{ item.categoryName }}
+                                </RouterLink>
+                            </td>
                         </tr>
                         <tr>
                             <th>В продаже?</th>
@@ -55,29 +62,21 @@
                     >След.</TheButton>
                 </div>
             </div>
-            </div>
-            <div class="col-xl-6">
-                <div class="card">
-                    <div class="card-body mb-4 text-center">
-                        <h5 class="card-title">Изображение продукта</h5>
-                        <img
-                            :src="productImage"
-                            :alt="item.name"
-                            class="img-thumbnail img-fluid"
-                        />
-                    </div>
+        </div>
+        <div class="col-xl-6">
+            <div class="card">
+                <div class="card-header">Изображения продукта</div>
+                <div class="card-body text-center pt-3">
+                    <img
+                        :src="productImage"
+                        :alt="item.name"
+                        class="img-thumbnail img-fluid"
+                    />
                 </div>
             </div>
         </div>
-        <Alert v-else class="mt-3"/>
-    </template>
-    <hr>
-    <RouterLink
-        :to="{ name: 'Product.Index' }"
-        class="btn btn-secondary my-2"
-        role="button"
-    >Обратно на Ассортимент
-    </RouterLink>
+    </div>
+    <Alert v-else class="mt-3"/>
 </template>
 
 <script setup>
@@ -87,7 +86,6 @@ import { useHttpService } from '@/use/useHttpService.js';
 import { useSpinnerStore } from '@/stores/spinners.js';
 import Alert from '@/components/Alert.vue';
 import { ADMIN_URLS, IMAGES, ROLES } from '@/helpers/constants.js';
-import TheSpinner from '@/components/core/TheSpinner.vue';
 import TheButton from '@/components/core/TheButton.vue';
 import { formatNumber } from '@/helpers/formatters.js';
 import TheBadge from '@/components/core/TheBadge.vue';

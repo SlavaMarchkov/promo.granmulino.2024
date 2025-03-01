@@ -20,16 +20,28 @@ final readonly class CategoryService
     {
     }
 
-    public function findCategory(Category $category)
+    public function findCategory(Category $category, array $params = [])
     : ?Category
     {
-        return $this->categoryRepository->find($category);
+        return $this->categoryRepository->find($category, $params);
     }
 
-    public function getCategories(array $params = [], bool $isAdmin = false)
+    public function findCategoryForAdmin(Category $category, array $params = [])
+    : ?Category
+    {
+        return $this->categoryRepository->findOneForAdmin($category, $params);
+    }
+
+    public function getCategoriesForAdmin(array $params = [])
     : Collection
     {
-        return $this->categoryRepository->get($params, $isAdmin);
+        return $this->categoryRepository->getAllForAdmin($params);
+    }
+
+    public function getCategories(array $params = [])
+    : Collection
+    {
+        return $this->categoryRepository->getAll($params);
     }
 
     public function storeCategory(array $data)

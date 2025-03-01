@@ -28,7 +28,7 @@ final class AdminController extends ApiController
         return $this->successResponse(
             new UserCollection($admins),
             'success',
-            __('crud.admins.all'),
+            __(''),
         );
     }
 

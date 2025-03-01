@@ -7,41 +7,59 @@ namespace App\Services\Regions\Repositories;
 
 
 use App\Models\Region;
-use Illuminate\Database\Eloquent\Builder;
+use App\Services\Regions\Filters\RegionFilter;
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Log;
 
 final class EloquentRegionRepository implements RegionRepositoryInterface
 {
-    public function find(Region $region)
-    : ?Region
-    {
-        return Region::query()->where('id', $region->id)->first();
+
+    /**
+     * @throws BindingResolutionException
+     */
+    public function find(Region $region, array $params = [])
+    : ?Region {
+        try {
+            $filter = app()->make(RegionFilter::class, ['params' => $params]);
+            $regionSql = Region::query()
+                ->where('id', $region->id)
+                ->filter($filter);
+            return $regionSql->first();
+        } catch (BindingResolutionException $e) {
+            Log::error('Error in RegionFilter: ' . $e->getMessage());
+            throw new BindingResolutionException($e->getMessage());
+        }
     }
 
+    /**
+     * @throws BindingResolutionException
+     */
     public function get(array $params = [])
-    : Collection
-    {
-        $regionsSql = Region::query();
-        $this->applyFilters($regionsSql, $params);
-        return $regionsSql->get();
+    : Collection {
+        try {
+            $filter = app()->make(RegionFilter::class, ['params' => $params]);
+            $regionsSql = Region::query()->filter($filter);
+            return $regionsSql->get();
+        } catch (BindingResolutionException $e) {
+            Log::error('Error in RegionFilter: ' . $e->getMessage());
+            throw new BindingResolutionException($e->getMessage());
+        }
     }
 
     public function createFromArray(array $data)
-    : Region
-    {
+    : Region {
         return Region::query()->create($data);
     }
 
     public function updateFromArray(Region $region, array $data)
-    : Region
-    {
+    : Region {
         $region->update($data);
         return $region;
     }
 
     public function delete(Region $region)
-    : int
-    {
+    : int {
         $cities_count = $region->cities->count();
 
         if ($cities_count == 0) {
@@ -49,17 +67,5 @@ final class EloquentRegionRepository implements RegionRepositoryInterface
         }
 
         return $cities_count;
-    }
-
-    private function applyFilters(Builder $qb, array $params)
-    : void
-    {
-        $qb->when(
-            isset($params['cities']) && to_boolean($params['cities']),
-            fn(Builder $query) => $query->with('cities')->withCount('cities'),
-        )->when(
-            isset($params['customers']) && to_boolean($params['customers']),
-            fn(Builder $query) => $query->with('customers')->withCount('customers'),
-        );
     }
 }

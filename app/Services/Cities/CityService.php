@@ -20,16 +20,16 @@ final readonly class CityService
     {
     }
 
-    public function findCity(City $city)
+    public function findCity(City $city, array $params = [])
     : ?City
     {
-        return $this->cityRepository->find($city);
+        return $this->cityRepository->find($city, $params);
     }
 
-    public function getCities()
+    public function getCities(array $params = [])
     : Collection
     {
-        return $this->cityRepository->get();
+        return $this->cityRepository->get($params);
     }
 
     public function storeCity(array $data)

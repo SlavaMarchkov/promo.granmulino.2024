@@ -21,8 +21,8 @@ final class CityController extends ApiController
 
     public function __construct(
         private readonly CityService $cityService,
-    )
-    {}
+    ) {
+    }
 
     public function index()
     : JsonResponse
@@ -30,19 +30,21 @@ final class CityController extends ApiController
         Cache::forget(self::CACHE_KEY);
 
         $cities = Cache::remember(self::CACHE_KEY, now()->addDay(), function () {
-            return $this->cityService->getCities();
+            return $this->cityService->getCities([
+                'region' => true,
+                ...request()->all(),
+            ]);
         });
 
         return $this->successResponse(
             new CityCollection($cities),
             'success',
-            __('crud.cities.all'),
+            __(''),
         );
     }
 
     public function store(StoreUpdateRequest $request)
-    : JsonResponse
-    {
+    : JsonResponse {
         $data = $request->validated();
         $city = $this->cityService->storeCity($data);
 
@@ -55,20 +57,23 @@ final class CityController extends ApiController
     }
 
     public function show(City $city)
-    : JsonResponse
-    {
-        $city = $this->cityService->findCity($city);
+    : JsonResponse {
+        $city = $this->cityService->findCity($city, [
+            'region'    => true,
+            'customers' => true,
+            'retailers' => true,
+            ...request()->all(),
+        ]);
 
         return $this->successResponse(
             new CityFullResource($city),
             'success',
-            __('crud.cities.one'),
+            __(''),
         );
     }
 
     public function update(StoreUpdateRequest $request, City $city)
-    : JsonResponse
-    {
+    : JsonResponse {
         $data = $request->validated();
         $city = $this->cityService->updateCity($city, $data);
 
@@ -80,8 +85,7 @@ final class CityController extends ApiController
     }
 
     public function destroy(City $city)
-    : JsonResponse
-    {
+    : JsonResponse {
         $result = $this->cityService->deleteCity($city);
 
         return ($result == 0)

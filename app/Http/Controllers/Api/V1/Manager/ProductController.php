@@ -31,7 +31,7 @@ final class ProductController extends ApiController
         return $this->successResponse(
             new ProductCollection($products),
             'success',
-            __('crud.products.all'),
+            __(''),
         );
     }
 }

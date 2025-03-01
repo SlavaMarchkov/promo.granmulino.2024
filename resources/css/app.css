@@ -25,10 +25,23 @@
     }
 }
 
+/* Полоса прокрутки */
+::-webkit-scrollbar {
+    -webkit-appearance: none;
+    width: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: darkgrey;
+    border-radius: 6px;
+    -webkit-box-shadow: 0 0 1px white;
+}
+
 body {
     font-family: "Scada", sans-serif;
     background: #f1f1f1;
     color: #444444;
+    overflow-y: scroll;
 }
 
 .modal {
@@ -70,6 +83,9 @@ h6 {
     background-color: #f4f4f4 !important;
 }
 
+table.retailer-nested tr:last-child {
+    border-bottom: none !important;
+}
 /*--------------------------------------------------------------
 # Main
 --------------------------------------------------------------*/

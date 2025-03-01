@@ -37,7 +37,7 @@ final class CategoryController extends ApiController
         return $this->successResponse(
             new CategoryCollection($categories),
             'success',
-            __('crud.categories.all'),
+            __(''),
         );
     }
 }
