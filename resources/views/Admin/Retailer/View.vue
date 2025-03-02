@@ -2,7 +2,6 @@
     <RouterLink
         :to="{ name: 'Retailer.Index' }"
         class="fw-bold"
-        role="button"
     ><i class="bi bi-arrow-bar-left me-2"></i>Обратно на Торговые сети
     </RouterLink>
     <hr>

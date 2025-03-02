@@ -35,7 +35,7 @@ final class PromoProductController extends ApiController
         return $this->successResponse(
             PromoProductResource::collection($products),
             'success',
-            __('crud.products.all'),
+            __(''),
         );
     }
 

@@ -30,9 +30,11 @@ class PromoProductResource extends JsonResource
             'profitPerProductPlan'   => $this->profit_per_product_plan,
             'profitPerProductActual' => $this->profit_per_product_actual,
 
-            'discount'   => $this->discount,
-            'netProfit'  => $this->net_profit,
-            'promoPrice' => $this->promo_price,
+            'discount'           => $this->discount,
+            'netProfit'          => $this->net_profit,
+            'promoPrice'         => $this->promo_price,
+            'customerPrice'      => $this->customer_price,
+            'customerPriceNoVat' => $this->customer_price_no_vat,
 
             'surplusPlan'   => $this->surplus_plan,
             'surplusActual' => $this->surplus_actual,

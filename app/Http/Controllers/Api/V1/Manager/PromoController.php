@@ -40,7 +40,7 @@ final class PromoController extends ApiController
         return $this->successResponse(
             new PromoCollection($promos),
             'success',
-            __('crud.promos.all'),
+            __(''),
         );
     }
 
@@ -78,7 +78,7 @@ final class PromoController extends ApiController
         return $this->successResponse(
             new PromoFullResource($promo),
             'success',
-            __('crud.promos.one'),
+            __(''),
         );
     }
 

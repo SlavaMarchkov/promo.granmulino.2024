@@ -15,8 +15,7 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body pb-0">
-                    Мои продажи (план-факт) (в разработке...)
-<pre>{{ salesPlans }}</pre>
+                    Мои продажи (план-факт) (работает добавление планов)
                 </div>
             </div>
         </div>

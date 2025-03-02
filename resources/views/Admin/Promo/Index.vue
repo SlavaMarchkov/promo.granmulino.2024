@@ -72,7 +72,7 @@
                 v-if="filteredItems.length > 0"
                 with-footer
             >
-                <template #header><h4 class="mb-0">Список промо-акций {{ searchBy }}</h4></template>
+                <template #header><h4 class="mb-0">Список промо-акций</h4></template>
                 <template #body>
                     <div class="list-group">
                         <a class="list-group-item list-group-item-action promo-item fw-bold" style="cursor: initial; background-color: #f8f9fa;">

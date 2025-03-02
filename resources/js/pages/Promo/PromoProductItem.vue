@@ -149,12 +149,16 @@
                             <th scope="col" class="text-end">{{ props.product.productName }}</th>
                         </tr>
                         <tr>
-                            <td class="text-secondary">Акционная цена</td>
-                            <th scope="col" class="text-end">{{ formatNumberWithFractions(props.product.promoPrice) }} руб.</th>
+                            <td class="text-secondary">Отпускная цена</td>
+                            <th scope="col" class="text-end">{{ formatNumberWithFractions(props.product.customerPrice) }} руб.</th>
                         </tr>
                         <tr>
-                            <td class="text-secondary">Скидка</td>
-                            <th scope="col" class="text-end">{{ props.product.discount }}&#8239;%</th>
+                            <td class="text-secondary">Отпускная цена без НДС</td>
+                            <th scope="col" class="text-end">{{ formatNumberWithFractions(props.product.customerPriceNoVat) }} руб.</th>
+                        </tr>
+                        <tr>
+                            <td class="text-secondary">Акционная цена</td>
+                            <th scope="col" class="text-end">{{ formatNumberWithFractions(props.product.promoPrice) }} руб.</th>
                         </tr>
                         </tbody>
                     </table>
@@ -169,6 +173,10 @@
                         <tr>
                             <td class="text-secondary">План прироста</td>
                             <th scope="col" class="text-end">{{ formatNumber(props.product.surplusPlan) }}&#8239;%</th>
+                        </tr>
+                        <tr>
+                            <td class="text-secondary">Скидка</td>
+                            <th scope="col" class="text-end">{{ props.product.discount }}&#8239;%</th>
                         </tr>
                         <tr>
                             <td class="text-secondary">Компенсация на 1 шт.</td>

@@ -1,9 +1,10 @@
 <template>
-    <div class="row mb-4">
-        <div class="col-12">
-            <h3 class="mb-1">{{ $route.meta.title }}</h3>
-        </div>
-    </div>
+    <RouterLink
+        :to="{ name: 'Manager.Promo.Index' }"
+        class="d-inline-block fw-bold py-2"
+    ><i class="bi bi-arrow-bar-left me-2"></i>Обратно на Мои Промо-акции
+    </RouterLink>
+    <hr>
     <div v-if="spinnerStore.isLoading" class="row">
         <div class="col-12">
             <h4 class="my-4"><TheSpinner /></h4>
@@ -76,7 +77,9 @@
                                 <div id="collapsePromoComments" aria-labelledby="promoComments"
                                      class="accordion-collapse collapse" data-bs-parent="#promoDetails">
                                     <div class="accordion-body">
-                                        {{ promo.comments }}
+                                        <div class="bd-callout bd-callout-warning mb-0">
+                                            <p class="mb-0">{{ promo.comments }}</p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -149,13 +152,6 @@
         </div>
         <Alert v-else class="mt-3"/>
     </template>
-    <hr>
-    <RouterLink
-        :to="{ name: 'Manager.Promo.Index' }"
-        class="btn btn-secondary my-2"
-        role="button"
-    >Обратно на Мои Промо-акции
-    </RouterLink>
 </template>
 
 <script setup>
@@ -202,7 +198,7 @@ const isPromoFound = computed(() => {
 });
 
 const fetchDetails = async (promoId) => {
-    const { status, data } = await get(`${MANAGER_URLS.PROMO}/${promoId}`);
+    const { status, data } = await get(`${ MANAGER_URLS.PROMO }/${ promoId }`);
     if ( status === 'success' ) promo.value = data;
 };
 

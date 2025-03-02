@@ -67,7 +67,7 @@
     </div>
     <div v-else class="row mb-4">
         <div class="col-12">
-            <p class="mt-3 text-center lead">
+            <p class="mt-3 lead">
                 {{ spinnerStore.isLoading ? 'Подождите, загружаю...' : 'Записей не найдено...' }}
             </p>
         </div>

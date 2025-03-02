@@ -8,11 +8,11 @@
 
     <style>
         @page {
-            margin: 4px;
+            margin: 10px;
         }
 
         body {
-            font-size: 0.6em;
+            font-size: 0.7em;
         }
 
         .page-break {

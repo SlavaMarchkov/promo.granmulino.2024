@@ -42,7 +42,7 @@
                     </table>
                 </div>
             </div>
-            <div class="card">
+<!--            <div class="card">
                 <div class="card-header">Загрузка изображений</div>
                 <div class="card-body">
                     <Alert />
@@ -56,7 +56,7 @@
                         :loading="spinnerStore.isButtonDisabled"
                     >Сохранить</TheButton>
                 </div>
-            </div>
+            </div>-->
         </div>
         <div class="col-xl-6">
             <div class="card">
@@ -106,10 +106,8 @@
 <script setup>
 import { onMounted, reactive, ref } from 'vue';
 import { Dropzone } from 'dropzone';
-import TheButton from '@/components/core/TheButton.vue';
 import { useHttpService } from '@/use/useHttpService.js';
 import { useSpinnerStore } from '@/stores/spinners.js';
-import Alert from '@/components/Alert.vue';
 import { IMAGES, MANAGER_URLS } from '@/helpers/constants.js';
 import { useAuthStore } from '@/stores/auth.js';
 import TheBadge from '@/components/core/TheBadge.vue';
