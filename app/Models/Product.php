@@ -7,6 +7,7 @@ namespace App\Models;
 use App\Observers\ProductObserver;
 use App\Traits\Models\HasPreviousNext;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -28,6 +29,26 @@ class Product extends Model
     protected $casts = [
         'is_active' => 'boolean',
     ];
+
+    public function packSize()
+    : Attribute
+    {
+        return new Attribute(
+            get: function () {
+                // TODO: посчитать объем пачки в см3 - return Product::query()->where('id', $this->product_id)->value('price');
+            },
+        );
+    }
+
+    public function boxWeight()
+    : Attribute
+    {
+        return new Attribute(
+            get: function () {
+                // TODO: посчитать вес гофрокороба в кг - кол-во пачек в коробе * вес одной пачки - return Product::query()->where('id', $this->product_id)->value('price');
+            },
+        );
+    }
 
     public function category()
     : BelongsTo

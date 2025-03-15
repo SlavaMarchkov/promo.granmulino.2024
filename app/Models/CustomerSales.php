@@ -2,20 +2,22 @@
 
 declare(strict_types=1);
 
-// 21.02.2025 at 12:11:13
+// 12.03.2025 at 20:58:29
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Sales extends Model
+class CustomerSales extends Model
 {
-    protected $table = 'sales';
+
+    protected $table = 'customer_sales';
 
     protected $fillable = [
         'sales_plan',
         'sales_actual',
         'sales_date',
+        'comments',
         'user_id',
         'customer_id',
         'category_id',

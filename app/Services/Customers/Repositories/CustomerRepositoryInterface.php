@@ -6,37 +6,33 @@ declare(strict_types=1);
 namespace App\Services\Customers\Repositories;
 
 use App\Models\Customer;
+use App\Models\CustomerSales;
 use App\Models\CustomerSeller;
 use Illuminate\Database\Eloquent\Collection;
 
 interface CustomerRepositoryInterface
 {
-    public function find(Customer $customer, array $params = [])
-    : ?Customer;
 
-    public function findSeller(int $id)
-    : ?CustomerSeller;
-
-    public function get(array $params = [])
+    public function getCustomers(array $params = [])
     : Collection;
 
-    public function createFromArray(array $data)
+    public function findCustomer(Customer $customer, array $params = [])
+    : ?Customer;
+
+    public function createCustomerFromArray(array $data)
     : Customer;
 
-    public function updateFromArray(Customer $customer, array $data)
+    public function updateCustomerFromArray(Customer $customer, array $data)
     : Customer;
 
-    public function delete(Customer $customer)
-    : int;
-
-    public function deleteSeller(CustomerSeller $seller)
+    public function deleteCustomer(Customer $customer)
     : int;
 
     public function getSellers(int $customer_id)
     : Collection;
 
-    public function getProducts(int $customer_id, array $params = [])
-    : Collection;
+    public function findSeller(int $id)
+    : ?CustomerSeller;
 
     public function createSellerFromArray(array $data)
     : CustomerSeller;
@@ -44,6 +40,24 @@ interface CustomerRepositoryInterface
     public function updateSellerFromArray(CustomerSeller $customerSeller, array $data)
     : CustomerSeller;
 
+    public function deleteSeller(CustomerSeller $seller)
+    : int;
+
+    public function getProducts(int $customer_id, array $params = [])
+    : Collection;
+
     public function createProductsFromArray(Customer $customer, array $data)
     : Collection;
+
+    public function getSales(array $params = [])
+    : Collection;
+
+    public function createSalesPlanFromArray(Customer $customer, array $data)
+    : Collection;
+
+    public function updateSalesPlanFromArray(CustomerSales $sales, array $data)
+    : CustomerSales;
+
+    public function getSalesYears()
+    : array;
 }

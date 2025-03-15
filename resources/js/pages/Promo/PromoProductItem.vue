@@ -141,7 +141,7 @@
                     <table class="table table-sm border-bottom">
                         <tbody>
                         <tr>
-                            <td class="text-secondary">Группа товара</td>
+                            <td class="text-secondary">Группа товаров</td>
                             <th scope="col" class="text-end">{{ props.product.categoryName }}</th>
                         </tr>
                         <tr>

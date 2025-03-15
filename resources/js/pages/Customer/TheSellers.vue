@@ -1,5 +1,5 @@
 <template>
-    <h4 class="mb-3">Супервайзеры с привязанными ТП</h4>
+    <h4 class="card-title p-0 my-2">Супервайзеры с привязанными ТП</h4>
     <div v-if="props.supervisors.length > 0" class="row">
         <SupervisorItem
             v-for="(supervisor, index) in props.supervisors"
@@ -23,7 +23,7 @@
         </div>
     </div>
     <hr>
-    <h4 class="mb-3">Торговые представители без привязки к супервайзерам</h4>
+    <h4 class="card-title p-0 my-2">Торговые представители без привязки к супервайзерам</h4>
     <div v-if="props.sellers.length > 0" class="row">
         <SellerItem
             v-for="(seller, index) in props.sellers"
@@ -39,7 +39,9 @@
     <div v-else class="row">
         <div class="col-12">
             <div class="bd-callout bd-callout-warning mb-0">
-                <p class="mb-0">Наполните команду:<br>Шаг 1. Введите поочерёдно ФИО торговых представителей.<br>Шаг 2. Привяжите их к супервайзерам перетаскиванием мышкой.</p>
+                <p class="fw-bold">Наполните команду:</p>
+                <p class="mb-0">Шаг 1. Введите поочерёдно ФИО торговых представителей.<br>
+                    Шаг 2. Привяжите их к супервайзерам перетаскиванием мышкой.</p>
             </div>
         </div>
     </div>
@@ -85,7 +87,7 @@ const emit = defineEmits([
 ]);
 
 const saveSeller = async (item) => {
-    const { status, data } = await post(`${MANAGER_URLS.CUSTOMER}/${props.customerId}${MANAGER_URLS.SELLER}`, item);
+    const { status, data } = await post(`${ MANAGER_URLS.CUSTOMER }/${ props.customerId }${ MANAGER_URLS.SELLER }`, item);
     if ( status === 'success' ) {
         alertStore.clear();
         emit('updateSellers', data);
@@ -96,7 +98,7 @@ const updateSeller = async (item) => {
     const {
         status,
         data,
-    } = await update(`${MANAGER_URLS.CUSTOMER}/${props.customerId}${MANAGER_URLS.SELLER}/${item.id}`, item);
+    } = await update(`${ MANAGER_URLS.CUSTOMER }/${ props.customerId }${ MANAGER_URLS.SELLER }/${ item.id }`, item);
     if ( status === 'success' ) {
         alertStore.clear();
         emit('updateSellers', data);
@@ -108,7 +110,7 @@ const deleteSeller = async (item) => {
         const {
             status,
             data,
-        } = await destroy(`${MANAGER_URLS.CUSTOMER}/${props.customerId}${MANAGER_URLS.SELLER}/${item.id}`, item);
+        } = await destroy(`${ MANAGER_URLS.CUSTOMER }/${ props.customerId }${ MANAGER_URLS.SELLER }/${ item.id }`, item);
         if ( status === 'success' ) {
             console.log(data);
             emit('updateSellers', data);

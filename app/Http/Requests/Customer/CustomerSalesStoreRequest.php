@@ -2,13 +2,14 @@
 
 declare(strict_types=1);
 
-// 21.02.2025 at 12:11:14
-namespace App\Http\Requests\Sales;
+// 12.03.2025 at 20:58:30
+namespace App\Http\Requests\Customer;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-final class StoreRequest extends FormRequest
+final class CustomerSalesStoreRequest extends FormRequest
 {
+
     public function authorize()
     : bool
     {
@@ -19,21 +20,23 @@ final class StoreRequest extends FormRequest
     : array
     {
         return [
-            'customer_id'               => ['required', 'numeric', 'exists:customers,id'],
-            'sales_date'                => ['required', 'date'],
-            'sales_plans'               => ['array'],
-            'sales_plans.*.sales_date'  => ['required', 'date'],
-            'sales_plans.*.sales_plan'  => ['required', 'numeric'],
-            'sales_plans.*.user_id'     => ['required', 'numeric', 'exists:users,id'],
-            'sales_plans.*.customer_id' => ['required', 'numeric', 'exists:customers,id'],
-            'sales_plans.*.category_id' => ['required', 'numeric', 'exists:categories,id'],
+            'customer_id' => ['required', 'numeric', 'exists:customers,id'],
+            'sales_date'  => ['required', 'date'],
+            'sales_plans' => ['array', 'filled'],
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'sales_plans.filled' => 'Введите план продаж хотя бы для одной группы товаров',
         ];
     }
 
     protected function prepareForValidation()
     : void
     {
-        $sales_plan_array = request()->input('sales_plan');
+        $sales_plan_array = request()->input('sales_plan') ?? [];
 
         $this->merge([
             'sales_plans' => array_map(function ($item) {

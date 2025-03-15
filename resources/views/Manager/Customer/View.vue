@@ -61,33 +61,33 @@
                 <div class="card">
                     <div class="card-body pt-3">
                         <ul class="nav nav-tabs nav-tabs-bordered" role="tablist">
-                            <li class="nav-item" role="presentation">
+<!--                            <li class="nav-item" role="presentation">
                                 <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview" aria-selected="true" role="tab">Профиль</button>
-                            </li>
+                            </li>-->
                             <li class="nav-item" role="presentation">
-                                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#price-list" aria-selected="false" tabindex="-1" role="tab">Прайс-лист</button>
+                                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#price-list" aria-selected="false" tabindex="-1" role="tab">Прайс-лист</button>
                             </li>
-                            <li class="nav-item" role="presentation">
+<!--                            <li class="nav-item" role="presentation">
                                 <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-settings" aria-selected="false" tabindex="-1" role="tab">Настройки</button>
-                            </li>
+                            </li>-->
                             <li class="nav-item" role="presentation">
                                 <button class="nav-link" data-bs-toggle="tab" data-bs-target="#the-sellers" aria-selected="false" tabindex="-1" role="tab">Команда ТП</button>
                             </li>
                         </ul>
                         <div class="tab-content pt-2">
-                            <div class="tab-pane fade show active profile-overview" id="profile-overview" role="tabpanel">
+<!--                            <div class="tab-pane fade show active profile-overview" id="profile-overview" role="tabpanel">
                                 <h5 class="card-title">В разработке</h5>
-                            </div>
-                            <div class="tab-pane fade pt-1" id="price-list" role="tabpanel">
+                            </div>-->
+                            <div class="tab-pane fade show active pt-1" id="price-list" role="tabpanel">
                                 <PriceList
                                     :customer-id="customerId"
                                     :categories="filteredCategories"
                                     @update-categories="updateCategories"
                                 />
                             </div>
-                            <div class="tab-pane fade pt-1" id="profile-settings" role="tabpanel">
+<!--                            <div class="tab-pane fade pt-1" id="profile-settings" role="tabpanel">
                                 <h5 class="card-title">В разработке</h5>
-                            </div>
+                            </div>-->
                             <div class="tab-pane fade pt-1" id="the-sellers" role="tabpanel">
                                 <TheSellers
                                     :customer-id="customerId"

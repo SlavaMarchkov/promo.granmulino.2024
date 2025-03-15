@@ -95,14 +95,14 @@
             <template #body>
                 <div class="row g-3 mb-3">
                     <div class="col-md-6">
-                        <TheLabel for="category_id" required>Группа товара</TheLabel>
+                        <TheLabel for="category_id" required>Группа товаров</TheLabel>
                         <select
                             v-model="state.form.categoryId"
                             @change="displayProducts"
                             id="category_id"
                             class="form-select"
                         >
-                            <option disabled selected value="">-- Выберите группу товара --</option>
+                            <option disabled selected value="">-- Выберите группу товаров --</option>
                             <option
                                 v-for="category in state.categories"
                                 :key="category.id"

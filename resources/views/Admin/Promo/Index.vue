@@ -58,7 +58,7 @@
                         :disabled="searchBy.year === ''"
                         v-model="searchBy.dateFilterQuarter"
                         :chooseFrom="'-- Выберите период года --'"
-                        :items="QUARTERS"
+                        :items="PERIODS"
                         selected-option="period"
                     >Квартал / Полугодие
                     </SelectGroup>
@@ -123,7 +123,7 @@ import { useHttpService } from '@/use/useHttpService.js';
 import { useArrayHandlers } from '@/use/useArrayHandlers.js';
 import TheFilter from '@/components/core/TheFilter.vue';
 import SelectGroup from '@/components/form/SelectGroup.vue';
-import { ADMIN_URLS, PROMO_STATUSES, PROMO_TYPES, QUARTERS } from '@/helpers/constants.js';
+import { ADMIN_URLS, PERIODS, PROMO_STATUSES, PROMO_TYPES } from '@/helpers/constants.js';
 import TheCard from '@/components/core/TheCard.vue';
 import AdminPromoItem from '@/pages/PromoActual/AdminPromoItem.vue';
 import { storeToRefs } from 'pinia';

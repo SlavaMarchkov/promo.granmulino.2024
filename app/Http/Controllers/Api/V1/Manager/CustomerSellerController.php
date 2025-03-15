@@ -43,7 +43,7 @@ final class CustomerSellerController extends ApiController
         $this->authorize('create', [CustomerSeller::class, $request->customer_id, $customer->id]);
 
         $data = $request->validated();
-        $seller = $this->customerService->storeSeller($data);
+        $seller = $this->customerService->storeCustomerSeller($data);
 
         return $this->successResponse(
             new CustomerSellerResource($seller),
@@ -68,7 +68,7 @@ final class CustomerSellerController extends ApiController
     public function destroy(int $customer_id, CustomerSeller $seller)
     : JsonResponse
     {
-        $result = $this->customerService->deleteSeller($seller);
+        $result = $this->customerService->deleteCustomerSeller($seller);
 
         return ($result == 0)
             ? $this->successResponse(

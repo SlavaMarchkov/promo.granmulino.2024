@@ -83,7 +83,58 @@ export const PROMO_STATUSES = [
     },
 ];
 
-export const QUARTERS = [
+export const MONTHS = [
+    {
+        id: '01',
+        month: 'январь',
+    },
+    {
+        id: '02',
+        month: 'февраль',
+    },
+    {
+        id: '03',
+        month: 'март',
+    },
+    {
+        id: '04',
+        month: 'апрель',
+    },
+    {
+        id: '05',
+        month: 'май',
+    },
+    {
+        id: '06',
+        month: 'июнь',
+    },
+    {
+        id: '07',
+        month: 'июль',
+    },
+    {
+        id: '08',
+        month: 'август',
+    },
+    {
+        id: '09',
+        month: 'сентябрь',
+    },
+    {
+        id: '10',
+        month: 'октябрь',
+    },
+    {
+        id: '11',
+        month: 'ноябрь',
+    },
+    {
+        id: '12',
+        month: 'декабрь',
+    },
+];
+
+export const PERIODS = [
     {
         id: 'q1',
         period: 'I квартал',
@@ -107,6 +158,10 @@ export const QUARTERS = [
     {
         id: 'hy2',
         period: '2-е полугодие',
+    },
+    {
+        id: 'm9',
+        period: '9 месяцев',
     },
 ];
 

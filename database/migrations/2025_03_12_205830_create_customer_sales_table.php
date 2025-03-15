@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-// 21.02.2025 at 12:11:15
+// 12.03.2025 at 20:58:30
 use App\Models\Category;
 use App\Models\Customer;
 use App\Models\User;
@@ -14,12 +14,14 @@ return new class extends Migration {
     public function up()
     : void
     {
-        Schema::create('sales', function (Blueprint $table) {
+        Schema::create('customer_sales', function (Blueprint $table) {
             $table->id();
 
-            $table->integer('sales_plan')->nullable();
-            $table->integer('sales_actual')->nullable();
+            $table->integer('sales_plan');
+            $table->integer('sales_actual')->default(0);
             $table->date('sales_date');
+            $table->string('comments')->nullable();
+
             $table->foreignIdFor(User::class)->nullable();
             $table->foreignIdFor(Customer::class)->constrained('customers');
             $table->foreignIdFor(Category::class)->constrained('categories');
@@ -32,7 +34,7 @@ return new class extends Migration {
     : void
     {
         if (!app()->isProduction()) {
-            Schema::dropIfExists('sales');
+            Schema::dropIfExists('customer_sales');
         }
     }
 };

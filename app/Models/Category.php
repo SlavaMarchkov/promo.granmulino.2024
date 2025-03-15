@@ -30,6 +30,6 @@ class Category extends Model
     public function sales()
     : HasMany
     {
-        return $this->hasMany(Sales::class, 'category_id');
+        return $this->hasMany(CustomerSales::class, 'category_id', 'id');
     }
 }

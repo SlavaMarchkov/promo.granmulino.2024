@@ -13,11 +13,74 @@
     </div>
     <div class="row mb-4">
         <div class="col-12">
-            <div class="card">
-                <div class="card-body pb-0">
-                    Мои продажи (план-факт) (работает добавление планов)
+            <TheFilter
+                @reset-filter="clearSearch"
+            >
+                <div class="col-md-4 mb-2">
+                    <SelectGroup
+                        v-model="searchBy.year"
+                        :chooseFrom="'-- Выберите год --'"
+                        :items="salesYears"
+                        selected-option="year"
+                    >Год
+                    </SelectGroup>
                 </div>
-            </div>
+                <div class="col-md-4 mb-2">
+                    <SelectGroup
+                        :disabled="searchBy.year === '' || searchBy.period !== ''"
+                        v-model="searchBy.month"
+                        :chooseFrom="'-- Выберите месяц --'"
+                        :items="MONTHS"
+                        selected-option="month"
+                    >Месяц
+                    </SelectGroup>
+                </div>
+                <div class="col-md-4 mb-2">
+                    <SelectGroup
+                        :disabled="searchBy.year === ''"
+                        v-model="searchBy.period"
+                        :chooseFrom="'-- Выберите период --'"
+                        :items="PERIODS"
+                        selected-option="period"
+                    >Период года
+                    </SelectGroup>
+                </div>
+                <div class="col-md-4 mb-2">
+                    <SelectGroup
+                        :disabled="searchBy.year === ''"
+                        v-model="searchBy.customerId"
+                        :chooseFrom="'-- Выберите название --'"
+                        :items="state.customers"
+                    >Контрагент
+                    </SelectGroup>
+                </div>
+                <div class="col-md-4 mb-2">
+                    <SelectGroup
+                        :disabled="searchBy.year === ''"
+                        v-model="searchBy.categoryId"
+                        :chooseFrom="'-- Выберите группу товаров --'"
+                        :items="salesStore.getCategories"
+                    >Группа товаров
+                    </SelectGroup>
+                </div>
+            </TheFilter>
+        </div>
+    </div>
+    <div class="row mb-4">
+        <div class="col-12">
+            <template v-if="state.sales.length > 0">
+                <SalesPlanActualItem
+                    v-for="(entry, index) in state.sales"
+                    :key="index"
+                    :entry="entry"
+                    :categories="state.categories"
+                    :months="state.months"
+                    @update-sales-actual="updateSalesActual"
+                />
+            </template>
+            <p v-else class="mt-3 text-center lead">
+                {{ spinnerStore.isLoading ? 'Подождите, загружаю...' : 'Записей не найдено. Выберите год для подгрузки планов продаж.' }}
+            </p>
         </div>
     </div>
     <TheModal
@@ -60,13 +123,13 @@
             <ul class="list-group">
                 <li class="list-group-item m-0">
                     <div class="row g-2 text-center fw-bold align-items-center p-0">
-                        <div class="col-md-5">Группа товара</div>
+                        <div class="col-md-5">Группа товаров</div>
                         <div class="col-md-4">План продаж, кг</div>
                         <div class="col-md-3">Доля в плане, %</div>
                     </div>
                 </li>
                 <SalesPlanItem
-                    v-for="category in state.categories"
+                    v-for="category in salesStore.getCategories"
                     :key="category.id"
                     :category="category"
                     :total-sales-plan="totalSalesPlan"
@@ -105,7 +168,7 @@
         </template>
         <template #footer>
             <TheButton
-                :disabled="spinnerStore.isButtonDisabled"
+                :disabled="spinnerStore.isButtonDisabled || !isFormValid()"
                 :loading="spinnerStore.isButtonDisabled"
                 class="btn-success w-25"
                 @click="saveSalesPlan"
@@ -115,7 +178,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, reactive, ref } from 'vue';
+import { computed, onMounted, reactive, ref, watch } from 'vue';
 import TheButton from '@/components/core/TheButton.vue';
 import TheModal from '@/components/TheModal.vue';
 import TheLabel from '@/components/form/TheLabel.vue';
@@ -127,20 +190,29 @@ import { useArrayHandlers } from '@/use/useArrayHandlers.js';
 import { useHttpService } from '@/use/useHttpService.js';
 import { useDatepicker } from 'vue-air-datepicker';
 import localeRu from 'air-datepicker/locale/ru';
-import { MANAGER_URLS } from '@/helpers/constants.js';
+import { MANAGER_URLS, MONTHS, PERIODS } from '@/helpers/constants.js';
 import SalesPlanItem from '@/pages/Sales/SalesPlanItem.vue';
+import SalesPlanActualItem from '@/pages/Sales/SalesPlanActualItem.vue';
 import Alert from '@/components/Alert.vue';
 import { useAuthStore } from '@/stores/auth.js';
+import { useSalesStore } from '@/stores/sales.js';
+import TheFilter from '@/components/core/TheFilter.vue';
+import SelectGroup from '@/components/form/SelectGroup.vue';
 
 const authUser = useAuthStore().getUser;
 const alertStore = useAlertStore();
 const spinnerStore = useSpinnerStore();
+const salesStore = useSalesStore();
 const arrayHandlers = useArrayHandlers();
-const { get, post } = useHttpService();
+const { get, post, update } = useHttpService();
 
 const modals = reactive({
     addModalPopUp: false,
 });
+
+const isFormValid = () => {
+    return state.form.salesDate !== '' && state.form.customerId !== '' && state.form.salesPlan.length > 0;
+};
 
 const initialFormData = () => ({
     userId: authUser.id,
@@ -152,14 +224,17 @@ const initialFormData = () => ({
 const state = reactive({
     customers: [],
     categories: [],
+    sales: [],
+    months: MONTHS,
     form: initialFormData(),
 });
 
-const salesPlans = ref([]);
+const salesYears = ref([]);
 
 onMounted(async () => {
     await getCustomers();
     await getCategories();
+    await getSalesYears();
 });
 
 const getCustomers = async () => {
@@ -171,7 +246,7 @@ const getCustomers = async () => {
             retailers: false,
         },
     });
-    state.customers = data.customers;
+    state.customers = arrayHandlers.sortArrayByStringColumn(data.customers, 'name');
 };
 
 const getCategories = async () => {
@@ -180,14 +255,103 @@ const getCategories = async () => {
             products: false,
         },
     });
-    state.categories = data.categories;
+    salesStore.setCategories(data.categories);
+    state.categories = salesStore.getCategories;
+};
+
+const getSalesYears = async () => {
+    const { data } = await get(`${ MANAGER_URLS.SALES }/getSalesYears`);
+    salesYears.value = Array.from(JSON.parse(data)).map(year => ({
+        id: year,
+        year: year.toString(),
+    }));
+};
+
+const getSales = async (year) => {
+    const { data } = await get(MANAGER_URLS.SALES, {
+        params: {
+            year,
+        },
+    });
+    salesStore.setSales(JSON.parse(data));
+    state.sales = arrayHandlers.sortArrayByStringColumn(salesStore.getSales, 'customerName');
+};
+
+const searchBy = reactive({
+    year: '',
+    month: '',
+    period: '',
+    customerId: '',
+    categoryId: '',
+});
+
+watch(
+    () => searchBy.year,
+    (current) => {
+        searchBy.month = '';
+        searchBy.period = '';
+        searchBy.customerId = '';
+        searchBy.categoryId = '';
+
+        if ( current ) {
+            getSales(current);
+        } else {
+            salesStore.setSales([]);
+            state.sales = salesStore.getSales;
+        }
+    },
+);
+
+watch(
+    () => searchBy.categoryId,
+    (current) => state.categories = current ? salesStore.getCategories.filter(category => +category.id === +current) : salesStore.getCategories,
+);
+
+watch(
+    () => searchBy.customerId,
+    (current) => state.sales = current ? salesStore.getSales.filter(item => item.customerId === +current) : salesStore.getSales,
+);
+
+watch(
+    () => searchBy.month,
+    (current) => state.months = current ? MONTHS.filter(month => month.id === current) : MONTHS,
+);
+
+watch(
+    () => searchBy.period,
+    (current) => {
+        // TODO просмотр по периодам
+        console.log(current);
+        searchBy.month = '';
+    },
+);
+
+const clearSearch = () => {
+    arrayHandlers.resetSearchKeys(searchBy);
 };
 
 const saveSalesPlan = async () => {
-    const response = await post(MANAGER_URLS.SALES, state.form);
+    const customerId = state.form.customerId;
+    const response = await post(`${ MANAGER_URLS.CUSTOMER }/${ customerId }${ MANAGER_URLS.SALES }`, state.form);
     if ( response && response.status === 'success' ) {
         alertStore.clear();
-        salesPlans.value = response.data;
+        // TODO: console.log(salesYears.value);
+        //state.sales = response.data.sales;
+    }
+};
+
+const updateSalesActual = async (item) => {
+    const {
+        status,
+        data,
+    } = await update(`${ MANAGER_URLS.CUSTOMER }/${ item.customerId }${ MANAGER_URLS.SALES }/${ item.id }`, item);
+    if ( status === 'success' ) {
+        const idx = salesStore.getSales.findIndex(s => s.customerId === data.customerId);
+        const el = salesStore.getSales[idx].sales.data[data.salesMonth].find(sd => sd.id === item.id);
+        el.salesActual = convertInputStringToNumber(data.salesActual);
+        state.sales = searchBy.customerId
+            ? salesStore.getSales.filter(s => s.customerId === +searchBy.customerId)
+            : arrayHandlers.sortArrayByStringColumn(salesStore.getSales, 'customerName');
     }
 };
 

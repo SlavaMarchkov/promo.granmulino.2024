@@ -14,12 +14,4 @@ export default {
      * @returns {Object}
      */
     getUser: state => state.user,
-
-    /**
-     * Возвращает массив с годами из поля start_date промо-акций
-     *
-     * @param state
-     * @returns {Array}
-     */
-    getYears: state => state.years,
 };

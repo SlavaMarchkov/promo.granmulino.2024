@@ -1,59 +1,61 @@
 <template>
-    <div class="card mt-2 mb-0">
-        <div class="card-header d-flex justify-content-between align-items-center py-0 px-4">
-            <h5 class="card-title">Продуктовая матрица контрагента</h5>
-            <TheButton
-                @click="saveProducts"
-                :class="[
-                    'btn-success w-25',
-                    { 'btn-cursor-not-allowed' : addedProducts.length === 0 }
-                ]"
-                :disabled="spinnerStore.isButtonDisabled || addedProducts.length === 0"
-            >Сохранить</TheButton>
-        </div>
-        <div class="card-body mt-3">
-            <div class="accordion" id="categoriesAccordion">
-                <div
-                    v-for="category in props.categories"
-                    class="accordion-item"
+    <div class="d-flex justify-content-between align-items-center mb-2">
+        <h4 class="card-title p-0 mb-0">Продуктовая матрица контрагента</h4>
+        <TheButton
+            @click="saveProducts"
+            :class="[
+                'btn-success w-25',
+                { 'btn-cursor-not-allowed' : addedProducts.length === 0 }
+            ]"
+            :disabled="spinnerStore.isButtonDisabled || addedProducts.length === 0"
+        >Сохранить</TheButton>
+    </div>
+    <div class="bd-callout bd-callout-warning mb-3">
+        <p class="fw-bold">Укажите цену для каждого формата, включая НДС.</p>
+        <p class="mb-0">Шаг 1. В поле Цена, руб. введите нужное значение.<br>
+            Шаг 2. Поставьте галочку рядом с названием формата.<br>
+            Шаг 3. Сохраните изменения.</p>
+    </div>
+    <div class="accordion" id="categoriesAccordion">
+        <div
+            v-for="category in props.categories"
+            class="accordion-item"
+        >
+            <h2 class="accordion-header" :id="`category${ category.id }`">
+                <button
+                    class="accordion-button collapsed"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    :data-bs-target="`#collapse${ category.id }`"
+                    aria-expanded="false"
+                    :aria-controls="`collapse${ category.id }`"
                 >
-                    <h2 class="accordion-header" :id="`category${ category.id }`">
-                        <button
-                            class="accordion-button collapsed"
-                            type="button"
-                            data-bs-toggle="collapse"
-                            :data-bs-target="`#collapse${ category.id }`"
-                            aria-expanded="false"
-                            :aria-controls="`collapse${ category.id }`"
-                        >
-                            {{ category.name }} - {{ countListedProducts(category.products) }} из {{ category.count }}
-                        </button>
-                    </h2>
-                    <div
-                        :id="`collapse${ category.id }`"
-                        class="accordion-collapse collapse"
-                        :aria-labelledby="`category${ category.id }`"
-                        data-bs-parent="#categoriesAccordion"
-                        style=""
-                    >
-                        <div class="accordion-body">
-                            <ul class="list-group">
-                                <li class="list-group-item m-0">
-                                    <div class="row g-2 text-center align-items-center p-0">
-                                        <div class="col-md-5">Наименование</div>
-                                        <div class="col-md-3">Цена, руб.</div>
-                                        <div class="col-md-4">Дата и время обновления</div>
-                                    </div>
-                                </li>
-                                <PriceListItem
-                                    v-for="product in category.products"
-                                    :category-id="category.id"
-                                    :product="product"
-                                    @update-product="addProductToMatrix"
-                                />
-                            </ul>
-                        </div>
-                    </div>
+                    {{ category.name }} - {{ countListedProducts(category.products) }} из {{ category.count }}
+                </button>
+            </h2>
+            <div
+                :id="`collapse${ category.id }`"
+                class="accordion-collapse collapse"
+                :aria-labelledby="`category${ category.id }`"
+                data-bs-parent="#categoriesAccordion"
+                style=""
+            >
+                <div class="accordion-body">
+                    <ul class="list-group">
+                        <li class="list-group-item m-0">
+                            <div class="row g-2 text-center align-items-center p-0">
+                                <div class="col-md-5">Наименование</div>
+                                <div class="col-md-3">Цена, руб.</div>
+                                <div class="col-md-4">Дата и время обновления</div>
+                            </div>
+                        </li>
+                        <PriceListItem
+                            v-for="product in sortArrayByStringColumn(category.products, 'name')"
+                            :category-id="category.id"
+                            :product="product"
+                            @update-product="addProductToMatrix"
+                        />
+                    </ul>
                 </div>
             </div>
         </div>
@@ -68,10 +70,12 @@ import { useSpinnerStore } from '@/stores/spinners.js';
 import PriceListItem from '@/pages/Customer/PriceListItem.vue';
 import TheButton from '@/components/core/TheButton.vue';
 import { MANAGER_URLS } from '@/helpers/constants.js';
+import { useArrayHandlers } from '@/use/useArrayHandlers.js';
 
 const { get, post } = useHttpService();
 const spinnerStore = useSpinnerStore();
 const alertStore = useAlertStore();
+const { sortArrayByStringColumn } = useArrayHandlers();
 
 const props = defineProps({
     customerId: {

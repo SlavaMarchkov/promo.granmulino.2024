@@ -26,9 +26,9 @@
                 <div class="col-md-4 mb-2">
                     <SelectGroup
                         v-model="searchBy.categoryId"
-                        :chooseFrom="'-- Выберите группу товара --'"
+                        :chooseFrom="'-- Выберите группу товаров --'"
                         :items="state.categories"
-                    >Группа товара
+                    >Группа товаров
                     </SelectGroup>
                 </div>
                 <div class="col-md-4 mb-2">
@@ -203,13 +203,13 @@
                     />
                 </div>
                 <div class="col-12">
-                    <TheLabel for="category_id" required>Группа товара</TheLabel>
+                    <TheLabel for="category_id" required>Группа товаров</TheLabel>
                     <select
                         id="category_id"
                         v-model="state.product.categoryId"
                         class="form-select"
                     >
-                        <option disabled selected value="">-- Выберите группу товара --</option>
+                        <option disabled selected value="">-- Выберите группу товаров --</option>
                         <option
                             v-for="category in state.categories"
                             :key="category.id"

@@ -16,6 +16,7 @@ use App\Http\Controllers\Api\V1\Manager\ChannelController;
 use App\Http\Controllers\Api\V1\Manager\CityController;
 use App\Http\Controllers\Api\V1\Manager\CustomerController;
 use App\Http\Controllers\Api\V1\Manager\CustomerProductController;
+use App\Http\Controllers\Api\V1\Manager\CustomerSalesController;
 use App\Http\Controllers\Api\V1\Manager\CustomerSellerController;
 use App\Http\Controllers\Api\V1\Manager\ProductController;
 use App\Http\Controllers\Api\V1\Manager\PromoController;
@@ -24,7 +25,6 @@ use App\Http\Controllers\Api\V1\Manager\PromoProductController;
 use App\Http\Controllers\Api\V1\Manager\PromoSellerController;
 use App\Http\Controllers\Api\V1\Manager\RegionController;
 use App\Http\Controllers\Api\V1\Manager\RetailerController;
-use App\Http\Controllers\Api\V1\Manager\SalesController;
 use App\Http\Controllers\Api\V1\Manager\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -68,23 +68,30 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
             ->name('logout');
 
         Route::get('categories', [CategoryController::class, 'index'])->name('categories');
+        Route::get('channels', [ChannelController::class, 'index'])->name('channels');
+        Route::get('cities', [CityController::class, 'index'])->name('cities');
         Route::get('products', [ProductController::class, 'index'])->name('products');
         Route::get('regions', [RegionController::class, 'index'])->name('regions');
-        Route::get('cities', [CityController::class, 'index'])->name('cities');
-        Route::get('channels', [ChannelController::class, 'index'])->name('channels');
+        Route::get('sales', [CustomerSalesController::class, 'index'])->name('sales');
+
         Route::post('users', [UserController::class, 'store'])->name('user.store');
-        Route::put('promos/{promo}/marks/{mark}', [PromoMarkController::class, 'update'])->name('promos.marks.update');
-        Route::get('promos/getPromoYears', [PromoController::class, 'getPromoYears'])->name('promos.getPromoYears');
+
+        Route::put('promos/{promo}/marks/{mark}', [PromoMarkController::class, 'update'])
+            ->name('promos.marks.update');
+        Route::get('promos/getPromoYears', [PromoController::class, 'getPromoYears'])
+            ->name('promos.getPromoYears');
+        Route::get('sales/getSalesYears', [CustomerSalesController::class, 'getSalesYears'])
+            ->name('sales.getSalesYears');
 
         Route::apiResources([
             'promos'             => PromoController::class,
             'retailers'          => RetailerController::class,
             'customers'          => CustomerController::class,
             'customers.products' => CustomerProductController::class,
+            'customers.sales'    => CustomerSalesController::class,
             'customers.sellers'  => CustomerSellerController::class,
             'promos.products'    => PromoProductController::class,
             'promos.sellers'     => PromoSellerController::class,
-            'sales'              => SalesController::class,
         ]);
     });
 });

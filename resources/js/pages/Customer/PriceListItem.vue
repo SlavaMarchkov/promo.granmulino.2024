@@ -21,18 +21,16 @@
             </div>
             <div class="col-md-3">
                 <div class="input-group">
-                    <span class="input-group-text">&#8381;</span>
                     <TheInput
                         class="text-center"
                         v-model="state.form.customerPrice"
                         @input="state.form.isListed = false"
                     />
-                    <span class="input-group-text">00,00</span>
+                    <span class="input-group-text">&#8381;</span>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="input-group">
-                    <span class="input-group-text"><i class="bi bi-calendar-date"></i></span>
                     <TheInput
                         class="text-center"
                         v-model="state.form.updatedAt"

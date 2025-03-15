@@ -7,10 +7,12 @@ namespace App\Services\Customers\Repositories;
 
 use App\Models\Customer;
 use App\Models\CustomerProduct;
+use App\Models\CustomerSales;
 use App\Models\CustomerSeller;
 use App\Services\Customers\Filters\CustomerFilter;
 use App\Services\Customers\Filters\CustomerProductFilter;
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -21,7 +23,7 @@ final readonly class EloquentCustomerRepository implements CustomerRepositoryInt
     /**
      * @throws BindingResolutionException
      */
-    public function find(Customer $customer, array $params = [])
+    public function findCustomer(Customer $customer, array $params = [])
     : ?Customer {
         try {
             $filter = app()->make(CustomerFilter::class, ['params' => $params]);
@@ -41,14 +43,14 @@ final readonly class EloquentCustomerRepository implements CustomerRepositoryInt
         return $customerSeller->first();
     }
 
-    public function get(array $params = [])
+    public function getCustomers(array $params = [])
     : Collection {
         $filter = new CustomerFilter($params);
         $customersSql = Customer::filter($filter);
         return $customersSql->get();
     }
 
-    public function createFromArray(array $data)
+    public function createCustomerFromArray(array $data)
     : Customer {
         return Customer::query()->create($data);
     }
@@ -58,7 +60,7 @@ final readonly class EloquentCustomerRepository implements CustomerRepositoryInt
         return CustomerSeller::query()->create($data);
     }
 
-    public function updateFromArray(Customer $customer, array $data)
+    public function updateCustomerFromArray(Customer $customer, array $data)
     : Customer {
         $customer->update($data);
         $customer->fresh();
@@ -72,9 +74,9 @@ final readonly class EloquentCustomerRepository implements CustomerRepositoryInt
         return $customerSeller;
     }
 
-    public function delete(Customer $customer)
+    public function deleteCustomer(Customer $customer)
     : int {
-        $user_id = (int) $customer->user->id;
+        $user_id = (int)$customer->user->id;
         $promo_count = DB::scalar('select count(*) as count from promos where customer_id = ?', [$customer->id]);
 
         if ($user_id === 0 && $promo_count === 0) {
@@ -132,5 +134,61 @@ final readonly class EloquentCustomerRepository implements CustomerRepositoryInt
         return CustomerProduct::query()
             ->where('customer_id', $customer->id)
             ->get();
+    }
+
+    public function getSales(array $params = [])
+    : Collection {
+        $customerSalesSql = CustomerSales::query();
+        $this->applyFilters($customerSalesSql, $params);
+        return $customerSalesSql->get();
+    }
+
+    public function getSalesYears()
+    : array
+    {
+        $years = CustomerSales::select([DB::raw('extract(year FROM sales_date) AS year')])
+            ->distinct()
+            ->pluck('year')
+            ->toArray();
+
+        return !empty($years) ? range(min($years), max($years)) : $years;
+    }
+
+    public function createSalesPlanFromArray(Customer $customer, array $data)
+    : Collection {
+        $customer->sales()->createUpdateOrDelete($data);
+
+        return CustomerSales::query()
+            ->with(['customer', 'category'])
+            ->where('customer_id', $data['customer_id'])
+            ->where('sales_date', $data['sales_date'])
+            ->get();
+    }
+
+    public function updateSalesPlanFromArray(CustomerSales $sales, array $data)
+    : CustomerSales {
+        $sales = $this->getSalesPlanById($data['id']);
+        unset($data['id']);
+        $sales->update($data);
+        $sales->fresh();
+        return $sales;
+    }
+
+    private function getSalesPlanById(int $id)
+    : CustomerSales {
+        return CustomerSales::query()->where('id', $id)->first();
+    }
+
+    private function applyFilters(Builder $qb, array $params)
+    : void {
+        $user_id = isset($params['user_id']) ? (int)$params['user_id'] : null;
+        $customer_id = isset($params['customer_id']) ? (int)$params['customer_id'] : null;
+        $year = $params['year'] ?? null;
+        $month = $params['month'] ?? null;
+
+        $qb->when($user_id, fn(Builder $query, int $user_id) => $query->where('user_id', $user_id))
+            ->when($customer_id, fn(Builder $query, int $customer_id) => $query->where('customer_id', $customer_id))
+            ->when($year, fn(Builder $query, string $year) => $query->whereYear('sales_date', $year))
+            ->when($month, fn(Builder $query, string $month) => $query->whereMonth('sales_date', $month));
     }
 }
