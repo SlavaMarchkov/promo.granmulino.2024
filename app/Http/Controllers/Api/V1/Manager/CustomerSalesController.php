@@ -51,16 +51,20 @@ final class CustomerSalesController extends ApiController
         );
     }
 
+    public function show()
+    {
+        // TODO: реализовать и выводить план продаж при вводе в модальном окне
+    }
+
     public function store(CustomerSalesStoreRequest $request, Customer $customer)
     : JsonResponse {
         $data = $request->validated();
-
-        $sales_plans = $this->customerService->storeSalesPlan($customer, $data);
+        $this->customerService->storeSalesPlan($customer, $data);
 
         return $this->successResponse(
-            new CustomerSalesCollection($sales_plans),
+            null,
             'success',
-            __('crud.sales_plan.created'),
+            __('crud.sales_plans.created'),
             Response::HTTP_CREATED,
         );
     }
@@ -73,7 +77,7 @@ final class CustomerSalesController extends ApiController
         return $this->successResponse(
             new CustomerSalesResource($sales),
             'success',
-            __('crud.sales_plan.updated'),
+            __('crud.sales_plans.updated'),
         );
     }
 

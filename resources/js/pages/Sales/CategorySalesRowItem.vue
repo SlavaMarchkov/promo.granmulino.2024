@@ -7,7 +7,7 @@
             <TheInput
                 class="sales-actual-input text-end"
                 :model-value="state.form.salesActual"
-                @blur="updateSalesActual"
+                @blur="updateOrInsertSalesActual"
             />
         </td>
         <td class="border-end text-end pe-3" style="min-width: 130px;">
@@ -45,8 +45,7 @@ const state = reactive({
     form: initialFormData(),
 });
 
-// TODO = попробовать provide-inject
-const updateSalesActual = (evt) => {
+const updateOrInsertSalesActual = (evt) => {
     const actual = convertInputStringToNumber(evt.target.value);
     if ( isNaN(actual) ) {
         evt.target.value = ''

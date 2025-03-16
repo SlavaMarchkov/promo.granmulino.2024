@@ -20,7 +20,7 @@
                     <SelectGroup
                         v-model="searchBy.year"
                         :chooseFrom="'-- Выберите год --'"
-                        :items="salesYears"
+                        :items="state.years"
                         selected-option="year"
                     >Год
                     </SelectGroup>
@@ -75,7 +75,7 @@
                     :entry="entry"
                     :categories="state.categories"
                     :months="state.months"
-                    @update-sales-actual="updateSalesActual"
+                    @update-sales-actual="updateSalesActualHandler"
                 />
             </template>
             <p v-else class="mt-3 text-center lead">
@@ -101,6 +101,7 @@
                         id="sales_date"
                         type="text"
                         readonly="readonly"
+                        placeholder="Кликните для выбора даты"
                     />
                 </div>
                 <div class="col-md-6">
@@ -178,7 +179,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, reactive, ref, watch } from 'vue';
+import { computed, onMounted, reactive, watch } from 'vue';
 import TheButton from '@/components/core/TheButton.vue';
 import TheModal from '@/components/TheModal.vue';
 import TheLabel from '@/components/form/TheLabel.vue';
@@ -211,7 +212,9 @@ const modals = reactive({
 });
 
 const isFormValid = () => {
-    return state.form.salesDate !== '' && state.form.customerId !== '' && state.form.salesPlan.length > 0;
+    return state.form.salesDate !== ''
+        && state.form.customerId !== ''
+        && state.form.salesPlan.length > 0;
 };
 
 const initialFormData = () => ({
@@ -225,11 +228,10 @@ const state = reactive({
     customers: [],
     categories: [],
     sales: [],
+    years: [],
     months: MONTHS,
     form: initialFormData(),
 });
-
-const salesYears = ref([]);
 
 onMounted(async () => {
     await getCustomers();
@@ -261,7 +263,7 @@ const getCategories = async () => {
 
 const getSalesYears = async () => {
     const { data } = await get(`${ MANAGER_URLS.SALES }/getSalesYears`);
-    salesYears.value = Array.from(JSON.parse(data)).map(year => ({
+    state.years = Array.from(JSON.parse(data)).map(year => ({
         id: year,
         year: year.toString(),
     }));
@@ -309,7 +311,9 @@ watch(
 
 watch(
     () => searchBy.customerId,
-    (current) => state.sales = current ? salesStore.getSales.filter(item => item.customerId === +current) : salesStore.getSales,
+    (current) => state.sales = current
+        ? salesStore.getSales.filter(item => item.customerId === +current)
+        : arrayHandlers.sortArrayByStringColumn(salesStore.getSales, 'customerName'),
 );
 
 watch(
@@ -332,15 +336,24 @@ const clearSearch = () => {
 
 const saveSalesPlan = async () => {
     const customerId = state.form.customerId;
+    const year = new Date(state.form.salesDate).getFullYear().toString();
     const response = await post(`${ MANAGER_URLS.CUSTOMER }/${ customerId }${ MANAGER_URLS.SALES }`, state.form);
     if ( response && response.status === 'success' ) {
         alertStore.clear();
-        // TODO: console.log(salesYears.value);
-        //state.sales = response.data.sales;
+        if ( !isYearExists(state.years, year) ) {
+            await getSalesYears();
+        }
+        searchBy.year = year;
     }
 };
 
-const updateSalesActual = async (item) => {
+function isYearExists(obj, year) {
+    return Object.keys(obj).some(key => {
+        return obj[key].id === year;
+    });
+}
+
+const updateSalesActualHandler = async (item) => {
     const {
         status,
         data,

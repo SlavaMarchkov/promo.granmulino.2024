@@ -15,9 +15,9 @@
             >{{ item[selectedOption] }}
             </option>
         </select>
-        <span class="input-group-text" style="cursor: pointer;"
-              @click="$emit('update:modelValue', '')"><i
-            class="bi bi-x-lg"></i></span>
+        <span class="input-group-text input-group-close"
+              @click="$emit('update:modelValue', '')"
+        ><i class="bi bi-x-lg"></i></span>
     </div>
 </template>
 
@@ -53,3 +53,15 @@ const handleChange = (event) => {
     emit('update:modelValue', event.target.value);
 };
 </script>
+
+<style scoped>
+.input-group-close {
+    cursor: pointer;
+    transition: background-color .3s;
+}
+
+.input-group-close:hover,
+.input-group-close:active {
+    background-color: #dfdfdf;
+}
+</style>

@@ -53,7 +53,7 @@ interface CustomerRepositoryInterface
     : Collection;
 
     public function createSalesPlanFromArray(Customer $customer, array $data)
-    : Collection;
+    : void;
 
     public function updateSalesPlanFromArray(CustomerSales $sales, array $data)
     : CustomerSales;

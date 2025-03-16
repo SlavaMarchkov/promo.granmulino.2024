@@ -97,8 +97,8 @@ final readonly class CustomerService
     }
 
     public function storeSalesPlan(Customer $customer, array $data)
-    : Collection {
-        return $this->createCustomerSalesHandler->handle($customer, $data);
+    : void {
+        $this->createCustomerSalesHandler->handle($customer, $data);
     }
 
     public function updateSalesPlan(CustomerSales $sales, array $data)

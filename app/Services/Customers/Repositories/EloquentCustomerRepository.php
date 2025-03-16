@@ -155,14 +155,8 @@ final readonly class EloquentCustomerRepository implements CustomerRepositoryInt
     }
 
     public function createSalesPlanFromArray(Customer $customer, array $data)
-    : Collection {
+    : void {
         $customer->sales()->createUpdateOrDelete($data);
-
-        return CustomerSales::query()
-            ->with(['customer', 'category'])
-            ->where('customer_id', $data['customer_id'])
-            ->where('sales_date', $data['sales_date'])
-            ->get();
     }
 
     public function updateSalesPlanFromArray(CustomerSales $sales, array $data)

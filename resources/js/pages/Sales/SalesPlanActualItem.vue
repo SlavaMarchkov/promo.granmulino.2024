@@ -38,7 +38,7 @@
                         </td>
                     </tr>
                     </tbody>
-                    <tfoot>
+                    <tfoot v-if="props.categories.length > 1">
                     <tr>
                         <th class="text-start sticky-col">ИТОГО</th>
                         <th v-for="month in props.months" :key="month.id" class="py-0">
