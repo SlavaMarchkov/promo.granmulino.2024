@@ -24,6 +24,7 @@
                     <span class="input-group-text">кг</span>
                     <TheInput
                         class="text-center"
+                        :value="props.category.salesPlan ? formatNumber(props.category.salesPlan) : ''"
                         @input="handleInput"
                     />
                     <span class="input-group-text">00</span>
@@ -34,7 +35,7 @@
                     <span class="input-group-text">%</span>
                     <TheInput
                         class="text-center"
-                        :value="salesPlanShare"
+                        :model-value="salesPlanShare"
                         readonly="readonly"
                         :tabindex="-1"
                     />
@@ -47,7 +48,7 @@
 
 <script setup>
 import TheInput from '@/components/form/TheInput.vue';
-import { computed, reactive } from 'vue';
+import { computed, reactive, watch } from 'vue';
 import { convertInputStringToNumber, formatNumber, formatNumberWithFractions } from '@/helpers/formatters.js';
 import { useCalculations } from '@/use/useCalculations.js';
 
@@ -69,7 +70,7 @@ const emit = defineEmits([
 ]);
 
 const initialFormData = () => ({
-    categoryId: props.category.id,
+    categoryId: props.category.categoryId,
     salesPlan: '',
     isAdded: false,
 });
@@ -77,6 +78,14 @@ const initialFormData = () => ({
 const state = reactive({
     form: initialFormData(),
 });
+
+watch(
+    () => props.category.salesPlan,
+    (newValue) => {
+        state.form.salesPlan = newValue;
+        state.form.isAdded = !!newValue;
+    },
+);
 
 const handleInput = (evt) => {
     const plan = convertInputStringToNumber(evt.target.value);

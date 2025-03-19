@@ -4,6 +4,7 @@
             <input
                 :id="props.id"
                 :checked="modelValue"
+                :disabled="props.disabled"
                 class="form-check-input mt-0"
                 type="checkbox"
                 @change="changeSelect"
@@ -22,6 +23,10 @@
 const props = defineProps({
     id: String,
     modelValue: {
+        type: Boolean,
+        default: false,
+    },
+    disabled: {
         type: Boolean,
         default: false,
     },

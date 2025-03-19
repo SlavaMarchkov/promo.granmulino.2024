@@ -36,7 +36,7 @@ final class CustomerSalesStoreRequest extends FormRequest
     protected function prepareForValidation()
     : void
     {
-        $sales_plan_array = request()->input('sales_plan') ?? [];
+        $sales_plans_array = request()->input('sales_plans') ?? [];
 
         $this->merge([
             'sales_plans' => array_map(function ($item) {
@@ -47,7 +47,7 @@ final class CustomerSalesStoreRequest extends FormRequest
                     'sales_plan'  => convert_string_to_number($item['sales_plan']),
                     'category_id' => $item['category_id'],
                 ];
-            }, $sales_plan_array),
+            }, $sales_plans_array),
         ]);
     }
 }

@@ -136,31 +136,31 @@ export const MONTHS = [
 
 export const PERIODS = [
     {
-        id: 'q1',
+        id: '0-3',
         period: 'I квартал',
     },
     {
-        id: 'q2',
+        id: '3-6',
         period: 'II квартал',
     },
     {
-        id: 'q3',
+        id: '6-9',
         period: 'III квартал',
     },
     {
-        id: 'q4',
+        id: '9-12',
         period: 'IV квартал',
     },
     {
-        id: 'hy1',
+        id: '0-6',
         period: '1-е полугодие',
     },
     {
-        id: 'hy2',
+        id: '6-12',
         period: '2-е полугодие',
     },
     {
-        id: 'm9',
+        id: '0-9',
         period: '9 месяцев',
     },
 ];
@@ -464,6 +464,7 @@ export const INITIALS = {
     OFFICE_EXPENSES: 0.075, // расходы на офис 7.5%
     MARKETING_EXPENSES: 0.05, // расходы на маркетинг 5%
     VAT_RATE: 1.2, // НДС в размере 20% для расчета логистики
+    PERIOD: 'весь год', // название периода по умолчанию
 };
 export const IMAGES = {
     USER_IMG_PATH: '/storage/images/user/', // путь к картинкам пользователя

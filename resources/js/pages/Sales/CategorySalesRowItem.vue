@@ -11,8 +11,13 @@
             />
         </td>
         <td class="border-end text-end pe-3" style="min-width: 130px;">
-            <span :class="calcDiffPercentColorInverse(diffPercent)">{{ formatNumberWithFractions(diffPercent) }}</span></td>
-        <td class="text-end pe-3" style="min-width: 130px;">{{ formatNumberWithFractions(outputPercent) }}</td>
+            <span :class="calcDiffPercentColorInverse(diffPercent)">
+                {{ formatNumberWithFractions(diffPercent) }}
+            </span>
+        </td>
+        <td class="text-end pe-3" style="min-width: 130px;">
+            {{ formatNumberWithFractions(outputPercent) }}
+        </td>
     </tr>
 </template>
 
@@ -38,7 +43,7 @@ const emit = defineEmits([
 const initialFormData = () => ({
     id: props.item.id,
     customerId: props.item.customerId,
-    salesActual: props.item.salesActual ? formatNumber(props.item.salesActual) : '',
+    salesActual: formatNumber(props.item.salesActual),
 });
 
 const state = reactive({

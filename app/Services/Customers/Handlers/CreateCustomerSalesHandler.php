@@ -8,6 +8,7 @@ namespace App\Services\Customers\Handlers;
 
 use App\Models\Customer;
 use App\Services\Customers\Repositories\CustomerRepositoryInterface;
+use Illuminate\Database\Eloquent\Collection;
 
 final readonly class CreateCustomerSalesHandler
 {
@@ -18,7 +19,7 @@ final readonly class CreateCustomerSalesHandler
     }
 
     public function handle(Customer $customer, array $data)
-    : void {
-        $this->customerRepository->createSalesPlanFromArray($customer, $data);
+    : Collection {
+        return $this->customerRepository->createSalesPlanFromArray($customer, $data);
     }
 }

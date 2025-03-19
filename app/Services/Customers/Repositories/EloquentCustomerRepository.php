@@ -155,8 +155,12 @@ final readonly class EloquentCustomerRepository implements CustomerRepositoryInt
     }
 
     public function createSalesPlanFromArray(Customer $customer, array $data)
-    : void {
+    : Collection {
         $customer->sales()->createUpdateOrDelete($data);
+        return $this->getSales([
+            'customer_id' => $customer->id,
+            'sales_date'  => $data['sales_date'],
+        ]);
     }
 
     public function updateSalesPlanFromArray(CustomerSales $sales, array $data)
@@ -179,10 +183,12 @@ final readonly class EloquentCustomerRepository implements CustomerRepositoryInt
         $customer_id = isset($params['customer_id']) ? (int)$params['customer_id'] : null;
         $year = $params['year'] ?? null;
         $month = $params['month'] ?? null;
+        $sales_date = $params['sales_date'] ?? null;
 
         $qb->when($user_id, fn(Builder $query, int $user_id) => $query->where('user_id', $user_id))
             ->when($customer_id, fn(Builder $query, int $customer_id) => $query->where('customer_id', $customer_id))
             ->when($year, fn(Builder $query, string $year) => $query->whereYear('sales_date', $year))
-            ->when($month, fn(Builder $query, string $month) => $query->whereMonth('sales_date', $month));
+            ->when($month, fn(Builder $query, string $month) => $query->whereMonth('sales_date', $month))
+            ->when($sales_date, fn(Builder $query, string $sales_date) => $query->where('sales_date', $sales_date));
     }
 }
