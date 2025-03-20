@@ -27,9 +27,9 @@ export function useArrayHandlers() {
         let tempArr = arr.slice();
 
         for (const key in obj) {
-            // если поисковый ключ начинается с is, например isActive,
-            // то фильтруем по true/false
             if (key.startsWith('is') && obj[key] === true) {
+                // если поисковый ключ начинается с is, например isActive,
+                // то фильтруем по true/false
                 tempArr = tempArr.filter(item => item[key] === true);
             } else if (!key.startsWith('is') && obj[key] !== '') {
                 // если поисковый ключ заканчивается на Id, например userId, promoId,
@@ -45,11 +45,16 @@ export function useArrayHandlers() {
                     // если поисковый ключ равен type,
                     // то это фильтр по радио-кнопкам
                     tempArr = tempArr.filter(item => item[key] === obj[key]);
-                } else {
+                } else if ( Array.isArray(obj[key]) && obj[key].length > 0 ) {
+                    // если передан фильтр в виде массива (отмечены чекбоксами)
+                    tempArr = tempArr.filter(item => {
+                        return obj[key].includes(item[key].toString());
+                    });
+                } else if ( !Array.isArray(obj[key]) ) {
                     tempArr = tempArr.filter(item => {
                         if ( item[key] !== null ) {
                             return Number.isInteger(item[key])
-                                ? item[key] <= parseInt(obj[key], 10)
+                                ? item[key] === parseInt(obj[key], 10)
                                 : item[key].toLowerCase().includes(obj[key].toLowerCase());
                         }
                     });

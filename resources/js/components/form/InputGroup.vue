@@ -8,11 +8,11 @@
             :type="type"
             :value="modelValue"
             @input="handleInput"
-
         />
-        <span class="input-group-text" style="cursor: pointer;"
-              @click="clearInput"><i
-            class="bi bi-x-lg"></i></span>
+        <span
+            class="input-group-text input-group-close"
+            @click="clearInput"
+        ><i class="bi bi-x-lg"></i></span>
     </div>
 </template>
 
@@ -35,8 +35,8 @@ const emit = defineEmits([
     'update:modelValue',
 ]);
 
-const handleInput = (event) => {
-    emit('update:modelValue', event.target.value);
+const handleInput = (evt) => {
+    emit('update:modelValue', evt.target.value);
 };
 
 const clearInput = () => {
@@ -44,3 +44,14 @@ const clearInput = () => {
 };
 </script>
 
+<style scoped>
+.input-group-close {
+    cursor: pointer;
+    transition: background-color .3s;
+}
+
+.input-group-close:hover,
+.input-group-close:active {
+    background-color: #dfdfdf;
+}
+</style>

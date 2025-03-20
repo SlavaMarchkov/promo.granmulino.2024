@@ -40,11 +40,10 @@
                     </TheCheckbox>
                 </div>
                 <div class="col-md-4 mb-2">
-                    <InputGroup
-                        v-model="searchBy.weight"
-                        placeholder="Фильтр по макс. весу"
-                    >Макс. вес
-                    </InputGroup>
+                    <DropDown
+                        :items="weights"
+                        @filter="handleCheckboxFilter"
+                    >Вес в граммах</DropDown>
                 </div>
                 <div v-if="isPriceAdmin" class="col-md-4 mb-2">
                     <InputGroup
@@ -350,6 +349,7 @@ import {
     ROLES,
 } from '@/helpers/constants.js';
 import { formatNumber } from '@/helpers/formatters.js';
+import DropDown from '@/components/form/DropDown.vue';
 
 const alertStore = useAlertStore();
 const spinnerStore = useSpinnerStore();
@@ -389,11 +389,10 @@ const state = reactive({
 
 const uploadedProductImageRef = ref(null);
 
-// TODO - сделать фильтр по весу (вес в виде массива с весами продукции)
 const searchBy = reactive({
     name: '',
-    weight: '',
     price: '',
+    weight: [],
     categoryId: '',
     isActive: false,
 });
@@ -493,6 +492,17 @@ const handleFileChange = (evt) => {
     }
 };
 
+const handleCheckboxFilter = (filter) => {
+    if ( filter === null ) {
+        searchBy.weight = [];
+        return;
+    }
+    if ( searchBy.weight.includes(filter) ) {
+        return searchBy.weight.splice(searchBy.weight.indexOf(filter), 1);
+    }
+    return searchBy.weight.push(filter);
+};
+
 const saveProduct = () => {
     state.isEditing ? updateProduct() : createProduct();
 };
@@ -551,5 +561,10 @@ const sortedItems = computed(() => {
 
 const filteredItems = computed(() => {
     return arrayHandlers.filterArray(sortedItems.value, searchBy);
+});
+
+const weights = computed(() => {
+    return [...new Set(state.products.map(pr => pr.weight))]
+        .sort((w1, w2) => w1 > w2 ? 1 : -1);
 });
 </script>
