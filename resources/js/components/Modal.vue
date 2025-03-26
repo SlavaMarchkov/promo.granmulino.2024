@@ -1,7 +1,6 @@
 <template>
     <div
         :id="props.id"
-        aria-hidden="true"
         class="modal fade"
         tabindex="-1"
         :aria-labelledby="props.id + 'Label'"

@@ -17,20 +17,79 @@
                            style="width: 100%;">
                         <tbody>
                         <tr>
-                            <th style="width: 30%;">ID</th>
+                            <th style="width: 27%;">ID</th>
                             <td>{{ item.id }}</td>
                         </tr>
                         <tr>
                             <th>Название</th>
                             <td>{{ item.name }}</td>
                         </tr>
-                        <tr>
-                            <th>Вес, г</th>
-                            <td>{{ formatNumber(item.weight) }}</td>
-                        </tr>
                         <tr v-if="isPriceAdmin">
                             <th>Себестоимость, руб.</th>
                             <td>{{ item.price }}</td>
+                        </tr>
+                        <tr>
+                            <th>Вес пачки</th>
+                            <td class="p-0">
+                                <table class="table text-center align-middle table-borderless m-0">
+                                    <thead>
+                                    <tr class="border-bottom">
+                                        <th class="border-end" style="width: 33.3333%;">Вес, г</th>
+                                        <th class="border-end" style="width: 33.3333%;">Вес нетто, кг</th>
+                                        <th style="width: 33.3333%;">Вес брутто, кг</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td class="border-end">{{ formatNumber(item.weight) }}</td>
+                                        <td class="border-end">{{ formatNumberWithFractions(item.weight / 1_000) }}</td>
+                                        <td>{{ item.grossWeight }}</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Коды</th>
+                            <td class="p-0">
+                                <table class="table text-center align-middle table-borderless m-0">
+                                    <thead>
+                                    <tr class="border-bottom">
+                                        <th class="border-end" style="width: 33.3333%;">Код продукта из 1С</th>
+                                        <th class="border-end" style="width: 33.3333%;">Штрих-код короба</th>
+                                        <th style="width: 33.3333%;">Штрих-код пачки</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td class="border-end">{{ item.code }}</td>
+                                        <td class="border-end">{{ item.barcodeBox }}</td>
+                                        <td>{{ item.barcode }}</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Гофрокороб</th>
+                            <td class="p-0">
+                                <table class="table text-center align-middle table-borderless m-0">
+                                    <thead>
+                                    <tr class="border-bottom">
+                                        <th class="border-end" style="width: 33.3333%;">Кол-во единиц<br>в г/к, шт.</th>
+                                        <th class="border-end" style="width: 33.3333%;">Вес г/к нетто,<br>кг</th>
+                                        <th style="width: 33.3333%;">Кол-во г/к<br>в одном слое, шт.</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td class="border-end">{{ item.capacity }}</td>
+                                        <td class="border-end">{{ item.boxWeight }}</td>
+                                        <td>{{ item.boxesInLayer }}</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </td>
                         </tr>
                         <tr>
                             <th>Группа товаров</th>
@@ -40,6 +99,52 @@
                                 >
                                     {{ item.categoryName }}
                                 </RouterLink>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Размеры упаковки</th>
+                            <td class="p-0">
+                                <table class="table text-center align-middle table-borderless m-0">
+                                    <thead>
+                                    <tr class="border-bottom">
+                                        <th class="border-end">Ширина, см</th>
+                                        <th class="border-end">Глубина, см</th>
+                                        <th class="border-end">Высота, см</th>
+                                        <th>Объём, см<sup>3</sup></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td class="border-end">{{ formatNumberWithFractions(item.width) }}</td>
+                                        <td class="border-end">{{ formatNumberWithFractions(item.depth) }}</td>
+                                        <td class="border-end">{{ formatNumberWithFractions(item.height) }}</td>
+                                        <td>{{ formatNumberWithFractions(item.packSize) }}</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Размеры гофрокороба</th>
+                            <td class="p-0">
+                                <table class="table text-center align-middle table-borderless m-0">
+                                    <thead>
+                                    <tr class="border-bottom">
+                                        <th class="border-end">Ширина, см</th>
+                                        <th class="border-end">Глубина, см</th>
+                                        <th class="border-end">Высота, см</th>
+                                        <th>Объём, см<sup>3</sup></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td class="border-end">{{ formatNumberWithFractions(item.widthBox) }}</td>
+                                        <td class="border-end">{{ formatNumberWithFractions(item.depthBox) }}</td>
+                                        <td class="border-end">{{ formatNumberWithFractions(item.heightBox) }}</td>
+                                        <td>{{ formatNumberWithFractions(item.boxSize) }}</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
                             </td>
                         </tr>
                         <tr>
@@ -87,7 +192,7 @@ import { useSpinnerStore } from '@/stores/spinners.js';
 import Alert from '@/components/Alert.vue';
 import { ADMIN_URLS, IMAGES, ROLES } from '@/helpers/constants.js';
 import TheButton from '@/components/core/TheButton.vue';
-import { formatNumber } from '@/helpers/formatters.js';
+import { formatNumber, formatNumberWithFractions } from '@/helpers/formatters.js';
 import TheBadge from '@/components/core/TheBadge.vue';
 import { useAuthStore } from '@/stores/auth.js';
 

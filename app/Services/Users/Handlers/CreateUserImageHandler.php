@@ -9,7 +9,7 @@ namespace App\Services\Users\Handlers;
 use App\Models\Image;
 use App\Services\Users\Repositories\UserRepositoryInterface;
 
-final class CreateUserImageHandler
+final readonly class CreateUserImageHandler
 {
     public function __construct(
         private UserRepositoryInterface $userRepository,

@@ -26,7 +26,7 @@ final readonly class CreateProductHandler
             $data['price'] = 0.00;
         }
 
-        if (isset($data['image']) && str_ends_with($data['image'], config('image.no_image'))) {
+        if (isset($data['image'])) {
             unset($data['image']);
         }
 

@@ -5,9 +5,11 @@ declare(strict_types=1);
 // 30.09.2024 at 18:04:51
 namespace App\Services\Products\Repositories;
 
+use App\Models\Image;
 use App\Models\Product;
 use App\Services\Products\Filters\Category;
 use App\Services\Products\Filters\Id;
+use App\Services\Products\Filters\Images;
 use App\Services\Products\Filters\IsActive;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Database\Eloquent\Collection;
@@ -45,6 +47,7 @@ final class EloquentProductRepository implements ProductRepositoryInterface
             ->through([
                 IsActive::class,
                 Category::class,
+                Images::class,
             ])
             ->thenReturn();
         return $products->get();
@@ -77,5 +80,25 @@ final class EloquentProductRepository implements ProductRepositoryInterface
         }
 
         return $customers_count;
+    }
+
+    public function createImageFromArray(
+        string $file,
+        string $thumbnail,
+        int $product_id,
+        string $class,
+        bool $is_main,
+    )
+    : Image {
+        return Image::query()->updateOrCreate([
+            'file'           => $file,
+            'imageable_id'   => $product_id,
+        ], [
+            'file'           => $file,
+            'thumbnail'      => $thumbnail,
+            'imageable_id'   => $product_id,
+            'imageable_type' => $class,
+            'is_main'        => $is_main,
+        ]);
     }
 }

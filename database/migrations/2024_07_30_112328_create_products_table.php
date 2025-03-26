@@ -14,6 +14,8 @@ return new class extends Migration {
             $table->id();
 
             $table->string('name', 64);
+            $table->string('code', 255)->nullable()->comment('Код продукта из 1С');
+
             $table->unsignedSmallInteger('weight')->comment('Вес в граммах')->default(400);
             $table->decimal('gross_weight', 5, 3)->default(0.000)->comment('Вес брутто, кг (±4г)');
             $table->decimal('price', 5, 2)->default(0.00)->comment('Себестоимость, руб.коп.');
@@ -30,8 +32,8 @@ return new class extends Migration {
             $table->decimal('width_box', 5, 2)->default(0.00)->comment('Ширина короба, см');
             $table->decimal('depth_box', 5, 2)->default(0.00)->comment('Глубина короба, см');
             $table->decimal('height_box', 5, 2)->default(0.00)->comment('Высота короба, см');
-            $table->unsignedTinyInteger('capacity')->default(6)->comment('Кол-во пачек в коробе, шт.');
-            $table->unsignedTinyInteger('box_in_layer')->default(3)->comment('Кол-во коробов в одном слое, шт.');
+            $table->unsignedTinyInteger('capacity')->default(0)->comment('Кол-во пачек в коробе, шт.');
+            $table->unsignedTinyInteger('boxes_in_layer')->default(0)->comment('Кол-во коробов в одном слое, шт.');
 
             $table->timestamps();
         });

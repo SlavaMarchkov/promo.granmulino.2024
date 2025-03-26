@@ -6,8 +6,10 @@ declare(strict_types=1);
 namespace App\Services\Products;
 
 
+use App\Models\Image;
 use App\Models\Product;
 use App\Services\Products\Handlers\CreateProductHandler;
+use App\Services\Products\Handlers\CreateProductImageHandler;
 use App\Services\Products\Repositories\ProductRepositoryInterface;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -16,6 +18,7 @@ final readonly class ProductService
     public function __construct(
         private ProductRepositoryInterface $productRepository,
         private CreateProductHandler $createProductHandler,
+        private CreateProductImageHandler $createProductImageHandler,
     ) {
     }
 
@@ -42,5 +45,16 @@ final readonly class ProductService
     public function deleteProduct(Product $product)
     : int {
         return $this->productRepository->delete($product);
+    }
+
+    public function storeProductImage(
+        string $file,
+        string $thumbnail,
+        int $product_id,
+        string $class,
+        bool $is_main,
+    )
+    : Image {
+        return $this->createProductImageHandler->handle($file, $thumbnail, $product_id, $class, $is_main);
     }
 }

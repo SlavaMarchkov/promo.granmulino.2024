@@ -44,20 +44,19 @@ final class ProductController extends ApiController
         );
     }
 
-    // TODO - images
     public function store(StoreUpdateRequest $request)
     : JsonResponse {
         $data = $request->validated();
 
-        /*if (str_starts_with($data['image'], 'data:image')) {
-            $data['image'] = upload_image($data['image']);
-        }*/
-
         Cache::forget(self::CACHE_KEY);
         $product = $this->productService->storeProduct($data);
 
+        if (isset($data['image']) && str_starts_with($data['image'], 'data:image')) {
+            $this->uploadImageAndThumbnail($data['image'], $product->id);
+        }
+
         return $this->successResponse(
-            new ProductResource($product->load('category')),
+            new ProductResource($product->load(['category'])),
             'success',
             __('crud.products.created'),
             Response::HTTP_CREATED,
@@ -81,15 +80,21 @@ final class ProductController extends ApiController
         );
     }
 
-    // TODO - images
     public function update(StoreUpdateRequest $request, Product $product)
     : JsonResponse {
         $data = $request->validated();
 
-        /*if ($data['image'] && $data['image'] !== $product->image) {
-            remove_image($product->image);
-            $data['image'] = upload_image($data['image']);
-        }*/
+        if (isset($data['image']) && str_starts_with($data['image'], 'data:image')) {
+            if ($product->mainImage()) {
+                $existing_image = $product->mainImage()->value('file');
+                $existing_thumbnail = $product->mainImage()->value('thumbnail');
+
+                remove_image($existing_image);
+                remove_thumbnail($existing_thumbnail);
+            }
+
+            $this->uploadImageAndThumbnail($data['image'], $product->id);
+        }
 
         Cache::forget(self::CACHE_KEY);
         $product = $this->productService->updateProduct($product, $data);
@@ -116,5 +121,27 @@ final class ProductController extends ApiController
                 'error',
                 __('crud.products.not_deleted'),
             );
+    }
+
+    /**
+     * @param string $image
+     * @param int $product_id
+     * @return void
+     */
+    private function uploadImageAndThumbnail(string $image, int $product_id)
+    : void {
+        $file = upload_image(
+            $image,
+            config('image.path_to_product_images'),
+            config('image.default_width')
+        );
+
+        $thumbnail = upload_thumbnail(
+            $image,
+            $file,
+            config('image.path_to_product_thumbnails')
+        );
+
+        $this->productService->storeProductImage($file, $thumbnail, $product_id, Product::class, true);
     }
 }

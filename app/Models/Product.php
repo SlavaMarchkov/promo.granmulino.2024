@@ -20,10 +20,22 @@ class Product extends Model
 
     protected $fillable = [
         'name',
-        'weight',
+        'code', // код продукта в 1С
+        'weight', // вес одной пачки
+        'gross_weight', // вес брутто одной пачки
         'price',
         'is_active',
         'category_id',
+        'barcode',
+        'barcode_box',
+        'width',
+        'depth',
+        'height',
+        'width_box',
+        'depth_box',
+        'height_box',
+        'capacity', // кол-во пачек в коробе
+        'boxes_in_layer',
     ];
 
     protected $casts = [
@@ -35,7 +47,17 @@ class Product extends Model
     {
         return new Attribute(
             get: function () {
-                // TODO: посчитать объем пачки в см3 - return Product::query()->where('id', $this->product_id)->value('price');
+                return $this->width * $this->depth * $this->height;
+            },
+        );
+    }
+
+    public function boxSize()
+    : Attribute
+    {
+        return new Attribute(
+            get: function () {
+                return $this->width_box * $this->depth_box * $this->height_box;
             },
         );
     }
@@ -45,7 +67,7 @@ class Product extends Model
     {
         return new Attribute(
             get: function () {
-                // TODO: посчитать вес гофрокороба в кг - кол-во пачек в коробе * вес одной пачки - return Product::query()->where('id', $this->product_id)->value('price');
+                return ($this->capacity * $this->weight) / 1_000;
             },
         );
     }
@@ -71,5 +93,13 @@ class Product extends Model
     : MorphMany
     {
         return $this->morphMany(Image::class, 'imageable');
+    }
+
+    public function mainImage()
+    : Image|Model|null
+    {
+        return $this->images()->get()->filter(function (Image $image) {
+            return $image->is_main;
+        })->first();
     }
 }

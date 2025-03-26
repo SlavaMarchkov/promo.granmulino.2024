@@ -348,6 +348,10 @@ watch(
     (current) => {
         state.months = current ? MONTHS.filter(month => month.id === current) : MONTHS;
         showMonths.value = false;
+        if ( searchBy.period ) {
+            const slicer = searchBy.period.split('-');
+            state.months = MONTHS.slice(slicer[0], slicer[1]);
+        }
     }
 );
 
@@ -365,6 +369,7 @@ watch(
             generateSalesForPeriod(state.months),
             'customerName',
         );
+
         if ( searchBy.customerId ) {
             state.sales = state.sales.filter(item => item.customerId === +searchBy.customerId);
         }

@@ -47,7 +47,8 @@ return [
     'path_to_product_thumbnails' => 'app/public/images/product/thumbnails/',
 
     /**
-    * Ширина сжатой картинки в пикселях
+     * Ширина сжатой картинки и thumbnail в пикселях
      */
     'default_width'              => 800,
+    'default_th_width'           => 100,
 ];

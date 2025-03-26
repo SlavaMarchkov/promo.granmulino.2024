@@ -71,14 +71,14 @@ if (!function_exists('upload_image')) {
     /**
      * Uploads an image as a .webp file
      *
-     * @param mixed $image
+     * @param Image|string $image
      * @param string $path
      * @param int $width
      * @return string
      */
-    function upload_image(mixed $image, string $path, int $width)
+    function upload_image(Image|string $image, string $path, int $width)
     : string {
-        $name = md5(time() . '.' . $image->getClientOriginalName()) . '.webp';
+        $name = md5(uniqid('img_', true)) . '.webp';
 
         $img = Image::read($image)
             ->scaleDown($width)
@@ -100,18 +100,18 @@ if (!function_exists('upload_thumbnail')) {
     /**
      * Uploads an image thumbnail as a .jpg file
      *
-     * @param mixed $image
+     * @param Image|string $image
      * @param string $file
      * @param string $path
      * @return string
      */
-    function upload_thumbnail(mixed $image, string $file, string $path)
+    function upload_thumbnail(Image|string $image, string $file, string $path)
     : string {
         $filename_without_ext = pathinfo($file, PATHINFO_FILENAME);
         $name = 'th_' . $filename_without_ext . '.jpg';
 
         $img = Image::read($image)
-            ->cover(100, 100)
+            ->scaleDown(config('image.default_th_width'))
             ->toJpeg(80);
 
         $upload_dir = storage_path($path);
@@ -135,8 +135,23 @@ if (!function_exists('remove_image')) {
      */
     function remove_image(string|null $image)
     : void {
-        // TODO
-        $file = public_path() . PRODUCT_IMG_PATH . $image;
+        $file = storage_path() . '/' . config('image.path_to_product_images') . $image;
+        if (file_exists($file)) {
+            @unlink($file);
+        }
+    }
+}
+
+if (!function_exists('remove_thumbnail')) {
+    /**
+     * Removes a thumbnail
+     *
+     * @param string|null $thumbnail
+     * @return void
+     */
+    function remove_thumbnail(string|null $thumbnail)
+    : void {
+        $file = storage_path() . '/' . config('image.path_to_product_thumbnails') . $thumbnail;
         if (file_exists($file)) {
             @unlink($file);
         }

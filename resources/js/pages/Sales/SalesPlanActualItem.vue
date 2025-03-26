@@ -151,7 +151,6 @@
 import { computed } from 'vue';
 import { formatNumber, formatNumberWithFractions } from '@/helpers/formatters.js';
 import TheCard from '@/components/core/TheCard.vue';
-import { MONTHS } from '@/helpers/constants.js';
 import CategorySalesRowItem from '@/pages/Sales/CategorySalesRowItem.vue';
 import { useCalculations } from '@/use/useCalculations.js';
 
@@ -168,7 +167,7 @@ const props = defineProps({
     },
     months: {
         type: Array,
-        default: MONTHS,
+        default: () => [],
     },
     period: {
         type: String,

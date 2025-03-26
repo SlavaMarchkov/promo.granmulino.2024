@@ -42,7 +42,7 @@
                     </table>
                 </div>
             </div>
-<!--            <div class="card">
+            <div class="card">
                 <div class="card-header">Загрузка изображений</div>
                 <div class="card-body">
                     <Alert />
@@ -56,7 +56,7 @@
                         :loading="spinnerStore.isButtonDisabled"
                     >Сохранить</TheButton>
                 </div>
-            </div>-->
+            </div>
         </div>
         <div class="col-xl-6">
             <div class="card">
@@ -111,18 +111,20 @@ import { useSpinnerStore } from '@/stores/spinners.js';
 import { IMAGES, MANAGER_URLS } from '@/helpers/constants.js';
 import { useAuthStore } from '@/stores/auth.js';
 import TheBadge from '@/components/core/TheBadge.vue';
+import Alert from '@/components/Alert.vue';
+import TheButton from '@/components/core/TheButton.vue';
 
 const { getUser: user, getToken: token } = useAuthStore();
 const spinnerStore = useSpinnerStore();
 const { post } = useHttpService();
 
-/*const initialFormData = () => ({
+const initialFormData = () => ({
     images: [],
 });
 
 const state = reactive({
     form: initialFormData(),
-});*/
+});
 
 const dropzoneRef = ref(null);
 let dropzone = reactive({});
@@ -148,10 +150,8 @@ onMounted(() => {
     });
     dropzone.on('addedfile', (file) => {
         imagesToUpload.value.push(file.upload.uuid);
-        console.log(file.upload.uuid);
     });
     dropzone.on('removedfile', (file) => {
-        console.log(file.upload.uuid);
         const idx = imagesToUpload.value.findIndex(f => f === file.upload.uuid);
         imagesToUpload.value.splice(idx, 1);
     });
