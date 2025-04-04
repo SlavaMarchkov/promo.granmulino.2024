@@ -29,6 +29,11 @@ interface UserRepositoryInterface
     public function delete(User $user)
     : int;
 
-    public function createImageFromArray(string $file, string $thumbnail, int $user_id, string $class)
+    public function createImageFromArray(
+        string $file,
+        string $thumbnail,
+        int $user_id,
+        string $class,
+    )
     : Image;
 }

@@ -107,8 +107,9 @@
 import { onMounted, reactive, ref } from 'vue';
 import { Dropzone } from 'dropzone';
 import { useHttpService } from '@/use/useHttpService.js';
+import { useCookies } from '@/use/useCookies.js';
 import { useSpinnerStore } from '@/stores/spinners.js';
-import { IMAGES, MANAGER_URLS } from '@/helpers/constants.js';
+import { IMAGES } from '@/helpers/constants.js';
 import { useAuthStore } from '@/stores/auth.js';
 import TheBadge from '@/components/core/TheBadge.vue';
 import Alert from '@/components/Alert.vue';
@@ -116,15 +117,8 @@ import TheButton from '@/components/core/TheButton.vue';
 
 const { getUser: user, getToken: token } = useAuthStore();
 const spinnerStore = useSpinnerStore();
+const cookies = useCookies();
 const { post } = useHttpService();
-
-const initialFormData = () => ({
-    images: [],
-});
-
-const state = reactive({
-    form: initialFormData(),
-});
 
 const dropzoneRef = ref(null);
 let dropzone = reactive({});
@@ -144,8 +138,8 @@ onMounted(() => {
         dictInvalidFileType: 'Допускается загружать только картинки в форматах JPG и PNG',
         dictRemoveFile: 'Удалить',
         headers: {
-            'x-xsrf-token': getCookie('XSRF-TOKEN'),
-            'Authorization': `Bearer ${token}`,
+            'x-xsrf-token': cookies.getCookie('XSRF-TOKEN'),
+            'Authorization': `Bearer ${ token }`,
         },
     });
     dropzone.on('addedfile', (file) => {
@@ -166,18 +160,13 @@ const saveImages = async () => {
     });
     formData.append('user_id', user.id);
     imagesToUpload.value = [];
-    const response = await post(MANAGER_URLS.USER, formData, {
+    const response = await post(`${ IMAGES.USER_IMAGE_URL }/${ user.id }`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
     });
     if ( response && response.status === 'success' ) {
         user.images = response.data.images;
     }
 };
-
-function getCookie(name) {
-    const matches = document.cookie.match(new RegExp("(?:^|; )" + name.replace(/([.$?*|{}()\[\]\\/+^])/g, '\\$1') + "=([^;]*)"));
-    return matches ? decodeURIComponent(matches[1]) : undefined;
-}
 </script>
 
 <style>

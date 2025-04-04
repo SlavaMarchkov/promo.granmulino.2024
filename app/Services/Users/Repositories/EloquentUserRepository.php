@@ -68,13 +68,22 @@ final class EloquentUserRepository implements UserRepositoryInterface
         return $customers_count;
     }
 
-    public function createImageFromArray(string $file, string $thumbnail, int $user_id, string $class)
+    public function createImageFromArray(
+        string $file,
+        string $thumbnail,
+        int $user_id,
+        string $class,
+    )
     : Image {
-        return Image::query()->create([
+        return Image::query()->updateOrCreate([
+            'file'           => $file,
+            'imageable_id'   => $user_id,
+        ], [
             'file'           => $file,
             'thumbnail'      => $thumbnail,
             'imageable_id'   => $user_id,
             'imageable_type' => $class,
+            'is_main'        => false,
         ]);
     }
 }

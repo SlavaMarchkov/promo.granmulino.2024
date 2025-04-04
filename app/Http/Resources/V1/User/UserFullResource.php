@@ -18,7 +18,6 @@ class UserFullResource extends UserResource
         return [
             ...parent::toArray($request),
 
-            'images' => ImageResource::collection($this->whenLoaded('images')),
             'avatar' => new ImageResource($this->whenLoaded('latestImage')),
 
             'customers' => CustomerResource::collection($this->whenLoaded('customers')),

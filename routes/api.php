@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\V1\Admin\PromoController as AdminPromoController;
 use App\Http\Controllers\Api\V1\Admin\RegionController as AdminRegionController;
 use App\Http\Controllers\Api\V1\Admin\RetailerController as AdminRetailerController;
 use App\Http\Controllers\Api\V1\Admin\UserController as AdminUserController;
+use App\Http\Controllers\Api\V1\ImageController;
 use App\Http\Controllers\Api\V1\Manager\AuthController;
 use App\Http\Controllers\Api\V1\Manager\CategoryController;
 use App\Http\Controllers\Api\V1\Manager\ChannelController;
@@ -25,7 +26,6 @@ use App\Http\Controllers\Api\V1\Manager\PromoProductController;
 use App\Http\Controllers\Api\V1\Manager\PromoSellerController;
 use App\Http\Controllers\Api\V1\Manager\RegionController;
 use App\Http\Controllers\Api\V1\Manager\RetailerController;
-use App\Http\Controllers\Api\V1\Manager\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['middleware' => 'auth:sanctum'], function () {
@@ -41,7 +41,9 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
             ->withoutMiddleware(['auth:sanctum', 'admin']);
         Route::post('logout', [AdminAuthController::class, 'logout'])
             ->name('logout');
+
         Route::get('promos/{promo}/print', [AdminPromoController::class, 'print']);
+
         Route::apiResources([
             'administrators' => AdminController::class,
             'cities'         => AdminCityController::class,
@@ -74,7 +76,10 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::get('regions', [RegionController::class, 'index'])->name('regions');
         Route::get('sales', [CustomerSalesController::class, 'index'])->name('sales');
 
-        Route::post('users', [UserController::class, 'store'])->name('user.store');
+        Route::post('product-images/{product}', [ImageController::class, 'uploadProductImages'])
+            ->name('product.upload-images');
+        Route::post('user-images/{user}', [ImageController::class, 'uploadUserImages'])
+            ->name('user.upload-images');
 
         Route::put('promos/{promo}/marks/{mark}', [PromoMarkController::class, 'update'])
             ->name('promos.marks.update');

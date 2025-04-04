@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Str;
 use Intervention\Image\Laravel\Facades\Image;
 
@@ -71,12 +72,12 @@ if (!function_exists('upload_image')) {
     /**
      * Uploads an image as a .webp file
      *
-     * @param Image|string $image
+     * @param UploadedFile|string $image
      * @param string $path
      * @param int $width
      * @return string
      */
-    function upload_image(Image|string $image, string $path, int $width)
+    function upload_image(UploadedFile|string $image, string $path, int $width)
     : string {
         $name = md5(uniqid('img_', true)) . '.webp';
 
@@ -100,12 +101,12 @@ if (!function_exists('upload_thumbnail')) {
     /**
      * Uploads an image thumbnail as a .jpg file
      *
-     * @param Image|string $image
+     * @param UploadedFile|string $image
      * @param string $file
      * @param string $path
      * @return string
      */
-    function upload_thumbnail(Image|string $image, string $file, string $path)
+    function upload_thumbnail(UploadedFile|string $image, string $file, string $path)
     : string {
         $filename_without_ext = pathinfo($file, PATHINFO_FILENAME);
         $name = 'th_' . $filename_without_ext . '.jpg';

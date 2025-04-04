@@ -467,9 +467,11 @@ export const INITIALS = {
     PERIOD: 'весь год', // название периода по умолчанию
 };
 export const IMAGES = {
-    USER_IMG_PATH: '/storage/images/user/', // путь к картинкам пользователя
-    USER_IMG_TH_PATH: '/storage/images/user/thumbnails/',
+    DEFAULT_IMG: '/assets/img/no-image.png', // путь к дефолтной картинке
+    PRODUCT_IMAGE_URL: '/product-images',
     PRODUCT_IMG_PATH: '/storage/images/product/', // путь к картинкам продукта
     PRODUCT_IMG_TH_PATH: '/storage/images/product/thumbnails/',
-    DEFAULT_IMG: '/assets/img/no-image.png', // путь к дефолтной картинке
+    USER_IMAGE_URL: '/user-images',
+    USER_IMG_PATH: '/storage/images/user/', // путь к картинкам пользователя
+    USER_IMG_TH_PATH: '/storage/images/user/thumbnails/',
 };

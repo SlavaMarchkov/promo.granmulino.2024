@@ -167,6 +167,23 @@
                     >След.</TheButton>
                 </div>
             </div>
+            <div class="card">
+                <div class="card-header">Загрузка изображений</div>
+                <div class="card-body">
+                    <Alert />
+                    <div ref="dropzoneRef" class="mb-3 upload">
+                        <div class="dz-message">Бросай сюда файлы как будто они горячие!</div>
+                    </div>
+                    <TheButton
+                        @click="saveImages"
+                        class="w-25 btn-primary"
+
+                    >Сохранить</TheButton>
+<!--                    :disabled="imagesToUpload.length === 0 || spinnerStore.isButtonDisabled"
+                    :loading="spinnerStore.isButtonDisabled"-->
+                    <pre>{{ imagesToUpload }}</pre>
+                </div>
+            </div>
         </div>
         <div class="col-xl-6">
             <div class="card">
@@ -185,9 +202,10 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, onMounted, reactive, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useHttpService } from '@/use/useHttpService.js';
+import { useCookies } from '@/use/useCookies.js';
 import { useSpinnerStore } from '@/stores/spinners.js';
 import Alert from '@/components/Alert.vue';
 import { ADMIN_URLS, IMAGES, ROLES } from '@/helpers/constants.js';
@@ -195,22 +213,52 @@ import TheButton from '@/components/core/TheButton.vue';
 import { formatNumber, formatNumberWithFractions } from '@/helpers/formatters.js';
 import TheBadge from '@/components/core/TheBadge.vue';
 import { useAuthStore } from '@/stores/auth.js';
+import { Dropzone } from 'dropzone';
 
 const route = useRoute();
 const router = useRouter();
 const authStore = useAuthStore();
 const spinnerStore = useSpinnerStore();
+const cookies = useCookies();
 
-const { get } = useHttpService();
+const { get, post } = useHttpService();
 const id = +route.params.id;
 
 const role = authStore.getUser.role;
+const token = authStore.getToken;
 const isPriceAdmin = computed(() => role === ROLES.PRICE_ADMIN);
 
 const item = ref({});
+const dropzoneRef = ref(null);
+let dropzone = reactive({});
+const imagesToUpload = ref([]);
 
 onMounted(async () => {
     await fetchDetails(id);
+    dropzone = new Dropzone(dropzoneRef.value, {
+        url: 'image-upload',
+        autoProcessQueue: true,
+        withCredentials: true,
+        maxFilesize: 4,
+        maxFiles: 5,
+        addRemoveLinks: true,
+        acceptedFiles: '.jpg, .jpeg, .png',
+        dictFileTooBig: 'Максимальный размер файла 4Мб',
+        dictMaxFilesExceeded: 'Превышено кол-во загружаемых файлов (не более 5 файлов)',
+        dictInvalidFileType: 'Допускается загружать только картинки в форматах JPG и PNG',
+        dictRemoveFile: 'Удалить',
+        headers: {
+            'x-xsrf-token': cookies.getCookie('XSRF-TOKEN'),
+            'Authorization': `Bearer ${ token }`,
+        },
+    });
+    dropzone.on('addedfile', (file) => {
+        imagesToUpload.value.push(file.upload.uuid);
+    });
+    dropzone.on('removedfile', (file) => {
+        const idx = imagesToUpload.value.findIndex(f => f === file.upload.uuid);
+        imagesToUpload.value.splice(idx, 1);
+    });
 });
 
 const fetchDetails = async (id) => {
@@ -239,4 +287,26 @@ const navigateToPreviousItem = () => {
 const navigateToNextItem = () => {
     router.push({ name: 'Product.View', params: { id: item.value.next } });
 };
+
+const saveImages = async () => {
+    const formData = new FormData();
+    const files = dropzone.getAcceptedFiles();
+    files.forEach(file => {
+        formData.append('images[]', file);
+        dropzone.removeFile(file);
+    });
+    formData.append('product_id', id);
+    imagesToUpload.value = [];
+    const response = await post(`${ IMAGES.PRODUCT_IMAGE_URL }/${ id }`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    if ( response && response.status === 'success' ) {
+        console.log(response.data.images);
+        //user.images = response.data.images;
+    }
+};
 </script>
+
+<style>
+@import url('/resources/css/upload.css');
+</style>
