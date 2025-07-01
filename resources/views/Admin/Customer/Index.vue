@@ -62,6 +62,9 @@
     </div>
     <div class="row mb-4">
         <div class="col-12">
+            <div class="bd-callout bd-callout-warning mb-4">
+                <p><strong>Инструкция.</strong> Перед удалением контрагента нужно отвязать его от менеджера!</p>
+            </div>
             <div class="card">
                 <div class="card-body pb-0">
                     <div v-if="filteredItems.length > 0" class="table-responsive">
